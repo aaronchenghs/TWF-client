@@ -29,7 +29,7 @@ export default function Landing() {
             />
             <button
               onClick={() =>
-                navigate(`/controller/${code.trim().toUpperCase()}`)
+                navigate(`${ROUTES.CONTROLLER}/${code.trim().toUpperCase()}`)
               }
             >
               Join

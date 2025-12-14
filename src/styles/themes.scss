@@ -1,0 +1,13 @@
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-app: #f4f5f7;
+  --text-primary: #0f1115;
+
+  --accent-primary: #e53935;
+}
+
+[data-theme="contrast"] {
+  --bg-app: #000000;
+  --text-primary: #ffffff;
+}

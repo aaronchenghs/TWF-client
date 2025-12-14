@@ -1,0 +1,54 @@
+@import "../../styles/variables.scss";
+
+$transition: $dur-fast ease;
+
+.button {
+  padding: 12px 18px;
+  border-radius: $radius-md;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border: none;
+  user-select: none;
+
+  transition: background-color $transition, transform $transition,
+    box-shadow $transition, opacity $transition;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+.primary {
+  background: linear-gradient(180deg, #f5c542, $accent);
+  color: #1a1a1a;
+  box-shadow: 0 4px 0 $accent;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.05);
+  }
+}
+
+.secondary {
+  background: $bg-surface;
+  color: $text-primary;
+  border: 1px solid $bg-elevated;
+
+  &:hover:not(:disabled) {
+    background: #262626;
+  }
+}
+
+.ghost {
+  background: transparent;
+  color: #f5c542;
+
+  &:hover:not(:disabled) {
+    background: rgba(245, 197, 66, 0.12);
+  }
+}

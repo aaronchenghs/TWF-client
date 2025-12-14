@@ -1,39 +1,44 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TWF_Logo from "../../assets/public/TWF_Transparent.svg";
+import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import styles from "./Landing.module.scss";
 import { ROUTES } from "../routes";
+import { AccentButton } from "../../components/AccentButton/AccentButton";
+import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
+import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState<string>("");
 
   return (
     <div className={styles.landingPage}>
       <div className={styles.container}>
-        <img src={TWF_Logo} alt="Tiers With Friends" className={styles.logo} />
+        <TWFLogo className={styles.logo} />
 
-        <div className={styles.actions}>
-          <button onClick={() => navigate(ROUTES.DISPLAY)}>
-            Create Room (Display)
-          </button>
-        </div>
+        <div className={styles.playActions}>
+          <AccentButton onClick={() => navigate(ROUTES.DISPLAY)}>
+            Create Room
+          </AccentButton>
 
-        <div className={styles.join}>
-          <h2>Join Room</h2>
-          <div className={styles.joinRow}>
-            <input
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="ABCD"
-            />
-            <button
-              onClick={() =>
-                navigate(`${ROUTES.CONTROLLER}/${code.trim().toUpperCase()}`)
-              }
-            >
-              Join
-            </button>
+          <MainTextTypography variant="h2">or</MainTextTypography>
+
+          <div className={styles.joinContainer}>
+            <div className={styles.joinRow}>
+              <AccentTextInput
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="ABCD"
+                maxLength={4}
+              />
+              <AccentButton
+                onClick={() =>
+                  navigate(`${ROUTES.CONTROLLER}/${code.trim().toUpperCase()}`)
+                }
+              >
+                Join Room
+              </AccentButton>
+            </div>
           </div>
         </div>
       </div>

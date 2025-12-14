@@ -1,0 +1,30 @@
+@import "../../styles/variables.scss";
+
+.input {
+  padding: 10px;
+  width: 120px;
+
+  text-transform: uppercase;
+  font-family: $font-display;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+
+  color: $text-primary;
+  background: $bg-surface;
+  border: 1px solid $bg-elevated;
+  border-radius: $radius-sm;
+
+  outline: none;
+
+  transition: border-color $dur-fast, box-shadow $dur-fast;
+
+  &::placeholder {
+    color: $text-secondary;
+    opacity: 0.6;
+  }
+
+  &:focus {
+    border-color: $accent;
+    box-shadow: 0 0 0 2px rgba($accent, 0.3);
+  }
+}

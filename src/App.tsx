@@ -4,6 +4,7 @@ import Display from "./routes/Display";
 import Controller from "./routes/Controller";
 import { ROUTES } from "./routes/routes";
 import "./styles/App.module.scss";
+import "./styles/global.scss";
 
 export default function App() {
   return (

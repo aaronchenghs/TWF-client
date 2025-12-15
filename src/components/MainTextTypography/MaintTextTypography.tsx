@@ -7,15 +7,24 @@ interface MainTextTypographyProps {
   variant?: Variant;
   className?: string;
   children: React.ReactNode;
+  muted?: boolean;
 }
 
 export function MainTextTypography({
   variant = "body",
   className,
   children,
+  muted,
 }: MainTextTypographyProps) {
   return (
-    <span className={clsx(styles.text, styles[variant], className)}>
+    <span
+      className={clsx(
+        styles.text,
+        styles[variant],
+        muted && styles.muted,
+        className
+      )}
+    >
       {children}
     </span>
   );

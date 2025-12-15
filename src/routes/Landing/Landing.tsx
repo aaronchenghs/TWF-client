@@ -17,7 +17,7 @@ export default function Landing() {
         <TWFLogo className={styles.logo} />
 
         <div className={styles.playActions}>
-          <AccentButton onClick={() => navigate(ROUTES.DISPLAY)}>
+          <AccentButton onClick={() => navigate(ROUTES.HOST_LOBBY)}>
             Create Room
           </AccentButton>
 
@@ -33,7 +33,7 @@ export default function Landing() {
               />
               <AccentButton
                 onClick={() =>
-                  navigate(`${ROUTES.CONTROLLER}/${code.trim().toUpperCase()}`)
+                  navigate(`${ROUTES.ROOM}/${code.trim().toUpperCase()}`)
                 }
               >
                 Join Room

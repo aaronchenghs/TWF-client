@@ -1,0 +1,24 @@
+@use "../../styles/export.scss" as *;
+
+.root {
+  display: flex;
+  align-items: center;
+  gap: $default-padding;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: $bg-elevated;
+}
+
+.text {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $text-secondary;
+  white-space: nowrap;
+}

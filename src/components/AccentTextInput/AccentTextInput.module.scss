@@ -1,7 +1,7 @@
-@import "../../styles/variables.scss";
+@import "../../styles/export.scss";
 
 .input {
-  padding: 10px;
+  padding: $default-padding;
   width: 120px;
 
   text-transform: uppercase;

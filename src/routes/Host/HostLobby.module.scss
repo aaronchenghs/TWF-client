@@ -1,0 +1,87 @@
+@use "../../styles/export.scss" as *;
+
+.root {
+  max-width: $page-width-cutoff;
+  margin: 48px auto;
+  padding: $default-padding;
+  display: flex;
+  flex-direction: column;
+  gap: calc($default-gap * 2);
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    .title {
+      @include float(6px, 3s);
+    }
+
+    .roomMeta {
+      text-align: right;
+    }
+
+    .roomLabel {
+      display: block;
+      opacity: 0.6;
+    }
+
+    .roomCode {
+      font-weight: bold;
+      letter-spacing: 0.2em;
+    }
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: calc($default-gap * 2);
+
+    .left {
+      display: flex;
+      flex-direction: column;
+      gap: calc($default-gap * 2);
+
+      .presetGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: $default-gap;
+      }
+    }
+
+    .presetCard {
+      padding: calc($default-padding);
+      border-radius: $radius-md;
+      border: 1px solid $bg-elevated;
+      background: $bg-surface;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .sidePanel {
+      display: flex;
+      flex-direction: column;
+      gap: calc($default-gap * 2);
+
+      .panel {
+        padding: calc($default-padding * 2);
+        border-radius: $radius-md;
+        border: 1px solid $bg-elevated;
+        background: $bg-surface;
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: calc($default-gap);
+      }
+    }
+
+    .playerList {
+      list-style: none;
+      padding: 0;
+      margin: $default-padding 0 0;
+    }
+  }
+}

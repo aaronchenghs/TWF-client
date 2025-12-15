@@ -1,9 +1,9 @@
-@import "../../styles/variables.scss";
+@import "../../styles/export.scss";
 
 $transition: $dur-fast ease;
 
 .button {
-  padding: 12px 18px;
+  padding: $default-padding calc($default-padding * 2);
   border-radius: $radius-md;
   font-weight: 600;
   letter-spacing: 0.02em;

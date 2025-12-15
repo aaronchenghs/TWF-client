@@ -1,5 +1,5 @@
 export const ROUTES = {
   LANDING: "/",
-  DISPLAY: "/display",
-  CONTROLLER: "/controller",
+  HOST_LOBBY: "/hostlobby",
+  ROOM: "/room",
 } as const;

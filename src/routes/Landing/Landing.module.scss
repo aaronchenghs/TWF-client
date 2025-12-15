@@ -1,4 +1,4 @@
-@import "../../styles/variables.scss";
+@import "../../styles/export.scss";
 
 .landingPage {
   min-height: 100vh;
@@ -43,12 +43,9 @@
       width: min(100vw, 800px);
       height: auto;
       margin-bottom: calc($default-gap * 3);
-
-      opacity: 0;
-      animation: fadeIn 500ms ease-out forwards,
-        float 4s ease-in-out infinite 500ms;
-
       transform-origin: center;
+
+      @include float(10px, 4s);
 
       @media (max-width: $mobile-width) {
         margin-bottom: calc($default-gap * 6);
@@ -58,18 +55,6 @@
     @keyframes fadeIn {
       to {
         opacity: 1;
-      }
-    }
-
-    @keyframes float {
-      0% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-      100% {
-        transform: translateY(0);
       }
     }
   }

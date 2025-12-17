@@ -19,7 +19,7 @@ export function AccentButton({
       className={clsx(styles.button, styles[variant], className)}
       {...props}
     >
-      <MainTextTypography>{props.children}</MainTextTypography>
+      <MainTextTypography variant="h5">{props.children}</MainTextTypography>
     </button>
   );
 }

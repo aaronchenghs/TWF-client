@@ -5,8 +5,6 @@ $transition: $dur-fast ease;
 .button {
   padding: $default-padding calc($default-padding * 2);
   border-radius: $radius-md;
-  font-weight: 600;
-  letter-spacing: 0.02em;
   cursor: pointer;
   border: none;
   user-select: none;

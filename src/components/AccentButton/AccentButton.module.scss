@@ -1,4 +1,4 @@
-@import "../../styles/export.scss";
+@use "../../styles/export.scss" as *;
 
 $transition: $dur-fast ease;
 

@@ -6,6 +6,7 @@ import { ROUTES } from "../routes";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
+import { socket } from "../../socket/socket";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -17,7 +18,14 @@ export default function Landing() {
         <TWFLogo className={styles.logo} />
 
         <div className={styles.playActions}>
-          <AccentButton onClick={() => navigate(ROUTES.HOST_LOBBY)}>
+          <AccentButton
+            onClick={() => {
+              socket.once("room:created", ({ code }) => {
+                navigate(`${ROUTES.HOST_LOBBY}/${code}`);
+              });
+              socket.emit("room:create", { role: "display" });
+            }}
+          >
             Create Room
           </AccentButton>
 

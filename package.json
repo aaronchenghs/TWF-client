@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@twf/contracts": "github:aaronchenghs/TWF-contracts#567d585f39d1b71407af88dcd273fe1678f81b62",
+    "@twf/contracts": "github:aaronchenghs/TWF-contracts#91fd63ab1aebf26b07017a5b892752ac89d3a144",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.10.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "vite-plugin-svgr": "^4.5.0"
   },
   "devDependencies": {

@@ -4,17 +4,30 @@ import styles from "./HostLobby.module.scss";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { SubtextDivider } from "../../components/SubtextDivider/SubtextDivider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { socket } from "../../socket/socket";
 
 const SAMPLE_PRESETS = ["Movies", "Fast Food", "Video Games"];
 
 export default function HostLobby() {
   const navigate = useNavigate();
-  const { code } = useParams();
-
+  const { code } = useParams<{ code: string }>();
   const [selectedPreset] = useState(false);
+
+  const roomCode = code ?? null;
   const playerCount = 0;
   const isStartEnabled = selectedPreset && playerCount >= 2;
+
+  useEffect(
+    function joinRoom() {
+      if (!roomCode) return;
+      socket.emit("room:join", {
+        code: roomCode,
+        role: "display",
+      });
+    },
+    [roomCode]
+  );
 
   return (
     <div className={styles.root}>
@@ -28,7 +41,7 @@ export default function HostLobby() {
             Room Code
           </MainTextTypography>
           <MainTextTypography className={styles.roomCode} variant="h3">
-            {code ?? "— — — —"}
+            {roomCode ?? "— — — —"}
           </MainTextTypography>
         </div>
       </header>

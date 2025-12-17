@@ -23,7 +23,7 @@ export default function Landing() {
               socket.once("room:created", ({ code }) => {
                 navigate(`${ROUTES.HOST_LOBBY}/${code}`);
               });
-              socket.emit("room:create", { role: "display" });
+              socket.emit("room:create", { role: "host" });
             }}
           >
             Create Room

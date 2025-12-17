@@ -23,7 +23,7 @@ export default function HostLobby() {
       if (!roomCode) return;
       socket.emit("room:join", {
         code: roomCode,
-        role: "display",
+        role: "host",
       });
     },
     [roomCode]

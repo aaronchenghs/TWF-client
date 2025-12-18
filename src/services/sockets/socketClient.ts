@@ -34,7 +34,7 @@ export class SocketClient {
 
   /** Creates the socket client and configures connection behavior. */
   constructor(url: string) {
-    this.socket = io(url, { autoConnect: true });
+    this.socket = io(url, { autoConnect: false });
   }
 
   /** Connects the socket if not already connected. */

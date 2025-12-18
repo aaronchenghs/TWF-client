@@ -6,6 +6,7 @@ import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { SubtextDivider } from "../../components/SubtextDivider/SubtextDivider";
 import { useEffect, useState } from "react";
 import { roomSocket } from "../../services/sockets/roomSocket";
+import { socketClient } from "../../services/sockets/socketClient";
 
 const SAMPLE_PRESETS = ["Movies", "Fast Food", "Video Games"];
 
@@ -20,7 +21,11 @@ export default function HostLobby() {
 
   useEffect(() => {
     if (!roomCode) return;
+
+    socketClient.connect();
     roomSocket.joinRoom({ code: roomCode, role: "host" });
+
+    return () => socketClient.disconnect();
   }, [roomCode]);
 
   return (
@@ -31,10 +36,10 @@ export default function HostLobby() {
         </MainTextTypography>
 
         <div className={styles.roomMeta}>
-          <MainTextTypography className={styles.roomLabel} variant="h5">
-            Room Code
+          <MainTextTypography className={styles.roomLabel} variant="h4">
+            Room Code:
           </MainTextTypography>
-          <MainTextTypography className={styles.roomCode} variant="h3">
+          <MainTextTypography className={styles.roomCode} variant="h2">
             {roomCode ?? "— — — —"}
           </MainTextTypography>
         </div>

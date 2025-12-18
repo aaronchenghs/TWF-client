@@ -15,6 +15,8 @@ export const roomSocket = {
    * Rejects if a `room:error` arrives first.
    */
   async createRoom(role: Role): Promise<RoomCreatedPayload> {
+    socketClient.connect();
+
     const createdP = socketClient
       .waitFor("room:created")
       .then(([payload]) => payload);
@@ -33,8 +35,9 @@ export const roomSocket = {
    * Normalizes the room code and emits the join request.
    */
   joinRoom(input: { code: string; role: Role; name?: string }): void {
-    const normalized = input.code.trim().toUpperCase();
+    socketClient.connect();
 
+    const normalized = input.code.trim().toUpperCase();
     socketClient.emit("room:join", {
       code: normalized,
       role: input.role,

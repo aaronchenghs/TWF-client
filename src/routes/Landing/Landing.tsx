@@ -7,10 +7,20 @@ import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { roomSocket } from "../../services/sockets/roomSocket";
+import { CODE_LENGTH, MAX_NAME_LENGTH } from "@twf/contracts";
 
 export default function Landing() {
   const navigate = useNavigate();
   const [code, setCode] = useState<string>("");
+  const [name, setName] = useState<string>("");
+
+  const normalizedCode = code.trim().toUpperCase();
+  const normalizedName = name.trim();
+
+  const isCodeValid = normalizedCode.length === CODE_LENGTH;
+  const isNameValid =
+    normalizedName.length >= 1 && normalizedName.length <= MAX_NAME_LENGTH;
+  const canJoin = isCodeValid && isNameValid;
 
   return (
     <div className={styles.landingPage}>
@@ -35,12 +45,22 @@ export default function Landing() {
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="ABCD"
-                maxLength={4}
+                maxLength={CODE_LENGTH}
+              />
+              <AccentTextInput
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="NAME"
+                maxLength={MAX_NAME_LENGTH}
               />
               <AccentButton
-                onClick={() =>
-                  navigate(`${ROUTES.ROOM}/${code.trim().toUpperCase()}`)
-                }
+                disabled={!canJoin}
+                onClick={() => {
+                  const qs = new URLSearchParams({
+                    name: normalizedName,
+                  }).toString();
+                  navigate(`${ROUTES.ROOM}/${normalizedCode}?${qs}`);
+                }}
               >
                 Join Room
               </AccentButton>

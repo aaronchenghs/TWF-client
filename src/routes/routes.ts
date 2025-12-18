@@ -1,5 +1,5 @@
 export const ROUTES = {
   LANDING: "/",
   HOST_LOBBY: "/hostlobby",
-  ROOM: "/room",
+  ROOM: "/playerRoom",
 } as const;

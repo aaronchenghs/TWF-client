@@ -1,5 +1,10 @@
-import type { Role, ServerToClientEvents } from "@twf/contracts";
+import type {
+  Role,
+  RoomJoinPayload,
+  ServerToClientEvents,
+} from "@twf/contracts";
 import { socketClient } from "./socketClient";
+import { normalizeCode } from "../../lib/codeUtils";
 
 type RoomCreatedPayload = Parameters<ServerToClientEvents["room:created"]>[0];
 type RoomStatePayload = Parameters<ServerToClientEvents["room:state"]>[0];
@@ -34,15 +39,23 @@ export const roomSocket = {
    * Attempts to join an existing room.
    * Normalizes the room code and emits the join request.
    */
-  joinRoom(input: { code: string; role: Role; name?: string }): void {
-    socketClient.connect();
-
-    const normalized = input.code.trim().toUpperCase();
-    socketClient.emit("room:join", {
-      code: normalized,
-      role: input.role,
-      ...(input.name ? { name: input.name } : {}),
-    });
+  joinRoom(input: RoomJoinPayload): void {
+    const normalizedCode = normalizeCode(input.code);
+    if (input.role === "player") {
+      socketClient.emit("room:join", {
+        code: normalizedCode,
+        role: "player",
+        name: input.name,
+      });
+      return;
+    }
+    if (input.role === "host") {
+      socketClient.emit("room:join", {
+        code: normalizedCode,
+        role: "host",
+      });
+      return;
+    }
   },
 
   /** Subscribes to room state updates; returns an unsubscribe function. */

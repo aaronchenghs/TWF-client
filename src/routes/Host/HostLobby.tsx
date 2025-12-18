@@ -5,7 +5,7 @@ import { MainTextTypography } from "../../components/MainTextTypography/MaintTex
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { SubtextDivider } from "../../components/SubtextDivider/SubtextDivider";
 import { useEffect, useState } from "react";
-import { roomSocket } from "../../services/roomSocket";
+import { roomSocket } from "../../services/sockets/roomSocket";
 
 const SAMPLE_PRESETS = ["Movies", "Fast Food", "Video Games"];
 

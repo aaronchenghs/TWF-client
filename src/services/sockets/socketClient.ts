@@ -9,6 +9,7 @@ type ContractSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 type EmitArgs<E extends keyof ClientToServerEvents> = Parameters<
   ClientToServerEvents[E]
 >;
+
 type ListenArgs<E extends keyof ServerToClientEvents> = Parameters<
   ServerToClientEvents[E]
 >;
@@ -31,18 +32,22 @@ type ContractOnce = <E extends keyof ServerToClientEvents>(
 export class SocketClient {
   private readonly socket: ContractSocket;
 
+  /** Creates the socket client and configures connection behavior. */
   constructor(url: string) {
     this.socket = io(url, { autoConnect: true });
   }
 
+  /** Connects the socket if not already connected. */
   connect(): void {
     if (!this.socket.connected) this.socket.connect();
   }
 
+  /** Disconnects the socket if currently connected. */
   disconnect(): void {
     if (this.socket.connected) this.socket.disconnect();
   }
 
+  /** Emits a contract-defined client->server event with the correct argument tuple. */
   emit<E extends keyof ClientToServerEvents>(
     event: E,
     ...args: EmitArgs<E>
@@ -50,6 +55,7 @@ export class SocketClient {
     this.socket.emit(event, ...args);
   }
 
+  /** Subscribes to a contract-defined server->client event; returns an unsubscribe function. */
   on<E extends keyof ServerToClientEvents>(
     event: E,
     handler: ServerToClientEvents[E]
@@ -63,6 +69,7 @@ export class SocketClient {
     };
   }
 
+  /** Subscribes once to a contract-defined server->client event; returns a cleanup function. */
   once<E extends keyof ServerToClientEvents>(
     event: E,
     handler: ServerToClientEvents[E]
@@ -76,6 +83,10 @@ export class SocketClient {
     };
   }
 
+  /**
+   * Waits for a single occurrence of a server->client event and resolves with its args.
+   * Rejects if the event does not arrive within `timeoutMs`.
+   */
   waitFor<E extends keyof ServerToClientEvents>(
     event: E,
     timeoutMs = 8000

@@ -6,7 +6,7 @@ import { ROUTES } from "../routes";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
-import { roomSocket } from "../../services/roomSocket";
+import { roomSocket } from "../../services/sockets/roomSocket";
 
 export default function Landing() {
   const navigate = useNavigate();

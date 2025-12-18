@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@twf/contracts": "github:aaronchenghs/TWF-contracts#323d9decc5e39f678dd0cd96315c5a40c5c12bfe",
+    "@twf/contracts": "github:aaronchenghs/TWF-contracts#b87007a3055704c40b1706e163c22b784e88c86a",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.10.1",

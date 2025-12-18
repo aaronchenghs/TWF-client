@@ -6,7 +6,7 @@ import { ROUTES } from "../routes";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
-import { socket } from "../../socket/socket";
+import { roomSocket } from "../../services/roomSocket";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -19,11 +19,9 @@ export default function Landing() {
 
         <div className={styles.playActions}>
           <AccentButton
-            onClick={() => {
-              socket.once("room:created", ({ code }) => {
-                navigate(`${ROUTES.HOST_LOBBY}/${code}`);
-              });
-              socket.emit("room:create", { role: "host" });
+            onClick={async () => {
+              const { code } = await roomSocket.createRoom("host");
+              navigate(`${ROUTES.HOST_LOBBY}/${code}`);
             }}
           >
             Create Room

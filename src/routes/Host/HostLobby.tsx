@@ -5,7 +5,7 @@ import { MainTextTypography } from "../../components/MainTextTypography/MaintTex
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { SubtextDivider } from "../../components/SubtextDivider/SubtextDivider";
 import { useEffect, useState } from "react";
-import { socket } from "../../socket/socket";
+import { roomSocket } from "../../services/roomSocket";
 
 const SAMPLE_PRESETS = ["Movies", "Fast Food", "Video Games"];
 
@@ -18,16 +18,10 @@ export default function HostLobby() {
   const playerCount = 0;
   const isStartEnabled = selectedPreset && playerCount >= 2;
 
-  useEffect(
-    function joinRoom() {
-      if (!roomCode) return;
-      socket.emit("room:join", {
-        code: roomCode,
-        role: "host",
-      });
-    },
-    [roomCode]
-  );
+  useEffect(() => {
+    if (!roomCode) return;
+    roomSocket.joinRoom({ code: roomCode, role: "host" });
+  }, [roomCode]);
 
   return (
     <div className={styles.root}>

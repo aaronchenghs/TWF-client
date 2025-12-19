@@ -8,13 +8,14 @@ import { MainTextTypography } from "../../components/MainTextTypography/MaintTex
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { CODE_LENGTH, MAX_NAME_LENGTH } from "@twf/contracts";
+import { normalizeCode } from "../../lib/codeUtils";
 
 export default function Landing() {
   const navigate = useNavigate();
   const [code, setCode] = useState<string>("");
   const [name, setName] = useState<string>("");
 
-  const normalizedCode = code.trim().toUpperCase();
+  const normalizedCode = normalizeCode(code);
   const normalizedName = name.trim();
 
   const isCodeValid = normalizedCode.length === CODE_LENGTH;
@@ -22,20 +23,25 @@ export default function Landing() {
     normalizedName.length >= 1 && normalizedName.length <= MAX_NAME_LENGTH;
   const canJoin = isCodeValid && isNameValid;
 
+  const handleCreateRoom = async () => {
+    const { code } = await roomSocket.createRoom("host");
+    navigate(`${ROUTES.HOST_LOBBY}/${code}`);
+  };
+
+  const handleJoinRoom = () => {
+    const qs = new URLSearchParams({
+      name: normalizedName,
+    }).toString();
+    navigate(`${ROUTES.ROOM}/${normalizedCode}?${qs}`);
+  };
+
   return (
     <div className={styles.landingPage}>
       <div className={styles.container}>
         <TWFLogo className={styles.logo} />
 
         <div className={styles.playActions}>
-          <AccentButton
-            onClick={async () => {
-              const { code } = await roomSocket.createRoom("host");
-              navigate(`${ROUTES.HOST_LOBBY}/${code}`);
-            }}
-          >
-            Create Room
-          </AccentButton>
+          <AccentButton onClick={handleCreateRoom}>Create Room</AccentButton>
 
           <MainTextTypography variant="h2">or</MainTextTypography>
 
@@ -53,15 +59,7 @@ export default function Landing() {
                 placeholder="NAME"
                 maxLength={MAX_NAME_LENGTH}
               />
-              <AccentButton
-                disabled={!canJoin}
-                onClick={() => {
-                  const qs = new URLSearchParams({
-                    name: normalizedName,
-                  }).toString();
-                  navigate(`${ROUTES.ROOM}/${normalizedCode}?${qs}`);
-                }}
-              >
+              <AccentButton disabled={!canJoin} onClick={handleJoinRoom}>
                 Join Room
               </AccentButton>
             </div>

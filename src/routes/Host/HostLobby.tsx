@@ -4,9 +4,11 @@ import styles from "./HostLobby.module.scss";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { SubtextDivider } from "../../components/SubtextDivider/SubtextDivider";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { socketClient } from "../../services/sockets/socketClient";
+import { CODE_LENGTH, type RoomPublicState } from "@twf/contracts";
+import { normalizeCode } from "../../lib/codeUtils";
 
 const SAMPLE_PRESETS = ["Movies", "Fast Food", "Video Games"];
 
@@ -14,19 +16,44 @@ export default function HostLobby() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
   const [selectedPreset] = useState(false);
+  const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const roomCode = code ?? null;
-  const playerCount = 0;
+  const players = roomState?.players ?? [];
+  const playerCount = players.length;
   const isStartEnabled = selectedPreset && playerCount >= 2;
 
-  useEffect(() => {
-    if (!roomCode) return;
+  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
 
-    socketClient.connect();
-    roomSocket.joinRoom({ code: roomCode, role: "host" });
+  const handleClose = useCallback(() => {
+    socketClient.disconnect();
+    navigate("/");
+  }, [navigate]);
 
-    return () => socketClient.disconnect();
-  }, [roomCode]);
+  useEffect(
+    function bootStrapLobbySocket() {
+      if (roomCode.length !== CODE_LENGTH) return;
+
+      socketClient.connect();
+
+      const offState = roomSocket.onRoomState((state) => {
+        setRoomState(state);
+        setErrorMessage(null);
+      });
+
+      const offError = roomSocket.onRoomError((msg) => {
+        setErrorMessage(msg);
+      });
+
+      roomSocket.joinRoom({ code: roomCode, role: "host" });
+
+      return () => {
+        offState();
+        offError();
+      };
+    },
+    [roomCode]
+  );
 
   return (
     <div className={styles.root}>
@@ -40,13 +67,13 @@ export default function HostLobby() {
             Room Code:
           </MainTextTypography>
           <MainTextTypography className={styles.roomCode} variant="h2">
-            {roomCode ?? "— — — —"}
+            {roomCode || "— — — —"}
           </MainTextTypography>
         </div>
       </header>
 
-      <MainTextTypography variant="body" muted>
-        Waiting for players to join…
+      <MainTextTypography variant="body" muted={!errorMessage}>
+        {errorMessage ?? "Waiting for players to join…"}
       </MainTextTypography>
 
       <div className={styles.layout}>
@@ -69,19 +96,32 @@ export default function HostLobby() {
             </MainTextTypography>
 
             <ul className={styles.playerList}>
-              <MainTextTypography
-                className={styles.player}
-                variant="body"
-                muted
-              >
-                Waiting…
-              </MainTextTypography>
+              {players.length === 0 ? (
+                <MainTextTypography
+                  className={styles.player}
+                  variant="body"
+                  muted
+                >
+                  Waiting…
+                </MainTextTypography>
+              ) : (
+                players.map((player) => (
+                  <li key={player.id}>
+                    <MainTextTypography
+                      className={styles.player}
+                      variant="body"
+                    >
+                      {player.name}
+                    </MainTextTypography>
+                  </li>
+                ))
+              )}
             </ul>
           </div>
 
           <div className={clsx(styles.panel, styles.controls)}>
-            <AccentButton variant="secondary" onClick={() => navigate("/")}>
-              Close
+            <AccentButton variant="secondary" onClick={handleClose}>
+              Close Lobby
             </AccentButton>
             <AccentButton variant="primary" disabled={!isStartEnabled}>
               Start Game

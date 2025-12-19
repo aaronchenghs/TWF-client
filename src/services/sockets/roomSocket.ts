@@ -1,6 +1,7 @@
 import type {
   Role,
   RoomJoinPayload,
+  RoomPublicState,
   ServerToClientEvents,
 } from "@twf/contracts";
 import { socketClient } from "./socketClient";
@@ -56,6 +57,30 @@ export const roomSocket = {
       });
       return;
     }
+  },
+
+  async joinRoomOrThrow(
+    input: RoomJoinPayload,
+    timeoutMs = 2000
+  ): Promise<RoomPublicState> {
+    const normalizedCode = normalizeCode(input.code);
+
+    socketClient.connect();
+
+    const stateP = socketClient
+      .waitFor("room:state", timeoutMs)
+      .then(([state]) => {
+        if (state.code !== normalizedCode) throw new Error("Unexpected room");
+        return state;
+      });
+
+    const errorP = socketClient
+      .waitFor("room:error", timeoutMs)
+      .then(([msg]) => Promise.reject(new Error(msg)));
+
+    this.joinRoom({ ...input, code: normalizedCode });
+
+    return Promise.race([stateP, errorP]);
   },
 
   /** Subscribes to room state updates; returns an unsubscribe function. */

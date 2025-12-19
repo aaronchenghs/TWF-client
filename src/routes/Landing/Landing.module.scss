@@ -13,6 +13,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: calc($default-padding * 3);
 
     .playActions {
       display: flex;
@@ -26,36 +27,42 @@
         flex-direction: column;
         gap: $default-gap;
       }
-
-      .joinContainer {
-        display: flex;
-        flex-direction: column;
-        gap: $default-gap;
-
-        .joinRow {
-          display: flex;
-          gap: $default-gap;
-        }
-      }
     }
 
     .logo {
+      @include float(10px, 3s);
       width: min(100vw, 800px);
       height: auto;
       margin-bottom: calc($default-gap * 3);
       transform-origin: center;
 
-      @include float(10px, 3s);
-
       @media (max-width: $mobile-width) {
-        margin-bottom: calc($default-gap * 6);
+        margin-bottom: calc($default-gap * 2);
       }
     }
+  }
+}
 
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
-    }
+/* Join panel */
+.joinCard {
+  display: flex;
+  flex-direction: column;
+  width: min(560px, 92vw);
+  gap: $default-gap;
+  padding: calc($default-padding * 2);
+  border-radius: $radius-md;
+  background: $bg-surface;
+  border: 1px solid $bg-elevated;
+  box-shadow: 0 10px 30px $box-shadow-color;
+}
+
+.joinRow {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  gap: $default-gap;
+  align-items: center;
+
+  @media (max-width: $mobile-width) {
+    grid-template-columns: 1fr;
   }
 }

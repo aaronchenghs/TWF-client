@@ -1,29 +1,36 @@
 @use "../../styles/export.scss" as *;
 
 .input {
+  height: 50px;
   padding: $default-padding;
-  width: 120px;
 
   text-transform: uppercase;
   font-family: $font-display;
   letter-spacing: 0.08em;
 
   color: $text-primary;
-  background: $bg-surface;
-  border: 1px solid $bg-elevated;
+
+  background: rgba($bg-surface, 1);
+  border: 1px solid rgba($text-primary, 0.18);
+
   border-radius: $radius-sm;
 
   outline: none;
+  transition: border-color $dur-fast, box-shadow $dur-fast, background $dur-fast;
 
-  transition: border-color $dur-fast, box-shadow $dur-fast;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 22px $box-shadow-color;
 
   &::placeholder {
     color: $text-secondary;
-    opacity: 0.6;
+    opacity: 0.75;
+  }
+
+  &:hover {
+    border-color: rgba($text-primary, 0.28);
   }
 
   &:focus {
     border-color: $accent;
-    box-shadow: 0 0 0 2px rgba($accent, 0.3);
+    box-shadow: 0 0 0 3px rgba($accent, 0.28), 0 10px 26px $box-shadow-color;
   }
 }

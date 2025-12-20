@@ -5,6 +5,7 @@ import { socketClient } from "../../services/sockets/socketClient";
 import { normalizeCode } from "../../lib/codeUtils";
 import { CODE_LENGTH } from "@twf/contracts";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
+import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerLobby.module.scss";
 
 export default function PlayerLobby() {
@@ -27,6 +28,7 @@ export default function PlayerLobby() {
 
   return (
     <div className={styles.waiting}>
+      <TWFLogo className={styles.logo} />
       <header className={styles.header}>
         <MainTextTypography variant="label" muted>
           ROOM

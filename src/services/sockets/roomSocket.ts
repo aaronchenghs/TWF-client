@@ -3,6 +3,9 @@ import type {
   RoomJoinPayload,
   RoomPublicState,
   ServerToClientEvents,
+  TierSetDefinition,
+  TierSetId,
+  TierSetSummary,
 } from "@twf/contracts";
 import { socketClient } from "./socketClient";
 import { normalizeCode } from "../../lib/codeUtils";
@@ -34,6 +37,39 @@ export const roomSocket = {
     socketClient.emit("room:create", { role });
 
     return Promise.race([createdP, errorP]);
+  },
+
+  async listTierSets(timeoutMs = 5000): Promise<TierSetSummary[]> {
+    const listedP = socketClient
+      .waitFor("tierSets:listed", timeoutMs)
+      .then(([payload]) => payload.tierSets);
+
+    const errorP = socketClient
+      .waitFor("room:error", timeoutMs)
+      .then(([msg]) => Promise.reject(new Error(msg)));
+
+    socketClient.emit("tierSets:list");
+    return Promise.race([listedP, errorP]);
+  },
+
+  async getTierSet(
+    id: TierSetId,
+    timeoutMs = 5000
+  ): Promise<TierSetDefinition> {
+    const gotP = socketClient
+      .waitFor("tierSets:got", timeoutMs)
+      .then(([payload]) => payload.tierSet);
+
+    const errorP = socketClient
+      .waitFor("room:error", timeoutMs)
+      .then(([msg]) => Promise.reject(new Error(msg)));
+
+    socketClient.emit("tierSets:get", { id });
+    return Promise.race([gotP, errorP]);
+  },
+
+  setTierSet(tierSetId: TierSetId): void {
+    socketClient.emit("room:setTierSet", { tierSetId });
   },
 
   /**
@@ -83,12 +119,10 @@ export const roomSocket = {
     return Promise.race([stateP, errorP]);
   },
 
-  /** Subscribes to room state updates; returns an unsubscribe function. */
   onRoomState(handler: (state: RoomStatePayload) => void): () => void {
     return socketClient.on("room:state", handler);
   },
 
-  /** Subscribes to room errors; returns an unsubscribe function. */
   onRoomError(handler: (err: RoomErrorPayload) => void): () => void {
     return socketClient.on("room:error", handler);
   },

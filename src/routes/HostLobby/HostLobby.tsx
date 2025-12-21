@@ -7,22 +7,26 @@ import { SubtextDivider } from "../../components/SubtextDivider/SubtextDivider";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { socketClient } from "../../services/sockets/socketClient";
-import { CODE_LENGTH, type RoomPublicState } from "@twf/contracts";
+import {
+  CODE_LENGTH,
+  type RoomPublicState,
+  type TierSetSummary,
+} from "@twf/contracts";
 import { normalizeCode } from "../../lib/codeUtils";
-
-const SAMPLE_PRESETS = ["Video Games"];
+import { TierSetGridEntry } from "./TierSetGridEntry/TierSetGridEntry";
 
 export default function HostLobby() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
-  const [selectedPreset] = useState(false);
+
+  const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const players = roomState?.players ?? [];
   const playerCount = players.length;
-  const isStartEnabled = selectedPreset && playerCount >= 2;
-
+  const selectedTierSetId = roomState?.tierSetId ?? null;
+  const isStartEnabled = !!selectedTierSetId && playerCount >= 2;
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
 
   const handleClose = useCallback(() => {
@@ -30,22 +34,25 @@ export default function HostLobby() {
     navigate("/");
   }, [navigate]);
 
+  const handleSelectTierSet = useCallback((ts: TierSetSummary) => {
+    setErrorMessage(null);
+    roomSocket.setTierSet(ts.id);
+  }, []);
+
   useEffect(
     function bootStrapLobbySocket() {
       if (roomCode.length !== CODE_LENGTH) return;
-
       socketClient.connect();
+      roomSocket.joinRoom({ code: roomCode, role: "host" });
+      roomSocket.listTierSets().then(setTierSets);
 
       const offState = roomSocket.onRoomState((state) => {
         setRoomState(state);
         setErrorMessage(null);
       });
-
       const offError = roomSocket.onRoomError((msg) => {
         setErrorMessage(msg);
       });
-
-      roomSocket.joinRoom({ code: roomCode, role: "host" });
 
       return () => {
         offState();
@@ -81,11 +88,20 @@ export default function HostLobby() {
           <SubtextDivider text="Choose a Tier List" />
 
           <div className={styles.presetGrid}>
-            {SAMPLE_PRESETS.map((preset) => (
-              <div key={preset} className={clsx(styles.presetCard)}>
-                {preset}
-              </div>
-            ))}
+            {tierSets.length === 0 ? (
+              <MainTextTypography variant="body" muted>
+                Loading tier lists…
+              </MainTextTypography>
+            ) : (
+              tierSets.map((set) => (
+                <TierSetGridEntry
+                  key={set.id}
+                  tierSet={set}
+                  selected={set.id === selectedTierSetId}
+                  onSelect={handleSelectTierSet}
+                />
+              ))
+            )}
           </div>
         </section>
 

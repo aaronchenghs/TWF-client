@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Landing from "./routes/Landing/Landing";
-import HostLobby from "./routes/Host/HostLobby";
+import HostLobby from "./routes/HostLobby/HostLobby";
 import { ROUTES } from "./routes/routes";
 import "./App.module.scss";
 import PlayerLobby from "./routes/PlayerLobby/PlayerLobby";

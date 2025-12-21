@@ -18,10 +18,11 @@
     }
 
     .roomMeta {
-      padding: $default-padding calc($default-padding * 2);
+      @include glow($accent, 2.5s, 8px, 25%);
+      padding: $default-padding calc($default-padding * 3);
       text-align: center;
       border: 2px solid $accent;
-      border-radius: $radius-md;
+      border-radius: $radius-lg;
 
       .roomLabel {
         display: block;
@@ -67,7 +68,7 @@
       .controls {
         display: flex;
         flex-direction: column;
-        gap: $default-gap;
+        gap: calc($default-gap * 2);
       }
     }
 

@@ -1,3 +1,5 @@
+@use "variables.scss" as *;
+
 @keyframes float {
   0% {
     transform: translateY(0);
@@ -13,4 +15,41 @@
 @mixin float($intensity, $duration: 2.5s) {
   --float-intensity: #{$intensity};
   animation: float $duration ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35),
+      0 0 0 0 color-mix(in srgb, $accent 0%, transparent);
+  }
+  60% {
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.42),
+      0 0 0 8px color-mix(in srgb, $accent 18%, transparent);
+  }
+  100% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35),
+      0 0 0 0 color-mix(in srgb, $accent 0%, transparent);
+  }
+}
+
+@mixin glow($color: $accent, $duration: 2.6s, $spread: 8px, $strength: 18%) {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  animation: glowPulse $duration ease-in-out infinite;
+
+  @supports (color: color-mix(in srgb, white 10%, black)) {
+    @keyframes glowPulse {
+      0% {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35),
+          0 0 0 0 color-mix(in srgb, $color 0%, transparent);
+      }
+      60% {
+        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.42),
+          0 0 0 $spread color-mix(in srgb, $color $strength, transparent);
+      }
+      100% {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35),
+          0 0 0 0 color-mix(in srgb, $color 0%, transparent);
+      }
+    }
+  }
 }

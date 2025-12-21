@@ -46,15 +46,15 @@ export default function HostLobby() {
       roomSocket.joinRoom({ code: roomCode, role: "host" });
       roomSocket.listTierSets().then(setTierSets);
 
-      const offState = roomSocket.onRoomState((state) => {
-        setRoomState(state);
-        setErrorMessage(null);
-      });
-      const offError = roomSocket.onRoomError((msg) => {
-        setErrorMessage(msg);
-      });
-
       return () => {
+        const offState = roomSocket.onRoomState((state) => {
+          setRoomState(state);
+          setErrorMessage(null);
+        });
+        const offError = roomSocket.onRoomError((msg) => {
+          setErrorMessage(msg);
+        });
+
         offState();
         offError();
       };
@@ -136,11 +136,11 @@ export default function HostLobby() {
           </div>
 
           <div className={clsx(styles.panel, styles.controls)}>
-            <AccentButton variant="secondary" onClick={handleClose}>
-              Close Lobby
-            </AccentButton>
             <AccentButton variant="primary" disabled={!isStartEnabled}>
               Start Game
+            </AccentButton>
+            <AccentButton variant="secondary" onClick={handleClose}>
+              Close Lobby
             </AccentButton>
           </div>
         </aside>

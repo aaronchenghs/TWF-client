@@ -10,7 +10,7 @@ import { socketClient } from "../../services/sockets/socketClient";
 import { CODE_LENGTH, type RoomPublicState } from "@twf/contracts";
 import { normalizeCode } from "../../lib/codeUtils";
 
-const SAMPLE_PRESETS = ["Movies", "Fast Food", "Video Games"];
+const SAMPLE_PRESETS = ["Video Games"];
 
 export default function HostLobby() {
   const navigate = useNavigate();

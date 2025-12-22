@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { socketClient } from "../../services/sockets/socketClient";
 import { normalizeCode } from "../../lib/codeUtils";
@@ -9,6 +9,7 @@ import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerLobby.module.scss";
 
 export default function PlayerLobby() {
+  const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
 
@@ -16,14 +17,22 @@ export default function PlayerLobby() {
   const name = (searchParams.get("name") ?? "").trim();
 
   useEffect(
-    function connectToRoom() {
+    function handleLobbyConnection() {
       if (!roomCode || roomCode.length !== CODE_LENGTH) return;
       if (!name) return;
       socketClient.connect();
       roomSocket.joinRoom({ code: roomCode, role: "player", name });
-      return () => socketClient.disconnect();
+
+      const offClosed = roomSocket.onRoomClosed(() => {
+        socketClient.disconnect();
+        navigate("/", { replace: true });
+      });
+
+      return () => {
+        offClosed();
+      };
     },
-    [roomCode, name]
+    [roomCode, name, navigate]
   );
 
   return (

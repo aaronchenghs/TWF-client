@@ -37,7 +37,7 @@ export default function HostLobby() {
   }, [tierSets, selectedTierSetId]);
 
   const handleClose = useCallback(() => {
-    socketClient.disconnect();
+    roomSocket.closeRoom();
     navigate("/");
   }, [navigate]);
 

@@ -119,6 +119,15 @@ export const roomSocket = {
     return Promise.race([stateP, errorP]);
   },
 
+  closeRoom(): void {
+    socketClient.emit("room:close");
+    socketClient.disconnect();
+  },
+
+  onRoomClosed(handler: () => void): () => void {
+    return socketClient.on("room:closed", handler);
+  },
+
   onRoomState(handler: (state: RoomStatePayload) => void): () => void {
     return socketClient.on("room:state", handler);
   },

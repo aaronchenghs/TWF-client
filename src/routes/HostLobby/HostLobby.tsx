@@ -29,6 +29,13 @@ export default function HostLobby() {
   const isStartEnabled = !!selectedTierSetId && playerCount >= 2;
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
 
+  const selectedTierSetName = useMemo(() => {
+    if (!selectedTierSetId) return null;
+    return (
+      tierSets.find((tier) => tier.id === selectedTierSetId)?.title ?? null
+    );
+  }, [tierSets, selectedTierSetId]);
+
   const handleClose = useCallback(() => {
     socketClient.disconnect();
     navigate("/");
@@ -46,15 +53,16 @@ export default function HostLobby() {
       roomSocket.joinRoom({ code: roomCode, role: "host" });
       roomSocket.listTierSets().then(setTierSets);
 
-      return () => {
-        const offState = roomSocket.onRoomState((state) => {
-          setRoomState(state);
-          setErrorMessage(null);
-        });
-        const offError = roomSocket.onRoomError((msg) => {
-          setErrorMessage(msg);
-        });
+      const offState = roomSocket.onRoomState((state) => {
+        setRoomState(state);
+        setErrorMessage(null);
+      });
 
+      const offError = roomSocket.onRoomError((msg) => {
+        setErrorMessage(msg);
+      });
+
+      return () => {
         offState();
         offError();
       };
@@ -136,6 +144,15 @@ export default function HostLobby() {
           </div>
 
           <div className={clsx(styles.panel, styles.controls)}>
+            <MainTextTypography
+              variant="body"
+              muted={!selectedTierSetName}
+              className={styles.selectedTierSetLabel}
+            >
+              {selectedTierSetName
+                ? `${selectedTierSetName}`
+                : "No tier list selected"}
+            </MainTextTypography>
             <AccentButton variant="primary" disabled={!isStartEnabled}>
               Start Game
             </AccentButton>

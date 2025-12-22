@@ -26,17 +26,17 @@
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 35%, transparent);
   }
 
   &.selected {
     border: 2px solid $accent;
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 30%, transparent);
 
     .selectedPill {
       color: $accent;
-      border-color: color-mix(in srgb, var(--accent) 60%, transparent);
-      background: color-mix(in srgb, var(--accent) 22%, transparent);
+      border-color: color-mix(in srgb, $accent 60%, transparent);
+      background: color-mix(in srgb, $accent 22%, transparent);
     }
 
     .hintPill {
@@ -47,12 +47,11 @@
   .presetCardContent {
     display: flex;
     flex-direction: column;
-    gap: calc($default-gap / 2);
+    gap: $default-gap;
   }
 
   .presetTitle {
     margin: 0;
-    line-height: 1.1;
   }
 
   .presetDescription {
@@ -65,9 +64,16 @@
     overflow: hidden;
   }
 
+  .metaLine {
+    margin-top: $default-gap;
+    opacity: 0.7;
+  }
+
   .presetCardFooter {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    gap: $default-gap;
   }
 
   .selectedPill,
@@ -77,11 +83,39 @@
   }
 
   .selectedPill {
-    border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
-    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    border: 1px solid color-mix(in srgb, $accent 50%, transparent);
+    background: color-mix(in srgb, $accent 15%, transparent);
   }
 
   .hintPill {
     background: color-mix(in srgb, $bg-surface 75%, $bg-elevated);
+  }
+}
+
+.detailsButton {
+  border: 1px solid $bg-elevated;
+  background: color-mix(in srgb, $bg-surface 80%, $bg-elevated);
+  color: $text-primary;
+
+  border-radius: $radius-sm;
+  padding: $default-padding;
+
+  font-size: 0.75rem;
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition: transform $dur-fast ease, border-color $dur-fast ease,
+    box-shadow $dur-fast ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in srgb, $bg-elevated 70%, $text-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 22%, transparent);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 35%, transparent);
   }
 }

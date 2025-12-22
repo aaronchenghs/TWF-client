@@ -1,7 +1,10 @@
-import type { TierSetSummary } from "@twf/contracts";
+import type { TierSetDefinition, TierSetSummary } from "@twf/contracts";
 import styles from "./TierSetGridEntry.module.scss";
 import clsx from "clsx";
+import { useCallback, useState } from "react";
 import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
+import { roomSocket } from "../../../services/sockets/roomSocket";
+import { TierSetDetails } from "./TierSetDetails/TierSetDetails";
 
 type TierSetGridEntryProps = {
   tierSet: TierSetSummary;
@@ -14,6 +17,30 @@ export function TierSetGridEntry({
   selected,
   onSelect,
 }: TierSetGridEntryProps) {
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [detailsError, setDetailsError] = useState<string | null>(null);
+  const [details, setDetails] = useState<TierSetDefinition | null>(null);
+
+  const toggleDetails = useCallback(
+    async (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      const next = !isDetailsOpen;
+      setIsDetailsOpen(next);
+      if (!next || !!details) return;
+      setDetailsError(null);
+
+      try {
+        const full = await roomSocket.getTierSet(tierSet.id);
+        setDetails(full);
+      } catch (error) {
+        setDetailsError(
+          error instanceof Error ? error.message : "Failed to load tier set."
+        );
+      }
+    },
+    [isDetailsOpen, details, tierSet.id]
+  );
+
   return (
     <button
       type="button"
@@ -25,13 +52,22 @@ export function TierSetGridEntry({
         <MainTextTypography variant="h4" className={styles.presetTitle}>
           {tierSet.title}
         </MainTextTypography>
-        <MainTextTypography
-          variant="body"
-          muted
-          className={styles.presetDescription}
-        >
-          {tierSet.description ?? "—"}
-        </MainTextTypography>
+
+        {!isDetailsOpen ? (
+          <MainTextTypography
+            variant="body"
+            muted
+            className={styles.presetDescription}
+          >
+            {tierSet.description ?? "—"}
+          </MainTextTypography>
+        ) : (
+          <TierSetDetails
+            isLoading={!details && !detailsError}
+            errorMessage={detailsError}
+            details={details}
+          />
+        )}
       </div>
 
       <div className={styles.presetCardFooter}>
@@ -40,8 +76,17 @@ export function TierSetGridEntry({
           muted={!selected}
           className={selected ? styles.selectedPill : styles.hintPill}
         >
-          {selected ? "SELECTED" : "CLICK TO SELECT"}
+          {selected ? "SELECTED" : null}
         </MainTextTypography>
+
+        <button
+          type="button"
+          className={styles.detailsButton}
+          onClick={toggleDetails}
+          aria-expanded={isDetailsOpen}
+        >
+          {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
+        </button>
       </div>
     </button>
   );

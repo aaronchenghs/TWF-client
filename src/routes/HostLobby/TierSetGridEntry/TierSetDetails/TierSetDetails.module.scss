@@ -1,0 +1,65 @@
+@use "../../../../styles/export.scss" as *;
+
+.detailsBody {
+  margin-top: $default-gap;
+  padding-top: $default-gap;
+  border-top: 1px solid $bg-elevated;
+
+  max-height: 220px;
+  overflow: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}
+
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}
+
+.tierChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $default-gap;
+}
+
+.tierChip {
+  padding: $default-padding;
+  border-radius: $radius-sm;
+  border: 1px solid $bg-elevated;
+  background: color-mix(in srgb, $bg-surface 75%, $bg-elevated);
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}
+
+.itemRow {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: $default-gap;
+  align-items: center;
+
+  padding: $default-padding;
+  border-radius: $radius-sm;
+
+  border: 1px solid color-mix(in srgb, $bg-elevated 70%, transparent);
+  background: color-mix(in srgb, $bg-surface 85%, $bg-elevated);
+}
+
+.itemThumb,
+.itemThumbPlaceholder {
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-sm;
+  background: $bg-elevated;
+  object-fit: cover;
+}
+
+.itemText {
+  margin: 0;
+}

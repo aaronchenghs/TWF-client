@@ -1,0 +1,50 @@
+@use "../../styles/export.scss" as *;
+
+$modalPadding: calc($default-padding * 2);
+
+.backdrop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: $box-shadow-color;
+  padding: calc($default-padding * 2);
+  @include appearFadeIn(140ms);
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  gap: calc($default-gap / 2);
+  width: min(520px, 100%);
+  border-radius: $radius-md;
+  background: $bg-surface;
+  border: 6px solid $bg-elevated;
+  box-shadow: 0 20px 80px $box-shadow-color;
+  padding: $modalPadding;
+  @include appearPopIn(180ms);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $default-gap;
+}
+
+.title {
+  font-family: $font-display;
+}
+
+.message {
+  margin-top: $default-padding;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $default-padding;
+  gap: $default-gap;
+}

@@ -2,7 +2,7 @@ import clsx from "clsx";
 import styles from "./AccentButton.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MaintTextTypography";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "ghost" | "destructive";
 
 interface AccentButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -12,6 +12,7 @@ interface AccentButtonProps
 export function AccentButton({
   variant = "primary",
   className,
+  children,
   ...props
 }: AccentButtonProps) {
   return (
@@ -19,7 +20,7 @@ export function AccentButton({
       className={clsx(styles.button, styles[variant], className)}
       {...props}
     >
-      <MainTextTypography variant="h5">{props.children}</MainTextTypography>
+      <MainTextTypography variant="h5">{children}</MainTextTypography>
     </button>
   );
 }

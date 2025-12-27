@@ -5,6 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  @include appearFadeIn(500ms);
 
   .container {
     width: 100%;
@@ -43,7 +44,6 @@
   }
 }
 
-/* Join panel */
 .joinCard {
   display: flex;
   flex-direction: column;

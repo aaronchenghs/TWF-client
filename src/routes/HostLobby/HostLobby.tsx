@@ -14,11 +14,13 @@ import {
 } from "@twf/contracts";
 import { normalizeCode } from "../../lib/codeUtils";
 import { TierSetGridEntry } from "./TierSetGridEntry/TierSetGridEntry";
+import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 
 export default function HostLobby() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
 
+  const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -36,7 +38,7 @@ export default function HostLobby() {
     );
   }, [tierSets, selectedTierSetId]);
 
-  const handleClose = useCallback(() => {
+  const handleCloseLobby = useCallback(() => {
     roomSocket.closeRoom();
     navigate("/");
   }, [navigate]);
@@ -131,10 +133,7 @@ export default function HostLobby() {
               ) : (
                 players.map((player) => (
                   <li key={player.id}>
-                    <MainTextTypography
-                      className={styles.player}
-                      variant="body"
-                    >
+                    <MainTextTypography className={styles.player} variant="h6">
                       {player.name}
                     </MainTextTypography>
                   </li>
@@ -156,12 +155,25 @@ export default function HostLobby() {
             <AccentButton variant="primary" disabled={!isStartEnabled}>
               Start Game
             </AccentButton>
-            <AccentButton variant="secondary" onClick={handleClose}>
+            <AccentButton
+              variant="secondary"
+              onClick={() => setIsConfirmCloseOpen(true)}
+            >
               Close Lobby
             </AccentButton>
           </div>
         </aside>
       </div>
+
+      <ConfirmationModal
+        open={isConfirmCloseOpen}
+        title="Close Lobby?"
+        message="This ends the session for everyone currently connected."
+        confirmText="Close"
+        destructive
+        onCancel={() => setIsConfirmCloseOpen(false)}
+        onConfirm={handleCloseLobby}
+      />
     </div>
   );
 }

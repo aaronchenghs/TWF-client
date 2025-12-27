@@ -25,6 +25,12 @@
       border: 2px solid $accent;
       border-radius: $radius-lg;
 
+      .roomCodeContainer {
+        display: flex;
+        align-items: center;
+        gap: $default-gap;
+      }
+
       .roomLabel {
         display: block;
         opacity: 0.6;

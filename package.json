@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@twf/contracts": "github:aaronchenghs/TWF-contracts#94bfb7bfafa337649337f7bd3988fde468ecffd9",
+    "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.10.1",

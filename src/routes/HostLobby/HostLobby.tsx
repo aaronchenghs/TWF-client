@@ -15,6 +15,7 @@ import {
 import { normalizeCode } from "../../lib/codeUtils";
 import { TierSetGridEntry } from "./TierSetGridEntry/TierSetGridEntry";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
+import { CopyTextButton } from "../../components/CopyTextButton/CopyTextButton";
 
 export default function HostLobby() {
   const navigate = useNavigate();
@@ -83,9 +84,16 @@ export default function HostLobby() {
           <MainTextTypography className={styles.roomLabel} variant="h4">
             Room Code:
           </MainTextTypography>
-          <MainTextTypography className={styles.roomCode} variant="h2">
-            {roomCode || "— — — —"}
-          </MainTextTypography>
+          <div className={styles.roomCodeContainer}>
+            <CopyTextButton
+              value={roomCode}
+              disabled={roomCode.length !== CODE_LENGTH}
+              title="Copy room code"
+            />
+            <MainTextTypography className={styles.roomCode} variant="h2">
+              {roomCode || "— — — —"}
+            </MainTextTypography>
+          </div>
         </div>
       </header>
 

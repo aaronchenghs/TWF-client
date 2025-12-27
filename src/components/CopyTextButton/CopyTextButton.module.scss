@@ -1,0 +1,50 @@
+@use "../../styles/export.scss" as *;
+
+.button {
+  height: 34px;
+  width: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid $bg-elevated;
+  border-radius: $radius-sm;
+
+  background: $bg-surface;
+  color: $text-primary;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition: transform $dur-fast ease, filter $dur-fast ease,
+    background-color $dur-fast ease, border-color $dur-fast ease,
+    opacity $dur-fast ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.06);
+    border-color: color-mix(in srgb, $accent 35%, $bg-elevated);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, $accent 65%, transparent);
+  }
+}
+
+.copied {
+  border-color: color-mix(in srgb, $accent 55%, $bg-elevated);
+  background: color-mix(in srgb, $accent 12%, $bg-surface);
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+}

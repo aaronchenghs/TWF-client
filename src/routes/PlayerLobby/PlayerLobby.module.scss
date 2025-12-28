@@ -2,7 +2,6 @@
 
 $lobby-padding: calc($default-padding * 2);
 $max-lobby-width: 420px;
-
 $logo-max-width: 520px;
 $logo-max-height: 160px;
 
@@ -74,6 +73,15 @@ $logo-max-height: 160px;
   border-radius: $radius-sm;
 }
 
+.actions {
+  width: 100%;
+  max-width: $max-lobby-width;
+  margin-top: $lobby-padding;
+
+  display: flex;
+  justify-content: center;
+}
+
 .footer {
   width: 100%;
 
@@ -82,4 +90,92 @@ $logo-max-height: 160px;
 
   padding-top: $lobby-padding;
   text-align: center;
+}
+
+.instructions {
+  width: 100%;
+  max-width: $max-lobby-width;
+  margin-top: $lobby-padding;
+
+  .instructionsDetails {
+    background: $bg-surface;
+    border: 1px solid $bg-elevated;
+    border-radius: $radius-sm;
+    overflow: hidden;
+
+    &:hover {
+      background-color: $bg-elevated;
+    }
+  }
+
+  .instructionsSummary {
+    list-style: none;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $default-gap;
+
+    padding: $lobby-padding;
+    user-select: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .instructionsSummary::-webkit-details-marker {
+    display: none;
+  }
+
+  .instructionsSummaryText {
+    display: flex;
+    flex-direction: column;
+    gap: calc($default-gap * 0.5);
+    text-align: left;
+  }
+
+  .chevron {
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid $bg-surface;
+    border-bottom: 2px solid $bg-surface;
+    transform: rotate(45deg);
+    transition: transform 160ms ease;
+    flex: 0 0 auto;
+  }
+
+  .instructionsDetails[open] .chevron {
+    transform: rotate(225deg);
+  }
+
+  .instructionsBody {
+    border-top: 1px solid $bg-elevated;
+    padding: $lobby-padding;
+    text-align: left;
+
+    display: flex;
+    flex-direction: column;
+    gap: $lobby-padding;
+  }
+
+  .instructionsBlock {
+    display: flex;
+    flex-direction: column;
+    gap: $default-gap;
+  }
+
+  .steps,
+  .tips {
+    margin: 0;
+    padding-left: calc($default-padding * 2);
+    display: flex;
+    flex-direction: column;
+    gap: $default-gap;
+  }
+}
+
+.instructionsGlow {
+  @include glow($accent, 1.8s, 4px, 25%);
 }

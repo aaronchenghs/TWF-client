@@ -55,7 +55,7 @@ $transition: $dur-fast ease;
 }
 
 .destructive {
-  background: linear-gradient(180deg, #ff2020, #c92a2a);
+  background: linear-gradient(180deg, $error, #c92a2a);
   color: #ffffff;
   --ledge: #8f1f1f;
 

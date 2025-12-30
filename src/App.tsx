@@ -4,6 +4,7 @@ import HostLobby from "./routes/HostLobby/HostLobby";
 import { ROUTES } from "./routes/routes";
 import "./App.module.scss";
 import PlayerLobby from "./routes/PlayerLobby/PlayerLobby";
+import GameRoom from "./routes/GameRoom/GameRoom";
 
 export default function App() {
   return (
@@ -11,7 +12,11 @@ export default function App() {
       <Routes>
         <Route path={ROUTES.LANDING} element={<Landing />} />
         <Route path={`${ROUTES.HOST_LOBBY}/:code?`} element={<HostLobby />} />
-        <Route path={`${ROUTES.ROOM}/:code?`} element={<PlayerLobby />} />
+        <Route
+          path={`${ROUTES.PLAYER_LOBBY}/:code?`}
+          element={<PlayerLobby />}
+        />
+        <Route path={`${ROUTES.GAME_ROOM}/:code`} element={<GameRoom />} />
         <Route path="*" element={<Navigate to={ROUTES.LANDING} replace />} />
       </Routes>
     </BrowserRouter>

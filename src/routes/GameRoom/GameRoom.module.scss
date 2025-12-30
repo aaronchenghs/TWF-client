@@ -1,0 +1,82 @@
+@use "../../styles/export.scss" as *;
+
+.root {
+  padding: $default-padding;
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: $default-gap;
+}
+
+.headerLeft,
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  gap: calc($default-gap / 2);
+}
+
+.headerRight {
+  align-items: flex-end;
+}
+
+.topRow {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: $default-gap;
+  align-items: start;
+}
+
+.boardSection {
+  min-width: 0;
+}
+
+.sideSection {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}
+
+.card {
+  padding: 0.9rem 1rem;
+  border-radius: $radius-lg;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.bigText {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.errorText {
+  opacity: 1;
+}
+
+.center {
+  flex: 1;
+  display: grid;
+  place-items: center;
+}
+
+@media (max-width: 900px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+  .headerRight {
+    flex-direction: row;
+    align-items: center;
+    gap: $default-gap;
+  }
+}

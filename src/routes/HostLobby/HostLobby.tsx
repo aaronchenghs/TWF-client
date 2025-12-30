@@ -16,6 +16,7 @@ import { normalizeCode } from "../../lib/codeUtils";
 import { TierSetGridEntry } from "./TierSetGridEntry/TierSetGridEntry";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 import { CopyTextButton } from "../../components/CopyTextButton/CopyTextButton";
+import { ROUTES } from "../routes";
 
 export default function HostLobby() {
   const navigate = useNavigate();
@@ -48,6 +49,12 @@ export default function HostLobby() {
     setErrorMessage(null);
     roomSocket.setTierSet(ts.id);
   }, []);
+
+  const handleStart = useCallback(() => {
+    setErrorMessage(null);
+    roomSocket.startGame(roomCode);
+    navigate(`${ROUTES.GAME_ROOM}/${roomCode}`);
+  }, [navigate, roomCode]);
 
   useEffect(
     function bootStrapLobbySocket() {
@@ -160,7 +167,11 @@ export default function HostLobby() {
                 ? `${selectedTierSetName}`
                 : "No tier list selected"}
             </MainTextTypography>
-            <AccentButton variant="primary" disabled={!isStartEnabled}>
+            <AccentButton
+              variant="primary"
+              disabled={!isStartEnabled}
+              onClick={handleStart}
+            >
               Start Game
             </AccentButton>
             <AccentButton

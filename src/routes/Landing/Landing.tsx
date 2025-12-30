@@ -61,7 +61,7 @@ export function JoinRoomPanel() {
         name: normalizedName,
       });
       const qString = new URLSearchParams({ name: normalizedName }).toString();
-      navigate(`${ROUTES.ROOM}/${normalizedCode}?${qString}`);
+      navigate(`${ROUTES.PLAYER_LOBBY}/${normalizedCode}?${qString}`);
     } catch (e) {
       socketClient.disconnect();
       setJoinError(e instanceof Error ? e.message : "Join failed");

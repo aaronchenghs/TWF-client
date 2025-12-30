@@ -1,0 +1,25 @@
+@use "../../../styles/export.scss" as *;
+
+.root {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: $default-gap;
+
+  padding: $default-padding;
+  border-radius: $radius-lg;
+
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+}
+
+.left,
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: calc($default-gap / 2);
+}
+
+.error {
+  outline: 2px solid $error;
+}

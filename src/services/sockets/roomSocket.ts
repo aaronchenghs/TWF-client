@@ -119,6 +119,10 @@ export const roomSocket = {
     return Promise.race([stateP, errorP]);
   },
 
+  startGame(code: string): void {
+    socketClient.emit("room:start", { code });
+  },
+
   closeRoom(): void {
     socketClient.emit("room:close");
     socketClient.disconnect();

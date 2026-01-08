@@ -10,6 +10,7 @@ import styles from "./PlayerLobby.module.scss";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import clsx from "clsx";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
+import { ROUTES } from "../routes";
 
 export default function PlayerLobby() {
   const navigate = useNavigate();
@@ -26,24 +27,33 @@ export default function PlayerLobby() {
     navigate("/", { replace: true });
   };
 
-  useEffect(
-    function handleLobbyConnection() {
-      if (!roomCode || roomCode.length !== CODE_LENGTH || !name) return;
+  useEffect(() => {
+    if (!roomCode || roomCode.length !== CODE_LENGTH || !name) return;
+    socketClient.connect();
+    roomSocket.joinRoom({ code: roomCode, role: "player", name });
 
-      socketClient.connect();
-      roomSocket.joinRoom({ code: roomCode, role: "player", name });
+    const offClosed = roomSocket.onRoomClosed(() => {
+      socketClient.disconnect();
+      navigate("/", { replace: true });
+    });
 
-      const offClosed = roomSocket.onRoomClosed(() => {
-        socketClient.disconnect();
-        navigate("/", { replace: true });
-      });
+    const offState = roomSocket.onRoomState((state) => {
+      if (state.phase !== "LOBBY") {
+        const queryString = new URLSearchParams({ name }).toString();
+        navigate(
+          `${ROUTES.PLAYER_GAME_CONTROLLER}/${roomCode}?${queryString}`,
+          {
+            replace: true,
+          }
+        );
+      }
+    });
 
-      return () => {
-        offClosed();
-      };
-    },
-    [roomCode, name, navigate]
-  );
+    return () => {
+      offClosed();
+      offState();
+    };
+  }, [roomCode, name, navigate]);
 
   return (
     <div className={styles.waiting}>

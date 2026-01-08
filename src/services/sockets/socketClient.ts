@@ -37,6 +37,10 @@ export class SocketClient {
     this.socket = io(url, { autoConnect: false });
   }
 
+  getMyId(): string | null {
+    return this.socket.id ?? null;
+  }
+
   /** Connects the socket if not already connected. */
   connect(): void {
     if (!this.socket.connected) this.socket.connect();

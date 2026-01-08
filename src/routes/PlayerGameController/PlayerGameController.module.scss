@@ -1,0 +1,87 @@
+@use "../../styles/variables.scss" as *;
+
+.root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: $default-gap $default-gap
+    calc($default-gap + env(safe-area-inset-bottom));
+  gap: $default-gap;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+}
+
+.headerText {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.exitButton {
+  flex: 0 0 auto;
+}
+
+.main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}
+
+.card {
+  border-radius: $radius-lg;
+  padding: $default-gap;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cardTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $default-gap;
+  margin-bottom: $default-padding;
+}
+
+.phaseTitle {
+  margin-bottom: $default-padding;
+}
+
+.errorText {
+  opacity: 1;
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
+  margin-top: $default-padding;
+}
+
+.itemImage {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: $default-gap;
+  flex: 0 0 auto;
+}
+
+.itemName {
+  min-width: 0;
+}
+
+.actionBar {
+  position: sticky;
+  bottom: 0;
+  padding: $default-gap 0 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}

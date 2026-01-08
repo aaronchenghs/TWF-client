@@ -5,6 +5,7 @@ import { ROUTES } from "./routes/routes";
 import "./App.module.scss";
 import PlayerLobby from "./routes/PlayerLobby/PlayerLobby";
 import GameRoom from "./routes/GameRoom/GameRoom";
+import PlayerGameController from "./routes/PlayerGameController/PlayerGameController";
 
 export default function App() {
   return (
@@ -17,6 +18,10 @@ export default function App() {
           element={<PlayerLobby />}
         />
         <Route path={`${ROUTES.GAME_ROOM}/:code`} element={<GameRoom />} />
+        <Route
+          path={`${ROUTES.PLAYER_GAME_CONTROLLER}/:code?`}
+          element={<PlayerGameController />}
+        />
         <Route path="*" element={<Navigate to={ROUTES.LANDING} replace />} />
       </Routes>
     </BrowserRouter>

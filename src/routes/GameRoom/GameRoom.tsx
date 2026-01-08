@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import clsx from "clsx";
 import styles from "./GameRoom.module.scss";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
@@ -12,6 +11,7 @@ import type { RoomPublicState } from "@twf/contracts";
 import { usePhaseClock } from "../../lib/hooks/usePhaseClock";
 import { PhaseBanner } from "./PhaseBanner/PhaseBanner";
 import { TierBoard } from "./TierBoard/TierBoard";
+import { getTurnLabel } from "../../lib/phaseLabels";
 
 export default function GameRoom() {
   const navigate = useNavigate();
@@ -119,31 +119,11 @@ export default function GameRoom() {
               TURN
             </MainTextTypography>
             <MainTextTypography variant="body" muted>
-              {renderTurnLabel(state)}
-            </MainTextTypography>
-          </div>
-
-          <div className={styles.card}>
-            <MainTextTypography variant="label" muted letterSpacing="wide">
-              STATUS
-            </MainTextTypography>
-            <MainTextTypography
-              variant="body"
-              className={clsx(err && styles.errorText)}
-              muted={!err}
-            >
-              {err ?? "Live"}
+              {getTurnLabel(state)}
             </MainTextTypography>
           </div>
         </aside>
       </main>
     </div>
   );
-}
-
-function renderTurnLabel(state: RoomPublicState): string {
-  const pid = state.currentTurnPlayerId;
-  if (!pid) return "—";
-  const p = state.players.find((x) => x.id === pid);
-  return p ? `${p.name}'s turn` : "—";
 }

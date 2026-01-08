@@ -10,7 +10,6 @@ export function VoteControls(props: {
   onVote: (vote: VoteValue) => void;
 }) {
   const { disabled, alreadyVoted, onVote, isPlacer } = props;
-
   return (
     <div className={styles.controls}>
       <MainTextTypography

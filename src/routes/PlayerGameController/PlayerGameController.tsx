@@ -74,6 +74,36 @@ export default function PlayerGameController() {
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);
 
+  const placeIntoTier = async (tierId: TierId) => {
+    if (!state || state.phase !== "PLACE" || !isMyTurn) return;
+    if (isPlacing) return;
+
+    setIsPlacing(true);
+    setErr(null);
+    try {
+      socketClient.emit("game:place", { tierId });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Place failed");
+    } finally {
+      setIsPlacing(false);
+    }
+  };
+
+  const vote = async (vote: VoteValue) => {
+    if (!canVote || hasVoted) return;
+    if (isVoting) return;
+
+    setIsVoting(true);
+    setErr(null);
+    try {
+      socketClient.emit("game:vote", { vote });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Vote failed");
+    } finally {
+      setIsVoting(false);
+    }
+  };
+
   useEffect(() => {
     if (!roomCode || roomCode.length !== CODE_LENGTH || !name) return;
 
@@ -119,36 +149,6 @@ export default function PlayerGameController() {
       navigate(`${ROUTES.PLAYER_LOBBY}/${roomCode}?${q}`, { replace: true });
     }
   }, [state?.phase, navigate, roomCode, name, state]);
-
-  const placeIntoTier = async (tierId: TierId) => {
-    if (!state || state.phase !== "PLACE" || !isMyTurn) return;
-    if (isPlacing) return;
-
-    setIsPlacing(true);
-    setErr(null);
-    try {
-      socketClient.emit("game:place", { tierId });
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : "Place failed");
-    } finally {
-      setIsPlacing(false);
-    }
-  };
-
-  const vote = async (vote: VoteValue) => {
-    if (!canVote || hasVoted) return;
-    if (isVoting) return;
-
-    setIsVoting(true);
-    setErr(null);
-    try {
-      socketClient.emit("game:vote", { vote });
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : "Vote failed");
-    } finally {
-      setIsVoting(false);
-    }
-  };
 
   if (!state) {
     return (

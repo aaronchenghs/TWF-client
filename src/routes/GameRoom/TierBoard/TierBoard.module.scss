@@ -12,7 +12,7 @@
   gap: $default-gap;
 
   padding: $default-gap;
-  border-radius: $radius-lg;
+  border-radius: $radius-sm;
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -34,13 +34,16 @@
 }
 
 .itemPill {
-  padding: calc($default-gap / 2);
-  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  padding: $default-gap;
+  border-radius: $radius-sm;
   background: rgba(255, 255, 255, 0.08);
   max-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-transform: uppercase;
 }
 
 .ghost {

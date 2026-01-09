@@ -1,11 +1,17 @@
 @use "../../styles/export.scss" as *;
 
 .root {
-  padding: $default-padding;
+  padding: calc($default-padding * 2);
   display: flex;
   flex-direction: column;
   gap: $default-gap;
   min-height: 100vh;
+
+  .logo {
+    width: 25vh;
+    height: auto;
+    @include float(6px, 4s);
+  }
 }
 
 .header {

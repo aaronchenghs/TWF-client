@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./GameRoom.module.scss";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
@@ -12,14 +12,24 @@ import { usePhaseClock } from "../../lib/hooks/usePhaseClock";
 import { PhaseBanner } from "./PhaseBanner/PhaseBanner";
 import { TierBoard } from "./TierBoard/TierBoard";
 import { getTurnLabel } from "../../lib/phaseLabels";
+import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
+import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 
 export default function GameRoom() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
-  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
 
   const [state, setState] = useState<RoomPublicState | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
+  const clock = usePhaseClock(state);
+
+  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
+
+  const handleExit = useCallback(() => {
+    socketClient.disconnect();
+    navigate(ROUTES.LANDING, { replace: true });
+  }, [navigate]);
 
   useEffect(() => {
     if (!roomCode) return;
@@ -46,8 +56,6 @@ export default function GameRoom() {
     };
   }, [roomCode, navigate]);
 
-  const clock = usePhaseClock(state);
-
   if (!state) {
     return (
       <div className={styles.root}>
@@ -71,24 +79,16 @@ export default function GameRoom() {
     <div className={styles.root}>
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <MainTextTypography variant="h2">
-            Tiers With Friends
-          </MainTextTypography>
-          <MainTextTypography variant="caption" muted letterSpacing="wide">
-            ROOM {state.code}
-          </MainTextTypography>
+          <TWFLogo className={styles.logo} />
         </div>
 
         <div className={styles.headerRight}>
           <MainTextTypography variant="caption" muted letterSpacing="wide">
-            PLAYERS {state.players.length}
+            ROOM {state.code}
           </MainTextTypography>
           <AccentButton
             variant="secondary"
-            onClick={() => {
-              socketClient.disconnect();
-              navigate(ROUTES.LANDING, { replace: true });
-            }}
+            onClick={() => setIsConfirmExitOpen(true)}
           >
             Exit
           </AccentButton>
@@ -115,15 +115,25 @@ export default function GameRoom() {
           </div>
 
           <div className={styles.card}>
-            <MainTextTypography variant="label" muted letterSpacing="wide">
-              TURN
-            </MainTextTypography>
-            <MainTextTypography variant="body" muted>
+            <MainTextTypography variant="h3" muted>
               {getTurnLabel(state)}
             </MainTextTypography>
           </div>
         </aside>
       </main>
+
+      <ConfirmationModal
+        open={isConfirmExitOpen}
+        title="Close Game?"
+        message="This will boot all players from the game."
+        confirmText="Exit"
+        destructive
+        onCancel={() => setIsConfirmExitOpen(false)}
+        onConfirm={() => {
+          setIsConfirmExitOpen(false);
+          handleExit();
+        }}
+      />
     </div>
   );
 }

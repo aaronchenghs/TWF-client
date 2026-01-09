@@ -77,7 +77,6 @@ export default function PlayerLobby() {
         <MainTextTypography variant="body" muted>
           YOU ARE:
         </MainTextTypography>
-
         <MainTextTypography variant="title" weight="medium">
           {name}
         </MainTextTypography>

@@ -18,7 +18,7 @@ export function VoteControls(props: {
         letterSpacing="wide"
         className={styles.controlsLabel}
       >
-        VOTE
+        {`VOTE: `}
       </MainTextTypography>
 
       {isPlacer ? (

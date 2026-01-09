@@ -37,19 +37,29 @@ export function phaseSubtext(
   currentTurnPlayer: { name: string } | null,
   isMyTurn: boolean
 ): string {
-  if (state.phase === "PLACE")
-    return isMyTurn
-      ? "Pick a tier."
-      : `Waiting on ${currentTurnPlayer?.name ?? "player"} to place.`;
-  if (state.phase === "VOTE")
-    return isMyTurn
-      ? "You placed. Waiting for votes."
-      : "Vote to drift up, agree, or drift down.";
-  if (state.phase === "REVEAL") return "Next item revealed.";
-  if (state.phase === "RESULTS") return "Votes tallied.";
-  if (state.phase === "DRIFT") return "Applying drift.";
-  if (state.phase === "RESOLVE") return "Locking item in.";
-  if (state.phase === "FINISHED") return "Game over.";
-  if (state.phase === "STARTING") return "Building turn order.";
-  return "Waiting…";
+  const turnName = currentTurnPlayer?.name ?? "player";
+  const byPhase: Partial<
+    Record<
+      RoomPublicState["phase"],
+      string | ((ctx: { isMyTurn: boolean; turnName: string }) => string)
+    >
+  > = {
+    PLACE: ({ isMyTurn, turnName }) =>
+      isMyTurn ? "Pick a tier." : `Waiting on ${turnName} to place.`,
+    VOTE: ({ isMyTurn }) =>
+      isMyTurn
+        ? "You placed. Waiting for votes."
+        : "Vote to drift up, agree, or drift down.",
+    REVEAL: "Next item revealed",
+    RESULTS: "Votes tallied",
+    DRIFT: "Applying votes",
+    RESOLVE: "Locking item in",
+    FINISHED: "Game over",
+    STARTING: "Building turn order",
+    LOBBY: "Waiting…",
+  };
+
+  const entry = byPhase[state.phase];
+  if (!entry) return "Waiting…";
+  return typeof entry === "function" ? entry({ isMyTurn, turnName }) : entry;
 }

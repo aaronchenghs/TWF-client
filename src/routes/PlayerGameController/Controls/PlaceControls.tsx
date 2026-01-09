@@ -27,7 +27,7 @@ export function PlaceControls(props: {
         letterSpacing="wide"
         className={styles.controlsLabel}
       >
-        PLACE INTO
+        {`PLACE INTO: `}
       </MainTextTypography>
 
       <div className={styles.grid2}>

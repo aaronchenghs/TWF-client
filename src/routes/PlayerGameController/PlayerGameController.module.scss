@@ -1,10 +1,10 @@
-@use "../../styles/variables.scss" as *;
+@use "../../styles/export.scss" as *;
 
 .root {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  padding: $default-gap $default-gap
+  padding: calc($default-gap * 2) calc($default-gap * 2)
     calc($default-gap + env(safe-area-inset-bottom));
   gap: $default-gap;
 }
@@ -16,8 +16,9 @@
 }
 
 .logo {
-  width: 44px;
-  height: 44px;
+  @include float(4px, 3s);
+  width: 100px;
+  height: 100px;
   flex: 0 0 auto;
 }
 

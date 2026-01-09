@@ -25,19 +25,13 @@ export function TierBoard({ state }: { state: RoomPublicState }) {
             </div>
 
             <div className={styles.items}>
-              {items.length === 0 ? (
-                <MainTextTypography variant="body" muted>
-                  —
-                </MainTextTypography>
-              ) : (
-                items.map((it) => (
-                  <div key={it} className={styles.itemPill} title={it}>
-                    <MainTextTypography variant="caption" weight="medium">
-                      {it}
-                    </MainTextTypography>
-                  </div>
-                ))
-              )}
+              {items.map((it) => (
+                <div key={it} className={styles.itemPill} title={it}>
+                  <MainTextTypography variant="caption" weight="medium">
+                    {it}
+                  </MainTextTypography>
+                </div>
+              ))}
 
               {/* “ghost” placement hint for pending tier */}
               {isPending && state.currentItem ? (

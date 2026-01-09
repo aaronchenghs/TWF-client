@@ -20,6 +20,7 @@ import { AwaitingControls } from "./Controls/AwaitingControls";
 import { PlaceControls } from "./Controls/PlaceControls";
 import { VoteControls } from "./Controls/VoteControls";
 import { phaseLabel, phaseSubtext } from "../../lib/phaseLabels";
+import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 
 export default function PlayerGameController() {
   const navigate = useNavigate();
@@ -34,6 +35,11 @@ export default function PlayerGameController() {
   const [err, setErr] = useState<string | null>(null);
   const [isPlacing, setIsPlacing] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
+  const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
+
+  const isMyTurn = !!myPlayerId && state?.currentTurnPlayerId === myPlayerId;
+  const canVote = !!myPlayerId && state?.phase === "VOTE" && !isMyTurn;
+  const hasVoted = !!myPlayerId && state?.votes?.[myPlayerId] !== undefined;
 
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
   const myName = useMemo(
@@ -48,10 +54,6 @@ export default function PlayerGameController() {
     );
   }, [state]);
 
-  const isMyTurn = !!myPlayerId && state?.currentTurnPlayerId === myPlayerId;
-  const canVote = !!myPlayerId && state?.phase === "VOTE" && !isMyTurn;
-  const hasVoted = !!myPlayerId && state?.votes?.[myPlayerId] !== undefined;
-
   const currentItem = useMemo(() => {
     if (!state?.currentItem || !tierSet) return null;
     return tierSet.items.find((it) => it.id === state.currentItem) ?? null;
@@ -61,6 +63,11 @@ export default function PlayerGameController() {
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);
+
+  const handleConfirmExit = useCallback(() => {
+    setIsConfirmExitOpen(false);
+    handleExit();
+  }, [handleExit]);
 
   const handlePlaceIntoTier = async (tierId: TierId) => {
     if (!state || state.phase !== "PLACE" || !isMyTurn) return;
@@ -196,10 +203,11 @@ export default function PlayerGameController() {
             ROOM {state.code} • {myName || "PLAYER"}
           </MainTextTypography>
         </div>
+
         <AccentButton
           variant="secondary"
           className={styles.exitButton}
-          onClick={handleExit}
+          onClick={() => setIsConfirmExitOpen(true)}
         >
           Exit
         </AccentButton>
@@ -222,7 +230,7 @@ export default function PlayerGameController() {
           </div>
 
           <MainTextTypography variant="h3" className={styles.phaseTitle}>
-            {phaseLabel(state.phase)}
+            {`${phaseLabel(state.phase)} `}
           </MainTextTypography>
 
           <MainTextTypography variant="body" muted>
@@ -232,7 +240,7 @@ export default function PlayerGameController() {
 
         <section className={styles.card}>
           <MainTextTypography variant="label" muted letterSpacing="wide">
-            CURRENT ITEM
+            {`CURRENT ITEM: `}
           </MainTextTypography>
 
           {currentItem ? (
@@ -273,6 +281,16 @@ export default function PlayerGameController() {
           <AwaitingControls />
         )}
       </footer>
+
+      <ConfirmationModal
+        open={isConfirmExitOpen}
+        title="Exit game?"
+        message="You will disconnect from this room."
+        confirmText="Exit"
+        destructive
+        onCancel={() => setIsConfirmExitOpen(false)}
+        onConfirm={handleConfirmExit}
+      />
     </div>
   );
 }

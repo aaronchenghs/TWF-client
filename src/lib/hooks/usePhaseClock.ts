@@ -42,7 +42,7 @@ export function usePhaseClock(state: RoomPublicState | null): PhaseClock {
   const msLeft = endsAt == null ? null : Math.max(0, endsAt - now);
   const secondsLeft = msLeft == null ? null : Math.ceil(msLeft / 1000);
 
-  // If you later include durations in contracts (e.g., buildMs/revealMs…),
+  // If later include durations in contracts (e.g., buildMs/revealMs…),
   // replace this with deterministic progress = 1 - msLeft/duration.
   const progress01 = endsAt == null ? null : null;
 

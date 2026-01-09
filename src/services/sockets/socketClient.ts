@@ -31,14 +31,18 @@ type ContractOnce = <E extends keyof ServerToClientEvents>(
 
 export class SocketClient {
   private readonly socket: ContractSocket;
+  private myPlayerId: string | null = null;
 
-  /** Creates the socket client and configures connection behavior. */
   constructor(url: string) {
     this.socket = io(url, { autoConnect: false });
   }
 
-  getMyId(): string | null {
-    return this.socket.id ?? null;
+  setMyPlayerId(id: string) {
+    this.myPlayerId = id;
+  }
+
+  getMyPlayerId(): string | null {
+    return this.myPlayerId;
   }
 
   /** Connects the socket if not already connected. */

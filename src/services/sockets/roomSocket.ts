@@ -13,6 +13,7 @@ import { normalizeCode } from "../../lib/codeUtils";
 type RoomCreatedPayload = Parameters<ServerToClientEvents["room:created"]>[0];
 type RoomStatePayload = Parameters<ServerToClientEvents["room:state"]>[0];
 type RoomErrorPayload = Parameters<ServerToClientEvents["room:error"]>[0];
+type RoomJoinedPayload = Parameters<ServerToClientEvents["room:joined"]>[0];
 
 /**
  * Room-level socket service.
@@ -126,6 +127,10 @@ export const roomSocket = {
   closeRoom(): void {
     socketClient.emit("room:close");
     socketClient.disconnect();
+  },
+
+  onRoomJoined(handler: (payload: RoomJoinedPayload) => void): () => void {
+    return socketClient.on("room:joined", handler);
   },
 
   onRoomClosed(handler: () => void): () => void {

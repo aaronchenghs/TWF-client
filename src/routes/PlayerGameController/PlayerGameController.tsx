@@ -26,19 +26,20 @@ export default function PlayerGameController() {
   const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
 
-  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
-  const name = useMemo(
-    () => (searchParams.get("name") ?? "").trim(),
-    [searchParams]
-  );
-
   const [state, setState] = useState<RoomPublicState | null>(null);
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
+  const [myPlayerId, setMyPlayerId] = useState<string | null>(
+    socketClient.getMyPlayerId()
+  );
   const [err, setErr] = useState<string | null>(null);
   const [isPlacing, setIsPlacing] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
 
-  const myPlayerId = socketClient.getMyId();
+  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
+  const myName = useMemo(
+    () => (searchParams.get("name") ?? "").trim(),
+    [searchParams]
+  );
 
   const currentTurnPlayer = useMemo(() => {
     if (!state?.currentTurnPlayerId) return null;
@@ -47,22 +48,9 @@ export default function PlayerGameController() {
     );
   }, [state]);
 
-  const isMyTurn = !!(
-    state &&
-    myPlayerId &&
-    state.currentTurnPlayerId === myPlayerId
-  );
-  const canVote = !!(
-    state &&
-    myPlayerId &&
-    state.phase === "VOTE" &&
-    !isMyTurn
-  );
-  const hasVoted = !!(
-    state &&
-    myPlayerId &&
-    state.votes?.[myPlayerId] !== undefined
-  );
+  const isMyTurn = !!myPlayerId && state?.currentTurnPlayerId === myPlayerId;
+  const canVote = !!myPlayerId && state?.phase === "VOTE" && !isMyTurn;
+  const hasVoted = !!myPlayerId && state?.votes?.[myPlayerId] !== undefined;
 
   const currentItem = useMemo(() => {
     if (!state?.currentItem || !tierSet) return null;
@@ -74,7 +62,7 @@ export default function PlayerGameController() {
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);
 
-  const placeIntoTier = async (tierId: TierId) => {
+  const handlePlaceIntoTier = async (tierId: TierId) => {
     if (!state || state.phase !== "PLACE" || !isMyTurn) return;
     if (isPlacing) return;
 
@@ -89,7 +77,7 @@ export default function PlayerGameController() {
     }
   };
 
-  const vote = async (vote: VoteValue) => {
+  const handleVote = async (vote: VoteValue) => {
     if (!canVote || hasVoted) return;
     if (isVoting) return;
 
@@ -104,51 +92,76 @@ export default function PlayerGameController() {
     }
   };
 
-  useEffect(() => {
-    if (!roomCode || roomCode.length !== CODE_LENGTH || !name) return;
-
-    socketClient.connect();
-    roomSocket.joinRoom({ code: roomCode, role: "player", name });
-
-    const offState = roomSocket.onRoomState((s) => {
-      setState(s);
-      setErr(null);
+  useEffect(function establishPlayerId() {
+    const offJoined = roomSocket.onRoomJoined(({ playerId }) => {
+      socketClient.setMyPlayerId(playerId);
+      setMyPlayerId(playerId);
     });
+    return offJoined;
+  }, []);
 
-    const offError = roomSocket.onRoomError((msg) => setErr(msg));
+  useEffect(
+    function establishRoomConnection() {
+      if (!roomCode || roomCode.length !== CODE_LENGTH || !myName) return;
 
-    const offClosed = roomSocket.onRoomClosed(() => {
-      socketClient.disconnect();
-      navigate(ROUTES.LANDING, { replace: true });
-    });
+      socketClient.connect();
+      roomSocket.joinRoom({ code: roomCode, role: "player", name: myName });
 
-    return () => {
-      offState();
-      offError();
-      offClosed();
-    };
-  }, [roomCode, name, navigate]);
+      const offState = roomSocket.onRoomState((s) => {
+        setState(s);
+        setErr(null);
+      });
 
-  useEffect(() => {
-    const tierSetId = state?.tierSetId ?? null;
-    if (!tierSetId) return;
+      const offError = roomSocket.onRoomError((msg) => setErr(msg));
 
-    roomSocket
-      .getTierSet(tierSetId)
-      .then(setTierSet)
-      .catch((e) =>
-        setErr(e instanceof Error ? e.message : "Failed to load tier set")
-      );
-  }, [state?.tierSetId]);
+      const offClosed = roomSocket.onRoomClosed(() => {
+        socketClient.disconnect();
+        navigate(ROUTES.LANDING, { replace: true });
+      });
 
-  // Safety: if host returns to lobby, controller route becomes invalid.
-  useEffect(() => {
-    if (!state) return;
-    if (state.phase === "LOBBY") {
-      const q = new URLSearchParams({ name }).toString();
+      return () => {
+        offState();
+        offError();
+        offClosed();
+      };
+    },
+    [roomCode, myName, navigate]
+  );
+
+  useEffect(
+    function handleLoadTierSet() {
+      const tierSetId = state?.tierSetId ?? null;
+      if (!tierSetId) return;
+
+      let cancelled = false;
+
+      roomSocket
+        .getTierSet(tierSetId)
+        .then((ts) => {
+          if (!cancelled) setTierSet(ts);
+        })
+        .catch((e) => {
+          if (!cancelled)
+            setErr(e instanceof Error ? e.message : "Failed to load tier set");
+        });
+
+      return () => {
+        cancelled = true;
+      };
+    },
+    [state?.tierSetId]
+  );
+
+  useEffect(
+    function handleCloseLobby() {
+      if (!state) return;
+      if (state.phase !== "LOBBY") return;
+
+      const q = new URLSearchParams({ name: myName }).toString();
       navigate(`${ROUTES.PLAYER_LOBBY}/${roomCode}?${q}`, { replace: true });
-    }
-  }, [state?.phase, navigate, roomCode, name, state]);
+    },
+    [state?.phase, navigate, roomCode, myName, state]
+  );
 
   if (!state) {
     return (
@@ -180,7 +193,7 @@ export default function PlayerGameController() {
         <TWFLogo className={styles.logo} />
         <div className={styles.headerText}>
           <MainTextTypography variant="caption" muted letterSpacing="wide">
-            ROOM {state.code} • {name || "PLAYER"}
+            ROOM {state.code} • {myName || "PLAYER"}
           </MainTextTypography>
         </div>
         <AccentButton
@@ -247,13 +260,13 @@ export default function PlayerGameController() {
             disabled={!isMyTurn || isPlacing}
             tiers={tierSet ? tierSet.tiers : []}
             tierOrder={state.tierOrder}
-            onPlace={placeIntoTier}
+            onPlace={handlePlaceIntoTier}
           />
         ) : state.phase === "VOTE" ? (
           <VoteControls
             disabled={!canVote || hasVoted || isVoting}
             alreadyVoted={hasVoted}
-            onVote={vote}
+            onVote={handleVote}
             isPlacer={isMyTurn}
           />
         ) : (

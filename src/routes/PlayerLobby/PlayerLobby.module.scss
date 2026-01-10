@@ -30,20 +30,9 @@ $logo-max-height: 160px;
   height: auto;
 
   display: block;
-  margin: 0 auto $lobby-padding;
+  margin: $lobby-padding auto;
   flex: 0 0 auto;
   @include float(6px, 3.5s);
-}
-
-.header {
-  width: 100%;
-  max-width: $max-lobby-width;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: $default-gap;
-  margin-top: 0;
 }
 
 .identity {

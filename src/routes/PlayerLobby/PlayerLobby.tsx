@@ -59,20 +59,6 @@ export default function PlayerLobby() {
     <div className={styles.waiting}>
       <TWFLogo className={styles.logo} />
 
-      <header className={styles.header}>
-        <MainTextTypography variant="body" muted>
-          ROOM
-        </MainTextTypography>
-
-        <MainTextTypography
-          variant="display"
-          weight="bold"
-          letterSpacing="wide"
-        >
-          {roomCode}
-        </MainTextTypography>
-      </header>
-
       <section className={styles.identity}>
         <MainTextTypography variant="body" muted>
           YOU ARE:

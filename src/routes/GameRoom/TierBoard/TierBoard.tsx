@@ -12,15 +12,18 @@ export function TierBoard({ state }: { state: RoomPublicState }) {
       {tierOrder.map((tierId) => {
         const items = tiers[tierId] ?? [];
         const isPending = state.pendingTierId === tierId;
+        const tierMeta = state.tierMetaById?.[tierId];
+        const tierColor = tierMeta?.color ?? "rgba(255,255,255,0.08)";
 
         return (
           <div
             key={tierId}
             className={clsx(styles.row, isPending && styles.pending)}
+            style={{ ["--tierColor" as string]: tierColor }}
           >
             <div className={styles.tierLabel}>
               <MainTextTypography variant="h5" weight="bold">
-                {tierId}
+                {tierMeta?.name ?? tierId}
               </MainTextTypography>
             </div>
 
@@ -33,7 +36,6 @@ export function TierBoard({ state }: { state: RoomPublicState }) {
                 </div>
               ))}
 
-              {/* “ghost” placement hint for pending tier */}
               {isPending && state.currentItem ? (
                 <div
                   className={clsx(styles.itemPill, styles.ghost)}

@@ -1,11 +1,12 @@
 import styles from "./TierBoard.module.scss";
 import clsx from "clsx";
-import type { RoomPublicState, TierId } from "@twf/contracts";
+import type { RoomPublicState, TierId, TierItemId } from "@twf/contracts";
 import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
+import { TierItemTile } from "./TierItemTile/TierItemTile";
 
 export function TierBoard({ state }: { state: RoomPublicState }) {
   const tierOrder = state.tierOrder ?? [];
-  const tiers = state.tiers ?? ({} as Record<TierId, string[]>);
+  const tiers = state.tiers ?? ({} as Record<TierId, TierItemId[]>);
 
   return (
     <div className={styles.root}>
@@ -13,7 +14,7 @@ export function TierBoard({ state }: { state: RoomPublicState }) {
         const items = tiers[tierId] ?? [];
         const isPending = state.pendingTierId === tierId;
         const tierMeta = state.tierMetaById?.[tierId];
-        const tierColor = tierMeta?.color ?? "rgba(255,255,255,0.08)";
+        const tierColor = tierMeta?.color;
 
         return (
           <div
@@ -28,23 +29,12 @@ export function TierBoard({ state }: { state: RoomPublicState }) {
             </div>
 
             <div className={styles.items}>
-              {items.map((it) => (
-                <div key={it} className={styles.itemPill} title={it}>
-                  <MainTextTypography variant="caption" weight="medium">
-                    {it}
-                  </MainTextTypography>
-                </div>
+              {items.map((id) => (
+                <TierItemTile key={id} state={state} itemId={id} />
               ))}
 
               {isPending && state.currentItem ? (
-                <div
-                  className={clsx(styles.itemPill, styles.ghost)}
-                  title={state.currentItem}
-                >
-                  <MainTextTypography variant="caption" weight="medium">
-                    {state.currentItem}
-                  </MainTextTypography>
-                </div>
+                <TierItemTile state={state} itemId={state.currentItem} ghost />
               ) : null}
             </div>
           </div>

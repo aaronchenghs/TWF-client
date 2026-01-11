@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@twf/contracts": "github:aaronchenghs/TWF-contracts#84180927932c0427ec07c5cf45cedfd55a7fb0ae",
+    "@twf/contracts": "github:aaronchenghs/TWF-contracts#8baf7904dd7bddfd2bec6299eb614ae33250ff93",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

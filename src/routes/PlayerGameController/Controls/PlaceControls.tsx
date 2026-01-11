@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
 import styles from "./Controls.module.scss";
+import { AwaitingControls } from "./AwaitingControls";
 
 export function PlaceControls(props: {
   tiers: Array<{ id: string; name: string }>;
@@ -19,6 +20,7 @@ export function PlaceControls(props: {
 
   const ordered = tierOrder.length ? tierOrder : tiers.map((t) => t.id);
 
+  if (disabled) return <AwaitingControls />;
   return (
     <div className={styles.controls}>
       <MainTextTypography

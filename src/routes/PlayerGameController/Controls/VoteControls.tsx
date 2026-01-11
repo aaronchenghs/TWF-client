@@ -2,6 +2,7 @@ import type { VoteValue } from "@twf/contracts";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
 import styles from "./Controls.module.scss";
+import { AwaitingControls } from "./AwaitingControls";
 
 export function VoteControls(props: {
   disabled: boolean;
@@ -10,6 +11,8 @@ export function VoteControls(props: {
   onVote: (vote: VoteValue) => void;
 }) {
   const { disabled, alreadyVoted, onVote, isPlacer } = props;
+
+  if (isPlacer) return <AwaitingControls />;
   return (
     <div className={styles.controls}>
       <MainTextTypography
@@ -38,7 +41,7 @@ export function VoteControls(props: {
           disabled={disabled}
           onClick={() => onVote(-1)}
         >
-          Drift Up
+          Drift Up 👆
         </AccentButton>
 
         <AccentButton
@@ -47,7 +50,7 @@ export function VoteControls(props: {
           disabled={disabled}
           onClick={() => onVote(0)}
         >
-          Agree
+          Agree 🤝
         </AccentButton>
 
         <AccentButton
@@ -56,7 +59,7 @@ export function VoteControls(props: {
           disabled={disabled}
           onClick={() => onVote(1)}
         >
-          Drift Down
+          Drift Down 👇
         </AccentButton>
       </div>
     </div>

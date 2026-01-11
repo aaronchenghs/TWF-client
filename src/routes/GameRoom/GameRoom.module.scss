@@ -76,12 +76,25 @@
   }
 
   .devControls {
-    position: fixed;
-    bottom: 12px;
-    right: 12px;
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    align-items: center;
+
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    gap: $default-gap;
     z-index: 9999;
+    padding: $default-padding;
+    border-radius: $radius-lg;
+
+    border: 2px solid $accent;
+
+    .prevnextButtonsGroup {
+      display: flex;
+      gap: $default-gap;
+    }
   }
 
   @media (max-width: 900px) {

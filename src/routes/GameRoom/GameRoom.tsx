@@ -148,8 +148,14 @@ export default function GameRoom() {
 
       {isDevMode && (
         <div className={styles.devControls}>
-          <button onClick={() => roomSocket.debugPrev()}>👨‍💻Prev</button>
-          <button onClick={() => roomSocket.debugNext()}>👨‍💻Next</button>
+          <span>👨‍💻 DEV CONTROLS:</span>
+          <button onClick={roomSocket.debugTogglePause}>
+            {state.debug?.paused ? "⏯ Resume" : "⏸Pause"}
+          </button>
+          <div className={styles.prevnextButtonsGroup}>
+            <button onClick={() => roomSocket.debugPrev()}>⏮ Prev</button>
+            <button onClick={() => roomSocket.debugNext()}>Next ⏭</button>
+          </div>
         </div>
       )}
     </div>

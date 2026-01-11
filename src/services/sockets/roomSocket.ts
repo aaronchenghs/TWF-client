@@ -157,4 +157,9 @@ export const roomSocket = {
   debugPrev(): void {
     socketClient.emit("debug:prev");
   },
+
+  /** DEV ONLY: stop the timer for the current phase. Reset timer on toggle ON. */
+  debugTogglePause(): void {
+    socketClient.emit("debug:togglePause");
+  },
 };

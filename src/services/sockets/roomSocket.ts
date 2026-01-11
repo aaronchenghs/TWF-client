@@ -144,4 +144,17 @@ export const roomSocket = {
   onRoomError(handler: (err: RoomErrorPayload) => void): () => void {
     return socketClient.on("room:error", handler);
   },
+
+  /**
+   * DEV ONLY: advance the server game state to the beginning of the next phase.
+   * (PLACE auto-places random tier; VOTE auto-fills agrees.)
+   */
+  debugNext(): void {
+    socketClient.emit("debug:next");
+  },
+
+  /** DEV ONLY: revert the server game state to the beginning of the previous phase. */
+  debugPrev(): void {
+    socketClient.emit("debug:prev");
+  },
 };

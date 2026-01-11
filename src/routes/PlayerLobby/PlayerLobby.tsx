@@ -34,7 +34,7 @@ export default function PlayerLobby() {
 
     const offClosed = roomSocket.onRoomClosed(() => {
       socketClient.disconnect();
-      navigate("/", { replace: true });
+      navigate(ROUTES.LANDING, { replace: true });
     });
 
     const offState = roomSocket.onRoomState((state) => {

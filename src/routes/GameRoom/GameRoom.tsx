@@ -24,37 +24,48 @@ export default function GameRoom() {
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
   const clock = usePhaseClock(state);
 
+  const isDevMode = import.meta.env.VITE_ENABLE_DEBUG_CONTROLS === "true";
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
 
   const handleExit = useCallback(() => {
+    roomSocket.closeRoom();
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);
 
-  useEffect(() => {
-    if (!roomCode) return;
+  useEffect(
+    function handleRoomConnection() {
+      if (!roomCode) return;
 
-    socketClient.connect();
-    roomSocket.joinRoom({ code: roomCode, role: "host" });
+      socketClient.connect();
+      roomSocket.joinRoom({ code: roomCode, role: "host" });
 
-    const offState = roomSocket.onRoomState((s) => {
-      setState(s);
-      setErr(null);
+      const offState = roomSocket.onRoomState((s) => {
+        setState(s);
+        setErr(null);
+      });
+
+      const offError = roomSocket.onRoomError((msg) => setErr(msg));
+
+      const offClosed = roomSocket.onRoomClosed(() => {
+        socketClient.disconnect();
+        navigate(ROUTES.LANDING, { replace: true });
+      });
+
+      return () => {
+        offState();
+        offError();
+        offClosed();
+      };
+    },
+    [roomCode, navigate]
+  );
+
+  useEffect(function logErrors() {
+    return roomSocket.onRoomError((err) => {
+      console.error("room:error", err);
     });
-
-    const offError = roomSocket.onRoomError((msg) => setErr(msg));
-
-    const offClosed = roomSocket.onRoomClosed(() => {
-      socketClient.disconnect();
-      navigate(ROUTES.LANDING, { replace: true });
-    });
-
-    return () => {
-      offState();
-      offError();
-      offClosed();
-    };
-  }, [roomCode, navigate]);
+  }, []);
 
   if (!state) {
     return (
@@ -134,6 +145,13 @@ export default function GameRoom() {
           handleExit();
         }}
       />
+
+      {isDevMode && (
+        <div className={styles.devControls}>
+          <button onClick={() => roomSocket.debugPrev()}>👨‍💻Prev</button>
+          <button onClick={() => roomSocket.debugNext()}>👨‍💻Next</button>
+        </div>
+      )}
     </div>
   );
 }

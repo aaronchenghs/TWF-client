@@ -57,7 +57,7 @@
   height: 36px;
   border-radius: $radius-sm;
   background: $bg-elevated;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .itemText {

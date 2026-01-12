@@ -1,0 +1,30 @@
+@use "../../../styles/export.scss" as *;
+
+.card {
+  padding: ($default-padding * 2);
+  border-radius: $radius-lg;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  .header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $default-gap;
+  }
+
+  .headerRight {
+    display: flex;
+    align-items: baseline;
+    gap: $default-gap;
+    min-width: 0;
+  }
+
+  .body {
+    margin-top: $default-padding;
+    display: flex;
+    flex-direction: column;
+    gap: calc($default-gap / 2);
+    min-width: 0;
+  }
+}

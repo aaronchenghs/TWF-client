@@ -31,7 +31,11 @@ export function TierSetDetails({
             <MainTextTypography variant="h5">Tiers</MainTextTypography>
             <div className={styles.tierChips}>
               {details.tiers.map((tier) => (
-                <span key={tier.id} className={styles.tierChip}>
+                <span
+                  key={tier.id}
+                  className={styles.tierChip}
+                  style={{ borderColor: tier.color }}
+                >
                   {tier.name}
                 </span>
               ))}

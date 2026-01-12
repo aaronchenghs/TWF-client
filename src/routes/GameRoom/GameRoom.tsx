@@ -9,18 +9,17 @@ import { normalizeCode } from "../../lib/codeUtils";
 import { ROUTES } from "../routes";
 import type { RoomPublicState } from "@twf/contracts";
 import { usePhaseClock } from "../../lib/hooks/usePhaseClock";
-import { PhaseBanner } from "./PhaseBanner/PhaseBanner";
 import { TierBoard } from "./TierBoard/TierBoard";
 import { getTurnLabel } from "../../lib/phaseLabels";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
+import { GameStatusCard } from "./GameStatusCard/GameStatusCard";
 
 export default function GameRoom() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
 
   const [state, setState] = useState<RoomPublicState | null>(null);
-  const [err, setErr] = useState<string | null>(null);
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
   const clock = usePhaseClock(state);
 
@@ -42,10 +41,7 @@ export default function GameRoom() {
 
       const offState = roomSocket.onRoomState((s) => {
         setState(s);
-        setErr(null);
       });
-
-      const offError = roomSocket.onRoomError((msg) => setErr(msg));
 
       const offClosed = roomSocket.onRoomClosed(() => {
         socketClient.disconnect();
@@ -54,7 +50,6 @@ export default function GameRoom() {
 
       return () => {
         offState();
-        offError();
         offClosed();
       };
     },
@@ -106,30 +101,75 @@ export default function GameRoom() {
         </div>
       </header>
 
-      <div className={styles.topRow}>
-        <PhaseBanner state={state} clock={clock} error={err} />
-      </div>
-
       <main className={styles.main}>
         <section className={styles.boardSection}>
           <TierBoard state={state} />
         </section>
 
         <aside className={styles.sideSection}>
-          <div className={styles.card}>
-            <MainTextTypography variant="label" muted letterSpacing="wide">
-              CURRENT ITEM
-            </MainTextTypography>
-            <MainTextTypography variant="h3" className={styles.bigText}>
-              {state.currentItem ?? "—"}
-            </MainTextTypography>
-          </div>
+          <GameStatusCard label="PHASE">
+            <div className={styles.itemRow}>
+              <MainTextTypography variant="h3" className={styles.bigText}>
+                {state.phase}
+              </MainTextTypography>
 
-          <div className={styles.card}>
-            <MainTextTypography variant="h3" muted>
-              {getTurnLabel(state)}
-            </MainTextTypography>
-          </div>
+              <MainTextTypography variant="h3" className={styles.bigText}>
+                {clock.secondsLeft ?? "—"}
+              </MainTextTypography>
+            </div>
+          </GameStatusCard>
+
+          <GameStatusCard label="CURRENT ITEM:">
+            {state.currentItem ? (
+              (() => {
+                const meta = state.itemMetaById?.[state.currentItem];
+                const name = meta?.name ?? state.currentItem;
+                const imageSrc = meta?.imageSrc;
+
+                return (
+                  <div className={styles.itemRow}>
+                    {imageSrc ? (
+                      <img
+                        className={styles.itemImage}
+                        src={imageSrc}
+                        alt={name}
+                        loading="lazy"
+                        draggable={false}
+                      />
+                    ) : (
+                      <div
+                        className={styles.itemImageFallback}
+                        aria-hidden="true"
+                      >
+                        <MainTextTypography variant="h4">
+                          {name.slice(0, 1).toUpperCase()}
+                        </MainTextTypography>
+                      </div>
+                    )}
+
+                    <MainTextTypography
+                      variant="h4"
+                      className={styles.itemName}
+                    >
+                      {name}
+                    </MainTextTypography>
+                  </div>
+                );
+              })()
+            ) : (
+              <MainTextTypography variant="body" muted>
+                —
+              </MainTextTypography>
+            )}
+          </GameStatusCard>
+
+          <GameStatusCard label="TURN:">
+            <div className={styles.itemRow}>
+              <MainTextTypography variant="h3" muted>
+                {getTurnLabel(state)}
+              </MainTextTypography>
+            </div>
+          </GameStatusCard>
         </aside>
       </main>
 

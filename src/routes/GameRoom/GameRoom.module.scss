@@ -1,5 +1,7 @@
 @use "../../styles/export.scss" as *;
 
+$current-item-float-duration: 3s;
+
 .root {
   padding: calc($default-padding * 2);
   display: flex;
@@ -31,42 +33,70 @@
     align-items: flex-end;
   }
 
-  .topRow {
-    display: flex;
-    flex-direction: column;
-    gap: $default-gap;
-  }
-
   .main {
     display: grid;
     grid-template-columns: 1fr 320px;
     gap: $default-gap;
     align-items: start;
+    min-height: 0;
   }
 
   .boardSection {
     min-width: 0;
+    min-height: 0;
   }
 
   .sideSection {
     display: flex;
     flex-direction: column;
     gap: $default-gap;
+    max-height: calc(100vh - 180px);
+    overflow: auto;
   }
 
-  .card {
-    padding: 0.9rem 1rem;
-    border-radius: $radius-lg;
-    background: rgba(255, 255, 255, 0.05);
+  .itemRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: $default-gap;
+    margin-top: calc($default-padding / 2);
+    min-width: 0;
+  }
+
+  // TODO: refactor common styles with for image renderer with PlayerGameController
+  .itemImage,
+  .itemImageFallback {
+    width: 56px;
+    height: 56px;
+    flex: 0 0 auto;
+    border-radius: $default-gap;
+  }
+
+  .itemImage {
+    @include float(4px, $current-item-float-duration);
+    object-fit: contain;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 8px 16px $box-shadow-color;
+  }
+
+  .itemImageFallback {
+    @extend .itemImage;
+    display: grid;
+    place-items: center;
+    text-shadow: 0 2px 10px $box-shadow-color;
+    user-select: none;
+  }
+
+  .itemName {
+    @include float(4px, $current-item-float-duration);
+    min-width: 0;
   }
 
   .bigText {
     display: block;
     margin-top: 0.25rem;
-  }
-
-  .errorText {
-    opacity: 1;
   }
 
   .center {
@@ -81,15 +111,17 @@
     align-items: center;
 
     position: fixed;
-    bottom: 15px;
-    right: 15px;
-    display: flex;
+    bottom: 14px;
+    right: 14px;
     gap: $default-gap;
     z-index: 9999;
+
     padding: $default-padding;
     border-radius: $radius-lg;
-
     border: 2px solid $accent;
+
+    background: $box-shadow-color;
+    backdrop-filter: blur(6px);
 
     .prevnextButtonsGroup {
       display: flex;
@@ -101,6 +133,12 @@
     .main {
       grid-template-columns: 1fr;
     }
+
+    .sideSection {
+      max-height: none;
+      overflow: visible;
+    }
+
     .headerRight {
       flex-direction: row;
       align-items: center;

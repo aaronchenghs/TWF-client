@@ -1,5 +1,7 @@
 @use "../../styles/export.scss" as *;
 
+$current-item-float-duration: 3s;
+
 .root {
   min-height: 100svh;
   display: flex;
@@ -68,21 +70,35 @@
   margin-top: $default-padding;
 }
 
-.itemImage {
-  width: 56px;
-  height: 56px;
-  object-fit: cover;
-  border-radius: $default-gap;
-  flex: 0 0 auto;
-}
-
-.itemName {
-  min-width: 0;
-}
-
 .actionBar {
   position: sticky;
   bottom: 0;
   padding: $default-gap 0 0;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+
+// TODO: refactor common styles with for image renderer with GameRoom
+.itemImage {
+  @include float(4px, $current-item-float-duration);
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border-radius: $default-gap;
+  object-fit: contain;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 16px $box-shadow-color;
+}
+
+.itemName {
+  @include float(4px, $current-item-float-duration);
+  min-width: 0;
+}
+
+.itemImageFallback {
+  @extend .itemImage;
+  display: grid;
+  place-items: center;
+  text-shadow: 0 2px 10px $box-shadow-color;
+  user-select: none;
 }

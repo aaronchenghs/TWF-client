@@ -59,7 +59,8 @@ $defaultTierColor: rgba(255, 255, 255, 0.08);
 
   .tierLabel {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     margin: calc($default-padding / 2) calc($default-padding * 2);
 
     :global(*) {

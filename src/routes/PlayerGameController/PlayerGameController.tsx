@@ -21,6 +21,7 @@ import { PlaceControls } from "./Controls/PlaceControls";
 import { VoteControls } from "./Controls/VoteControls";
 import { phaseLabel, phaseSubtext } from "../../lib/phaseLabels";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
+import { GameStatusCard } from "../GameRoom/GameStatusCard/GameStatusCard";
 
 export default function PlayerGameController() {
   const navigate = useNavigate();
@@ -214,11 +215,9 @@ export default function PlayerGameController() {
       </header>
 
       <main className={styles.main}>
-        <section className={styles.card}>
-          <div className={styles.cardTopRow}>
-            <MainTextTypography variant="label" muted letterSpacing="wide">
-              PHASE
-            </MainTextTypography>
+        <GameStatusCard
+          label="PHASE"
+          headerRight={
             <MainTextTypography
               variant="label"
               className={clsx(err && styles.errorText)}
@@ -227,8 +226,8 @@ export default function PlayerGameController() {
             >
               {err ?? "LIVE"}
             </MainTextTypography>
-          </div>
-
+          }
+        >
           <MainTextTypography variant="h3" className={styles.phaseTitle}>
             {`${phaseLabel(state.phase)} `}
           </MainTextTypography>
@@ -236,20 +235,26 @@ export default function PlayerGameController() {
           <MainTextTypography variant="body" muted>
             {phaseSubtext(state, currentTurnPlayer, isMyTurn)}
           </MainTextTypography>
-        </section>
+        </GameStatusCard>
 
-        <section className={styles.card}>
-          <MainTextTypography variant="label" muted letterSpacing="wide">
-            {`CURRENT ITEM: `}
-          </MainTextTypography>
-
+        <GameStatusCard label="CURRENT ITEM:">
           {currentItem ? (
             <div className={styles.itemRow}>
-              <img
-                className={styles.itemImage}
-                src={currentItem.imageSrc}
-                alt={currentItem.name}
-              />
+              {currentItem.imageSrc ? (
+                <img
+                  className={styles.itemImage}
+                  src={currentItem.imageSrc}
+                  alt={currentItem.name}
+                  loading="lazy"
+                  draggable={false}
+                />
+              ) : (
+                <div className={styles.itemImageFallback} aria-hidden="true">
+                  <MainTextTypography variant="h4">
+                    {currentItem.name.slice(0, 1).toUpperCase()}
+                  </MainTextTypography>
+                </div>
+              )}
               <MainTextTypography variant="h4" className={styles.itemName}>
                 {currentItem.name}
               </MainTextTypography>
@@ -259,7 +264,7 @@ export default function PlayerGameController() {
               —
             </MainTextTypography>
           )}
-        </section>
+        </GameStatusCard>
       </main>
 
       <footer className={styles.actionBar}>

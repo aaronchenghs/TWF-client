@@ -14,39 +14,25 @@ $defaultTierColor: rgba(255, 255, 255, 0.08);
   display: grid;
   grid-template-columns: 0.1fr 1fr;
   gap: $default-gap;
+  min-height: 174px;
 
   padding: $default-gap;
   border-radius: $radius-sm;
 
   background: $defaultTierColor;
-  border: 1px solid $defaultTierColor;
 
   position: relative;
   overflow: hidden;
 
-  // tinted overlay
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     background: var(--tierColor);
-    opacity: 0.3;
+    opacity: 0.25;
     pointer-events: none;
   }
 
-  // left accent strip
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 12px;
-    background: var(--tierColor);
-    pointer-events: none;
-  }
-
-  // ensure children render above overlays
   > * {
     position: relative;
     z-index: 1;
@@ -58,14 +44,15 @@ $defaultTierColor: rgba(255, 255, 255, 0.08);
   }
 
   .tierLabel {
+    align-self: stretch;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: calc($default-padding / 2) calc($default-padding * 2);
 
-    :global(*) {
-      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
-    }
+    background: var(--tierColor);
+    border-radius: $radius-sm;
+    padding: $default-padding;
+    box-shadow: 0 4px 0 $box-shadow-color;
   }
 
   .items {

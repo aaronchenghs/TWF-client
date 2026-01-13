@@ -7,10 +7,12 @@ type Variant = "primary" | "secondary" | "ghost" | "destructive";
 interface AccentButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
+  color?: string;
 }
 
 export function AccentButton({
   variant = "primary",
+  color,
   className,
   children,
   ...props
@@ -18,9 +20,16 @@ export function AccentButton({
   return (
     <button
       className={clsx(styles.button, styles[variant], className)}
+      style={
+        color
+          ? ({
+              ["--custom-accent" as string]: color,
+            } as React.CSSProperties)
+          : undefined
+      }
       {...props}
     >
-      <MainTextTypography variant="h5">{children}</MainTextTypography>
+      <MainTextTypography variant="h4">{children}</MainTextTypography>
     </button>
   );
 }

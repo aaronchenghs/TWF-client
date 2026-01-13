@@ -10,9 +10,11 @@ import { normalizeCode } from "../../lib/codeUtils";
 import { CODE_LENGTH, MAX_NAME_LENGTH } from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
+import { useMobileView } from "../../lib/hooks/useMobileView";
 
 export default function Landing() {
   const navigate = useNavigate();
+  const isMobile = useMobileView();
 
   const handleCreateRoom = async () => {
     const { code } = await roomSocket.createRoom("host");
@@ -24,8 +26,15 @@ export default function Landing() {
       <div className={styles.container}>
         <TWFLogo className={styles.logo} />
         <div className={styles.playActions}>
-          <AccentButton onClick={handleCreateRoom}>Create Lobby</AccentButton>
-          <MainTextTypography variant="h2">or</MainTextTypography>
+          {!isMobile && (
+            <>
+              <AccentButton onClick={handleCreateRoom}>
+                Create Lobby
+              </AccentButton>
+              <MainTextTypography variant="h2">or</MainTextTypography>
+            </>
+          )}
+
           <JoinRoomPanel />
         </div>
       </div>

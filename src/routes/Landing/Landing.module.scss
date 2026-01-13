@@ -36,10 +36,6 @@
       height: auto;
       margin-bottom: calc($default-gap * 3);
       transform-origin: center;
-
-      @media (max-width: $mobile-width) {
-        margin-bottom: calc($default-gap * 2);
-      }
     }
   }
 }
@@ -49,7 +45,7 @@
   flex-direction: column;
   width: min(560px, 92vw);
   gap: $default-gap;
-  padding: calc($default-padding * 2);
+  padding: $default-padding;
   border-radius: $radius-md;
   background: $bg-surface;
   border: 1px solid $bg-elevated;

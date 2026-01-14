@@ -17,10 +17,16 @@ const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 export default function Landing() {
   const navigate = useNavigate();
   const isMobile = useMobileView();
+  const [isCreatingLobby, setIsCreatingLobby] = useState<boolean>(false);
 
   const handleCreateRoom = async () => {
-    const { code } = await roomSocket.createRoom("host");
-    navigate(`${ROUTES.HOST_LOBBY}/${code}`);
+    setIsCreatingLobby(true);
+    try {
+      const { code } = await roomSocket.createRoom("host");
+      navigate(`${ROUTES.HOST_LOBBY}/${code}`);
+    } finally {
+      setIsCreatingLobby(false);
+    }
   };
 
   return (
@@ -30,8 +36,11 @@ export default function Landing() {
         <div className={styles.playActions}>
           {!isMobile && (
             <>
-              <AccentButton onClick={handleCreateRoom}>
-                Create Lobby
+              <AccentButton
+                disabled={isCreatingLobby}
+                onClick={handleCreateRoom}
+              >
+                {isCreatingLobby ? "Creating..." : "Create Lobby"}
               </AccentButton>
               <MainTextTypography variant="h2">or</MainTextTypography>
             </>

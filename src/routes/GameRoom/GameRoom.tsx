@@ -14,6 +14,7 @@ import { getTurnLabel } from "../../lib/phaseLabels";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import { GameStatusCard } from "./GameStatusCard/GameStatusCard";
+import { IS_DEBUG_ENABLED } from "../../config/env";
 
 export default function GameRoom() {
   const navigate = useNavigate();
@@ -23,7 +24,6 @@ export default function GameRoom() {
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
   const clock = usePhaseClock(state);
 
-  const isDevMode = import.meta.env.VITE_ENABLE_DEBUG_CONTROLS === "true";
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
 
   const handleExit = useCallback(() => {
@@ -186,7 +186,7 @@ export default function GameRoom() {
         }}
       />
 
-      {isDevMode && (
+      {IS_DEBUG_ENABLED && (
         <div className={styles.devControls}>
           <span>👨‍💻 DEV CONTROLS:</span>
           <button onClick={roomSocket.debugTogglePause}>

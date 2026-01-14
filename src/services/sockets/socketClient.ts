@@ -3,6 +3,7 @@ import type {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@twf/contracts";
+import { SOCKET_URL } from "../../config/env";
 
 type ContractSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -34,7 +35,11 @@ export class SocketClient {
   private myPlayerId: string | null = null;
 
   constructor(url: string) {
-    this.socket = io(url, { autoConnect: false });
+    this.socket = io(url, {
+      transports: ["websocket", "polling"],
+      withCredentials: true,
+      autoConnect: false,
+    });
   }
 
   setMyPlayerId(id: string) {
@@ -122,6 +127,4 @@ export class SocketClient {
   }
 }
 
-export const socketClient = new SocketClient(
-  import.meta.env.VITE_SERVER_URL as string
-);
+export const socketClient = new SocketClient(SOCKET_URL);

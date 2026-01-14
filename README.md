@@ -24,7 +24,7 @@ npm install
 npm run dev
 ```
 
-# Scripts
+## Scripts
 
 ```bash
 npm run dev
@@ -33,6 +33,14 @@ npm run preview
 npm run lint
 ```
 
-# Local Dev Notes
+## Local Dev Notes
 
-Run the server in a separate terminal. The server defaults to port 3001 and expects the client origin to be allowed via CORS.
+Run the server in a separate terminal.
+The server defaults to port 3001 and expects the client origin to be allowed via CORS.
+
+Required .env variables are:
+
+```bash
+VITE_SOCKET_URL=string
+VITE_ENABLE_DEBUG_CONTROLS=boolean
+```

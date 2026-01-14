@@ -7,10 +7,12 @@ import { MainTextTypography } from "../../components/MainTextTypography/MaintTex
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { useMemo, useState } from "react";
 import { normalizeCode } from "../../lib/codeUtils";
-import { CODE_LENGTH, MAX_NAME_LENGTH } from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
+import * as Contracts from "@twf/contracts";
+const CODE_LENGTH = Contracts.CODE_LENGTH;
+const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 
 export default function Landing() {
   const navigate = useNavigate();

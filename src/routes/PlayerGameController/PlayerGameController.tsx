@@ -1,15 +1,8 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import clsx from "clsx";
-import type {
-  RoomPublicState,
-  TierSetDefinition,
-  TierId,
-  VoteValue,
-} from "@twf/contracts";
 import { ROUTES } from "../routes";
 import { normalizeCode } from "../../lib/codeUtils";
-import { CODE_LENGTH } from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
@@ -22,6 +15,12 @@ import { VoteControls } from "./Controls/VoteControls";
 import { phaseLabel, phaseSubtext } from "../../lib/phaseLabels";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 import { GameStatusCard } from "../GameRoom/GameStatusCard/GameStatusCard";
+import * as Contracts from "@twf/contracts";
+type RoomPublicState = Contracts.RoomPublicState;
+type TierSetDefinition = Contracts.TierSetDefinition;
+type TierId = Contracts.TierId;
+type VoteValue = Contracts.VoteValue;
+const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 export default function PlayerGameController() {
   const navigate = useNavigate();

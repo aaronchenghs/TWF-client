@@ -1,8 +1,9 @@
-import type { VoteValue } from "@twf/contracts";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
 import styles from "./Controls.module.scss";
 import { AwaitingControls } from "./AwaitingControls";
+import * as Contracts from "@twf/contracts";
+type VoteValue = Contracts.VoteValue;
 
 export function VoteControls(props: {
   disabled: boolean;

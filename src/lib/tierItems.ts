@@ -1,4 +1,6 @@
-import type { RoomPublicState, TierItemId } from "@twf/contracts";
+import * as Contracts from "@twf/contracts";
+type RoomPublicState = Contracts.RoomPublicState;
+type TierItemId = Contracts.TierItemId;
 
 function fallbackNameFromId(id: string) {
   return id.replace(/[-_]/g, " ").trim();

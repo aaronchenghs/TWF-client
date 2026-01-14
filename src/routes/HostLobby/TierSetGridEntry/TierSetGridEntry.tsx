@@ -1,10 +1,12 @@
-import type { TierSetDefinition, TierSetSummary } from "@twf/contracts";
 import styles from "./TierSetGridEntry.module.scss";
 import clsx from "clsx";
 import { useCallback, useState } from "react";
 import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
 import { roomSocket } from "../../../services/sockets/roomSocket";
 import { TierSetDetails } from "./TierSetDetails/TierSetDetails";
+import * as Contracts from "@twf/contracts";
+type TierSetSummary = Contracts.TierSetSummary;
+type TierSetDefinition = Contracts.TierSetDefinition;
 
 type TierSetGridEntryProps = {
   tierSet: TierSetSummary;

@@ -7,7 +7,7 @@ import { socketClient } from "../../services/sockets/socketClient";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { normalizeCode } from "../../lib/codeUtils";
 import { ROUTES } from "../routes";
-import type { RoomPublicState } from "@twf/contracts";
+import * as Contracts from "@twf/contracts";
 import { usePhaseClock } from "../../lib/hooks/usePhaseClock";
 import { TierBoard } from "./TierBoard/TierBoard";
 import { getTurnLabel } from "../../lib/phaseLabels";
@@ -15,6 +15,7 @@ import { ConfirmationModal } from "../../components/ConfirmationModal/Confirmati
 import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import { GameStatusCard } from "./GameStatusCard/GameStatusCard";
 import { IS_DEBUG_ENABLED } from "../../config/env";
+type RoomPublicState = Contracts.RoomPublicState;
 
 export default function GameRoom() {
   const navigate = useNavigate();

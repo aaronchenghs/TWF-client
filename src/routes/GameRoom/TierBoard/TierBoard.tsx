@@ -1,8 +1,11 @@
 import styles from "./TierBoard.module.scss";
 import clsx from "clsx";
-import type { RoomPublicState, TierId, TierItemId } from "@twf/contracts";
+import * as Contracts from "@twf/contracts";
 import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
 import { TierItemTile } from "./TierItemTile/TierItemTile";
+type RoomPublicState = Contracts.RoomPublicState;
+type TierId = Contracts.TierId;
+type TierItemId = Contracts.TierItemId;
 
 export function TierBoard({ state }: { state: RoomPublicState }) {
   const tierOrder = state.tierOrder ?? [];

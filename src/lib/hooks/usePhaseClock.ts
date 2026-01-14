@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import type { RoomPublicState } from "@twf/contracts";
+import * as Contracts from "@twf/contracts";
+type RoomPublicState = Contracts.RoomPublicState;
 
 export type PhaseClock = {
   endsAt: number | null;

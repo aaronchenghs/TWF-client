@@ -1,8 +1,10 @@
 import clsx from "clsx";
 import styles from "./TierItemTile.module.scss";
-import type { RoomPublicState, TierItemId } from "@twf/contracts";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
 import { getItemMeta } from "../../../../lib/tierItems";
+import * as Contracts from "@twf/contracts";
+type RoomPublicState = Contracts.RoomPublicState;
+type TierItemId = Contracts.TierItemId;
 
 type Props = {
   state: RoomPublicState;

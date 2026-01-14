@@ -1,14 +1,13 @@
-import type {
-  Role,
-  RoomJoinPayload,
-  RoomPublicState,
-  ServerToClientEvents,
-  TierSetDefinition,
-  TierSetId,
-  TierSetSummary,
-} from "@twf/contracts";
 import { socketClient } from "./socketClient";
 import { normalizeCode } from "../../lib/codeUtils";
+import * as Contracts from "@twf/contracts";
+type Role = Contracts.Role;
+type TierSetId = Contracts.TierSetId;
+type TierSetDefinition = Contracts.TierSetDefinition;
+type TierSetSummary = Contracts.TierSetSummary;
+type RoomPublicState = Contracts.RoomPublicState;
+type ServerToClientEvents = Contracts.ServerToClientEvents;
+type RoomJoinPayload = Contracts.RoomJoinPayload;
 
 type RoomCreatedPayload = Parameters<ServerToClientEvents["room:created"]>[0];
 type RoomStatePayload = Parameters<ServerToClientEvents["room:state"]>[0];

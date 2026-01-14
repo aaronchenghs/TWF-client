@@ -1,4 +1,5 @@
-import type { RoomPublicState } from "@twf/contracts";
+import * as Contracts from "@twf/contracts";
+type RoomPublicState = Contracts.RoomPublicState;
 
 export function getTurnLabel(state: RoomPublicState): string {
   const pid = state.currentTurnPlayerId;

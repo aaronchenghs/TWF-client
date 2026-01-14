@@ -3,7 +3,8 @@ import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
 import styles from "./Controls.module.scss";
 import { AwaitingControls } from "./AwaitingControls";
-import type { Tier } from "@twf/contracts";
+import * as Contracts from "@twf/contracts";
+type Tier = Contracts.Tier;
 
 export function PlaceControls(props: {
   tiers: Tier[];

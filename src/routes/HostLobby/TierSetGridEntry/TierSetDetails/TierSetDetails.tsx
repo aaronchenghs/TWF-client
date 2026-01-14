@@ -1,6 +1,7 @@
-import type { TierSetDefinition } from "@twf/contracts";
 import styles from "./TierSetDetails.module.scss";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
+import * as Contracts from "@twf/contracts";
+type TierSetDefinition = Contracts.TierSetDefinition;
 
 type TierSetDetailsProps = {
   isLoading: boolean;

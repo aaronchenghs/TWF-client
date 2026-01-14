@@ -40,7 +40,7 @@ The server defaults to port 3001 and expects the client origin to be allowed via
 
 Required .env variables are:
 
-```bash
-VITE_SOCKET_URL=string
-VITE_ENABLE_DEBUG_CONTROLS=boolean
+```sh
+VITE_SOCKET_URL (default: 3001) - port the socket API is expected from
+VITE_ENABLE_DEBUG_CONTROLS (default: false) - boolean, determines if the client is allowed to access debug controls
 ```

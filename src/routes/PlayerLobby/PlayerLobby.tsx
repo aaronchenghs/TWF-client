@@ -7,10 +7,11 @@ import { MainTextTypography } from "../../components/MainTextTypography/MaintTex
 import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerLobby.module.scss";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
-import clsx from "clsx";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 import { ROUTES } from "../routes";
+import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
 import * as Contracts from "@twf/contracts";
+
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 export default function PlayerLobby() {
@@ -19,9 +20,16 @@ export default function PlayerLobby() {
   const [searchParams] = useSearchParams();
 
   const [isConfirmQuitOpen, setIsConfirmQuitOpen] = useState(false);
+  const [isHowToOpen, setIsHowToOpen] = useState(false);
+  const [howToKey, setHowToKey] = useState(0);
 
   const roomCode = normalizeCode(code ?? "");
   const name = (searchParams.get("name") ?? "").trim();
+
+  const openHowTo = () => {
+    setHowToKey((k) => k + 1);
+    setIsHowToOpen(true);
+  };
 
   const handleConfirmQuit = () => {
     socketClient.disconnect();
@@ -69,7 +77,24 @@ export default function PlayerLobby() {
         </MainTextTypography>
       </section>
 
-      <GameInstructions />
+      <section className={styles.instructions}>
+        <button
+          type="button"
+          className={styles.instructionsTrigger}
+          onClick={openHowTo}
+        >
+          <div className={styles.instructionsSummaryText}>
+            <MainTextTypography variant="body" muted letterSpacing="wide">
+              HOW TO PLAY
+            </MainTextTypography>
+            <MainTextTypography variant="body" weight="medium">
+              Game Instructions
+            </MainTextTypography>
+          </div>
+
+          <span className={styles.chevron} aria-hidden="true" />
+        </button>
+      </section>
 
       <section className={styles.status}>
         <MainTextTypography variant="body" muted letterSpacing="wide">
@@ -101,115 +126,12 @@ export default function PlayerLobby() {
         onCancel={() => setIsConfirmQuitOpen(false)}
         onConfirm={handleConfirmQuit}
       />
+
+      <HowToPlayModal
+        key={howToKey}
+        open={isHowToOpen}
+        onClose={() => setIsHowToOpen(false)}
+      />
     </div>
   );
 }
-
-const GameInstructions = () => {
-  const [shouldGlow, setShouldGlow] = useState(true);
-
-  return (
-    <section
-      className={clsx(
-        styles.instructions,
-        shouldGlow && styles.instructionsGlow
-      )}
-    >
-      <details
-        className={styles.instructionsDetails}
-        onToggle={() => setShouldGlow(false)}
-      >
-        <summary className={styles.instructionsSummary}>
-          <div className={styles.instructionsSummaryText}>
-            <MainTextTypography variant="body" muted letterSpacing="wide">
-              HOW TO PLAY
-            </MainTextTypography>
-            <MainTextTypography variant="body" weight="medium">
-              Game Instructions
-            </MainTextTypography>
-          </div>
-
-          <span className={styles.chevron} aria-hidden="true" />
-        </summary>
-
-        <div className={styles.instructionsBody}>
-          <div className={styles.instructionsBlock}>
-            <MainTextTypography variant="label" muted letterSpacing="wide">
-              WHAT THIS IS
-            </MainTextTypography>
-            <MainTextTypography variant="body" muted>
-              A fast, turn-based tier list game. One person places the item.
-              Everyone else votes to keep it or drift it.
-            </MainTextTypography>
-          </div>
-
-          <div className={styles.instructionsBlock}>
-            <MainTextTypography variant="label" muted letterSpacing="wide">
-              GAME:
-            </MainTextTypography>
-
-            <ol className={styles.steps}>
-              <li>
-                <MainTextTypography variant="body" muted>
-                  <strong>Starting:</strong> The host starts the game. A random
-                  player is chosen to go first.
-                </MainTextTypography>
-              </li>
-
-              <li>
-                <MainTextTypography variant="body" muted>
-                  <strong>Placement (timed):</strong> The next item to be placed
-                  is revealed. Only the player whose turn it is can place the
-                  item into a tier, others await this decision.
-                </MainTextTypography>
-              </li>
-
-              <li>
-                <MainTextTypography variant="body" muted>
-                  <strong>Discussion & Voting (timed):</strong> Everyone who
-                  isn’t the placer votes:
-                  <br />
-                  • Drift Up (Item should be ranked higher!)
-                  <br />
-                  • Agree
-                  <br />• Drift Down (Item should be ranked lower!)
-                </MainTextTypography>
-              </li>
-
-              <li>
-                <MainTextTypography variant="body" muted>
-                  <strong>Resolution:</strong> When all votes are in (or time
-                  runs out), the item drifts based on the group and locks in.
-                </MainTextTypography>
-              </li>
-
-              <li>
-                <MainTextTypography variant="body" muted>
-                  <strong>Next Turn:</strong> Turn passes to the next player in
-                  the circle, then the next item reveals.
-                </MainTextTypography>
-              </li>
-
-              <li>
-                <MainTextTypography variant="body" muted>
-                  <strong>Finish:</strong> After the last item, the final tier
-                  list is ready to share.
-                </MainTextTypography>
-              </li>
-            </ol>
-          </div>
-
-          <div className={styles.instructionsBlock}>
-            <ul className={styles.tips}>
-              <li>
-                <MainTextTypography variant="body" muted>
-                  Keep this tab open. Rejoining puts you back in the room.
-                </MainTextTypography>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </details>
-    </section>
-  );
-};

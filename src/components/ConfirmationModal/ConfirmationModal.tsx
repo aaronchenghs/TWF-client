@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useRef, useState } from "react";
 import { AccentButton } from "../AccentButton/AccentButton";
 import { MainTextTypography } from "../MainTextTypography/MaintTextTypography";
-import styles from "./ConfirmationModal.module.scss";
+import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
 
 type ConfirmationModalProps = {
   open: boolean;
@@ -30,36 +29,12 @@ export function ConfirmationModal({
 
   const isWorking = confirmDisabled ?? isInternalWorking;
 
-  const portalEl = useMemo(() => {
-    if (typeof document === "undefined") return null;
-    return document.body;
-  }, []);
-
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
     };
   }, []);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCancel();
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [open, onCancel]);
-
-  if (!open || !portalEl) return null;
 
   const handleConfirm = async () => {
     if (isWorking) return;
@@ -71,28 +46,18 @@ export function ConfirmationModal({
     }
   };
 
-  return createPortal(
-    <div className={styles.backdrop} role="presentation" onMouseDown={onCancel}>
-      <div
-        className={styles.modal}
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-        onMouseDown={(e) => e.stopPropagation()}
-      >
-        <div className={styles.header}>
-          <MainTextTypography variant="h4" className={styles.title}>
-            {title}
-          </MainTextTypography>
-        </div>
-
-        {message ? (
-          <MainTextTypography variant="body" muted className={styles.message}>
-            {message}
-          </MainTextTypography>
-        ) : null}
-
-        <div className={styles.actions}>
+  return (
+    <PrimaryModal
+      open={open}
+      onClose={onCancel}
+      title={title}
+      ariaLabel={title}
+      maxWidth={520}
+      closeOnBackdrop
+      closeOnEscape
+      showCloseButton
+      footer={
+        <>
           <AccentButton
             variant="secondary"
             onClick={onCancel}
@@ -108,9 +73,14 @@ export function ConfirmationModal({
           >
             {confirmText}
           </AccentButton>
-        </div>
-      </div>
-    </div>,
-    portalEl
+        </>
+      }
+    >
+      {message ? (
+        <MainTextTypography variant="body" muted>
+          {message}
+        </MainTextTypography>
+      ) : null}
+    </PrimaryModal>
   );
 }

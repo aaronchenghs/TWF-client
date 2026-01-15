@@ -1,6 +1,6 @@
 @use "../../../styles/export.scss" as *;
 
-$defaultTierColor: rgba(255, 255, 255, 0.08);
+$defaultTierColor: $light-transparency;
 
 .root {
   display: flex;
@@ -39,7 +39,7 @@ $defaultTierColor: rgba(255, 255, 255, 0.08);
   }
 
   &.pending {
-    outline: 2px solid rgba(255, 255, 255, 0.18);
+    outline: 2px solid $light-transparency;
     box-shadow: 0 0 0 2px $defaultTierColor;
   }
 

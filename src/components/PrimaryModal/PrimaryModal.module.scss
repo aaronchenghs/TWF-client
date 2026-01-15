@@ -1,0 +1,81 @@
+@use "../../styles/export.scss" as *;
+
+.overlay {
+  @include appearFadeIn(140ms);
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: $box-shadow-color;
+  backdrop-filter: blur(8px);
+  padding: $default-padding;
+}
+
+.modal {
+  @include appearPopIn(180ms);
+  width: min(920px, 100%);
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background: rgba(20, 20, 24, 0.9);
+  border: 1px solid $light-transparency;
+  box-shadow: 0 16px 60px $box-shadow-color, 0 0 0 1px $light-transparency inset;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $default-gap;
+
+  padding: $default-padding;
+  border-bottom: 1px solid $light-transparency;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}
+
+.closeButton {
+  appearance: none;
+  border: 0;
+  background: $light-transparency;
+  color: $text-primary;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  display: grid;
+  place-items: center;
+  transition: transform $dur-fast ease, background $dur-fast ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: $light-transparency;
+  }
+
+  &:active {
+    transform: translateY(0px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.3);
+    outline-offset: 2px;
+  }
+}
+
+.content {
+  padding: $default-padding;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $default-gap;
+
+  padding: $default-padding;
+  border-top: 1px solid $light-transparency;
+}

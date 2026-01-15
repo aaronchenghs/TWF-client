@@ -62,3 +62,31 @@
     grid-template-columns: 1fr;
   }
 }
+
+.howToPlayLink {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: $default-padding;
+  border-radius: $radius-md;
+  margin: $default-padding auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform $dur-fast ease, background $dur-fast ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: $light-transparency;
+  }
+
+  &:active {
+    transform: translateY(0px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $text-secondary;
+    outline-offset: 2px;
+  }
+}

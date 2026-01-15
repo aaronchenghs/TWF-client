@@ -43,8 +43,8 @@ $current-item-float-duration: 3s;
 .card {
   border-radius: $radius-lg;
   padding: $default-gap;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: $light-transparency;
+  border: 1px solid $light-transparency;
 }
 
 .cardTopRow {
@@ -85,8 +85,8 @@ $current-item-float-duration: 3s;
   flex: 0 0 auto;
   border-radius: $default-gap;
   object-fit: contain;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid $light-transparency;
+  background: $light-transparency;
   box-shadow: 0 8px 16px $box-shadow-color;
 }
 

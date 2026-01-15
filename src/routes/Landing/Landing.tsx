@@ -10,6 +10,7 @@ import { normalizeCode } from "../../lib/codeUtils";
 import { socketClient } from "../../services/sockets/socketClient";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
+import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
 import * as Contracts from "@twf/contracts";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
@@ -18,6 +19,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const isMobile = useMobileView();
   const [isCreatingLobby, setIsCreatingLobby] = useState<boolean>(false);
+  const [isHowToOpen, setIsHowToOpen] = useState(false);
 
   const handleCreateRoom = async () => {
     setIsCreatingLobby(true);
@@ -33,6 +35,17 @@ export default function Landing() {
     <div className={styles.landingPage}>
       <div className={styles.container}>
         <TWFLogo className={styles.logo} />
+
+        <button
+          type="button"
+          className={styles.howToPlayLink}
+          onClick={() => setIsHowToOpen(true)}
+        >
+          <MainTextTypography variant="caption" muted letterSpacing="wide">
+            HOW TO PLAY
+          </MainTextTypography>
+        </button>
+
         <div className={styles.playActions}>
           {!isMobile && (
             <>
@@ -49,6 +62,12 @@ export default function Landing() {
           <JoinRoomPanel />
         </div>
       </div>
+
+      <HowToPlayModal
+        key={isHowToOpen ? "howto-open" : "howto-closed"}
+        open={isHowToOpen}
+        onClose={() => setIsHowToOpen(false)}
+      />
     </div>
   );
 }

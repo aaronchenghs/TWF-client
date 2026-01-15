@@ -11,14 +11,14 @@
   color: $text-primary;
 
   background: rgba($bg-surface, 1);
-  border: 1px solid rgba($text-primary, 0.18);
+  border: 1px solid rgba($text-primary, 0.2);
 
   border-radius: $radius-sm;
 
   outline: none;
   transition: border-color $dur-fast, box-shadow $dur-fast, background $dur-fast;
 
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 22px $box-shadow-color;
+  box-shadow: 0 1px 0 $light-transparency, 0 8px 22px $box-shadow-color;
 
   &::placeholder {
     color: $text-secondary;
@@ -26,11 +26,11 @@
   }
 
   &:hover {
-    border-color: rgba($text-primary, 0.28);
+    border-color: rgba($text-primary, 0.3);
   }
 
   &:focus {
     border-color: $accent;
-    box-shadow: 0 0 0 3px rgba($accent, 0.28), 0 10px 26px $box-shadow-color;
+    box-shadow: 0 0 0 3px rgba($accent, 0.3), 0 10px 26px $box-shadow-color;
   }
 }

@@ -121,6 +121,7 @@ export default function PlayerLobby() {
       <ConfirmationModal
         open={isConfirmQuitOpen}
         title="Leave lobby?"
+        message="This will disconnect you from the lobby."
         confirmText="Quit"
         destructive
         onCancel={() => setIsConfirmQuitOpen(false)}

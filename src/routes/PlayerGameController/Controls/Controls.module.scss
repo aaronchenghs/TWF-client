@@ -1,10 +1,22 @@
 @use "../../../styles/variables.scss" as *;
 
+$image-preview-height: 56px;
+
 .controls {
+  width: 100%;
+
   border-radius: $radius-lg;
   padding: $default-padding;
   background: $box-shadow-color;
   border: 1px solid $light-transparency;
+
+  max-height: 65vh;
+  display: flex;
+  flex-direction: column;
+
+  max-width: $page-width-cutoff;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .controlsLabel {
@@ -29,7 +41,156 @@
 }
 
 .bigButton {
-  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: $image-preview-height;
   border-radius: $radius-lg;
-  font-size: 16px;
+}
+
+.controlsHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $default-gap;
+  margin-bottom: $default-padding;
+}
+
+.controlsHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: calc($default-gap / 2);
+}
+
+.controlsHeaderRight {
+  max-width: 45%;
+  text-align: right;
+  opacity: 0.9;
+}
+
+.tierPickList {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  padding-right: calc($default-padding / 2);
+}
+
+.tierPickRow {
+  --tierColor: $light-transparency;
+
+  appearance: none;
+  border: 0;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+
+  display: grid;
+  grid-template-columns: 0.35fr 1fr;
+  gap: $default-gap;
+
+  border-radius: $radius-sm;
+  padding: $default-gap;
+  min-height: 84px;
+
+  background: $light-transparency;
+  position: relative;
+  overflow: hidden;
+
+  transition: transform $dur-fast ease, box-shadow $dur-fast ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--tierColor);
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $light-transparency;
+    outline-offset: 2px;
+  }
+}
+
+.tierPickRowSelected {
+  outline: 2px solid $light-transparency;
+  box-shadow: 0 0 0 2px $box-shadow-color;
+}
+
+.tierPickLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--tierColor);
+  border-radius: $radius-sm;
+  padding: $default-padding;
+  box-shadow: 0 4px 0 $box-shadow-color;
+}
+
+.tierPickPreview {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.previewPlaceholder {
+  width: 100%;
+  height: $image-preview-height;
+  border-radius: $radius-sm;
+  background: $light-transparency;
+  border: 1px dashed $light-transparency;
+}
+
+.previewImg {
+  width: 100%;
+  height: $image-preview-height;
+  object-fit: contain;
+  border-radius: $radius-sm;
+  background: $light-transparency;
+  border: 1px solid $light-transparency;
+  display: block;
+}
+
+.previewFallback {
+  width: 100%;
+  height: $image-preview-height;
+  border-radius: $radius-sm;
+  background: $light-transparency;
+  border: 1px solid $light-transparency;
+  display: grid;
+  place-items: center;
+}
+
+.confirmRow {
+  margin-top: $default-padding;
+  flex: 0 0 auto;
+}
+
+.confirmButton {
+  width: 100%;
+  height: $image-preview-height;
+  border-radius: $radius-lg;
+}
+
+@media (max-height: $mobile-width) {
+  .tierPickList {
+    max-height: 55vh;
+  }
 }

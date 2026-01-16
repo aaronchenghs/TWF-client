@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import clsx from "clsx";
 import { ROUTES } from "../routes";
 import { normalizeCode } from "../../lib/codeUtils";
 import { socketClient } from "../../services/sockets/socketClient";
@@ -12,7 +11,6 @@ import styles from "./PlayerGameController.module.scss";
 import { AwaitingControls } from "./Controls/AwaitingControls";
 import { PlaceControls } from "./Controls/PlaceControls";
 import { VoteControls } from "./Controls/VoteControls";
-import { phaseLabel, phaseSubtext } from "../../lib/phaseLabels";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 import { GameStatusCard } from "../GameRoom/GameStatusCard/GameStatusCard";
 import * as Contracts from "@twf/contracts";
@@ -32,6 +30,9 @@ export default function PlayerGameController() {
   const [myPlayerId, setMyPlayerId] = useState<string | null>(
     socketClient.getMyPlayerId()
   );
+
+  // TODO: snackbar for errors
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [err, setErr] = useState<string | null>(null);
   const [isPlacing, setIsPlacing] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
@@ -47,12 +48,13 @@ export default function PlayerGameController() {
     [searchParams]
   );
 
-  const currentTurnPlayer = useMemo(() => {
-    if (!state?.currentTurnPlayerId) return null;
-    return (
-      state.players.find((p) => p.id === state.currentTurnPlayerId) ?? null
-    );
-  }, [state]);
+  // TODO: use later for prompting the current turn player
+  // const currentTurnPlayer = useMemo(() => {
+  //   if (!state?.currentTurnPlayerId) return null;
+  //   return (
+  //     state.players.find((p) => p.id === state.currentTurnPlayerId) ?? null
+  //   );
+  // }, [state]);
 
   const currentItem = useMemo(() => {
     if (!state?.currentItem || !tierSet) return null;
@@ -60,9 +62,10 @@ export default function PlayerGameController() {
   }, [state?.currentItem, tierSet]);
 
   const handleExit = useCallback(() => {
+    console.error(err);
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
-  }, [navigate]);
+  }, [navigate, err]);
 
   const handleConfirmExit = useCallback(() => {
     setIsConfirmExitOpen(false);
@@ -214,28 +217,6 @@ export default function PlayerGameController() {
       </header>
 
       <main className={styles.main}>
-        <GameStatusCard
-          label="PHASE"
-          headerRight={
-            <MainTextTypography
-              variant="label"
-              className={clsx(err && styles.errorText)}
-              muted={!err}
-              letterSpacing="wide"
-            >
-              {err ?? "LIVE"}
-            </MainTextTypography>
-          }
-        >
-          <MainTextTypography variant="h3" className={styles.phaseTitle}>
-            {`${phaseLabel(state.phase)} `}
-          </MainTextTypography>
-
-          <MainTextTypography variant="body" muted>
-            {phaseSubtext(state, currentTurnPlayer, isMyTurn)}
-          </MainTextTypography>
-        </GameStatusCard>
-
         <GameStatusCard label="CURRENT ITEM:">
           {currentItem ? (
             <div className={styles.itemRow}>
@@ -273,6 +254,7 @@ export default function PlayerGameController() {
             tiers={tierSet ? tierSet.tiers : []}
             tierOrder={state.tierOrder}
             onPlace={handlePlaceIntoTier}
+            currentItem={currentItem}
           />
         ) : state.phase === "VOTE" ? (
           <VoteControls

@@ -1,6 +1,7 @@
 import styles from "./TierSetDetails.module.scss";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
 import * as Contracts from "@twf/contracts";
+import { onKeyDown } from "../../../../lib/accessibility";
 type TierSetDefinition = Contracts.TierSetDefinition;
 
 type TierSetDetailsProps = {
@@ -15,7 +16,13 @@ export function TierSetDetails({
   details,
 }: TierSetDetailsProps) {
   return (
-    <div className={styles.detailsBody} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={styles.detailsBody}
+      onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => onKeyDown(e, () => {}, { stopPropagation: true })}
+      tabIndex={-1}
+      role="button"
+    >
       {isLoading && (
         <MainTextTypography variant="body" muted>
           Loading…

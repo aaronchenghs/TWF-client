@@ -19,12 +19,14 @@
   display: grid;
   place-items: center;
   min-height: 280px;
+  transition: max-height $dur-fast ease;
 }
 
 .image {
   width: 100%;
-  height: 100%;
-  object-fit: fill;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
   display: block;
   user-select: none;
 }
@@ -85,6 +87,13 @@
   }
 
   .imageFrame {
-    height: 180px;
+    height: auto;
+    max-height: 40vh;
+    min-height: 0;
+  }
+
+  .howToContentWrapper {
+    max-height: 90vh;
+    overflow-y: auto;
   }
 }

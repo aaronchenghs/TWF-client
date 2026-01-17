@@ -1,0 +1,154 @@
+@use "../../styles/export.scss" as *;
+
+.host {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + $default-padding);
+  left: $default-padding;
+  right: $default-padding;
+  z-index: 9999;
+
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+
+  pointer-events: none;
+}
+
+.card {
+  pointer-events: auto;
+
+  display: grid;
+  grid-template-columns: 1fr 32px;
+  align-items: start;
+
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+
+  border-radius: $radius-lg;
+  padding: $default-padding;
+
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 28px $box-shadow-color;
+
+  border: 1px solid $light-transparency;
+  background: rgba(18, 18, 20, 0.92);
+  color: $text-primary;
+
+  transform: translateY(-6px);
+  animation: snackIn $dur-fast ease-out forwards;
+}
+
+.content {
+  min-width: 0;
+  padding-left: $default-gap;
+}
+
+.title {
+  font-size: $fs-h6;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  margin-bottom: $default-gap;
+}
+
+.message {
+  font-size: $fs-h6;
+  line-height: 1.25rem;
+  opacity: 0.95;
+  overflow-wrap: anywhere;
+}
+
+.close {
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-md;
+
+  display: grid;
+  place-items: center;
+
+  background: transparent;
+  border: none;
+  color: inherit;
+  opacity: 0.8;
+
+  cursor: pointer;
+}
+
+.close:hover {
+  opacity: 1;
+  background: $light-transparency;
+}
+
+.progressTrack {
+  margin-top: $default-padding;
+  height: 3px;
+  border-radius: $round;
+  background: $light-transparency;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: $round;
+  background: rgba(255, 255, 255, 0.55);
+  transition: width $dur-fast linear;
+}
+
+.sev_error {
+  --snackbarAccent: #e53935;
+}
+
+.sev_warn {
+  --snackbarAccent: #fb8c00;
+}
+
+.sev_info {
+  --snackbarAccent: #1e88e5;
+}
+
+.sev_success {
+  --snackbarAccent: #43a047;
+}
+
+.sev_error,
+.sev_warn,
+.sev_info,
+.sev_success {
+  border-color: color-mix(
+    in srgb,
+    var(--snackbarAccent) 70%,
+    $light-transparency
+  );
+
+  box-shadow:
+    0 8px 28px $box-shadow-color,
+    inset 4px 0 0 color-mix(in srgb, var(--snackbarAccent) 70%, transparent);
+}
+
+.sev_error .progressFill,
+.sev_warn .progressFill,
+.sev_info .progressFill,
+.sev_success .progressFill {
+  background: color-mix(
+    in srgb,
+    var(--snackbarAccent) 65%,
+    $light-transparency
+  );
+}
+
+@media (max-width: $mobile-width) {
+  .card {
+    padding: $default-padding $default-gap;
+    border-radius: $radius-md;
+  }
+
+  .message {
+    font-size: $fs-caption;
+  }
+}
+
+@keyframes snackIn {
+  to {
+    transform: translateY(0);
+  }
+}

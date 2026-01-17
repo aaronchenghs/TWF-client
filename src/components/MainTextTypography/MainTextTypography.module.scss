@@ -5,21 +5,20 @@
   color: $text-primary;
   -webkit-font-smoothing: antialiased;
   text-rendering: geometricPrecision;
-  text-shadow: 0 1px 0 $box-shadow-color, 0 0 10px rgba(0, 0, 0, 0.18);
+  text-shadow:
+    0 1px 0 $box-shadow-color,
+    0 0 10px $box-shadow-color;
 }
 
 .ls_tight {
   letter-spacing: 0;
 }
-
 .ls_normal {
   letter-spacing: 0.02em;
 }
-
 .ls_wide {
   letter-spacing: 0.12em;
 }
-
 .ls_wider {
   letter-spacing: 0.28em;
 }
@@ -27,15 +26,12 @@
 .w_regular {
   font-weight: 400;
 }
-
 .w_medium {
   font-weight: 600;
 }
-
 .w_bold {
   font-weight: 700;
 }
-
 .w_black {
   font-weight: 800;
 }
@@ -47,70 +43,65 @@
 .h4,
 .h5,
 .h6 {
-  font-family: "Luckiest Guy", cursive;
+  font-family: $font-display;
 }
 
 .display {
-  font-size: clamp(44px, 9vw, 76px);
-  letter-spacing: 0.22em;
+  font-size: $fs-display;
+  letter-spacing: $ls-display;
 }
 
 .h1 {
-  font-size: clamp(40px, 6vw, 72px);
+  font-size: $fs-h1;
 }
-
 .h2 {
-  font-size: clamp(32px, 4.5vw, 56px);
+  font-size: $fs-h2;
 }
-
 .h3 {
-  font-size: clamp(24px, 3.5vw, 40px);
+  font-size: $fs-h3;
 }
-
 .h4 {
-  font-size: clamp(20px, 3vw, 32px);
+  font-size: $fs-h4;
 }
-
 .h5 {
-  font-size: clamp(16px, 2.2vw, 24px);
+  font-size: $fs-h5;
 }
-
 .h6 {
-  font-size: clamp(14px, 1.8vw, 20px);
+  font-size: $fs-h6;
 }
 
 .title {
-  font-family: "Nunito", system-ui, sans-serif;
-  font-weight: 800;
-  font-size: clamp(20px, 2.7vw, 26px);
-  line-height: 1.2;
+  font-family: $font-body;
+  font-weight: $fw-title;
+  font-size: $fs-title;
+  line-height: $lh-title;
 }
 
 .label {
-  font-family: "Nunito", system-ui, sans-serif;
-  font-weight: 800;
+  font-family: $font-body;
+  font-weight: $fw-label;
   text-transform: uppercase;
-  font-size: 12px;
-  line-height: 1.1;
-  opacity: 0.85;
+  font-size: $fs-label;
+  line-height: $lh-label;
+  opacity: $op-label;
   text-shadow: 0 1px 0 $box-shadow-color;
 }
 
 .body,
 .caption {
-  font-family: "Nunito", system-ui, sans-serif;
+  font-family: $font-body;
 }
 
 .body {
-  font-size: 18px;
-  line-height: 1.5;
+  font-size: $fs-body;
+  line-height: $lh-body;
 }
 
 .caption {
-  font-size: 13px;
-  opacity: 0.75;
+  font-size: $fs-caption;
+  opacity: $op-caption;
 }
 
 .muted {
-  opacity: 0.5;
+  opacity: $op-muted;
 }

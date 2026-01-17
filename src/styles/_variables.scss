@@ -30,3 +30,30 @@ $font-display: "Luckiest Guy", sans-serif;
 $font-body: "Nunito", sans-serif;
 $font-alt-display: "Bangers", sans-serif;
 $font-ui: "Inter", sans-serif;
+
+$fs-display: clamp(44px, 9vw, 76px);
+$ls-display: 0.22em;
+
+$fs-h1: clamp(40px, 6vw, 72px);
+$fs-h2: clamp(32px, 4.5vw, 56px);
+$fs-h3: clamp(24px, 3.5vw, 40px);
+$fs-h4: clamp(20px, 3vw, 32px);
+$fs-h5: clamp(16px, 2.2vw, 24px);
+$fs-h6: clamp(14px, 1.8vw, 20px);
+
+$fs-title: clamp(20px, 2.7vw, 26px);
+$lh-title: 1.2;
+$fw-title: 800;
+
+$fs-label: 12px;
+$lh-label: 1.1;
+$fw-label: 800;
+$op-label: 0.85;
+
+$fs-body: 18px;
+$lh-body: 1.5;
+
+$fs-caption: 13px;
+$op-caption: 0.75;
+
+$op-muted: 0.5;

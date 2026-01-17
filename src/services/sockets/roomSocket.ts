@@ -54,7 +54,7 @@ export const roomSocket = {
 
   async getTierSet(
     id: TierSetId,
-    timeoutMs = 5000
+    timeoutMs = 5000,
   ): Promise<TierSetDefinition> {
     const gotP = socketClient
       .waitFor("tierSets:got", timeoutMs)
@@ -72,10 +72,6 @@ export const roomSocket = {
     socketClient.emit("room:setTierSet", { tierSetId });
   },
 
-  /**
-   * Attempts to join an existing room.
-   * Normalizes the room code and emits the join request.
-   */
   joinRoom(input: RoomJoinPayload): void {
     const normalizedCode = normalizeCode(input.code);
     if (input.role === "player") {
@@ -97,7 +93,7 @@ export const roomSocket = {
 
   async joinRoomOrThrow(
     input: RoomJoinPayload,
-    timeoutMs = 2000
+    timeoutMs = 2000,
   ): Promise<RoomPublicState> {
     const normalizedCode = normalizeCode(input.code);
 

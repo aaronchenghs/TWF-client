@@ -25,7 +25,6 @@ export default function HostLobby() {
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const players = roomState?.players ?? [];
   const playerCount = players.length;
@@ -46,39 +45,29 @@ export default function HostLobby() {
   }, [navigate]);
 
   const handleSelectTierSet = useCallback((ts: TierSetSummary) => {
-    setErrorMessage(null);
     roomSocket.setTierSet(ts.id);
   }, []);
 
   const handleStart = useCallback(() => {
-    setErrorMessage(null);
     roomSocket.startGame(roomCode);
     navigate(`${ROUTES.GAME_ROOM}/${roomCode}`);
   }, [navigate, roomCode]);
 
-  useEffect(
-    function bootStrapLobbySocket() {
-      if (roomCode.length !== CODE_LENGTH) return;
-      socketClient.connect();
-      roomSocket.joinRoom({ code: roomCode, role: "host" });
-      roomSocket.listTierSets().then(setTierSets);
+  useEffect(() => {
+    if (roomCode.length !== CODE_LENGTH) return;
 
-      const offState = roomSocket.onRoomState((state) => {
-        setRoomState(state);
-        setErrorMessage(null);
-      });
+    socketClient.connect();
+    roomSocket.joinRoom({ code: roomCode, role: "host" });
+    roomSocket.listTierSets().then(setTierSets);
 
-      const offError = roomSocket.onRoomError((msg) => {
-        setErrorMessage(msg);
-      });
+    const offState = roomSocket.onRoomState((state) => {
+      setRoomState(state);
+    });
 
-      return () => {
-        offState();
-        offError();
-      };
-    },
-    [roomCode]
-  );
+    return () => {
+      offState();
+    };
+  }, [roomCode]);
 
   return (
     <div className={styles.root}>
@@ -103,10 +92,6 @@ export default function HostLobby() {
           </div>
         </div>
       </header>
-
-      <MainTextTypography variant="body" muted={!errorMessage}>
-        {errorMessage ?? "Waiting for players to join…"}
-      </MainTextTypography>
 
       <div className={styles.layout}>
         <section className={styles.left}>

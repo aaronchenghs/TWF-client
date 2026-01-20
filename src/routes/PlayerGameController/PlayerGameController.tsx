@@ -28,12 +28,9 @@ export default function PlayerGameController() {
   const [state, setState] = useState<RoomPublicState | null>(null);
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
   const [myPlayerId, setMyPlayerId] = useState<string | null>(
-    socketClient.getMyPlayerId()
+    socketClient.getMyPlayerId(),
   );
 
-  // TODO: snackbar for errors
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [err, setErr] = useState<string | null>(null);
   const [isPlacing, setIsPlacing] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
@@ -45,7 +42,7 @@ export default function PlayerGameController() {
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
   const myName = useMemo(
     () => (searchParams.get("name") ?? "").trim(),
-    [searchParams]
+    [searchParams],
   );
 
   // TODO: use later for prompting the current turn player
@@ -62,10 +59,9 @@ export default function PlayerGameController() {
   }, [state?.currentItem, tierSet]);
 
   const handleExit = useCallback(() => {
-    console.error(err);
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
-  }, [navigate, err]);
+  }, [navigate]);
 
   const handleConfirmExit = useCallback(() => {
     setIsConfirmExitOpen(false);
@@ -77,11 +73,8 @@ export default function PlayerGameController() {
     if (isPlacing) return;
 
     setIsPlacing(true);
-    setErr(null);
     try {
       socketClient.emit("game:place", { tierId });
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : "Place failed");
     } finally {
       setIsPlacing(false);
     }
@@ -92,11 +85,8 @@ export default function PlayerGameController() {
     if (isVoting) return;
 
     setIsVoting(true);
-    setErr(null);
     try {
       socketClient.emit("game:vote", { vote });
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : "Vote failed");
     } finally {
       setIsVoting(false);
     }
@@ -119,10 +109,7 @@ export default function PlayerGameController() {
 
       const offState = roomSocket.onRoomState((s) => {
         setState(s);
-        setErr(null);
       });
-
-      const offError = roomSocket.onRoomError((msg) => setErr(msg));
 
       const offClosed = roomSocket.onRoomClosed(() => {
         socketClient.disconnect();
@@ -131,11 +118,10 @@ export default function PlayerGameController() {
 
       return () => {
         offState();
-        offError();
         offClosed();
       };
     },
-    [roomCode, myName, navigate]
+    [roomCode, myName, navigate],
   );
 
   useEffect(
@@ -145,21 +131,15 @@ export default function PlayerGameController() {
 
       let cancelled = false;
 
-      roomSocket
-        .getTierSet(tierSetId)
-        .then((ts) => {
-          if (!cancelled) setTierSet(ts);
-        })
-        .catch((e) => {
-          if (!cancelled)
-            setErr(e instanceof Error ? e.message : "Failed to load tier set");
-        });
+      roomSocket.getTierSet(tierSetId).then((ts) => {
+        if (!cancelled) setTierSet(ts);
+      });
 
       return () => {
         cancelled = true;
       };
     },
-    [state?.tierSetId]
+    [state?.tierSetId],
   );
 
   useEffect(
@@ -170,7 +150,7 @@ export default function PlayerGameController() {
       const q = new URLSearchParams({ name: myName }).toString();
       navigate(`${ROUTES.PLAYER_LOBBY}/${roomCode}?${q}`, { replace: true });
     },
-    [state?.phase, navigate, roomCode, myName, state]
+    [state?.phase, navigate, roomCode, myName, state],
   );
 
   if (!state) {

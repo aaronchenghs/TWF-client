@@ -20,7 +20,6 @@ export function TierSetGridEntry({
   onSelect,
 }: TierSetGridEntryProps) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [detailsError, setDetailsError] = useState<string | null>(null);
   const [details, setDetails] = useState<TierSetDefinition | null>(null);
 
   const toggleDetails = useCallback(
@@ -29,18 +28,11 @@ export function TierSetGridEntry({
       const next = !isDetailsOpen;
       setIsDetailsOpen(next);
       if (!next || !!details) return;
-      setDetailsError(null);
 
-      try {
-        const full = await roomSocket.getTierSet(tierSet.id);
-        setDetails(full);
-      } catch (error) {
-        setDetailsError(
-          error instanceof Error ? error.message : "Failed to load tier set."
-        );
-      }
+      const full = await roomSocket.getTierSet(tierSet.id);
+      setDetails(full);
     },
-    [isDetailsOpen, details, tierSet.id]
+    [isDetailsOpen, details, tierSet.id],
   );
 
   return (
@@ -64,11 +56,7 @@ export function TierSetGridEntry({
             {tierSet.description ?? "—"}
           </MainTextTypography>
         ) : (
-          <TierSetDetails
-            isLoading={!details && !detailsError}
-            errorMessage={detailsError}
-            details={details}
-          />
+          <TierSetDetails isLoading={!details} details={details} />
         )}
       </div>
 

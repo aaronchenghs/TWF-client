@@ -54,14 +54,8 @@ export default function GameRoom() {
         offClosed();
       };
     },
-    [roomCode, navigate]
+    [roomCode, navigate],
   );
-
-  useEffect(function logErrors() {
-    return roomSocket.onRoomError((err) => {
-      console.error("room:error", err);
-    });
-  }, []);
 
   if (!state) {
     return (

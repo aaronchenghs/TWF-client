@@ -1,6 +1,7 @@
 import { socketClient } from "./socketClient";
 import { normalizeCode } from "../../lib/codeUtils";
 import * as Contracts from "@twf/contracts";
+
 type Role = Contracts.Role;
 type TierSetId = Contracts.TierSetId;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -11,8 +12,10 @@ type RoomJoinPayload = Contracts.RoomJoinPayload;
 
 type RoomCreatedPayload = Parameters<ServerToClientEvents["room:created"]>[0];
 type RoomStatePayload = Parameters<ServerToClientEvents["room:state"]>[0];
-type RoomErrorPayload = Parameters<ServerToClientEvents["room:error"]>[0];
 type RoomJoinedPayload = Parameters<ServerToClientEvents["room:joined"]>[0];
+export type RoomErrorPayload = Parameters<
+  ServerToClientEvents["room:error"]
+>[0];
 
 /**
  * Room-level socket service.

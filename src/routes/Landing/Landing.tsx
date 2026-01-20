@@ -7,7 +7,6 @@ import { MainTextTypography } from "../../components/MainTextTypography/MaintTex
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { useMemo, useState } from "react";
 import { normalizeCode } from "../../lib/codeUtils";
-import { socketClient } from "../../services/sockets/socketClient";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
 import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
@@ -76,7 +75,6 @@ export function JoinRoomPanel() {
   const navigate = useNavigate();
   const [code, setCode] = useState<string>("");
   const [name, setName] = useState<string>("");
-  const [joinError, setJoinError] = useState<string | null>(null);
   const [isJoining, setIsJoining] = useState<boolean>(false);
 
   const normalizedCode = useMemo(() => normalizeCode(code), [code]);
@@ -91,7 +89,6 @@ export function JoinRoomPanel() {
   const handleJoinRoom = async () => {
     if (!canJoin) return;
     setIsJoining(true);
-    setJoinError(null);
 
     try {
       await roomSocket.joinRoomOrThrow({
@@ -101,9 +98,6 @@ export function JoinRoomPanel() {
       });
       const qString = new URLSearchParams({ name: normalizedName }).toString();
       navigate(`${ROUTES.PLAYER_LOBBY}/${normalizedCode}?${qString}`);
-    } catch (e) {
-      socketClient.disconnect();
-      setJoinError(e instanceof Error ? e.message : "Join failed");
     } finally {
       setIsJoining(false);
     }
@@ -131,12 +125,6 @@ export function JoinRoomPanel() {
           {isJoining ? "Joining..." : "Play"}
         </AccentButton>
       </div>
-      {/* TODO: create a proper error snackbar */}
-      {joinError ? (
-        <MainTextTypography className={styles.joinError} variant="body">
-          {joinError}
-        </MainTextTypography>
-      ) : null}
     </div>
   );
 }

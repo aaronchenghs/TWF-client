@@ -15,6 +15,7 @@ import { CopyTextButton } from "../../components/CopyTextButton/CopyTextButton";
 import { ROUTES } from "../routes";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
+const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
 type TierSetSummary = Contracts.TierSetSummary;
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -118,7 +119,7 @@ export default function HostLobby() {
         <aside className={styles.sidePanel}>
           <div className={styles.panel}>
             <MainTextTypography variant="h3">
-              Players ({playerCount})
+              Players ({playerCount}/{LOBBY_CAPACITY})
             </MainTextTypography>
 
             <ul className={styles.playerList}>

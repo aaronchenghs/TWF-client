@@ -37,9 +37,6 @@ export default function GameRoom() {
     function handleRoomConnection() {
       if (!roomCode) return;
 
-      socketClient.connect();
-      roomSocket.joinRoom({ code: roomCode, role: "host" });
-
       const offState = roomSocket.onRoomState((s) => {
         setState(s);
       });

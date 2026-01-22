@@ -14,23 +14,24 @@ import { VoteControls } from "./Controls/VoteControls";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 import { GameStatusCard } from "../GameRoom/GameStatusCard/GameStatusCard";
 import * as Contracts from "@twf/contracts";
+
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
 type TierId = Contracts.TierId;
 type VoteValue = Contracts.VoteValue;
-const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 export default function PlayerGameController() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
 
-  const [state, setState] = useState<RoomPublicState | null>(null);
+  const [state, setState] = useState<RoomPublicState | null>(() =>
+    roomSocket.getLastRoomState(),
+  );
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
   const [myPlayerId, setMyPlayerId] = useState<string | null>(
     socketClient.getMyPlayerId(),
   );
-
   const [isPlacing, setIsPlacing] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
@@ -92,24 +93,27 @@ export default function PlayerGameController() {
     }
   };
 
-  useEffect(function establishPlayerId() {
-    const offJoined = roomSocket.onRoomJoined(({ playerId }) => {
-      socketClient.setMyPlayerId(playerId);
-      setMyPlayerId(playerId);
-    });
-    return offJoined;
-  }, []);
+  useEffect(
+    function handleIdentity() {
+      if (!state || !myName) return;
+
+      const me = state.players.find((p) => p.name.trim() === myName);
+      const id = me?.id ?? null;
+      setMyPlayerId(id);
+
+      if (id) socketClient.setMyPlayerId(id);
+    },
+    [state, myName],
+  );
 
   useEffect(
-    function establishRoomConnection() {
-      if (!roomCode || roomCode.length !== CODE_LENGTH || !myName) return;
+    function handleGameState() {
+      if (!roomCode || !myName) {
+        navigate(ROUTES.LANDING, { replace: true });
+        return;
+      }
 
-      socketClient.connect();
-      roomSocket.joinRoom({ code: roomCode, role: "player", name: myName });
-
-      const offState = roomSocket.onRoomState((s) => {
-        setState(s);
-      });
+      const offState = roomSocket.onRoomState((s) => setState(s));
 
       const offClosed = roomSocket.onRoomClosed(() => {
         socketClient.disconnect();
@@ -125,12 +129,11 @@ export default function PlayerGameController() {
   );
 
   useEffect(
-    function handleLoadTierSet() {
+    function handleTierData() {
       const tierSetId = state?.tierSetId ?? null;
       if (!tierSetId) return;
 
       let cancelled = false;
-
       roomSocket.getTierSet(tierSetId).then((ts) => {
         if (!cancelled) setTierSet(ts);
       });
@@ -142,28 +145,14 @@ export default function PlayerGameController() {
     [state?.tierSetId],
   );
 
-  useEffect(
-    function handleCloseLobby() {
-      if (!state) return;
-      if (state.phase !== "LOBBY") return;
-
-      const q = new URLSearchParams({ name: myName }).toString();
-      navigate(`${ROUTES.PLAYER_LOBBY}/${roomCode}?${q}`, { replace: true });
-    },
-    [state?.phase, navigate, roomCode, myName, state],
-  );
-
   if (!state) {
     return (
       <div className={styles.root}>
         <header className={styles.header}>
           <TWFLogo className={styles.logo} />
           <div className={styles.headerText}>
-            <MainTextTypography variant="h5" muted letterSpacing="wide">
-              CONTROLLER
-            </MainTextTypography>
             <MainTextTypography variant="body" muted>
-              ROOM {roomCode || "—"}
+              LOBBY: {roomCode || "—"}
             </MainTextTypography>
           </div>
         </header>
@@ -183,7 +172,7 @@ export default function PlayerGameController() {
         <TWFLogo className={styles.logo} />
         <div className={styles.headerText}>
           <MainTextTypography variant="caption" muted letterSpacing="wide">
-            ROOM {state.code} • {myName || "PLAYER"}
+            LOBBY {state.code} • {myName || "PLAYER"}
           </MainTextTypography>
         </div>
 

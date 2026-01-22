@@ -33,36 +33,40 @@ export default function PlayerLobby() {
 
   const handleConfirmQuit = () => {
     socketClient.disconnect();
-    navigate("/", { replace: true });
+    navigate(ROUTES.LANDING, { replace: true });
   };
 
-  useEffect(() => {
-    if (!roomCode || roomCode.length !== CODE_LENGTH || !name) return;
-    socketClient.connect();
-    roomSocket.joinRoom({ code: roomCode, role: "player", name });
-
-    const offClosed = roomSocket.onRoomClosed(() => {
-      socketClient.disconnect();
-      navigate(ROUTES.LANDING, { replace: true });
-    });
-
-    const offState = roomSocket.onRoomState((state) => {
-      if (state.phase !== "LOBBY") {
-        const queryString = new URLSearchParams({ name }).toString();
-        navigate(
-          `${ROUTES.PLAYER_GAME_CONTROLLER}/${roomCode}?${queryString}`,
-          {
-            replace: true,
-          }
-        );
+  useEffect(
+    function handleNavigateOnStateChange() {
+      if (!roomCode || roomCode.length !== CODE_LENGTH || !name) {
+        navigate(ROUTES.LANDING, { replace: true });
+        return;
       }
-    });
 
-    return () => {
-      offClosed();
-      offState();
-    };
-  }, [roomCode, name, navigate]);
+      const offClosed = roomSocket.onRoomClosed(() => {
+        socketClient.disconnect();
+        navigate(ROUTES.LANDING, { replace: true });
+      });
+
+      const offState = roomSocket.onRoomState((state) => {
+        if (state.phase !== "LOBBY") {
+          const queryString = new URLSearchParams({ name }).toString();
+          navigate(
+            `${ROUTES.PLAYER_GAME_CONTROLLER}/${roomCode}?${queryString}`,
+            {
+              replace: true,
+            },
+          );
+        }
+      });
+
+      return () => {
+        offClosed();
+        offState();
+      };
+    },
+    [roomCode, name, navigate],
+  );
 
   return (
     <div className={styles.waiting}>

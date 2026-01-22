@@ -17,15 +17,25 @@ export type RoomErrorPayload = Parameters<
   ServerToClientEvents["room:error"]
 >[0];
 
+let lastRoomState: RoomPublicState | null = null;
+
+function setLastRoomState(state: RoomStatePayload) {
+  lastRoomState = state as RoomPublicState;
+}
+
 /**
  * Room-level socket service.
  * Centralizes event names, payload shaping, and common room workflows.
  */
 export const roomSocket = {
-  /**
-   * Requests a new room from the server and resolves with `{ code }`.
-   * Rejects if a `room:error` arrives first.
-   */
+  getLastRoomState(): RoomPublicState | null {
+    return lastRoomState;
+  },
+
+  clearLastRoomState(): void {
+    lastRoomState = null;
+  },
+
   async createRoom(role: Role): Promise<RoomCreatedPayload> {
     socketClient.connect();
 
@@ -75,8 +85,12 @@ export const roomSocket = {
     socketClient.emit("room:setTierSet", { tierSetId });
   },
 
+  /**
+   * @deprecated Internal: Do not call directly. Use `joinRoomOrThrow()`.
+   */
   joinRoom(input: RoomJoinPayload): void {
     const normalizedCode = normalizeCode(input.code);
+
     if (input.role === "player") {
       socketClient.emit("room:join", {
         code: normalizedCode,
@@ -85,27 +99,21 @@ export const roomSocket = {
       });
       return;
     }
-    if (input.role === "host") {
-      socketClient.emit("room:join", {
-        code: normalizedCode,
-        role: "host",
-      });
-      return;
-    }
+
+    socketClient.emit("room:join", { code: normalizedCode, role: "host" });
   },
 
   async joinRoomOrThrow(
     input: RoomJoinPayload,
-    timeoutMs = 2000,
+    timeoutMs = 3000,
   ): Promise<RoomPublicState> {
     const normalizedCode = normalizeCode(input.code);
-
-    socketClient.connect();
 
     const stateP = socketClient
       .waitFor("room:state", timeoutMs)
       .then(([state]) => {
         if (state.code !== normalizedCode) throw new Error("Unexpected room");
+        setLastRoomState(state);
         return state;
       });
 
@@ -125,6 +133,7 @@ export const roomSocket = {
   closeRoom(): void {
     socketClient.emit("room:close");
     socketClient.disconnect();
+    this.clearLastRoomState();
   },
 
   onRoomJoined(handler: (payload: RoomJoinedPayload) => void): () => void {
@@ -136,7 +145,10 @@ export const roomSocket = {
   },
 
   onRoomState(handler: (state: RoomStatePayload) => void): () => void {
-    return socketClient.on("room:state", handler);
+    return socketClient.on("room:state", (state) => {
+      setLastRoomState(state);
+      handler(state);
+    });
   },
 
   onRoomError(handler: (err: RoomErrorPayload) => void): () => void {

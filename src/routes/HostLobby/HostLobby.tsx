@@ -54,21 +54,24 @@ export default function HostLobby() {
     navigate(`${ROUTES.GAME_ROOM}/${roomCode}`);
   }, [navigate, roomCode]);
 
-  useEffect(() => {
-    if (roomCode.length !== CODE_LENGTH) return;
+  useEffect(
+    function handleRoomConnection() {
+      if (roomCode.length !== CODE_LENGTH) return;
 
-    socketClient.connect();
-    roomSocket.joinRoom({ code: roomCode, role: "host" });
-    roomSocket.listTierSets().then(setTierSets);
+      socketClient.connect();
+      roomSocket.joinRoomOrThrow({ code: roomCode, role: "host" });
+      roomSocket.listTierSets().then(setTierSets);
 
-    const offState = roomSocket.onRoomState((state) => {
-      setRoomState(state);
-    });
+      const offState = roomSocket.onRoomState((state) => {
+        setRoomState(state);
+      });
 
-    return () => {
-      offState();
-    };
-  }, [roomCode]);
+      return () => {
+        offState();
+      };
+    },
+    [roomCode],
+  );
 
   return (
     <div className={styles.root}>

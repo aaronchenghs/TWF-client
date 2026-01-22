@@ -11,6 +11,7 @@ import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInpu
 import { useMobileView } from "../../lib/hooks/useMobileView";
 import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
 import * as Contracts from "@twf/contracts";
+import { socketClient } from "../../services/sockets/socketClient";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 
@@ -91,13 +92,18 @@ export function JoinRoomPanel() {
     setIsJoining(true);
 
     try {
+      socketClient.connect();
       await roomSocket.joinRoomOrThrow({
         code: normalizedCode,
         role: "player",
         name: normalizedName,
       });
+
       const qString = new URLSearchParams({ name: normalizedName }).toString();
       navigate(`${ROUTES.PLAYER_LOBBY}/${normalizedCode}?${qString}`);
+    } catch (e) {
+      console.error(e);
+      socketClient.disconnect();
     } finally {
       setIsJoining(false);
     }
@@ -122,7 +128,7 @@ export function JoinRoomPanel() {
           fullWidth
         />
         <AccentButton disabled={!canJoin} onClick={handleJoinRoom}>
-          {isJoining ? "Joining..." : "Play"}
+          Play
         </AccentButton>
       </div>
     </div>

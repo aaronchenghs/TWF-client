@@ -1,12 +1,13 @@
+import React from "react";
 import clsx from "clsx";
 import styles from "./AccentButton.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MaintTextTypography";
 
 type Variant = "primary" | "secondary" | "ghost" | "destructive";
 
-interface AccentButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface AccentButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
+  /** Overrides accent color */
   color?: string;
 }
 
@@ -22,9 +23,7 @@ export function AccentButton({
       className={clsx(styles.button, styles[variant], className)}
       style={
         color
-          ? ({
-              ["--custom-accent" as string]: color,
-            } as React.CSSProperties)
+          ? ({ ["--accent" as string]: color } as React.CSSProperties)
           : undefined
       }
       {...props}

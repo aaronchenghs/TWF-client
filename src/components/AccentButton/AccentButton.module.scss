@@ -1,91 +1,109 @@
 @use "../../styles/export.scss" as *;
 
-$transition: $dur-fast ease;
+$transition-med: $dur-base ease;
 
 .button {
-  padding: $default-padding calc($default-padding * 2);
-  border-radius: $radius-md;
-  cursor: pointer;
-  border: none;
-  user-select: none;
+  --accent: #{$accent};
+  --radius: #{$radius-md};
 
-  --ledge: $black;
-  transition: background-color $transition, transform $transition,
-    box-shadow $transition, opacity $transition, filter $transition;
-  box-shadow: 0 4px 0 var(--ledge);
+  --accent-border: color-mix(in srgb, var(--accent) 88%, #fff 12%);
+  --accent-fill: var(--accent);
+  --accent-glow: color-mix(in srgb, var(--accent) 55%, transparent);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: $default-padding calc($default-padding * 1.6);
+  border-radius: var(--radius);
+
+  border: 2px solid var(--accent-border);
+  background: transparent;
+  color: var(--accent-border);
+
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+
+  transition:
+    background-color $transition-med,
+    color $transition-med,
+    border-color $transition-med,
+    box-shadow $transition-med,
+    transform $transition-med;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--accent-fill);
+    color: $text-primary;
+    border-color: color-mix(in srgb, var(--accent) 92%, $black 8%);
+    box-shadow:
+      0 10px 22px $box-shadow-color,
+      0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+    transform: translateY(-1px);
   }
 
   &:active:not(:disabled) {
-    transform: translateY(1px);
-    box-shadow: 0 3px 0 var(--ledge);
-  }
-}
-
-.primary {
-  background: linear-gradient(180deg, #ffc526, #{$accent});
-  color: #1a1a1a;
-  --ledge: #{$accent};
-
-  &:hover:not(:disabled) {
-    filter: brightness(1.05);
-  }
-}
-
-.primary:where([style*="--custom-accent"]) {
-  background: linear-gradient(
-    180deg,
-    var(--custom-accent) 0%,
-    color-mix(in srgb, var(--custom-accent) 82%, #000 18%) 100%
-  );
-  --ledge: color-mix(in srgb, var(--custom-accent) 70%, #000 30%);
-  color: $text-primary;
-
-  &:hover:not(:disabled) {
-    filter: brightness(1.07);
-  }
-}
-
-.secondary {
-  background: $bg-surface;
-  color: $text-primary;
-  border: 1px solid $bg-elevated;
-  --ledge: #{$bg-elevated};
-
-  &:hover:not(:disabled) {
-    background: #262626;
-  }
-}
-
-.ghost {
-  background: transparent;
-  color: $accent;
-  --ledge: rgba(245, 197, 66, 0.22);
-
-  &:hover:not(:disabled) {
-    background: rgba(245, 197, 66, 0.12);
+    transform: translateY(0px);
+    box-shadow:
+      0 6px 14px $box-shadow-color,
+      0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
   }
 }
 
 .destructive {
-  background: linear-gradient(180deg, $error, #c92a2a);
+  --accent: #{$error};
+}
+
+.secondary {
+  --accent: #{$accent};
   color: $text-primary;
-  --ledge: #8f1f1f;
+  border-color: $bg-elevated;
+  background: transparent;
 
   &:hover:not(:disabled) {
-    filter: brightness(1.15);
+    background: $bg-surface;
+    border-color: color-mix(in srgb, $bg-elevated 70%, #fff 30%);
+    color: $text-primary;
+    box-shadow: 0 10px 22px $box-shadow-color;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in srgb, $bg-elevated 55%, transparent);
   }
 }
 
-.destructive:where([style*="--custom-accent"]) {
-  background: linear-gradient(
-    180deg,
-    var(--custom-accent) 0%,
-    color-mix(in srgb, var(--custom-accent) 82%, #000 18%) 100%
-  );
-  --ledge: color-mix(in srgb, var(--custom-accent) 70%, #000 30%);
+.ghost {
+  border-color: transparent;
+  background: transparent;
   color: $text-primary;
+  box-shadow: none;
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, $bg-surface 65%, transparent);
+    border-color: transparent;
+    color: $text-primary;
+    box-shadow: none;
+    transform: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in srgb, $bg-elevated 55%, transparent);
+  }
 }

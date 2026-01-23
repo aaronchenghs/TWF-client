@@ -6,7 +6,6 @@ import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { SubtextDivider } from "../../components/SubtextDivider/SubtextDivider";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { roomSocket } from "../../services/sockets/roomSocket";
-import { socketClient } from "../../services/sockets/socketClient";
 import * as Contracts from "@twf/contracts";
 import { normalizeCode } from "../../lib/codeUtils";
 import { TierSetGridEntry } from "./TierSetGridEntry/TierSetGridEntry";
@@ -58,7 +57,6 @@ export default function HostLobby() {
     function handleRoomConnection() {
       if (roomCode.length !== CODE_LENGTH) return;
 
-      socketClient.connect();
       roomSocket.joinRoomOrThrow({ code: roomCode, role: "host" });
       roomSocket.listTierSets().then(setTierSets);
 

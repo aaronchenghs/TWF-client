@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { roomSocket } from "../../services/sockets/roomSocket";
-import { socketClient } from "../../services/sockets/socketClient";
-import { normalizeCode } from "../../lib/codeUtils";
-import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
-import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
+import TWFLogo from "../../../assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerLobby.module.scss";
-import { AccentButton } from "../../components/AccentButton/AccentButton";
-import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
-import { ROUTES } from "../routes";
-import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
 import * as Contracts from "@twf/contracts";
+import { AccentButton } from "../../../components/AccentButton/AccentButton";
+import { ConfirmationModal } from "../../../components/ConfirmationModal/ConfirmationModal";
+import { HowToPlayModal } from "../../../components/HowToPlayModal/HowToPlayModal";
+import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
+import { normalizeCode } from "../../../lib/codeUtils";
+import { socketClient } from "../../../services/sockets/socketClient";
+import { ROUTES } from "../../routes";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 
@@ -21,15 +20,9 @@ export default function PlayerLobby() {
 
   const [isConfirmQuitOpen, setIsConfirmQuitOpen] = useState(false);
   const [isHowToOpen, setIsHowToOpen] = useState(false);
-  const [howToKey, setHowToKey] = useState(0);
 
   const roomCode = normalizeCode(code ?? "");
-  const name = (searchParams.get("name") ?? "").trim();
-
-  const openHowTo = () => {
-    setHowToKey((k) => k + 1);
-    setIsHowToOpen(true);
-  };
+  const myName = (searchParams.get("name") ?? "").trim();
 
   const handleConfirmQuit = () => {
     socketClient.disconnect();
@@ -37,35 +30,11 @@ export default function PlayerLobby() {
   };
 
   useEffect(
-    function handleNavigateOnStateChange() {
-      if (!roomCode || roomCode.length !== CODE_LENGTH || !name) {
+    function handleBootIntruders() {
+      if (!roomCode || roomCode.length !== CODE_LENGTH || !myName)
         navigate(ROUTES.LANDING, { replace: true });
-        return;
-      }
-
-      const offClosed = roomSocket.onRoomClosed(() => {
-        socketClient.disconnect();
-        navigate(ROUTES.LANDING, { replace: true });
-      });
-
-      const offState = roomSocket.onRoomState((state) => {
-        if (state.phase !== "LOBBY") {
-          const queryString = new URLSearchParams({ name }).toString();
-          navigate(
-            `${ROUTES.PLAYER_GAME_CONTROLLER}/${roomCode}?${queryString}`,
-            {
-              replace: true,
-            },
-          );
-        }
-      });
-
-      return () => {
-        offClosed();
-        offState();
-      };
     },
-    [roomCode, name, navigate],
+    [roomCode, myName, navigate],
   );
 
   return (
@@ -77,7 +46,7 @@ export default function PlayerLobby() {
           YOU ARE:
         </MainTextTypography>
         <MainTextTypography variant="title" weight="medium">
-          {name}
+          {myName}
         </MainTextTypography>
       </section>
 
@@ -85,7 +54,7 @@ export default function PlayerLobby() {
         <button
           type="button"
           className={styles.instructionsTrigger}
-          onClick={openHowTo}
+          onClick={() => setIsHowToOpen(true)}
         >
           <div className={styles.instructionsSummaryText}>
             <MainTextTypography variant="body" muted letterSpacing="wide">
@@ -133,7 +102,6 @@ export default function PlayerLobby() {
       />
 
       <HowToPlayModal
-        key={howToKey}
         open={isHowToOpen}
         onClose={() => setIsHowToOpen(false)}
       />

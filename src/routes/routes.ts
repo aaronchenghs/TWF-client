@@ -1,7 +1,6 @@
 export const ROUTES = {
   LANDING: "/",
-  HOST_LOBBY: "/hostlobby",
-  PLAYER_LOBBY: "/playerLobby",
-  PLAYER_GAME_CONTROLLER: "/playerGameController",
-  GAME_ROOM: "/gameRoom",
+  HOST_LOBBY: "/host",
+  PLAYER_SESSION: "/player",
+  GAME_ROOM: "/game",
 } as const;

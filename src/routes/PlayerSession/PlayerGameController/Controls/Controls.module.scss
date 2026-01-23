@@ -1,4 +1,4 @@
-@use "../../../styles/variables.scss" as *;
+@use "../../../../styles/variables.scss" as *;
 
 $image-preview-height: 56px;
 
@@ -102,7 +102,9 @@ $image-preview-height: 56px;
   position: relative;
   overflow: hidden;
 
-  transition: transform $dur-fast ease, box-shadow $dur-fast ease;
+  transition:
+    transform $dur-fast ease,
+    box-shadow $dur-fast ease;
 
   &::before {
     content: "";

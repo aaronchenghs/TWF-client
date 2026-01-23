@@ -1,4 +1,4 @@
-import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
 import styles from "./Controls.module.scss";
 
 export function AwaitingControls() {

@@ -17,25 +17,11 @@ export type RoomErrorPayload = Parameters<
   ServerToClientEvents["room:error"]
 >[0];
 
-let lastRoomState: RoomPublicState | null = null;
-
-function setLastRoomState(state: RoomStatePayload) {
-  lastRoomState = state as RoomPublicState;
-}
-
 /**
  * Room-level socket service.
  * Centralizes event names, payload shaping, and common room workflows.
  */
 export const roomSocket = {
-  getLastRoomState(): RoomPublicState | null {
-    return lastRoomState;
-  },
-
-  clearLastRoomState(): void {
-    lastRoomState = null;
-  },
-
   async createRoom(role: Role): Promise<RoomCreatedPayload> {
     socketClient.connect();
 
@@ -113,7 +99,6 @@ export const roomSocket = {
       .waitFor("room:state", timeoutMs)
       .then(([state]) => {
         if (state.code !== normalizedCode) throw new Error("Unexpected room");
-        setLastRoomState(state);
         return state;
       });
 
@@ -121,6 +106,7 @@ export const roomSocket = {
       .waitFor("room:error", timeoutMs)
       .then(([msg]) => Promise.reject(new Error(msg)));
 
+    socketClient.connect();
     this.joinRoom({ ...input, code: normalizedCode });
 
     return Promise.race([stateP, errorP]);
@@ -133,7 +119,6 @@ export const roomSocket = {
   closeRoom(): void {
     socketClient.emit("room:close");
     socketClient.disconnect();
-    this.clearLastRoomState();
   },
 
   onRoomJoined(handler: (payload: RoomJoinedPayload) => void): () => void {
@@ -145,31 +130,24 @@ export const roomSocket = {
   },
 
   onRoomState(handler: (state: RoomStatePayload) => void): () => void {
-    return socketClient.on("room:state", (state) => {
-      setLastRoomState(state);
-      handler(state);
-    });
+    return socketClient.on("room:state", handler);
   },
 
   onRoomError(handler: (err: RoomErrorPayload) => void): () => void {
     return socketClient.on("room:error", handler);
   },
 
-  /**
-   * DEV ONLY: advance the server game state to the beginning of the next phase.
-   * (PLACE auto-places random tier; VOTE auto-fills agrees.)
-   */
+  // #region DEV TOOLS
   debugNext(): void {
     socketClient.emit("debug:next");
   },
 
-  /** DEV ONLY: revert the server game state to the beginning of the previous phase. */
   debugPrev(): void {
     socketClient.emit("debug:prev");
   },
 
-  /** DEV ONLY: stop the timer for the current phase. Reset timer on toggle ON. */
   debugTogglePause(): void {
     socketClient.emit("debug:togglePause");
   },
+  // #endregion DEV TOOLS
 };

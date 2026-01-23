@@ -1,63 +1,56 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ROUTES } from "../routes";
-import { normalizeCode } from "../../lib/codeUtils";
-import { socketClient } from "../../services/sockets/socketClient";
-import { roomSocket } from "../../services/sockets/roomSocket";
-import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
-import { AccentButton } from "../../components/AccentButton/AccentButton";
-import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import TWFLogo from "../../../assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerGameController.module.scss";
 import { AwaitingControls } from "./Controls/AwaitingControls";
 import { PlaceControls } from "./Controls/PlaceControls";
 import { VoteControls } from "./Controls/VoteControls";
-import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
-import { GameStatusCard } from "../GameRoom/GameStatusCard/GameStatusCard";
 import * as Contracts from "@twf/contracts";
+import { AccentButton } from "../../../components/AccentButton/AccentButton";
+import { ConfirmationModal } from "../../../components/ConfirmationModal/ConfirmationModal";
+import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
+import { roomSocket } from "../../../services/sockets/roomSocket";
+import { socketClient } from "../../../services/sockets/socketClient";
+import { GameStatusCard } from "../../GameRoom/GameStatusCard/GameStatusCard";
+import { ROUTES } from "../../routes";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
 type TierId = Contracts.TierId;
 type VoteValue = Contracts.VoteValue;
 
-export default function PlayerGameController() {
+export default function PlayerGameController({
+  state,
+}: {
+  state: RoomPublicState;
+}) {
   const navigate = useNavigate();
-  const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
 
-  const [state, setState] = useState<RoomPublicState | null>(() =>
-    roomSocket.getLastRoomState(),
-  );
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
-  const [myPlayerId, setMyPlayerId] = useState<string | null>(
-    socketClient.getMyPlayerId(),
-  );
   const [isPlacing, setIsPlacing] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
 
-  const isMyTurn = !!myPlayerId && state?.currentTurnPlayerId === myPlayerId;
-  const canVote = !!myPlayerId && state?.phase === "VOTE" && !isMyTurn;
-  const hasVoted = !!myPlayerId && state?.votes?.[myPlayerId] !== undefined;
-
-  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
   const myName = useMemo(
     () => (searchParams.get("name") ?? "").trim(),
     [searchParams],
   );
 
-  // TODO: use later for prompting the current turn player
-  // const currentTurnPlayer = useMemo(() => {
-  //   if (!state?.currentTurnPlayerId) return null;
-  //   return (
-  //     state.players.find((p) => p.id === state.currentTurnPlayerId) ?? null
-  //   );
-  // }, [state]);
+  const myPlayerId = useMemo(() => {
+    if (!myName) return null;
+    const me = state.players?.find((p) => p.name.trim() === myName) ?? null;
+    return me?.id ?? null;
+  }, [state.players, myName]);
+
+  const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
+  const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;
+  const hasVoted = !!myPlayerId && state.votes?.[myPlayerId] !== undefined;
 
   const currentItem = useMemo(() => {
-    if (!state?.currentItem || !tierSet) return null;
+    if (!state.currentItem || !tierSet) return null;
     return tierSet.items.find((it) => it.id === state.currentItem) ?? null;
-  }, [state?.currentItem, tierSet]);
+  }, [state.currentItem, tierSet]);
 
   const handleExit = useCallback(() => {
     socketClient.disconnect();
@@ -70,70 +63,36 @@ export default function PlayerGameController() {
   }, [handleExit]);
 
   const handlePlaceIntoTier = async (tierId: TierId) => {
-    if (!state || state.phase !== "PLACE" || !isMyTurn) return;
+    if (state.phase !== "PLACE" || !isMyTurn) return;
     if (isPlacing) return;
 
     setIsPlacing(true);
-    try {
-      socketClient.emit("game:place", { tierId });
-    } finally {
-      setIsPlacing(false);
-    }
+    socketClient.emit("game:place", { tierId });
+    setIsPlacing(false);
   };
 
   const handleVote = async (vote: VoteValue) => {
-    if (!canVote || hasVoted) return;
-    if (isVoting) return;
+    if (!canVote || hasVoted || isVoting) return;
 
     setIsVoting(true);
-    try {
-      socketClient.emit("game:vote", { vote });
-    } finally {
-      setIsVoting(false);
-    }
+    socketClient.emit("game:vote", { vote });
+    setIsVoting(false);
   };
 
   useEffect(
     function handleIdentity() {
-      if (!state || !myName) return;
-
-      const me = state.players.find((p) => p.name.trim() === myName);
-      const id = me?.id ?? null;
-      setMyPlayerId(id);
-
-      if (id) socketClient.setMyPlayerId(id);
+      if (myPlayerId) socketClient.setMyPlayerId(myPlayerId);
     },
-    [state, myName],
+    [myPlayerId],
   );
 
   useEffect(
-    function handleGameState() {
-      if (!roomCode || !myName) {
-        navigate(ROUTES.LANDING, { replace: true });
-        return;
-      }
-
-      const offState = roomSocket.onRoomState((s) => setState(s));
-
-      const offClosed = roomSocket.onRoomClosed(() => {
-        socketClient.disconnect();
-        navigate(ROUTES.LANDING, { replace: true });
-      });
-
-      return () => {
-        offState();
-        offClosed();
-      };
-    },
-    [roomCode, myName, navigate],
-  );
-
-  useEffect(
-    function handleTierData() {
-      const tierSetId = state?.tierSetId ?? null;
+    function handleTierSetInfo() {
+      const tierSetId = state.tierSetId ?? null;
       if (!tierSetId) return;
 
       let cancelled = false;
+
       roomSocket.getTierSet(tierSetId).then((ts) => {
         if (!cancelled) setTierSet(ts);
       });
@@ -142,29 +101,8 @@ export default function PlayerGameController() {
         cancelled = true;
       };
     },
-    [state?.tierSetId],
+    [state.tierSetId],
   );
-
-  if (!state) {
-    return (
-      <div className={styles.root}>
-        <header className={styles.header}>
-          <TWFLogo className={styles.logo} />
-          <div className={styles.headerText}>
-            <MainTextTypography variant="body" muted>
-              LOBBY: {roomCode || "—"}
-            </MainTextTypography>
-          </div>
-        </header>
-
-        <div className={styles.center}>
-          <MainTextTypography variant="body" muted>
-            Connecting…
-          </MainTextTypography>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.root}>
@@ -204,6 +142,7 @@ export default function PlayerGameController() {
                   </MainTextTypography>
                 </div>
               )}
+
               <MainTextTypography variant="h4" className={styles.itemName}>
                 {currentItem.name}
               </MainTextTypography>

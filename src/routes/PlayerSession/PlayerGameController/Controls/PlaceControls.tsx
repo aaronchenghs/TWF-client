@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import clsx from "clsx";
-import { AccentButton } from "../../../components/AccentButton/AccentButton";
-import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
 import styles from "./Controls.module.scss";
 import { AwaitingControls } from "./AwaitingControls";
 import * as Contracts from "@twf/contracts";
+import { AccentButton } from "../../../../components/AccentButton/AccentButton";
+import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
 type Tier = Contracts.Tier;
 type TierItem = Contracts.TierItem;
 
@@ -62,7 +62,7 @@ export function PlaceControls(props: {
               type="button"
               className={clsx(
                 styles.tierPickRow,
-                isSelected && styles.tierPickRowSelected
+                isSelected && styles.tierPickRowSelected,
               )}
               style={{
                 ["--tierColor" as string]: tier.color,

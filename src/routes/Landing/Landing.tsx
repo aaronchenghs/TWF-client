@@ -92,7 +92,6 @@ export function JoinRoomPanel() {
     setIsJoining(true);
 
     try {
-      socketClient.connect();
       await roomSocket.joinRoomOrThrow({
         code: normalizedCode,
         role: "player",
@@ -100,7 +99,7 @@ export function JoinRoomPanel() {
       });
 
       const qString = new URLSearchParams({ name: normalizedName }).toString();
-      navigate(`${ROUTES.PLAYER_LOBBY}/${normalizedCode}?${qString}`);
+      navigate(`${ROUTES.PLAYER_SESSION}/${normalizedCode}?${qString}`);
     } catch (e) {
       console.error(e);
       socketClient.disconnect();

@@ -5,8 +5,10 @@
   padding: $default-padding;
 
   text-transform: uppercase;
+  text-align: center;
   font-family: $font-display;
   letter-spacing: 0.08em;
+  font-size: $fs-h5;
 
   color: $text-primary;
 
@@ -16,9 +18,14 @@
   border-radius: $radius-sm;
 
   outline: none;
-  transition: border-color $dur-fast, box-shadow $dur-fast, background $dur-fast;
+  transition:
+    border-color $dur-fast,
+    box-shadow $dur-fast,
+    background $dur-fast;
 
-  box-shadow: 0 1px 0 $light-transparency, 0 8px 22px $box-shadow-color;
+  box-shadow:
+    0 1px 0 $light-transparency,
+    0 8px 22px $box-shadow-color;
 
   &::placeholder {
     color: $text-secondary;
@@ -31,6 +38,8 @@
 
   &:focus {
     border-color: $accent;
-    box-shadow: 0 0 0 3px rgba($accent, 0.3), 0 10px 26px $box-shadow-color;
+    box-shadow:
+      0 0 0 3px rgba($accent, 0.3),
+      0 10px 26px $box-shadow-color;
   }
 }

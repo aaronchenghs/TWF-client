@@ -12,6 +12,7 @@ import { TierSetGridEntry } from "./TierSetGridEntry/TierSetGridEntry";
 import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
 import { CopyTextButton } from "../../components/CopyTextButton/CopyTextButton";
 import { ROUTES } from "../routes";
+import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -23,6 +24,8 @@ export default function HostLobby() {
   const { code } = useParams<{ code: string }>();
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
+  const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
+
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
 
@@ -48,7 +51,16 @@ export default function HostLobby() {
     roomSocket.setTierSet(ts.id);
   }, []);
 
-  const handleStart = useCallback(() => {
+  const handleStartClick = useCallback(() => {
+    if (!isStartEnabled) return;
+    setIsStartCountdownOpen(true);
+  }, [isStartEnabled]);
+
+  const handleCancelCountdown = useCallback(() => {
+    setIsStartCountdownOpen(false);
+  }, []);
+
+  const handleCountdownComplete = useCallback(() => {
     roomSocket.startGame(roomCode);
     navigate(`${ROUTES.GAME_ROOM}/${roomCode}`);
   }, [navigate, roomCode]);
@@ -154,16 +166,19 @@ export default function HostLobby() {
                 ? `${selectedTierSetName}`
                 : "No tier list selected"}
             </MainTextTypography>
+
             <AccentButton
               variant="primary"
-              disabled={!isStartEnabled}
-              onClick={handleStart}
+              disabled={!isStartEnabled || isStartCountdownOpen}
+              onClick={handleStartClick}
             >
               Start Game
             </AccentButton>
+
             <AccentButton
               variant="secondary"
               onClick={() => setIsConfirmCloseOpen(true)}
+              disabled={isStartCountdownOpen}
             >
               Close Lobby
             </AccentButton>
@@ -179,6 +194,12 @@ export default function HostLobby() {
         destructive
         onCancel={() => setIsConfirmCloseOpen(false)}
         onConfirm={handleCloseLobby}
+      />
+
+      <CountdownOverlay
+        open={isStartCountdownOpen}
+        onCancel={handleCancelCountdown}
+        onComplete={handleCountdownComplete}
       />
     </div>
   );

@@ -1,0 +1,55 @@
+@use "../../../styles/export.scss" as *;
+
+.overlay {
+  @include appearFadeIn(140ms);
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: $box-shadow-color;
+  backdrop-filter: blur(6px);
+  padding: $default-padding;
+}
+
+.content {
+  display: grid;
+  grid-template-rows: auto auto;
+  place-items: center;
+  gap: $default-gap;
+}
+
+.stage {
+  display: grid;
+  place-items: center;
+  width: min(360px, 80vw);
+  height: min(360px, 50vh);
+  padding-bottom: 18px;
+  overflow: hidden;
+}
+
+.countSvg {
+  width: min(240px, 55vw);
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 28px $box-shadow-color);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.in {
+  @include appearPopIn(180ms);
+}
+
+.out {
+  @include appearPopOut(140ms);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}

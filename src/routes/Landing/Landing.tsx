@@ -12,11 +12,7 @@ import { useMobileView } from "../../lib/hooks/useMobileView";
 import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
 import * as Contracts from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
-import {
-  getClientId,
-  getRoomSession,
-  saveRoomSession,
-} from "../../lib/session";
+import { getClientId, saveRoomSession } from "../../lib/session";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 
@@ -95,30 +91,23 @@ export function JoinRoomPanel() {
   const handleJoinRoom = async () => {
     if (!canJoin) return;
     setIsJoining(true);
-
     const clientId = getClientId();
-
-    const existing = getRoomSession(normalizedCode);
-    const effectiveName =
-      existing?.role === "player" && existing.name
-        ? existing.name
-        : normalizedName;
 
     try {
       await roomSocket.joinRoomOrThrow({
         code: normalizedCode,
         role: "player",
-        name: effectiveName,
+        name: normalizedName,
         clientId,
       });
 
       saveRoomSession({
         code: normalizedCode,
         role: "player",
-        name: effectiveName,
+        name: normalizedName,
       });
 
-      const qString = new URLSearchParams({ name: effectiveName }).toString();
+      const qString = new URLSearchParams({ name: normalizedName }).toString();
       navigate(`${ROUTES.PLAYER_SESSION}/${normalizedCode}?${qString}`);
     } catch (e) {
       console.error(e);

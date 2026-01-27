@@ -30,7 +30,10 @@ export default function HostLobby() {
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
 
-  const players = roomState?.players ?? [];
+  const players = useMemo(
+    () => (roomState?.players ?? []).filter((p) => p.connected !== false),
+    [roomState],
+  );
   const playerCount = players.length;
   const selectedTierSetId = roomState?.tierSetId ?? null;
   const isStartEnabled = !!selectedTierSetId && playerCount >= 2;

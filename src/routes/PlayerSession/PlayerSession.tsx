@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ROUTES } from "../routes";
-import { normalizeCode } from "../../lib/codeUtils";
+import { normalizeCode, normalizeName } from "../../lib/codeUtils";
 import { socketClient } from "../../services/sockets/socketClient";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
@@ -24,10 +24,11 @@ export default function PlayerSession() {
   const [state, setState] = useState<RoomPublicState | null>(null);
 
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
-  const myName = useMemo(
-    () => (searchParams.get("name") ?? "").trim(),
-    [searchParams],
-  );
+
+  // const myName = useMemo(
+  //   () => (searchParams.get("name") ?? "").trim(),
+  //   [searchParams],
+  // );
 
   const returnToLanding = useCallback(() => {
     socketClient.disconnect();
@@ -40,10 +41,10 @@ export default function PlayerSession() {
         returnToLanding();
         return;
       }
-
+      const nameFromUrl = normalizeName(searchParams.get("name"));
       const clientId = getClientId();
       const session = getRoomSession(roomCode);
-      const effectiveName = session?.name ?? myName;
+      const effectiveName = nameFromUrl || session?.name || "";
 
       if (!effectiveName) {
         returnToLanding();
@@ -81,7 +82,7 @@ export default function PlayerSession() {
         offClosed();
       };
     },
-    [roomCode, myName, returnToLanding],
+    [roomCode, searchParams, returnToLanding],
   );
 
   if (!state) return <div>Connecting…</div>;

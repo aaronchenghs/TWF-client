@@ -24,7 +24,7 @@
   place-items: center;
   width: min(360px, 80vw);
   height: min(360px, 50vh);
-  padding-bottom: 18px;
+  padding-bottom: 28px;
   overflow: hidden;
 }
 
@@ -34,10 +34,14 @@
   max-height: 100%;
   height: auto;
   display: block;
-  object-fit: contain;
+
   filter: drop-shadow(0 16px 28px $box-shadow-color);
   user-select: none;
   -webkit-user-drag: none;
+}
+
+.countSvg :global(path[fill="currentColor"]) {
+  transition: fill 120ms ease;
 }
 
 .in {

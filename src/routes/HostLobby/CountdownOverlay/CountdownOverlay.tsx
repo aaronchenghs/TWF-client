@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./CountdownOverlay.module.scss";
-import oneSvg from "../../../assets/public/1.svg";
-import twoSvg from "../../../assets/public/2.svg";
-import threeSvg from "../../../assets/public/3.svg";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
+import { DEFAULT_TIER_COLORS } from "../../../lib/colors";
+
+import One from "../../../assets/public/1.svg?react";
+import Two from "../../../assets/public/2.svg?react";
+import Three from "../../../assets/public/3.svg?react";
 
 const COUNTDOWN_PACE = 600;
 const OUT_MS = 140;
@@ -17,12 +19,6 @@ type Props = {
   seconds?: 3 | 2 | 1;
 };
 
-const SVG_BY_COUNT: Record<number, string> = {
-  1: oneSvg,
-  2: twoSvg,
-  3: threeSvg,
-};
-
 export function CountdownOverlay({
   open,
   onCancel,
@@ -31,6 +27,7 @@ export function CountdownOverlay({
 }: Props) {
   const [displayCount, setDisplayCount] = useState<number>(seconds);
   const [phase, setPhase] = useState<"in" | "out">("in");
+  const [color, setColor] = useState<string>(() => pickRandomColor());
 
   const timersRef = useRef<number[]>([]);
 
@@ -44,12 +41,17 @@ export function CountdownOverlay({
     timersRef.current.push(id);
   }, []);
 
-  const handleCancel = useCallback(() => {
+  const hardReset = useCallback(() => {
     clearAllTimers();
     setPhase("in");
     setDisplayCount(seconds);
+    setColor((prev) => pickRandomColor(prev));
+  }, [clearAllTimers, seconds]);
+
+  const handleCancel = useCallback(() => {
+    hardReset();
     onCancel();
-  }, [clearAllTimers, onCancel, seconds]);
+  }, [hardReset, onCancel]);
 
   useEffect(
     function handleLockScroll() {
@@ -93,6 +95,7 @@ export function CountdownOverlay({
       schedule(() => {
         setPhase("in");
         setDisplayCount(startCount);
+        setColor((prev) => pickRandomColor(prev));
       }, 0);
 
       const counts = Array.from(
@@ -111,6 +114,7 @@ export function CountdownOverlay({
           schedule(() => {
             setDisplayCount(n - 1);
             setPhase("in");
+            setColor((prev) => pickRandomColor(prev));
           }, base + COUNTDOWN_PACE);
         } else {
           schedule(() => {
@@ -126,9 +130,13 @@ export function CountdownOverlay({
     [open, seconds, onComplete, clearAllTimers, schedule],
   );
 
-  if (!open) return null;
+  const Svg = useMemo(() => {
+    if (displayCount === 3) return Three;
+    if (displayCount === 2) return Two;
+    return One;
+  }, [displayCount]);
 
-  const src = SVG_BY_COUNT[displayCount] ?? threeSvg;
+  if (!open) return null;
 
   return (
     <div
@@ -139,13 +147,13 @@ export function CountdownOverlay({
     >
       <div className={styles.content}>
         <div className={styles.stage}>
-          <img
+          <Svg
             className={clsx(
               styles.countSvg,
               phase === "in" ? styles.in : styles.out,
             )}
-            src={src}
-            alt={`${displayCount}`}
+            style={{ color }}
+            aria-label={`${displayCount}`}
           />
         </div>
 
@@ -157,4 +165,18 @@ export function CountdownOverlay({
       </div>
     </div>
   );
+}
+
+function pickRandomColor(prev?: string) {
+  const colorArray = Array.from(DEFAULT_TIER_COLORS);
+  const n = colorArray.length;
+
+  const prevIndex = prev ? colorArray.indexOf(prev) : -1;
+
+  const offset =
+    prevIndex >= 0
+      ? 1 + Math.floor(Math.random() * (n - 1))
+      : Math.floor(Math.random() * n);
+
+  return colorArray[(Math.max(prevIndex, 0) + offset) % n];
 }

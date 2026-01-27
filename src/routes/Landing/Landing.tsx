@@ -107,8 +107,7 @@ export function JoinRoomPanel() {
         name: normalizedName,
       });
 
-      const qString = new URLSearchParams({ name: normalizedName }).toString();
-      navigate(`${ROUTES.PLAYER_SESSION}/${normalizedCode}?${qString}`);
+      navigate(`${ROUTES.PLAYER_SESSION}/${normalizedCode}`);
     } catch (e) {
       console.error(e);
       socketClient.disconnect();

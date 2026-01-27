@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TWFLogo from "../../../assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerGameController.module.scss";
 import { AwaitingControls } from "./Controls/AwaitingControls";
@@ -13,6 +13,7 @@ import { roomSocket } from "../../../services/sockets/roomSocket";
 import { socketClient } from "../../../services/sockets/socketClient";
 import { GameStatusCard } from "../../GameRoom/GameStatusCard/GameStatusCard";
 import { ROUTES } from "../../routes";
+import { getPlayerId } from "../../../lib/session";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -25,23 +26,18 @@ export default function PlayerGameController({
   state: RoomPublicState;
 }) {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
   const [isPlacing, setIsPlacing] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
 
-  const myName = useMemo(
-    () => (searchParams.get("name") ?? "").trim(),
-    [searchParams],
-  );
+  const myPlayerId = getPlayerId(state.code);
 
-  const myPlayerId = useMemo(() => {
-    if (!myName) return null;
-    const me = state.players?.find((p) => p.name.trim() === myName) ?? null;
-    return me?.id ?? null;
-  }, [state.players, myName]);
+  const myName = useMemo(() => {
+    if (!myPlayerId) return "PLAYER";
+    return state.players.find((p) => p.id === myPlayerId)?.name ?? "PLAYER";
+  }, [state.players, myPlayerId]);
 
   const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
   const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;

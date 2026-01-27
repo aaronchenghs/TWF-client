@@ -24,6 +24,22 @@ function sessionKey(code: string) {
   return `twf:session:${code}`;
 }
 
+function playerIdKey(code: string) {
+  return `twf:playerId:${code}`;
+}
+
+export function getPlayerId(code: string): string | null {
+  return localStorage.getItem(playerIdKey(code));
+}
+
+export function savePlayerId(code: string, playerId: string) {
+  localStorage.setItem(playerIdKey(code), playerId);
+}
+
+export function clearPlayerId(code: string) {
+  localStorage.removeItem(playerIdKey(code));
+}
+
 /**
  * Returns a saved room session for the given code, if any.
  */

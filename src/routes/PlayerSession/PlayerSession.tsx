@@ -8,9 +8,12 @@ import * as Contracts from "@twf/contracts";
 import PlayerLobby from "./PlayerLobby/PlayerLobby";
 import PlayerGameController from "./PlayerGameController/PlayerGameController";
 import {
+  clearPlayerId,
   clearRoomSession,
   getClientId,
+  getPlayerId,
   getRoomSession,
+  savePlayerId,
   saveRoomSession,
 } from "../../lib/session";
 
@@ -53,26 +56,42 @@ export default function PlayerSession() {
 
       let cancelled = false;
 
-      (async () => {
+      async function joinAndHydrateSession() {
         try {
-          const initial = await roomSocket.joinRoomOrThrow({
+          const result = await roomSocket.joinRoomOrThrow({
             code: roomCode,
             role: "player",
             name: effectiveName,
             clientId,
           });
+
+          const { state: initial, playerId } = result;
+
+          const existingPlayerId = getPlayerId(roomCode);
+          const finalPlayerId = playerId ?? existingPlayerId;
+          if (!finalPlayerId) throw new Error("Missing playerId");
+
+          if (playerId) savePlayerId(roomCode, playerId);
+
+          const canonicalName =
+            initial.players.find((p) => p.id === finalPlayerId)?.name ??
+            effectiveName;
+
           saveRoomSession({
             code: roomCode,
             role: "player",
-            name: effectiveName,
+            name: canonicalName,
           });
+
           if (!cancelled) setState(initial);
         } catch {
           clearRoomSession(roomCode);
+          clearPlayerId(roomCode);
           if (!cancelled) returnToLanding();
         }
-      })();
+      }
 
+      joinAndHydrateSession();
       const offState = roomSocket.onRoomState((s) => setState(s));
       const offClosed = roomSocket.onRoomClosed(() => returnToLanding());
 

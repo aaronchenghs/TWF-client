@@ -97,7 +97,7 @@ export const roomSocket = {
   async joinRoomOrThrow(
     input: RoomJoinPayload,
     timeoutMs = 3000,
-  ): Promise<RoomPublicState> {
+  ): Promise<{ state: RoomPublicState; playerId?: string }> {
     const normalizedCode = normalizeCode(input.code);
 
     const stateP = socketClient
@@ -111,10 +111,22 @@ export const roomSocket = {
       .waitFor("room:error", timeoutMs)
       .then(([msg]) => Promise.reject(new Error(msg)));
 
+    const joinedP =
+      input.role === "player"
+        ? socketClient
+            .waitFor("room:joined", timeoutMs)
+            .then(([payload]) => payload.playerId as string)
+        : Promise.resolve(undefined);
+
     socketClient.connect();
     this.joinRoom({ ...input, code: normalizedCode });
 
-    return Promise.race([stateP, errorP]);
+    const [state, playerId] = await Promise.race([
+      Promise.all([stateP, joinedP]),
+      errorP,
+    ]);
+
+    return { state, playerId };
   },
 
   startGame(code: string): void {

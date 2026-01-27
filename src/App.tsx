@@ -16,7 +16,7 @@ export default function App() {
           <Route path={ROUTES.LANDING} element={<Landing />} />
           <Route path={`${ROUTES.HOST_LOBBY}/:code?`} element={<HostLobby />} />
           <Route
-            path={`${ROUTES.PLAYER_SESSION}/:code?`}
+            path={`${ROUTES.PLAYER_SESSION}/:code`}
             element={<PlayerSession />}
           />
           <Route path={`${ROUTES.GAME_ROOM}/:code`} element={<GameRoom />} />

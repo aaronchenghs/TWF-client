@@ -7,6 +7,12 @@ import { roomSocket } from "../../services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
 import PlayerLobby from "./PlayerLobby/PlayerLobby";
 import PlayerGameController from "./PlayerGameController/PlayerGameController";
+import {
+  clearRoomSession,
+  getClientId,
+  getRoomSession,
+  saveRoomSession,
+} from "../../lib/session";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -29,11 +35,21 @@ export default function PlayerSession() {
   }, [navigate]);
 
   useEffect(
-    function handleState() {
-      if (!roomCode || roomCode.length !== CODE_LENGTH || !myName) {
+    function handleStateAndConnection() {
+      if (!roomCode || roomCode.length !== CODE_LENGTH) {
         returnToLanding();
         return;
       }
+
+      const clientId = getClientId();
+      const session = getRoomSession(roomCode);
+      const effectiveName = session?.name ?? myName;
+
+      if (!effectiveName) {
+        returnToLanding();
+        return;
+      }
+
       let cancelled = false;
 
       (async () => {
@@ -41,10 +57,17 @@ export default function PlayerSession() {
           const initial = await roomSocket.joinRoomOrThrow({
             code: roomCode,
             role: "player",
-            name: myName,
+            name: effectiveName,
+            clientId,
+          });
+          saveRoomSession({
+            code: roomCode,
+            role: "player",
+            name: effectiveName,
           });
           if (!cancelled) setState(initial);
         } catch {
+          clearRoomSession(roomCode);
           if (!cancelled) returnToLanding();
         }
       })();

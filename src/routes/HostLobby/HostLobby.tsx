@@ -13,6 +13,7 @@ import { ConfirmationModal } from "../../components/ConfirmationModal/Confirmati
 import { CopyTextButton } from "../../components/CopyTextButton/CopyTextButton";
 import { ROUTES } from "../routes";
 import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
+import { getClientId } from "../../lib/session";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -69,7 +70,9 @@ export default function HostLobby() {
     function handleRoomConnection() {
       if (roomCode.length !== CODE_LENGTH) return;
 
-      roomSocket.joinRoomOrThrow({ code: roomCode, role: "host" });
+      const clientId = getClientId();
+
+      roomSocket.joinRoomOrThrow({ code: roomCode, role: "host", clientId });
       roomSocket.listTierSets().then(setTierSets);
 
       const offState = roomSocket.onRoomState((state) => {

@@ -82,11 +82,16 @@ export const roomSocket = {
         code: normalizedCode,
         role: "player",
         name: input.name,
+        clientId: input.clientId,
       });
       return;
     }
 
-    socketClient.emit("room:join", { code: normalizedCode, role: "host" });
+    socketClient.emit("room:join", {
+      code: normalizedCode,
+      role: "host",
+      clientId: input.clientId,
+    });
   },
 
   async joinRoomOrThrow(

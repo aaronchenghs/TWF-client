@@ -3,6 +3,7 @@
 ## Overview
 
 Frontend for **Tiers! With Friends**, a real-time tier-ranking party game. Hosts create lobbies; players join with a code and name. Communicates with the server over **socket.io**.
+Server repository can be found here: https://github.com/aaronchenghs/TWF-server
 
 ## Tech
 

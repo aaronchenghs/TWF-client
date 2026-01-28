@@ -3,51 +3,20 @@
 $defaultTierColor: $light-transparency;
 
 .root {
-  // provided by TSX
-  --rowCount: 8;
-
-  --maxRowsNoScroll: 8;
-  --boardChrome: 180px;
-
-  --g: clamp(6px, 1vh, #{$default-gap});
-  --pad: clamp(6px, 1vh, #{$default-gap});
-  --nameH: 28px;
-
-  // effective rows used for sizing:
-  // - if 1..8 rows: they expand to fill the board
-  // - if >8 rows: treat as 8 for sizing (scroll becomes expected)
-  --rowsForSizing: min(var(--rowCount), var(--maxRowsNoScroll));
-
-  --rowTarget: calc(
-    (
-        100dvh - var(--boardChrome) - (var(--rowsForSizing) + 1) * var(--g) -
-          2 * var(--pad)
-      ) /
-      var(--rowsForSizing)
-  );
-
-  // thumb grows when few rows; shrinks when many rows
-  --thumb: clamp(52px, calc(var(--rowTarget) - var(--nameH)), 110px);
-  --tileH: calc(var(--thumb) + var(--nameH));
-  --tileW: calc(var(--thumb) + 75px);
-
   display: flex;
   flex-direction: column;
-  gap: var(--g);
-
-  min-height: calc(100dvh - var(--boardChrome));
+  gap: $default-gap;
 }
 
 .row {
-  --tierColor: #{$defaultTierColor};
+  --tierColor: $defaultTierColor;
 
   display: grid;
-  grid-template-columns: clamp(84px, 10vw, 160px) 1fr;
-  gap: var(--g);
+  grid-template-columns: 0.1fr 1fr;
+  gap: $default-gap;
+  min-height: 174px;
 
-  min-height: var(--tileH);
-
-  padding: var(--pad);
+  padding: $default-gap;
   border-radius: $radius-sm;
 
   background: $defaultTierColor;
@@ -82,17 +51,14 @@ $defaultTierColor: $light-transparency;
 
     background: var(--tierColor);
     border-radius: $radius-sm;
-    padding: clamp(6px, 0.8vh, #{$default-padding});
+    padding: $default-padding;
     box-shadow: 0 4px 0 $box-shadow-color;
-    min-height: 0;
   }
 
   .items {
     display: flex;
     align-items: flex-start;
-    align-content: flex-start;
     flex-wrap: wrap;
-    gap: var(--g);
-    min-height: var(--tileH);
+    gap: $default-gap;
   }
 }

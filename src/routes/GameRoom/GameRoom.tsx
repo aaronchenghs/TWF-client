@@ -75,30 +75,27 @@ export default function GameRoom() {
 
   return (
     <div className={styles.root}>
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <TWFLogo className={styles.logo} />
-        </div>
-
-        <div className={styles.headerRight}>
-          <MainTextTypography variant="caption" muted letterSpacing="wide">
-            ROOM {state.code}
-          </MainTextTypography>
-          <AccentButton
-            variant="secondary"
-            onClick={() => setIsConfirmExitOpen(true)}
-          >
-            Exit
-          </AccentButton>
-        </div>
-      </header>
-
       <main className={styles.main}>
         <section className={styles.boardSection}>
           <TierBoard state={state} />
         </section>
 
         <aside className={styles.sideSection}>
+          <header className={styles.header}>
+            <div className={styles.headerLeft}>
+              <TWFLogo className={styles.logo} />
+            </div>
+
+            <div className={styles.headerRight}>
+              <AccentButton
+                variant="secondary"
+                onClick={() => setIsConfirmExitOpen(true)}
+              >
+                Exit
+              </AccentButton>
+            </div>
+          </header>
+
           <GameStatusCard label="PHASE">
             <div className={styles.itemRow}>
               <MainTextTypography variant="h3" className={styles.bigText}>

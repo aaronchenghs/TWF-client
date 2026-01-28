@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TWFLogo from "../../../assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerLobby.module.scss";
 import * as Contracts from "@twf/contracts";
@@ -7,35 +7,29 @@ import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { ConfirmationModal } from "../../../components/ConfirmationModal/ConfirmationModal";
 import { HowToPlayModal } from "../../../components/HowToPlayModal/HowToPlayModal";
 import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
-import { normalizeCode } from "../../../lib/codeUtils";
 import { socketClient } from "../../../services/sockets/socketClient";
 import { ROUTES } from "../../routes";
+import { getPlayerId } from "../../../lib/session";
 
-const CODE_LENGTH = Contracts.CODE_LENGTH;
+type RoomPublicState = Contracts.RoomPublicState;
 
-export default function PlayerLobby() {
+export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const navigate = useNavigate();
-  const { code } = useParams<{ code: string }>();
-  const [searchParams] = useSearchParams();
 
   const [isConfirmQuitOpen, setIsConfirmQuitOpen] = useState(false);
   const [isHowToOpen, setIsHowToOpen] = useState(false);
 
-  const roomCode = normalizeCode(code ?? "");
-  const myName = (searchParams.get("name") ?? "").trim();
+  const myPlayerId = getPlayerId(state.code);
+
+  const myName = useMemo(() => {
+    if (!myPlayerId) return "PLAYER";
+    return state.players.find((p) => p.id === myPlayerId)?.name ?? "PLAYER";
+  }, [state.players, myPlayerId]);
 
   const handleConfirmQuit = () => {
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
   };
-
-  useEffect(
-    function handleBootIntruders() {
-      if (!roomCode || roomCode.length !== CODE_LENGTH || !myName)
-        navigate(ROUTES.LANDING, { replace: true });
-    },
-    [roomCode, myName, navigate],
-  );
 
   return (
     <div className={styles.waiting}>

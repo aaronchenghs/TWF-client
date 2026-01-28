@@ -28,11 +28,6 @@ export default function PlayerSession() {
 
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
 
-  // const myName = useMemo(
-  //   () => (searchParams.get("name") ?? "").trim(),
-  //   [searchParams],
-  // );
-
   const returnToLanding = useCallback(() => {
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
@@ -65,17 +60,18 @@ export default function PlayerSession() {
             clientId,
           });
 
-          const { state: initial, playerId } = result;
+          const { state: initialState, playerId } = result;
 
           const existingPlayerId = getPlayerId(roomCode);
-          const finalPlayerId = playerId ?? existingPlayerId;
-          if (!finalPlayerId) throw new Error("Missing playerId");
-
           if (playerId) savePlayerId(roomCode, playerId);
 
+          const finalPlayerId = playerId ?? existingPlayerId ?? null;
           const canonicalName =
-            initial.players.find((p) => p.id === finalPlayerId)?.name ??
-            effectiveName;
+            (finalPlayerId
+              ? initialState.players.find(
+                  (player) => player.id === finalPlayerId,
+                )?.name
+              : null) ?? effectiveName;
 
           saveRoomSession({
             code: roomCode,
@@ -83,7 +79,7 @@ export default function PlayerSession() {
             name: canonicalName,
           });
 
-          if (!cancelled) setState(initial);
+          if (!cancelled) setState(initialState);
         } catch {
           clearRoomSession(roomCode);
           clearPlayerId(roomCode);
@@ -107,7 +103,7 @@ export default function PlayerSession() {
   if (!state) return <div>Connecting…</div>;
 
   return state.phase === "LOBBY" ? (
-    <PlayerLobby />
+    <PlayerLobby state={state} />
   ) : (
     <PlayerGameController state={state} />
   );

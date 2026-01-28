@@ -9,17 +9,13 @@ $current-item-float-duration: 3s;
   gap: $default-gap;
   min-height: 100vh;
 
-  .logo {
-    width: 25vh;
-    height: auto;
-    @include float(6px, 4s);
-  }
-
   .header {
     display: flex;
-    justify-content: space-between;
     align-items: flex-end;
+    justify-content: space-between;
+    align-items: center;
     gap: $default-gap;
+    overflow: hidden;
   }
 
   .headerLeft,
@@ -31,6 +27,15 @@ $current-item-float-duration: 3s;
 
   .headerRight {
     align-items: flex-end;
+  }
+
+  .logo {
+    width: auto;
+    height: 56px;
+    max-width: 100%;
+    flex: 0 1 auto;
+    object-fit: contain;
+    @include float(6px, 4s);
   }
 
   .main {

@@ -12,7 +12,14 @@ export function TierBoard({ state }: { state: RoomPublicState }) {
   const tiers = state.tiers ?? ({} as Record<TierId, TierItemId[]>);
 
   return (
-    <div className={styles.root}>
+    <div
+      className={styles.root}
+      style={
+        {
+          ["--rowCount" as string]: tierOrder.length || 1,
+        } as React.CSSProperties
+      }
+    >
       {tierOrder.map((tierId) => {
         const items = tiers[tierId] ?? [];
         const isPending = state.pendingTierId === tierId;
@@ -23,7 +30,13 @@ export function TierBoard({ state }: { state: RoomPublicState }) {
           <div
             key={tierId}
             className={clsx(styles.row, isPending && styles.pending)}
-            style={{ ["--tierColor" as string]: tierColor }}
+            style={
+              tierColor
+                ? ({
+                    ["--tierColor" as string]: tierColor,
+                  } as React.CSSProperties)
+                : undefined
+            }
           >
             <div className={styles.tierLabel}>
               <MainTextTypography variant="h5" weight="bold">

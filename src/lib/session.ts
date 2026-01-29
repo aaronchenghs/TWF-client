@@ -1,4 +1,5 @@
-import type { Role } from "@twf/contracts";
+import * as Contracts from "@twf/contracts";
+type Role = Contracts.Role;
 
 const KEY_CLIENT_ID = "twf:clientId";
 

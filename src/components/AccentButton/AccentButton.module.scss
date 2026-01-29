@@ -62,6 +62,17 @@ $transition-med: $dur-base ease;
   }
 }
 
+.small {
+  padding: calc($default-padding * 0.55) calc($default-padding * 1.05);
+  border-width: 1px;
+  border-radius: $radius-sm;
+
+  :global(*) {
+    font-size: 0.9em;
+    line-height: 1.1;
+  }
+}
+
 .destructive {
   --accent: #{$error};
 }

@@ -90,11 +90,17 @@ export default function PlayerSession() {
       joinAndHydrateSession();
       const offState = roomSocket.onRoomState((s) => setState(s));
       const offClosed = roomSocket.onRoomClosed(() => returnToLanding());
+      const offKicked = roomSocket.onRoomKicked(() => {
+        clearRoomSession(roomCode);
+        clearPlayerId(roomCode);
+        returnToLanding();
+      });
 
       return () => {
         cancelled = true;
         offState();
         offClosed();
+        offKicked();
       };
     },
     [roomCode, searchParams, returnToLanding],

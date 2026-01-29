@@ -152,10 +152,17 @@ export default function HostLobby() {
                 </MainTextTypography>
               ) : (
                 players.map((player) => (
-                  <li key={player.id}>
+                  <li className={styles.playerEntry} key={player.id}>
                     <MainTextTypography className={styles.player} variant="h6">
                       {player.name}
                     </MainTextTypography>
+                    <AccentButton
+                      variant="destructive"
+                      size="small"
+                      onClick={() => roomSocket.bootPlayerFromLobby(player.id)}
+                    >
+                      Kick
+                    </AccentButton>
                   </li>
                 ))
               )}

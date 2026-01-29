@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
-    "@twf/contracts": "github:aaronchenghs/TWF-contracts#c4b7d96e9fdfc87d76df1b871401ab50d0df55ab",
+    "@twf/contracts": "github:aaronchenghs/TWF-contracts#ee1388d6e6a1a734a1a9ed8f37e0877943e42016",
     "lucide-react": "^0.562.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

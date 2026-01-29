@@ -4,15 +4,18 @@ import styles from "./AccentButton.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MaintTextTypography";
 
 type Variant = "primary" | "secondary" | "ghost" | "destructive";
+type Size = "small";
 
 interface AccentButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
+  size?: Size;
   /** Overrides accent color */
   color?: string;
 }
 
 export function AccentButton({
   variant = "primary",
+  size,
   color,
   className,
   children,
@@ -20,7 +23,12 @@ export function AccentButton({
 }: AccentButtonProps) {
   return (
     <button
-      className={clsx(styles.button, styles[variant], className)}
+      className={clsx(
+        styles.button,
+        styles[variant],
+        size && styles[size],
+        className,
+      )}
       style={
         color
           ? ({ ["--accent" as string]: color } as React.CSSProperties)
@@ -28,7 +36,9 @@ export function AccentButton({
       }
       {...props}
     >
-      <MainTextTypography variant="h4">{children}</MainTextTypography>
+      <MainTextTypography variant={size === "small" ? "h6" : "h4"}>
+        {children}
+      </MainTextTypography>
     </button>
   );
 }

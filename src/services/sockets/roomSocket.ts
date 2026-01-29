@@ -3,6 +3,7 @@ import { normalizeCode } from "../../lib/codeUtils";
 import * as Contracts from "@twf/contracts";
 
 type Role = Contracts.Role;
+type PlayerId = Contracts.PlayerId;
 type TierSetId = Contracts.TierSetId;
 type TierSetDefinition = Contracts.TierSetDefinition;
 type TierSetSummary = Contracts.TierSetSummary;
@@ -69,6 +70,14 @@ export const roomSocket = {
 
   setTierSet(tierSetId: TierSetId): void {
     socketClient.emit("room:setTierSet", { tierSetId });
+  },
+
+  bootPlayerFromLobby(playerId: PlayerId): void {
+    socketClient.emit("room:bootPlayerFromLobby", { playerId });
+  },
+
+  onRoomKicked(handler: () => void): () => void {
+    return socketClient.on("room:kicked", handler);
   },
 
   /**

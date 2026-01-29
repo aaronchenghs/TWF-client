@@ -87,6 +87,12 @@
       list-style: none;
       padding: 0;
       margin: $default-padding 0 0;
+
+      .playerEntry {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
 
     .player {

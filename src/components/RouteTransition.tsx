@@ -1,36 +1,35 @@
 import type { PropsWithChildren } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-
-type Direction = "left" | "right";
+import { AnimatePresence, easeInOut, motion } from "framer-motion";
+import type { TransitionDirection } from "../lib/routeTransitionRules";
 
 export function RouteTransition({
   children,
   routeKey,
   direction = "left",
-  durationMs = 200,
+  durationMs = 450,
 }: PropsWithChildren<{
   routeKey: string;
-  direction?: Direction;
+  direction?: TransitionDirection;
   durationMs?: number;
 }>) {
-  const offset = 18;
+  const offset = 2000;
   const enterX = direction === "left" ? -offset : offset;
   const exitX = direction === "left" ? offset : -offset;
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="sync" initial={false}>
       <motion.div
         key={routeKey}
         style={{
           position: "absolute",
           inset: 0,
         }}
-        initial={{ opacity: 0, x: enterX }}
+        initial={{ opacity: 0.25, x: enterX }}
         animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: exitX }}
+        exit={{ opacity: 0.25, x: exitX }}
         transition={{
           duration: durationMs / 1000,
-          ease: [0.2, 0.8, 0.2, 1],
+          ease: easeInOut,
         }}
       >
         {children}

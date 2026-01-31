@@ -1,0 +1,40 @@
+// Fades top/bottom edges of a scroll container using a mask gradient.
+// Usage: @include scrollFade($fade: 24px);
+@mixin scrollFade($fade: 24px, $axis: y, $repeat: no-repeat) {
+  --scroll-fade: #{$fade};
+
+  @if $axis == y {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--scroll-fade),
+      #000 calc(100% - var(--scroll-fade)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--scroll-fade),
+      #000 calc(100% - var(--scroll-fade)),
+      transparent 100%
+    );
+  } @else if $axis == x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--scroll-fade),
+      #000 calc(100% - var(--scroll-fade)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--scroll-fade),
+      #000 calc(100% - var(--scroll-fade)),
+      transparent 100%
+    );
+  }
+
+  -webkit-mask-repeat: $repeat;
+  mask-repeat: $repeat;
+}

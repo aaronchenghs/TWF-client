@@ -3,10 +3,12 @@
 .root {
   max-width: $page-width-cutoff;
   margin: 0 auto;
-  padding: $default-padding calc($default-padding * 2);
+  padding: 0 calc($default-padding * 2);
   display: flex;
   flex-direction: column;
   gap: $default-gap;
+  height: 100dvh;
+  overflow-y: auto;
 
   .header {
     display: flex;
@@ -51,12 +53,16 @@
     .left {
       display: flex;
       flex-direction: column;
-      gap: calc($default-gap * 2);
+      gap: $default-gap;
 
       .presetGrid {
         display: grid;
+        max-height: 65vh;
+        overflow-y: auto;
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: $default-gap;
+        @include scrollFade(24px, y);
+        padding-block: calc($default-padding * 1.5);
       }
     }
 

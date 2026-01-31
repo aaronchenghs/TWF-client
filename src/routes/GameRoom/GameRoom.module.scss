@@ -1,6 +1,9 @@
 @use "../../styles/export.scss" as *;
 
 $current-item-float-duration: 3s;
+$intro-duration: 2s;
+$board-delay: 0s;
+$side-delay: 0.25s;
 
 .root {
   padding: calc($default-padding * 2);
@@ -11,7 +14,6 @@ $current-item-float-duration: 3s;
 
   .header {
     display: flex;
-    align-items: flex-end;
     justify-content: space-between;
     align-items: center;
     gap: $default-gap;
@@ -46,18 +48,44 @@ $current-item-float-duration: 3s;
     min-height: 0;
   }
 
+  // --- Intro slide-in support ---
+  .boardSection,
+  .sideSection {
+    opacity: 1;
+    transform: translateX(0);
+    will-change: transform;
+
+    transition-property: transform;
+    transition-duration: $intro-duration;
+    transition-timing-function: ease-in-out;
+  }
+
   .boardSection {
+    transition-delay: $board-delay;
     min-width: 0;
     min-height: 0;
   }
 
   .sideSection {
+    transition-delay: $side-delay;
+
     display: flex;
     flex-direction: column;
     gap: $default-gap;
     max-height: calc(100vh - 180px);
     overflow: auto;
   }
+
+  &.intro {
+    .boardSection {
+      transform: translateX(-100vw);
+    }
+
+    .sideSection {
+      transform: translateX(100vw);
+    }
+  }
+  // ---------------------------------------------------------
 
   .itemRow {
     display: flex;

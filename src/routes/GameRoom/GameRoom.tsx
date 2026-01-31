@@ -15,14 +15,18 @@ import { ConfirmationModal } from "../../components/ConfirmationModal/Confirmati
 import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import { GameStatusCard } from "./GameStatusCard/GameStatusCard";
 import { IS_DEBUG_ENABLED } from "../../config/env";
+import clsx from "clsx";
+
 type RoomPublicState = Contracts.RoomPublicState;
 
 export default function GameRoom() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
 
-  const [state, setState] = useState<RoomPublicState | null>(null);
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
+  const [state, setState] = useState<RoomPublicState | null>(null);
+  const [isIntro, setIsIntro] = useState(true);
+
   const clock = usePhaseClock(state);
 
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
@@ -32,6 +36,16 @@ export default function GameRoom() {
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);
+
+  useEffect(
+    function handleIntroTransition() {
+      if (!state) return;
+      const raf = requestAnimationFrame(() => setIsIntro(false));
+      return () => cancelAnimationFrame(raf);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [!!state],
+  );
 
   useEffect(
     function handleRoomConnection() {
@@ -74,7 +88,7 @@ export default function GameRoom() {
   }
 
   return (
-    <div className={styles.root}>
+    <div className={clsx(styles.root, isIntro && styles.intro)}>
       <main className={styles.main}>
         <section className={styles.boardSection}>
           <TierBoard state={state} />

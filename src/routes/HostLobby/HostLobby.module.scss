@@ -51,18 +51,17 @@
     gap: calc($default-gap * 2);
 
     .left {
-      display: flex;
-      flex-direction: column;
       gap: $default-gap;
 
       .presetGrid {
-        display: grid;
+        display: flex;
+        flex-direction: column;
         max-height: 65vh;
         overflow-y: auto;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: $default-gap;
         @include scrollFade(24px, y);
         padding-block: calc($default-padding * 1.5);
+        padding: 0 $default-gap;
       }
     }
 

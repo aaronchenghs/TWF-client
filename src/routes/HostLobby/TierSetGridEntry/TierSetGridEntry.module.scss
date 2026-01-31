@@ -2,7 +2,7 @@
 
 .presetCard {
   width: 100%;
-  padding: calc($default-padding * 1.25);
+  padding: $default-padding;
   border-radius: $radius-md;
   border: 1px solid $bg-elevated;
   background: $bg-surface;
@@ -12,11 +12,11 @@
 
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: $default-gap;
-  min-height: 140px;
 
-  transition: transform $dur-fast ease, border-color $dur-fast ease,
+  transition:
+    transform $dur-fast ease,
+    border-color $dur-fast ease,
     box-shadow $dur-fast ease;
 
   &:hover {
@@ -27,95 +27,70 @@
   &:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px color-mix(in srgb, $accent 35%, transparent);
-  }
-
-  &.selected {
-    border: 2px solid $accent;
-    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 30%, transparent);
-
-    .selectedPill {
-      color: $accent;
-      border-color: color-mix(in srgb, $accent 60%, transparent);
-      background: color-mix(in srgb, $accent 22%, transparent);
-    }
-
-    .hintPill {
-      display: none;
-    }
-  }
-
-  .presetCardContent {
-    display: flex;
-    flex-direction: column;
-    gap: $default-gap;
-  }
-
-  .presetTitle {
-    margin: 0;
-  }
-
-  .presetDescription {
-    margin: 0;
-    opacity: 0.7;
-    display: -webkit-box;
-    line-clamp: 3;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .metaLine {
-    margin-top: $default-gap;
-    opacity: 0.7;
-  }
-
-  .presetCardFooter {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: $default-gap;
-  }
-
-  .selectedPill,
-  .hintPill {
-    padding: $default-padding;
-    border-radius: $radius-sm;
-  }
-
-  .selectedPill {
-    border: 1px solid color-mix(in srgb, $accent 50%, transparent);
-    background: color-mix(in srgb, $accent 15%, transparent);
-  }
-
-  .hintPill {
-    background: color-mix(in srgb, $bg-surface 75%, $bg-elevated);
   }
 }
 
-.detailsButton {
-  border: 1px solid $bg-elevated;
-  background: color-mix(in srgb, $bg-surface 80%, $bg-elevated);
-  color: $text-primary;
+.presetCardSelected {
+  border: 2px solid $accent;
+  box-shadow: 0 0 0 2px color-mix(in srgb, $accent 30%, transparent);
 
-  border-radius: $radius-sm;
+  .selectedPill {
+    color: $accent;
+    border-color: color-mix(in srgb, $accent 60%, transparent);
+    background: color-mix(in srgb, $accent 22%, transparent);
+  }
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $default-gap;
+}
+
+.presetTitle {
+  margin: 0;
+  min-width: 0;
+  flex: 1;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}
+
+.presetDescription {
+  margin: 0;
+  opacity: 0.7;
+
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $default-gap;
+}
+
+.selectedPill,
+.hintPill {
   padding: $default-padding;
+  border-radius: $radius-sm;
+  white-space: nowrap;
+}
 
-  font-size: 0.75rem;
-  text-transform: uppercase;
+.selectedPill {
+  border: 1px solid color-mix(in srgb, $accent 50%, transparent);
+  background: color-mix(in srgb, $accent 15%, transparent);
+}
 
-  cursor: pointer;
-
-  transition: transform $dur-fast ease, border-color $dur-fast ease,
-    box-shadow $dur-fast ease;
-
-  &:hover {
-    transform: translateY(-1px);
-    border-color: color-mix(in srgb, $bg-elevated 70%, $text-primary);
-    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 22%, transparent);
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 35%, transparent);
-  }
+.hintPill {
+  background: color-mix(in srgb, $bg-surface 75%, $bg-elevated);
+  opacity: 0.75;
 }

@@ -5,48 +5,79 @@ import { MainTextTypography } from "../../../components/MainTextTypography/Maint
 import { roomSocket } from "../../../services/sockets/roomSocket";
 import { TierSetDetails } from "./TierSetDetails/TierSetDetails";
 import * as Contracts from "@twf/contracts";
+import type { Guid } from "../../../lib/guid";
+import { AccentButton } from "../../../components/AccentButton/AccentButton";
+import { handleKeyDown } from "../../../lib/accessibility";
+
 type TierSetSummary = Contracts.TierSetSummary;
 type TierSetDefinition = Contracts.TierSetDefinition;
 
 type TierSetGridEntryProps = {
   tierSet: TierSetSummary;
   selected: boolean;
+  openDetailsTierSetId: Guid | null;
+  setOpenDetailsTierSet: React.Dispatch<React.SetStateAction<Guid | null>>;
   onSelect: (tierSet: TierSetSummary) => void;
 };
 
 export function TierSetGridEntry({
   tierSet,
   selected,
+  openDetailsTierSetId,
+  setOpenDetailsTierSet,
   onSelect,
 }: TierSetGridEntryProps) {
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [details, setDetails] = useState<TierSetDefinition | null>(null);
+  const isDetailsOpen = openDetailsTierSetId === tierSet.id;
 
   const toggleDetails = useCallback(
     async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
-      const next = !isDetailsOpen;
-      setIsDetailsOpen(next);
-      if (!next || !!details) return;
 
-      const full = await roomSocket.getTierSet(tierSet.id);
-      setDetails(full);
+      if (isDetailsOpen) {
+        setOpenDetailsTierSet(null);
+        return;
+      }
+
+      setOpenDetailsTierSet(tierSet.id as Guid);
+
+      if (!details) {
+        const fullDetails = await roomSocket.getTierSet(tierSet.id);
+        setDetails(fullDetails);
+      }
     },
-    [isDetailsOpen, details, tierSet.id],
+    [details, isDetailsOpen, setOpenDetailsTierSet, tierSet.id],
   );
 
   return (
-    <button
-      type="button"
-      className={clsx(styles.presetCard, selected && styles.selected)}
+    <div
+      role="button"
+      tabIndex={0}
+      className={clsx(styles.presetCard, selected && styles.presetCardSelected)}
       onClick={() => onSelect(tierSet)}
+      onKeyDown={(e) =>
+        handleKeyDown(e, () => {
+          onSelect(tierSet);
+        })
+      }
       aria-pressed={selected}
     >
-      <div className={styles.presetCardContent}>
+      <div className={styles.headerRow}>
         <MainTextTypography variant="h4" className={styles.presetTitle}>
           {tierSet.title}
         </MainTextTypography>
 
+        <AccentButton
+          type="button"
+          size="small"
+          onClick={toggleDetails}
+          aria-expanded={isDetailsOpen}
+        >
+          {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
+        </AccentButton>
+      </div>
+
+      <div className={styles.content}>
         {!isDetailsOpen ? (
           <MainTextTypography
             variant="body"
@@ -60,24 +91,21 @@ export function TierSetGridEntry({
         )}
       </div>
 
-      <div className={styles.presetCardFooter}>
-        <MainTextTypography
-          variant="caption"
-          muted={!selected}
-          className={selected ? styles.selectedPill : styles.hintPill}
-        >
-          {selected ? "SELECTED" : null}
-        </MainTextTypography>
-
-        <button
-          type="button"
-          className={styles.detailsButton}
-          onClick={toggleDetails}
-          aria-expanded={isDetailsOpen}
-        >
-          {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
-        </button>
+      <div className={styles.footerRow}>
+        {selected ? (
+          <MainTextTypography variant="caption" className={styles.selectedPill}>
+            SELECTED
+          </MainTextTypography>
+        ) : (
+          <MainTextTypography
+            variant="caption"
+            muted
+            className={styles.hintPill}
+          >
+            {!selected ? "CLICK TO SELECT" : " "}
+          </MainTextTypography>
+        )}
       </div>
-    </button>
+    </div>
   );
 }

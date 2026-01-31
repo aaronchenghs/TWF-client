@@ -14,6 +14,7 @@ import { CopyTextButton } from "../../components/CopyTextButton/CopyTextButton";
 import { ROUTES } from "../routes";
 import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
 import { getClientId } from "../../lib/session";
+import type { Guid } from "../../lib/guid";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -26,6 +27,8 @@ export default function HostLobby() {
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
+  const [tierSetWithDetailsOpen, setTierSetWithDetailsOpen] =
+    useState<Guid | null>(null);
 
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
@@ -129,6 +132,8 @@ export default function HostLobby() {
                   tierSet={set}
                   selected={set.id === selectedTierSetId}
                   onSelect={handleSelectTierSet}
+                  setOpenDetailsTierSet={setTierSetWithDetailsOpen}
+                  openDetailsTierSetId={tierSetWithDetailsOpen}
                 />
               ))
             )}

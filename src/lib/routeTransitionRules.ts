@@ -26,10 +26,9 @@ export const TRANSITION_RULES: readonly RouteTransitionRule[] = [
 export function getRouteTransitionDirection(
   fromPathname: string,
   toPathname: string,
-  fallback: TransitionDirection = "left",
 ): TransitionDirection {
   const rule = TRANSITION_RULES.find(
     (r) => routeMatches(fromPathname, r.from) && routeMatches(toPathname, r.to),
   );
-  return rule?.dir ?? fallback;
+  return rule?.dir ?? "left";
 }

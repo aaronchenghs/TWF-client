@@ -20,7 +20,7 @@ export function AnimatedRoutes() {
     function determineTransitionDirection() {
       const from = prevPathRef.current;
       const to = location.pathname;
-      setDirection(getRouteTransitionDirection(from, to, "left"));
+      setDirection(getRouteTransitionDirection(from, to));
       prevPathRef.current = to;
     },
     [location.pathname],

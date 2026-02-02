@@ -121,6 +121,7 @@ export function JoinRoomPanel() {
       <MainTextTypography variant="h4">Join a Lobby</MainTextTypography>
       <div className={styles.joinRow}>
         <AccentTextInput
+          name="lobbycode"
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="CODE"
@@ -128,6 +129,7 @@ export function JoinRoomPanel() {
           fullWidth
         />
         <AccentTextInput
+          name="username"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="YOUR NAME"

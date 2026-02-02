@@ -182,7 +182,7 @@ export default function HostLobby() {
             >
               {selectedTierSetName
                 ? `${selectedTierSetName}`
-                : "No tier list selected"}
+                : "Select a tier set"}
             </MainTextTypography>
 
             <AccentButton

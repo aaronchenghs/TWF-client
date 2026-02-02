@@ -31,14 +31,16 @@
 }
 
 .presetCardSelected {
-  border: 2px solid $accent;
+  border: 1px solid $accent;
   box-shadow: 0 0 0 2px color-mix(in srgb, $accent 30%, transparent);
+}
 
-  .selectedPill {
-    color: $accent;
-    border-color: color-mix(in srgb, $accent 60%, transparent);
-    background: color-mix(in srgb, $accent 22%, transparent);
-  }
+.selectedPill {
+  padding: $default-padding;
+  border-radius: $radius-sm;
+  white-space: nowrap;
+  border: 1px solid color-mix(in srgb, $accent 50%, transparent);
+  background: color-mix(in srgb, $accent 15%, transparent);
 }
 
 .headerRow {
@@ -76,21 +78,4 @@
   align-items: center;
   justify-content: space-between;
   gap: $default-gap;
-}
-
-.selectedPill,
-.hintPill {
-  padding: $default-padding;
-  border-radius: $radius-sm;
-  white-space: nowrap;
-}
-
-.selectedPill {
-  border: 1px solid color-mix(in srgb, $accent 50%, transparent);
-  background: color-mix(in srgb, $accent 15%, transparent);
-}
-
-.hintPill {
-  background: color-mix(in srgb, $bg-surface 75%, $bg-elevated);
-  opacity: 0.75;
 }

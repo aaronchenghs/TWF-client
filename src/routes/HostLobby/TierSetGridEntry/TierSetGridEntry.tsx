@@ -78,7 +78,9 @@ export function TierSetGridEntry({
       </div>
 
       <div className={styles.content}>
-        {!isDetailsOpen ? (
+        {isDetailsOpen ? (
+          <TierSetDetails isLoading={!details} details={details} />
+        ) : (
           <MainTextTypography
             variant="body"
             muted
@@ -86,8 +88,6 @@ export function TierSetGridEntry({
           >
             {tierSet.description ?? "—"}
           </MainTextTypography>
-        ) : (
-          <TierSetDetails isLoading={!details} details={details} />
         )}
       </div>
 
@@ -97,12 +97,8 @@ export function TierSetGridEntry({
             SELECTED
           </MainTextTypography>
         ) : (
-          <MainTextTypography
-            variant="caption"
-            muted
-            className={styles.hintPill}
-          >
-            {!selected ? "CLICK TO SELECT" : " "}
+          <MainTextTypography variant="caption" muted>
+            CLICK TO SELECT
           </MainTextTypography>
         )}
       </div>

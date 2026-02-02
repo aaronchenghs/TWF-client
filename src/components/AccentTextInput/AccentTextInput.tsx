@@ -17,7 +17,7 @@ export function AccentTextInput({
   style,
   ...props
 }: AccentTextInputProps) {
-  const resolvedWidth = fullWidth ? "100%" : width ?? "120px";
+  const resolvedWidth = fullWidth ? "100%" : (width ?? "120px");
   return (
     <input
       {...props}

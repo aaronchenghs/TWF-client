@@ -78,9 +78,11 @@ export function TierSetGridEntry({
       </div>
 
       <div className={styles.content}>
-        {isDetailsOpen ? (
+        <div className={clsx(styles.collapse, isDetailsOpen && styles.open)}>
           <TierSetDetails isLoading={!details} details={details} />
-        ) : (
+        </div>
+
+        <div className={clsx(styles.collapse, !isDetailsOpen && styles.open)}>
           <MainTextTypography
             variant="body"
             muted
@@ -88,7 +90,7 @@ export function TierSetGridEntry({
           >
             {tierSet.description ?? "—"}
           </MainTextTypography>
-        )}
+        </div>
       </div>
 
       <div className={styles.footerRow}>

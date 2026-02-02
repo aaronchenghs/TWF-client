@@ -56,7 +56,7 @@ export default function Landing() {
               >
                 {isCreatingLobby ? "Creating..." : "Create Lobby"}
               </AccentButton>
-              <MainTextTypography variant="h2">or</MainTextTypography>
+              <MainTextTypography variant="h3">or</MainTextTypography>
             </>
           )}
 

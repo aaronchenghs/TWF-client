@@ -59,7 +59,6 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: $default-gap;
 }
 
 .presetDescription {
@@ -78,4 +77,36 @@
   align-items: center;
   justify-content: space-between;
   gap: $default-gap;
+}
+
+.collapse {
+  display: grid;
+  overflow: hidden;
+
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    grid-template-rows $dur-easy ease,
+    opacity $dur-base ease,
+    padding $dur-easy ease;
+
+  will-change: grid-template-rows, opacity, padding;
+
+  &:not(.open) {
+    height: 0;
+    padding: 0;
+  }
+}
+
+.collapse > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  pointer-events: auto;
 }

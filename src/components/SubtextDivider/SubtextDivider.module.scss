@@ -5,7 +5,7 @@
   align-items: center;
   gap: $default-padding;
   width: 100%;
-  margin: 20px 0;
+  margin: calc($default-gap * 2) 0;
 }
 
 .line {

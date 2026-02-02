@@ -68,7 +68,7 @@
     .sidePanel {
       display: flex;
       flex-direction: column;
-      gap: calc($default-gap * 2);
+      gap: $default-gap;
 
       .panel {
         padding: calc($default-padding * 2);

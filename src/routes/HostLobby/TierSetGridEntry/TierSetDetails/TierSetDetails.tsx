@@ -2,6 +2,7 @@ import styles from "./TierSetDetails.module.scss";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
 import * as Contracts from "@twf/contracts";
 import { handleKeyDown } from "../../../../lib/accessibility";
+import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
 type TierSetDefinition = Contracts.TierSetDefinition;
 
 type TierSetDetailsProps = {
@@ -48,15 +49,13 @@ export function TierSetDetails({ isLoading, details }: TierSetDetailsProps) {
             <div className={styles.itemsList}>
               {details.items.map((item) => (
                 <div key={item.id} className={styles.itemRow}>
-                  {item.imageSrc ? (
-                    <img
-                      className={styles.itemThumb}
-                      src={item.imageSrc}
-                      alt={item.name}
-                    />
-                  ) : (
-                    <div className={styles.itemThumbPlaceholder} />
-                  )}
+                  <LoadableImage
+                    src={item.imageSrc}
+                    alt={item.name}
+                    loading="lazy"
+                    draggable={false}
+                    fallback={<div aria-hidden="true" />}
+                  />
                   <MainTextTypography
                     variant="body"
                     className={styles.itemText}

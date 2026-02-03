@@ -3,10 +3,10 @@ import clsx from "clsx";
 import styles from "./CountdownOverlay.module.scss";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { DEFAULT_TIER_COLORS } from "../../../lib/colors";
-
 import One from "../../../assets/public/1.svg?react";
 import Two from "../../../assets/public/2.svg?react";
 import Three from "../../../assets/public/3.svg?react";
+import { OverlayDialog } from "../../../components/OverlayDialog/OverlayDialog";
 
 const COUNTDOWN_PACE = 600;
 const OUT_MS = 140;
@@ -53,82 +53,48 @@ export function CountdownOverlay({
     onCancel();
   }, [hardReset, onCancel]);
 
-  useEffect(
-    function handleLockScroll() {
-      if (!open) return;
-
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-
-      return () => {
-        document.body.style.overflow = prev;
-      };
-    },
-    [open],
-  );
-
-  useEffect(
-    function registerEscapeToCancel() {
-      if (!open) return;
-
-      const onKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape") handleCancel();
-      };
-
-      window.addEventListener("keydown", onKeyDown);
-      return () => window.removeEventListener("keydown", onKeyDown);
-    },
-    [open, handleCancel],
-  );
-
-  useEffect(
-    function handleCountdownSchedule() {
-      if (!open) {
-        clearAllTimers();
-        return;
-      }
-
+  useEffect(() => {
+    if (!open) {
       clearAllTimers();
+      return;
+    }
 
-      const startCount = seconds;
+    clearAllTimers();
+
+    const startCount = seconds;
+
+    schedule(() => {
+      setPhase("in");
+      setDisplayCount(startCount);
+      setColor((prev) => pickRandomColor(prev));
+    }, 0);
+
+    const counts = Array.from({ length: startCount }, (_, i) => startCount - i);
+
+    counts.forEach((n) => {
+      const base = (startCount - n) * COUNTDOWN_PACE;
 
       schedule(() => {
-        setPhase("in");
-        setDisplayCount(startCount);
-        setColor((prev) => pickRandomColor(prev));
-      }, 0);
+        setPhase("out");
+      }, base + VISIBLE_MS);
 
-      const counts = Array.from(
-        { length: startCount },
-        (_, i) => startCount - i,
-      );
-
-      counts.forEach((n) => {
-        const base = (startCount - n) * COUNTDOWN_PACE;
-
+      if (n > 1) {
         schedule(() => {
-          setPhase("out");
-        }, base + VISIBLE_MS);
+          setDisplayCount(n - 1);
+          setPhase("in");
+          setColor((prev) => pickRandomColor(prev));
+        }, base + COUNTDOWN_PACE);
+      } else {
+        schedule(() => {
+          onComplete();
+        }, base + COUNTDOWN_PACE);
+      }
+    });
 
-        if (n > 1) {
-          schedule(() => {
-            setDisplayCount(n - 1);
-            setPhase("in");
-            setColor((prev) => pickRandomColor(prev));
-          }, base + COUNTDOWN_PACE);
-        } else {
-          schedule(() => {
-            onComplete();
-          }, base + COUNTDOWN_PACE);
-        }
-      });
-
-      return () => {
-        clearAllTimers();
-      };
-    },
-    [open, seconds, onComplete, clearAllTimers, schedule],
-  );
+    return () => {
+      clearAllTimers();
+    };
+  }, [open, seconds, onComplete, clearAllTimers, schedule]);
 
   const Svg = useMemo(() => {
     if (displayCount === 3) return Three;
@@ -136,14 +102,11 @@ export function CountdownOverlay({
     return One;
   }, [displayCount]);
 
-  if (!open) return null;
-
   return (
-    <div
-      className={styles.overlay}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Starting game"
+    <OverlayDialog
+      open={open}
+      ariaLabel="Starting game"
+      onEscape={handleCancel}
     >
       <div className={styles.content}>
         <div className={styles.stage}>
@@ -163,7 +126,7 @@ export function CountdownOverlay({
           </AccentButton>
         </div>
       </div>
-    </div>
+    </OverlayDialog>
   );
 }
 

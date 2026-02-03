@@ -10,8 +10,8 @@ type OnKeyDownOpts = {
 const DEFAULT_KEYS = ["Enter", " "] as const;
 
 export function handleKeyDown(
-  e: React.KeyboardEvent<HTMLElement>,
-  handler: (e: React.KeyboardEvent<HTMLElement>) => void,
+  e: React.KeyboardEvent<HTMLElement> | KeyboardEvent,
+  handler: (e: React.KeyboardEvent<HTMLElement> | KeyboardEvent) => void,
   opts: OnKeyDownOpts = {},
 ) {
   const {

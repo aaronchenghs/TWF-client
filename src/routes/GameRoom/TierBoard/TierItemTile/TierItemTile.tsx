@@ -3,6 +3,7 @@ import styles from "./TierItemTile.module.scss";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
 import { getItemMeta } from "../../../../lib/tierItems";
 import * as Contracts from "@twf/contracts";
+import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
 type RoomPublicState = Contracts.RoomPublicState;
 type TierItemId = Contracts.TierItemId;
 
@@ -21,19 +22,18 @@ export function TierItemTile({ state, itemId, ghost, className }: Props) {
       title={name}
     >
       <div className={styles.thumb}>
-        {imageSrc ? (
-          <img
-            className={styles.thumbImg}
-            src={imageSrc}
-            alt={name}
-            loading="lazy"
-            draggable={false}
-          />
-        ) : (
-          <div className={styles.thumbPlaceholder} aria-hidden="true">
-            {name.slice(0, 1).toUpperCase()}
-          </div>
-        )}
+        <LoadableImage
+          className={styles.thumbImg}
+          src={imageSrc}
+          alt={name}
+          loading="lazy"
+          draggable={false}
+          fallback={
+            <div className={styles.thumbPlaceholder} aria-hidden="true">
+              {name.slice(0, 1).toUpperCase()}
+            </div>
+          }
+        />
       </div>
 
       <MainTextTypography

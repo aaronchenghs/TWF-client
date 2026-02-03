@@ -109,3 +109,16 @@
   animation: fadeIn $duration ease-out both;
   will-change: opacity;
 }
+
+@keyframes shimmer {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 200% 0%;
+  }
+}
+
+@mixin shimmerAnimation($duration: 900ms) {
+  animation: shimmer $duration linear infinite;
+}

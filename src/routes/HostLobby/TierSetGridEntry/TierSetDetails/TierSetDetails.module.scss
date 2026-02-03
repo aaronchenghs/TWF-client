@@ -54,15 +54,6 @@
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-.itemThumb,
-.itemThumbPlaceholder {
-  width: 36px;
-  height: 36px;
-  border-radius: $radius-sm;
-  background: $bg-elevated;
-  object-fit: contain;
-}
-
 .itemText {
   margin: 0;
 }

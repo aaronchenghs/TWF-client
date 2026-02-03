@@ -10,6 +10,7 @@ import Step3Img from "../../assets/public/InstructionStep3.svg";
 import Step4Img from "../../assets/public/InstructionStep4.svg";
 import Step5Img from "../../assets/public/InstructionStep5.svg";
 import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
+import { LoadableImage } from "../LoadableImage/LoadableImage";
 
 export type HowToPlayStep = {
   title: string;
@@ -79,7 +80,7 @@ export function HowToPlayModal(props: {
     >
       <div className={styles.content}>
         <div className={styles.imageFrame}>
-          <img
+          <LoadableImage
             className={styles.image}
             src={step.imageSrc}
             alt={step.alt}

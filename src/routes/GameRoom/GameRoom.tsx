@@ -16,6 +16,8 @@ import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import { GameStatusCard } from "./GameStatusCard/GameStatusCard";
 import { IS_DEBUG_ENABLED } from "../../config/env";
 import clsx from "clsx";
+import { RevealOverlay } from "./RevealOverlay/RevealOverlay";
+import { LoadableImage } from "../../components/LoadableImage/LoadableImage";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -28,7 +30,6 @@ export default function GameRoom() {
   const [isIntro, setIsIntro] = useState(true);
 
   const clock = usePhaseClock(state);
-
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
 
   const handleExit = useCallback(() => {
@@ -131,25 +132,23 @@ export default function GameRoom() {
 
                 return (
                   <div className={styles.itemRow}>
-                    {imageSrc ? (
-                      <img
-                        className={styles.itemImage}
-                        src={imageSrc}
-                        alt={name}
-                        loading="lazy"
-                        draggable={false}
-                      />
-                    ) : (
-                      <div
-                        className={styles.itemImageFallback}
-                        aria-hidden="true"
-                      >
-                        <MainTextTypography variant="h4">
-                          {name.slice(0, 1).toUpperCase()}
-                        </MainTextTypography>
-                      </div>
-                    )}
-
+                    <LoadableImage
+                      className={styles.itemImage}
+                      src={imageSrc}
+                      alt={name}
+                      loading="lazy"
+                      draggable={false}
+                      fallback={
+                        <div
+                          className={styles.itemImageFallback}
+                          aria-hidden="true"
+                        >
+                          <MainTextTypography variant="h4">
+                            {name.slice(0, 1).toUpperCase()}
+                          </MainTextTypography>
+                        </div>
+                      }
+                    />
                     <MainTextTypography
                       variant="h4"
                       className={styles.itemName}
@@ -175,6 +174,8 @@ export default function GameRoom() {
           </GameStatusCard>
         </aside>
       </main>
+
+      <RevealOverlay open={state?.phase === "REVEAL"} state={state} />
 
       <ConfirmationModal
         open={isConfirmExitOpen}

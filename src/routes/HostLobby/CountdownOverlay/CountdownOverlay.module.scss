@@ -1,17 +1,5 @@
 @use "../../../styles/export.scss" as *;
 
-.overlay {
-  @include appearFadeIn(140ms);
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: grid;
-  place-items: center;
-  background: $box-shadow-color;
-  backdrop-filter: blur(6px);
-  padding: $default-padding;
-}
-
 .content {
   display: grid;
   grid-template-rows: auto auto;

@@ -62,12 +62,6 @@ $image-preview-height: 56px;
   gap: calc($default-gap / 2);
 }
 
-.controlsHeaderRight {
-  max-width: 45%;
-  text-align: right;
-  opacity: 0.9;
-}
-
 .tierPickList {
   display: flex;
   flex-direction: column;

@@ -16,8 +16,9 @@ import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import { GameStatusCard } from "./GameStatusCard/GameStatusCard";
 import { IS_DEBUG_ENABLED } from "../../config/env";
 import clsx from "clsx";
-import { RevealOverlay } from "./RevealOverlay/RevealOverlay";
 import { LoadableImage } from "../../components/LoadableImage/LoadableImage";
+import { ItemPlacementRevealOverlay } from "./RevealOverlay/RevealOverlay";
+import { SHOW_CURRENT_ITEM_PHASES } from "../../lib/tierItems";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -124,43 +125,46 @@ export default function GameRoom() {
           </GameStatusCard>
 
           <GameStatusCard label="CURRENT ITEM:">
-            {state.currentItem ? (
-              (() => {
-                const meta = state.itemMetaById?.[state.currentItem];
-                const name = meta?.name ?? state.currentItem;
-                const imageSrc = meta?.imageSrc;
+            {SHOW_CURRENT_ITEM_PHASES.has(state.phase) ? (
+              state.currentItem ? (
+                (() => {
+                  const meta = state.itemMetaById?.[state.currentItem];
+                  const name = meta?.name ?? state.currentItem;
+                  const imageSrc = meta?.imageSrc;
 
-                return (
-                  <div className={styles.itemRow}>
-                    <LoadableImage
-                      className={styles.itemImage}
-                      src={imageSrc}
-                      alt={name}
-                      loading="lazy"
-                      draggable={false}
-                      fallback={
-                        <div
-                          className={styles.itemImageFallback}
-                          aria-hidden="true"
-                        >
-                          <MainTextTypography variant="h4">
-                            {name.slice(0, 1).toUpperCase()}
-                          </MainTextTypography>
-                        </div>
-                      }
-                    />
-                    <MainTextTypography
-                      variant="h4"
-                      className={styles.itemName}
-                    >
-                      {name}
-                    </MainTextTypography>
-                  </div>
-                );
-              })()
+                  return (
+                    <div className={styles.itemRow}>
+                      <LoadableImage
+                        className={styles.itemImage}
+                        src={imageSrc}
+                        alt={name}
+                        loading="lazy"
+                        draggable={false}
+                        fallback={
+                          <div
+                            className={styles.itemImageFallback}
+                            aria-hidden="true"
+                          >
+                            <MainTextTypography textAlign="center" variant="h4">
+                              {name}
+                            </MainTextTypography>
+                          </div>
+                        }
+                      />
+                      <MainTextTypography textAlign="center" variant="h4">
+                        {name}
+                      </MainTextTypography>
+                    </div>
+                  );
+                })()
+              ) : (
+                <MainTextTypography textAlign="center" variant="body" muted>
+                  —
+                </MainTextTypography>
+              )
             ) : (
-              <MainTextTypography variant="body" muted>
-                —
+              <MainTextTypography textAlign="center" variant="h4" muted>
+                ???
               </MainTextTypography>
             )}
           </GameStatusCard>
@@ -175,7 +179,10 @@ export default function GameRoom() {
         </aside>
       </main>
 
-      <RevealOverlay open={state?.phase === "REVEAL"} state={state} />
+      <ItemPlacementRevealOverlay
+        triggerReveal={state?.phase === "VOTE"}
+        state={state}
+      />
 
       <ConfirmationModal
         open={isConfirmExitOpen}

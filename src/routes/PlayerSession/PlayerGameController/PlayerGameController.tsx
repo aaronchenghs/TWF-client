@@ -14,6 +14,7 @@ import { socketClient } from "../../../services/sockets/socketClient";
 import { GameStatusCard } from "../../GameRoom/GameStatusCard/GameStatusCard";
 import { ROUTES } from "../../routes";
 import { getPlayerId } from "../../../lib/session";
+import { SHOW_CURRENT_ITEM_PHASES } from "../../../lib/tierItems";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -121,31 +122,37 @@ export default function PlayerGameController({
 
       <main className={styles.main}>
         <GameStatusCard label="CURRENT ITEM:">
-          {currentItem ? (
-            <div className={styles.itemRow}>
-              {currentItem.imageSrc ? (
-                <img
-                  className={styles.itemImage}
-                  src={currentItem.imageSrc}
-                  alt={currentItem.name}
-                  loading="lazy"
-                  draggable={false}
-                />
-              ) : (
-                <div className={styles.itemImageFallback} aria-hidden="true">
-                  <MainTextTypography variant="h4">
-                    {currentItem.name.slice(0, 1).toUpperCase()}
-                  </MainTextTypography>
-                </div>
-              )}
+          {SHOW_CURRENT_ITEM_PHASES.has(state.phase) || isMyTurn ? (
+            currentItem ? (
+              <div className={styles.itemRow}>
+                {currentItem.imageSrc ? (
+                  <img
+                    className={styles.itemImage}
+                    src={currentItem.imageSrc}
+                    alt={currentItem.name}
+                    loading="lazy"
+                    draggable={false}
+                  />
+                ) : (
+                  <div className={styles.itemImageFallback} aria-hidden="true">
+                    <MainTextTypography variant="h4">
+                      {currentItem.name}
+                    </MainTextTypography>
+                  </div>
+                )}
 
-              <MainTextTypography variant="h4" className={styles.itemName}>
-                {currentItem.name}
+                <MainTextTypography variant="h4" className={styles.itemName}>
+                  {currentItem.name}
+                </MainTextTypography>
+              </div>
+            ) : (
+              <MainTextTypography textAlign="center" variant="body" muted>
+                —
               </MainTextTypography>
-            </div>
+            )
           ) : (
-            <MainTextTypography variant="body" muted>
-              —
+            <MainTextTypography textAlign="center" variant="h4" muted>
+              ???
             </MainTextTypography>
           )}
         </GameStatusCard>

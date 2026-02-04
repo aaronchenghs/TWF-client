@@ -177,8 +177,8 @@ export default function HostLobby() {
           <div className={clsx(styles.panel, styles.controls)}>
             <MainTextTypography
               variant="body"
+              textAlign="center"
               muted={!selectedTierSetName}
-              className={styles.selectedTierSetLabel}
             >
               {selectedTierSetName
                 ? `${selectedTierSetName}`

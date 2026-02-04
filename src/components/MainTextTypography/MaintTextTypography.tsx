@@ -16,6 +16,7 @@ type Variant =
 
 type LetterSpacing = "tight" | "normal" | "wide" | "wider";
 type Weight = "regular" | "medium" | "bold" | "black";
+type TextAlign = "left" | "center" | "right";
 
 interface MainTextTypographyProps {
   variant?: Variant;
@@ -24,6 +25,7 @@ interface MainTextTypographyProps {
   muted?: boolean;
   letterSpacing?: LetterSpacing;
   weight?: Weight;
+  textAlign?: TextAlign;
 }
 
 export function MainTextTypography({
@@ -33,6 +35,7 @@ export function MainTextTypography({
   muted,
   letterSpacing = "normal",
   weight,
+  textAlign,
 }: MainTextTypographyProps) {
   return (
     <span
@@ -42,7 +45,8 @@ export function MainTextTypography({
         styles[`ls_${letterSpacing}`],
         weight && styles[`w_${weight}`],
         muted && styles.muted,
-        className
+        textAlign && styles[`ta_${textAlign}`],
+        className,
       )}
     >
       {children}

@@ -39,6 +39,7 @@ export function TierItemTile({ state, itemId, ghost, className }: Props) {
       <MainTextTypography
         variant="body"
         weight="bold"
+        textAlign="center"
         className={styles.itemName}
       >
         {name}

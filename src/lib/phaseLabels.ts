@@ -12,8 +12,6 @@ export function phaseLabel(phase: RoomPublicState["phase"]): string {
   switch (phase) {
     case "STARTING":
       return "Starting";
-    case "REVEAL":
-      return "Reveal";
     case "PLACE":
       return "Place";
     case "VOTE":
@@ -36,7 +34,7 @@ export function phaseLabel(phase: RoomPublicState["phase"]): string {
 export function phaseSubtext(
   state: RoomPublicState,
   currentTurnPlayer: { name: string } | null,
-  isMyTurn: boolean
+  isMyTurn: boolean,
 ): string {
   const turnName = currentTurnPlayer?.name ?? "player";
   const byPhase: Partial<
@@ -51,7 +49,6 @@ export function phaseSubtext(
       isMyTurn
         ? "You placed. Waiting for votes."
         : "Vote to drift up, agree, or drift down.",
-    REVEAL: "Next item revealed",
     RESULTS: "Votes tallied",
     DRIFT: "Applying votes",
     RESOLVE: "Locking item in",

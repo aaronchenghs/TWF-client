@@ -25,8 +25,6 @@ export function usePhaseClock(state: RoomPublicState | null): PhaseClock {
     switch (state.phase) {
       case "STARTING":
         return t.buildEndsAt ?? null;
-      case "REVEAL":
-        return t.revealEndsAt ?? null;
       case "PLACE":
         return t.placeEndsAt ?? null;
       case "VOTE":

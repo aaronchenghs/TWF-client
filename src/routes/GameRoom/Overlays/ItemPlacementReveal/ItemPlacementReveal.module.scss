@@ -1,4 +1,4 @@
-@use "../../../styles/export" as *;
+@use "../../../../styles/export" as *;
 
 .revealImage {
   max-height: 30vh;
@@ -19,37 +19,31 @@
   justify-content: center;
 }
 
-.placedIntoRow {
-  display: flex;
-  align-items: center;
-  gap: $default-gap;
-  margin-top: $default-gap;
-}
-
 .tierRevealSlot {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 64px;
   width: 100%;
+  min-height: 64px;
+  margin-top: $default-gap;
+}
+
+.placedIntoRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .placedIntoRowPlaceholder {
-  margin-top: $default-gap;
+  opacity: 0;
   display: flex;
   align-items: center;
-  gap: $default-gap;
-  opacity: 0;
-}
-
-.labelPlaceholder {
-  width: 56px;
-  height: 18px;
+  justify-content: center;
 }
 
 .badgePlaceholder {
-  min-width: 120px;
-  min-height: 44px;
+  min-width: 150px;
+  min-height: 75px;
   border-radius: $radius-sm;
 }
 
@@ -61,11 +55,8 @@
   padding: $default-padding;
   border-radius: $radius-sm;
 
-  box-shadow: 0 4px 0 $box-shadow-color;
+  min-height: 75px;
+  min-width: 150px;
 
-  min-height: 66px;
-  min-width: 180px;
-
-  line-height: 1;
   @include glow($duration: 2.6s, $spread: 8px, $strength: 18%);
 }

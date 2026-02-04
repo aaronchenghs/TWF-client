@@ -17,8 +17,9 @@ import { GameStatusCard } from "./GameStatusCard/GameStatusCard";
 import { IS_DEBUG_ENABLED } from "../../config/env";
 import clsx from "clsx";
 import { LoadableImage } from "../../components/LoadableImage/LoadableImage";
-import { ItemPlacementRevealOverlay } from "./RevealOverlay/RevealOverlay";
+import { ItemPlacementReveal } from "./Overlays/ItemPlacementReveal/ItemPlacementReveal";
 import { SHOW_CURRENT_ITEM_PHASES } from "../../lib/tierItems";
+import { PlayerTurnReveal } from "./Overlays/PlayerTurnReveal/PlayerTurnReveal";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -179,10 +180,11 @@ export default function GameRoom() {
         </aside>
       </main>
 
-      <ItemPlacementRevealOverlay
-        triggerReveal={state?.phase === "VOTE"}
-        state={state}
-      />
+      {/** --- #region OVERLAYS and MODALS --- */}
+
+      <PlayerTurnReveal state={state} />
+
+      <ItemPlacementReveal state={state} />
 
       <ConfirmationModal
         open={isConfirmExitOpen}
@@ -209,6 +211,8 @@ export default function GameRoom() {
           </div>
         </div>
       )}
+
+      {/** --- #endregion OVERLAYS and MODALS --- */}
     </div>
   );
 }

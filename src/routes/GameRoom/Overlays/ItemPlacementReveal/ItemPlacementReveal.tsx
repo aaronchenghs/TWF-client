@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./ItemPlacementReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,6 +7,7 @@ import { resolvePlacedTierId } from "../../../../lib/tierItems";
 import { OverlayDialog } from "../../../../components/OverlayDialog/OverlayDialog";
 import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
+import { usePhaseStartOverlay } from "../../../../lib/hooks/usePhaseStartOverlay";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierId = Contracts.TierId;
@@ -24,13 +25,15 @@ const totalAnimateS = ENTER_MS / 1000 + HOLD_MS / 1000;
 const enterFrac = totalAnimateS > 0 ? ENTER_MS / 1000 / totalAnimateS : 1;
 
 export function ItemPlacementReveal({ state }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
   const [placedItemId, setPlacedItemId] = useState<TierItemId | null>(null);
   const [placedTierId, setPlacedTierId] = useState<TierId | null>(null);
-  const [openToken, setOpenToken] = useState(0);
 
-  const prevPhaseRef = useRef<RoomPublicState["phase"] | null>(null);
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { isOpen, token } = usePhaseStartOverlay(state, {
+    openOnPhase: "VOTE",
+    openMs: REVEAL_TOTAL_MS,
+    closeIfPhaseMismatch: true,
+    shouldOpen: () => !!state?.currentItem,
+  });
 
   const { itemName, imageSrc, tierName, tierColor } = useMemo(() => {
     const meta = placedItemId ? state?.itemMetaById?.[placedItemId] : undefined;
@@ -53,44 +56,18 @@ export function ItemPlacementReveal({ state }: Props) {
   }, [state]);
 
   useEffect(
-    function handleOpenOnEnteredVote() {
-      if (!state) {
-        prevPhaseRef.current = null;
-        return;
-      }
-
-      const prev = prevPhaseRef.current;
-      const curr = state.phase;
-
-      const enteredVote = prev !== "VOTE" && curr === "VOTE";
-      prevPhaseRef.current = curr;
-
-      if (!enteredVote) return;
-
-      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    function handleSnapshotOnOpen() {
+      if (!state) return;
+      if (!isOpen) return;
 
       const currentItem = state.currentItem ?? null;
-
       const placedTier =
         state.pendingTierId ?? resolvePlacedTierId(state, currentItem);
 
       setPlacedItemId(currentItem);
       setPlacedTierId(placedTier);
-
-      setIsOpen(true);
-      setOpenToken((t) => t + 1);
-
-      closeTimeoutRef.current = setTimeout(() => {
-        setIsOpen(false);
-      }, REVEAL_TOTAL_MS);
-
-      return () => {
-        if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-        closeTimeoutRef.current = null;
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [state?.phase, state?.currentItem, state?.pendingTierId, !!state],
+    [isOpen, state],
   );
 
   return (
@@ -98,7 +75,7 @@ export function ItemPlacementReveal({ state }: Props) {
       <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            key={`${openToken}:${placedItemId ?? "none"}:${placedTierId ?? "none"}`}
+            key={`${token}:${placedItemId ?? "none"}:${placedTierId ?? "none"}`}
             className={styles.reveal}
             initial={{ x: "-125vw", opacity: 0 }}
             animate={{

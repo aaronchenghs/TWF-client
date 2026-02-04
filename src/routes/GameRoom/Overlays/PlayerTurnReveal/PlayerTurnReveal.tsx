@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import styles from "./PlayerTurnReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
 import { AnimatePresence, motion } from "framer-motion";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
 import { OverlayDialog } from "../../../../components/OverlayDialog/OverlayDialog";
-
+import { usePhaseStartOverlay } from "../../../../lib/hooks/usePhaseStartOverlay";
 type RoomPublicState = Contracts.RoomPublicState;
 
 type PlayerTurnRevealProps = {
@@ -19,13 +19,13 @@ const totalAnimateS = ENTER_MS / 1000 + HOLD_MS / 1000;
 const enterFrac = totalAnimateS > 0 ? ENTER_MS / 1000 / totalAnimateS : 1;
 
 export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const [revealToken, setRevealToken] = useState(0);
-  const [prevPhase, setPrevPhase] = useState<RoomPublicState["phase"] | null>(
-    null,
-  );
-  const [prevTurnPlayerId, setPrevTurnPlayerId] = useState<string | null>(null);
+  const { isOpen, token } = usePhaseStartOverlay(state, {
+    openOnPhase: "PLACE",
+    reopenKey: state?.currentTurnPlayerId ?? null,
+    openMs: REVEAL_TOTAL_MS,
+    closeIfPhaseMismatch: true,
+    shouldOpen: () => !!state?.currentTurnPlayerId,
+  });
 
   const playerName = useMemo(() => {
     const id = state?.currentTurnPlayerId ?? null;
@@ -33,42 +33,12 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
     return state?.players?.find((p) => p.id === id)?.name ?? "—";
   }, [state]);
 
-  useEffect(
-    function handleOpenTriggers() {
-      if (!state) return;
-
-      const enteredPlace = prevPhase !== "PLACE" && state.phase === "PLACE";
-      const turnChangedWhilePlace =
-        state.phase === "PLACE" &&
-        !!state.currentTurnPlayerId &&
-        prevTurnPlayerId !== state.currentTurnPlayerId;
-
-      if (enteredPlace || turnChangedWhilePlace) {
-        setRevealToken((t) => t + 1);
-        setIsOpen(true);
-      }
-
-      setPrevPhase(state.phase);
-      setPrevTurnPlayerId(state.currentTurnPlayerId ?? null);
-    },
-    [state, prevPhase, prevTurnPlayerId],
-  );
-
-  useEffect(
-    function handleAutoClose() {
-      if (!isOpen) return;
-      const timeoutId = setTimeout(() => setIsOpen(false), REVEAL_TOTAL_MS);
-      return () => clearTimeout(timeoutId);
-    },
-    [isOpen, revealToken],
-  );
-
   return (
     <OverlayDialog open={isOpen} ariaLabel="Reveal turn player">
       <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            key={`${state?.currentTurnPlayerId ?? "none"}:${revealToken}`}
+            key={`${state?.currentTurnPlayerId ?? "none"}:${token}`}
             className={styles.reveal}
             initial={{ y: "30vh", opacity: 0, scale: 0.98 }}
             animate={{

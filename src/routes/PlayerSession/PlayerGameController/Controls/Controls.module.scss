@@ -98,7 +98,8 @@ $image-preview-height: 56px;
 
   transition:
     transform $dur-fast ease,
-    box-shadow $dur-fast ease;
+    box-shadow $dur-fast ease,
+    filter $dur-fast ease;
 
   &::before {
     content: "";
@@ -115,7 +116,9 @@ $image-preview-height: 56px;
   }
 
   &:active {
-    transform: translateY(1px);
+    transform: none;
+    filter: brightness(1.06);
+    box-shadow: inset 0 0 0 2px $box-shadow-color;
   }
 
   &:focus-visible {

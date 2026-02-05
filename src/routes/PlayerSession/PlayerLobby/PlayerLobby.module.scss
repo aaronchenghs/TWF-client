@@ -68,6 +68,17 @@ $logo-max-height: 160px;
   border-radius: $radius-sm;
 }
 
+.statusLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.statusDots {
+  opacity: 0.7;
+}
+
 .actions {
   width: 100%;
   max-width: $max-lobby-width;

@@ -6,6 +6,7 @@ import * as Contracts from "@twf/contracts";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { HowToPlayModal } from "@/components/HowToPlayModal/HowToPlayModal";
+import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { socketClient } from "@/services/sockets/socketClient";
 import { ROUTES } from "@/routes/routes";
@@ -68,8 +69,14 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
       </section>
 
       <section className={styles.status}>
-        <MainTextTypography variant="body" muted letterSpacing="wide">
+        <MainTextTypography
+          variant="body"
+          muted
+          letterSpacing="wide"
+          className={styles.statusLabel}
+        >
           WAITING FOR HOST TO START
+          <AnimatedDots className={styles.statusDots} />
         </MainTextTypography>
       </section>
 

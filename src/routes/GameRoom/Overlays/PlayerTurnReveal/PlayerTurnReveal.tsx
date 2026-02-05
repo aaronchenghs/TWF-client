@@ -70,6 +70,7 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
               className={styles.name}
               textAlign="center"
               weight="black"
+              tone="player"
             >
               {playerName}
               {"'s"}

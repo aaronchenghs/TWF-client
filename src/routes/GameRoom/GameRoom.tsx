@@ -10,7 +10,6 @@ import { ROUTES } from "@/routes/routes";
 import * as Contracts from "@twf/contracts";
 import { usePhaseClock } from "@/lib/hooks/usePhaseClock";
 import { TierBoard } from "./TierBoard/TierBoard";
-import { getTurnLabel } from "@/lib/phaseLabels";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
 import { GameStatusCard } from "./GameStatusCard/GameStatusCard";
@@ -22,6 +21,7 @@ import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { PlayerTurnReveal } from "./Overlays/PlayerTurnReveal/PlayerTurnReveal";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
+import { getPlayerNameById } from "@/lib/players";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -43,6 +43,10 @@ export default function GameRoom() {
         imageSrc: state.itemMetaById?.[state.currentItem]?.imageSrc,
       }
     : null;
+
+  const currentTurnName = state?.currentTurnPlayerId
+    ? getPlayerNameById(state.players, state.currentTurnPlayerId, "")
+    : "";
 
   const handleExit = useCallback(() => {
     roomSocket.closeRoom();
@@ -132,13 +136,28 @@ export default function GameRoom() {
             />
           </GameStatusCard>
 
-          <GameStatusCard label="TURN:">
-            <div className={styles.itemRow}>
-              <MainTextTypography variant="h3" muted>
-                {getTurnLabel(state)}
-              </MainTextTypography>
-            </div>
-          </GameStatusCard>
+              <GameStatusCard label="TURN:">
+                <div className={styles.itemRow}>
+                  {currentTurnName ? (
+                    <div className={styles.turnRow}>
+                      <MainTextTypography
+                        variant="h3"
+                        tone="player"
+                        className={styles.turnName}
+                      >
+                        {currentTurnName}
+                      </MainTextTypography>
+                      <MainTextTypography variant="h3" muted>
+                        {"'s turn"}
+                      </MainTextTypography>
+                    </div>
+                  ) : (
+                    <MainTextTypography variant="h3" muted>
+                      —
+                    </MainTextTypography>
+                  )}
+                </div>
+              </GameStatusCard>
         </aside>
       </main>
 

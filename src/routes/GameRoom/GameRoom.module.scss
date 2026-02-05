@@ -97,6 +97,23 @@ $side-delay: 0.25s;
     min-width: 0;
   }
 
+  .turnRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;
+  }
+
+  .turnName {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   // TODO: refactor common styles with for image renderer with PlayerGameController
   .itemImage,
   .itemImageFallback {

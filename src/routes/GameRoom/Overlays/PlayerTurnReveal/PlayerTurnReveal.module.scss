@@ -26,4 +26,8 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   @include float(8px, 1.7s);
+  max-width: min(80vw, 520px);
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }

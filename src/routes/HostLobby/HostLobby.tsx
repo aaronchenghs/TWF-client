@@ -170,9 +170,13 @@ export default function HostLobby() {
                   ) : (
                 players.map((player) => (
                   <li className={styles.playerEntry} key={player.id}>
-                    <MainTextTypography className={styles.player} variant="h6">
-                      {player.name}
-                    </MainTextTypography>
+                        <MainTextTypography
+                          className={styles.player}
+                          variant="h6"
+                          tone="player"
+                        >
+                          {player.name}
+                        </MainTextTypography>
                     <AccentButton
                       variant="destructive"
                       size="small"

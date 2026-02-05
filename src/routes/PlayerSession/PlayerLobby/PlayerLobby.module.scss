@@ -50,6 +50,12 @@ $logo-max-height: 160px;
   border-radius: $radius-sm;
 }
 
+.identityName {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .status {
   width: 100%;
   max-width: $max-lobby-width;

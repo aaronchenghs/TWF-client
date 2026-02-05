@@ -87,7 +87,10 @@ export function ItemPlacementReveal({ state }: Props) {
 
             <div className={styles.text}>
               <MainTextTypography variant="h4" className={styles.name}>
-                {placedByPlayerName} Placed: {itemName}
+                <MainTextTypography variant="h4" tone="player">
+                  {placedByPlayerName}
+                </MainTextTypography>{" "}
+                Placed: {itemName}
               </MainTextTypography>
             </div>
 

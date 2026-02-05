@@ -37,7 +37,12 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
         <MainTextTypography variant="body" muted>
           YOU ARE:
         </MainTextTypography>
-        <MainTextTypography variant="title" weight="medium">
+        <MainTextTypography
+          variant="title"
+          weight="medium"
+          className={styles.identityName}
+          tone="player"
+        >
           {myName}
         </MainTextTypography>
       </section>

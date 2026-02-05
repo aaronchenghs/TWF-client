@@ -29,6 +29,21 @@ $current-item-float-duration: 3s;
   min-width: 0;
 }
 
+.headerLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.headerName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .exitButton {
   flex: 0 0 auto;
 }

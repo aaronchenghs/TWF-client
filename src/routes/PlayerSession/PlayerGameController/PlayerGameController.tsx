@@ -105,11 +105,21 @@ export default function PlayerGameController({
     <div className={styles.root}>
       <header className={styles.header}>
         <TWFLogo className={styles.logo} />
-        <div className={styles.headerText}>
-          <MainTextTypography variant="caption" muted letterSpacing="wide">
-            LOBBY {state.code} - {myName || "PLAYER"}
-          </MainTextTypography>
-        </div>
+            <div className={styles.headerText}>
+              <div className={styles.headerLine}>
+                <MainTextTypography variant="caption" muted letterSpacing="wide">
+                  LOBBY {state.code} -
+                </MainTextTypography>
+                <MainTextTypography
+                  variant="caption"
+                  tone="player"
+                  letterSpacing="wide"
+                  className={styles.headerName}
+                >
+                  {myName || "PLAYER"}
+                </MainTextTypography>
+              </div>
+            </div>
 
         <AccentButton
           variant="secondary"

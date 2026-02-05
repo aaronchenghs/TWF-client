@@ -19,6 +19,13 @@
   justify-content: center;
 }
 
+.name {
+  max-width: min(80vw, 520px);
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .tierRevealSlot {
   display: flex;
   align-items: center;

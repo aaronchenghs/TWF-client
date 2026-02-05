@@ -33,7 +33,9 @@ export function ItemPlacementReveal({ state }: Props) {
   const placedTierId = resolvePlacedTierId(state, placedItemId);
 
   const meta = placedItemId ? state?.itemMetaById?.[placedItemId] : undefined;
-  const tierMeta = placedTierId ? state?.tierMetaById?.[placedTierId] : undefined;
+  const tierMeta = placedTierId
+    ? state?.tierMetaById?.[placedTierId]
+    : undefined;
 
   const itemName = meta?.name ?? placedItemId ?? "--";
   const imageSrc = meta?.imageSrc;

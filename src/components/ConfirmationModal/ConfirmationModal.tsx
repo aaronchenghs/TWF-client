@@ -29,13 +29,6 @@ export function ConfirmationModal({
 
   const isWorking = confirmDisabled ?? isInternalWorking;
 
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
   const handleConfirm = async () => {
     if (isWorking) return;
     try {
@@ -45,6 +38,13 @@ export function ConfirmationModal({
       if (isMountedRef.current) setIsInternalWorking(false);
     }
   };
+
+  useEffect(function trackMountedState() {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   return (
     <PrimaryModal

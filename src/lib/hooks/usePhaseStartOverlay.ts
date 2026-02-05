@@ -76,7 +76,7 @@ export function usePhaseStartOverlay(
     setIsOpen(false);
   }, [clearCloseTimer]);
 
-  useEffect(() => {
+  useEffect(function handlePhaseEdgeTrigger() {
     if (!state) {
       prevPhaseRef.current = null;
       prevReopenKeyRef.current = reopenKey;
@@ -128,7 +128,7 @@ export function usePhaseStartOverlay(
     openMs,
   ]);
 
-  useEffect(() => {
+  useEffect(function cleanupOverlayTimer() {
     return () => {
       clearCloseTimer();
     };

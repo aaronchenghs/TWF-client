@@ -33,7 +33,7 @@ export function usePhaseClock(state: RoomPublicState | null): PhaseClock {
     }
   }, [state]);
 
-  useEffect(() => {
+  useEffect(function syncPhaseClock() {
     if (endsAt == null) return;
     const id = window.setInterval(() => setNow(Date.now()), 100);
     return () => window.clearInterval(id);

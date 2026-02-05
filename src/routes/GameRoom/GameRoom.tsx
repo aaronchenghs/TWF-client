@@ -39,7 +39,8 @@ export default function GameRoom() {
 
   const currentItem = state?.currentItem
     ? {
-        name: state.itemMetaById?.[state.currentItem]?.name ?? state.currentItem,
+        name:
+          state.itemMetaById?.[state.currentItem]?.name ?? state.currentItem,
         imageSrc: state.itemMetaById?.[state.currentItem]?.imageSrc,
       }
     : null;
@@ -59,11 +60,14 @@ export default function GameRoom() {
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);
 
-  useEffect(() => {
-    if (!hasState) return;
-    const raf = requestAnimationFrame(() => setIsIntro(false));
-    return () => cancelAnimationFrame(raf);
-  }, [hasState]);
+  useEffect(
+    function endIntroAfterFirstFrame() {
+      if (!hasState) return;
+      const raf = requestAnimationFrame(() => setIsIntro(false));
+      return () => cancelAnimationFrame(raf);
+    },
+    [hasState],
+  );
 
   useRoomSubscriptions({
     roomCode: roomCode || null,
@@ -82,9 +86,10 @@ export default function GameRoom() {
         </header>
 
         <div className={styles.center}>
-              <MainTextTypography variant="body" muted>
-                Connecting<AnimatedDots />
-              </MainTextTypography>
+          <MainTextTypography variant="body" muted>
+            Connecting
+            <AnimatedDots />
+          </MainTextTypography>
         </div>
       </div>
     );
@@ -136,28 +141,28 @@ export default function GameRoom() {
             />
           </GameStatusCard>
 
-              <GameStatusCard label="TURN:">
-                <div className={styles.itemRow}>
-                  {currentTurnName ? (
-                    <div className={styles.turnRow}>
-                      <MainTextTypography
-                        variant="h3"
-                        tone="player"
-                        className={styles.turnName}
-                      >
-                        {currentTurnName}
-                      </MainTextTypography>
-                      <MainTextTypography variant="h3" muted>
-                        {"'s turn"}
-                      </MainTextTypography>
-                    </div>
-                  ) : (
-                    <MainTextTypography variant="h3" muted>
-                      —
-                    </MainTextTypography>
-                  )}
+          <GameStatusCard label="TURN:">
+            <div className={styles.itemRow}>
+              {currentTurnName ? (
+                <div className={styles.turnRow}>
+                  <MainTextTypography
+                    variant="h3"
+                    tone="player"
+                    className={styles.turnName}
+                  >
+                    {currentTurnName}
+                  </MainTextTypography>
+                  <MainTextTypography variant="h3" muted>
+                    {"'s turn"}
+                  </MainTextTypography>
                 </div>
-              </GameStatusCard>
+              ) : (
+                <MainTextTypography variant="h3" muted>
+                  —
+                </MainTextTypography>
+              )}
+            </div>
+          </GameStatusCard>
         </aside>
       </main>
 

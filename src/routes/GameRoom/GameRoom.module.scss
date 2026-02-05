@@ -11,6 +11,8 @@ $side-delay: 0.25s;
   flex-direction: column;
   gap: $default-gap;
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 
   .header {
     display: flex;
@@ -45,7 +47,9 @@ $side-delay: 0.25s;
     grid-template-columns: 1fr 320px;
     gap: $default-gap;
     align-items: start;
+    flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
   }
 
   // --- Intro slide-in support ---
@@ -64,6 +68,7 @@ $side-delay: 0.25s;
     transition-delay: $board-delay;
     min-width: 0;
     min-height: 0;
+    height: 100%;
   }
 
   .sideSection {
@@ -72,7 +77,8 @@ $side-delay: 0.25s;
     display: flex;
     flex-direction: column;
     gap: $default-gap;
-    max-height: calc(100vh - 180px);
+    max-height: 100%;
+    min-height: 0;
     overflow: auto;
   }
 
@@ -180,8 +186,12 @@ $side-delay: 0.25s;
   }
 
   @media (max-width: 900px) {
+    height: auto;
+    overflow: visible;
+
     .main {
       grid-template-columns: 1fr;
+      height: auto;
     }
 
     .sideSection {

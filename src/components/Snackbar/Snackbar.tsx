@@ -47,42 +47,45 @@ function SnackbarCard(props: {
   const rafRef = useRef<number | null>(null);
   const dismissedRef = useRef(false);
 
-  useEffect(() => {
-    dismissedRef.current = false;
+  useEffect(
+    function manageSnackbarTimer() {
+      dismissedRef.current = false;
 
-    if (item.durationMs === null) return;
+      if (item.durationMs === null) return;
 
-    const now0 = Date.now();
-    deadlineRef.current = now0 + item.durationMs;
-    lastTickRef.current = now0;
+      const now0 = Date.now();
+      deadlineRef.current = now0 + item.durationMs;
+      lastTickRef.current = now0;
 
-    const tick = () => {
+      const tick = () => {
+        rafRef.current = window.requestAnimationFrame(tick);
+
+        if (dismissedRef.current) return;
+
+        const now = Date.now();
+        const dt = now - lastTickRef.current;
+        lastTickRef.current = now;
+
+        if (isPaused) {
+          if (deadlineRef.current !== null) deadlineRef.current += dt;
+          return;
+        }
+
+        if (deadlineRef.current !== null && now >= deadlineRef.current) {
+          dismissedRef.current = true;
+          onDismiss(item.id);
+        }
+      };
+
       rafRef.current = window.requestAnimationFrame(tick);
 
-      if (dismissedRef.current) return;
-
-      const now = Date.now();
-      const dt = now - lastTickRef.current;
-      lastTickRef.current = now;
-
-      if (isPaused) {
-        if (deadlineRef.current !== null) deadlineRef.current += dt;
-        return;
-      }
-
-      if (deadlineRef.current !== null && now >= deadlineRef.current) {
-        dismissedRef.current = true;
-        onDismiss(item.id);
-      }
-    };
-
-    rafRef.current = window.requestAnimationFrame(tick);
-
-    return () => {
-      if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [item.id, item.durationMs, isPaused, onDismiss]);
+      return () => {
+        if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      };
+    },
+    [item.id, item.durationMs, isPaused, onDismiss],
+  );
 
   return (
     <div

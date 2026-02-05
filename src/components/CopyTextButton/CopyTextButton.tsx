@@ -60,7 +60,7 @@ export function CopyTextButton({
     );
   }, [disabled, handleCopy]);
 
-  useEffect(() => {
+  useEffect(function cleanupCopyTimer() {
     return () => {
       if (timerRef.current) window.clearTimeout(timerRef.current);
     };

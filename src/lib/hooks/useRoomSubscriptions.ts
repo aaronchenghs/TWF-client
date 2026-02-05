@@ -17,21 +17,26 @@ export function useRoomSubscriptions({
   onClosed,
   onKicked,
 }: Options) {
-  useEffect(() => {
-    if (!roomCode) return;
+  useEffect(
+    function subscribeToRoomEvents() {
+      if (!roomCode) return;
 
-    const offState = onState ? roomSocket.onRoomState(onState) : () => undefined;
-    const offClosed = onClosed
-      ? roomSocket.onRoomClosed(onClosed)
-      : () => undefined;
-    const offKicked = onKicked
-      ? roomSocket.onRoomKicked(onKicked)
-      : () => undefined;
+      const offState = onState
+        ? roomSocket.onRoomState(onState)
+        : () => undefined;
+      const offClosed = onClosed
+        ? roomSocket.onRoomClosed(onClosed)
+        : () => undefined;
+      const offKicked = onKicked
+        ? roomSocket.onRoomKicked(onKicked)
+        : () => undefined;
 
-    return () => {
-      offState();
-      offClosed();
-      offKicked();
-    };
-  }, [roomCode, onState, onClosed, onKicked]);
+      return () => {
+        offState();
+        offClosed();
+        offKicked();
+      };
+    },
+    [roomCode, onState, onClosed, onKicked],
+  );
 }

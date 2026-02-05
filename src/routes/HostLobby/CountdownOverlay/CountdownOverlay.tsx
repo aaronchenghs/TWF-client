@@ -53,48 +53,54 @@ export function CountdownOverlay({
     onCancel();
   }, [hardReset, onCancel]);
 
-  useEffect(() => {
-    if (!open) {
+  useEffect(
+    function runCountdownSequence() {
+      if (!open) {
+        clearAllTimers();
+        return;
+      }
+
       clearAllTimers();
-      return;
-    }
 
-    clearAllTimers();
-
-    const startCount = seconds;
-
-    schedule(() => {
-      setPhase("in");
-      setDisplayCount(startCount);
-      setColor((prev) => pickRandomColor(prev));
-    }, 0);
-
-    const counts = Array.from({ length: startCount }, (_, i) => startCount - i);
-
-    counts.forEach((n) => {
-      const base = (startCount - n) * COUNTDOWN_PACE;
+      const startCount = seconds;
 
       schedule(() => {
-        setPhase("out");
-      }, base + VISIBLE_MS);
+        setPhase("in");
+        setDisplayCount(startCount);
+        setColor((prev) => pickRandomColor(prev));
+      }, 0);
 
-      if (n > 1) {
-        schedule(() => {
-          setDisplayCount(n - 1);
-          setPhase("in");
-          setColor((prev) => pickRandomColor(prev));
-        }, base + COUNTDOWN_PACE);
-      } else {
-        schedule(() => {
-          onComplete();
-        }, base + COUNTDOWN_PACE);
-      }
-    });
+      const counts = Array.from(
+        { length: startCount },
+        (_, i) => startCount - i,
+      );
 
-    return () => {
-      clearAllTimers();
-    };
-  }, [open, seconds, onComplete, clearAllTimers, schedule]);
+      counts.forEach((n) => {
+        const base = (startCount - n) * COUNTDOWN_PACE;
+
+        schedule(() => {
+          setPhase("out");
+        }, base + VISIBLE_MS);
+
+        if (n > 1) {
+          schedule(() => {
+            setDisplayCount(n - 1);
+            setPhase("in");
+            setColor((prev) => pickRandomColor(prev));
+          }, base + COUNTDOWN_PACE);
+        } else {
+          schedule(() => {
+            onComplete();
+          }, base + COUNTDOWN_PACE);
+        }
+      });
+
+      return () => {
+        clearAllTimers();
+      };
+    },
+    [open, seconds, onComplete, clearAllTimers, schedule],
+  );
 
   const Svg = useMemo(() => {
     if (displayCount === 3) return Three;

@@ -1,5 +1,5 @@
-import { socketClient } from "./socketClient";
-import { normalizeCode } from "../../lib/codeUtils";
+import { socketClient } from "@/services/sockets/socketClient";
+import { normalizeCode } from "@/lib/codeUtils";
 import * as Contracts from "@twf/contracts";
 
 type Role = Contracts.Role;
@@ -18,6 +18,67 @@ export type RoomErrorPayload = Parameters<
   ServerToClientEvents["room:error"]
 >[0];
 
+type ListenArgs<E extends keyof ServerToClientEvents> = Parameters<
+  ServerToClientEvents[E]
+>;
+
+const DEFAULT_TIMEOUT_MS = 8000;
+
+function toError(err: unknown): Error {
+  if (err instanceof Error) return err;
+  if (typeof err === "string") return new Error(err);
+  try {
+    return new Error(JSON.stringify(err));
+  } catch {
+    return new Error("Unknown error");
+  }
+}
+
+function waitForEventOrError<E extends keyof ServerToClientEvents, T>(
+  event: E,
+  map: (...args: ListenArgs<E>) => T,
+  timeoutMs: number,
+  timeoutLabel = String(event),
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    let settled = false;
+
+    let offEvent: () => void = () => undefined;
+    let offError: () => void = () => undefined;
+
+    let timer: number | null = null;
+
+    const cleanup = () => {
+      if (timer !== null) window.clearTimeout(timer);
+      offEvent();
+      offError();
+    };
+
+    const settle = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      fn();
+    };
+
+    const handler = ((...args: ListenArgs<E>) => {
+      settle(() => resolve(map(...args)));
+    }) as ServerToClientEvents[E];
+
+    offEvent = socketClient.on(event, handler);
+
+    offError = socketClient.on("room:error", (err) => {
+      settle(() => reject(toError(err)));
+    });
+
+    timer = window.setTimeout(() => {
+      settle(() =>
+        reject(new Error(`Timed out waiting for ${timeoutLabel}`)),
+      );
+    }, timeoutMs);
+  });
+}
+
 /**
  * Room-level socket service.
  * Centralizes event names, payload shaping, and common room workflows.
@@ -26,46 +87,40 @@ export const roomSocket = {
   async createRoom(role: Role): Promise<RoomCreatedPayload> {
     socketClient.connect();
 
-    const createdP = socketClient
-      .waitFor("room:created")
-      .then(([payload]) => payload);
-
-    const errorP = socketClient
-      .waitFor("room:error")
-      .then(([payload]) => Promise.reject(payload as RoomErrorPayload));
+    const createdP = waitForEventOrError(
+      "room:created",
+      (payload) => payload,
+      DEFAULT_TIMEOUT_MS,
+    );
 
     socketClient.emit("room:create", { role });
 
-    return Promise.race([createdP, errorP]);
+    return createdP;
   },
 
   async listTierSets(timeoutMs = 5000): Promise<TierSetSummary[]> {
-    const listedP = socketClient
-      .waitFor("tierSets:listed", timeoutMs)
-      .then(([payload]) => payload.tierSets);
-
-    const errorP = socketClient
-      .waitFor("room:error", timeoutMs)
-      .then(([msg]) => Promise.reject(new Error(msg)));
+    const listedP = waitForEventOrError(
+      "tierSets:listed",
+      (payload) => payload.tierSets,
+      timeoutMs,
+    );
 
     socketClient.emit("tierSets:list");
-    return Promise.race([listedP, errorP]);
+    return listedP;
   },
 
   async getTierSet(
     id: TierSetId,
     timeoutMs = 5000,
   ): Promise<TierSetDefinition> {
-    const gotP = socketClient
-      .waitFor("tierSets:got", timeoutMs)
-      .then(([payload]) => payload.tierSet);
-
-    const errorP = socketClient
-      .waitFor("room:error", timeoutMs)
-      .then(([msg]) => Promise.reject(new Error(msg)));
+    const gotP = waitForEventOrError(
+      "tierSets:got",
+      (payload) => payload.tierSet,
+      timeoutMs,
+    );
 
     socketClient.emit("tierSets:get", { id });
-    return Promise.race([gotP, errorP]);
+    return gotP;
   },
 
   setTierSet(tierSetId: TierSetId): void {
@@ -108,34 +163,66 @@ export const roomSocket = {
     timeoutMs = 3000,
   ): Promise<{ state: RoomPublicState; playerId?: string }> {
     const normalizedCode = normalizeCode(input.code);
+    const isPlayer = input.role === "player";
 
-    const stateP = socketClient
-      .waitFor("room:state", timeoutMs)
-      .then(([state]) => {
-        if (state.code !== normalizedCode) throw new Error("Unexpected room");
-        return state;
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      let state: RoomPublicState | null = null;
+      let playerId: string | undefined;
+
+      let offState: () => void = () => undefined;
+      let offJoined: () => void = () => undefined;
+      let offError: () => void = () => undefined;
+
+      let timer: number | null = null;
+
+      const cleanup = () => {
+        if (timer !== null) window.clearTimeout(timer);
+        offState();
+        offJoined();
+        offError();
+      };
+
+      const settle = (fn: () => void) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        fn();
+      };
+
+      const maybeResolve = () => {
+        const resolvedState = state;
+        if (!resolvedState) return;
+        if (isPlayer && !playerId) return;
+        settle(() => resolve({ state: resolvedState, playerId }));
+      };
+
+      offState = socketClient.on("room:state", (nextState) => {
+        if (nextState.code !== normalizedCode) return;
+        state = nextState;
+        maybeResolve();
       });
 
-    const errorP = socketClient
-      .waitFor("room:error", timeoutMs)
-      .then(([msg]) => Promise.reject(new Error(msg)));
+      offJoined = isPlayer
+        ? socketClient.on("room:joined", (payload) => {
+            playerId = payload.playerId as string;
+            maybeResolve();
+          })
+        : () => undefined;
 
-    const joinedP =
-      input.role === "player"
-        ? socketClient
-            .waitFor("room:joined", timeoutMs)
-            .then(([payload]) => payload.playerId as string)
-        : Promise.resolve(undefined);
+      offError = socketClient.on("room:error", (err) => {
+        settle(() => reject(toError(err)));
+      });
 
-    socketClient.connect();
-    this.joinRoom({ ...input, code: normalizedCode });
+      timer = window.setTimeout(() => {
+        settle(() =>
+          reject(new Error(`Timed out waiting for room join (${normalizedCode})`)),
+        );
+      }, timeoutMs);
 
-    const [state, playerId] = await Promise.race([
-      Promise.all([stateP, joinedP]),
-      errorP,
-    ]);
-
-    return { state, playerId };
+      socketClient.connect();
+      roomSocket.joinRoom({ ...input, code: normalizedCode });
+    });
   },
 
   startGame(code: string): void {

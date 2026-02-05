@@ -1,17 +1,14 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import { useEffect, useMemo, useState } from "react";
 import styles from "./ItemPlacementReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
 import { AnimatePresence, motion } from "framer-motion";
-import { resolvePlacedTierId } from "../../../../lib/tierItems";
-import { OverlayDialog } from "../../../../components/OverlayDialog/OverlayDialog";
-import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
-import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
-import { usePhaseStartOverlay } from "../../../../lib/hooks/usePhaseStartOverlay";
+import { resolvePlacedTierId } from "@/lib/tierItems";
+import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
+import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
+import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
+import { getPlayerNameById } from "@/lib/players";
 
 type RoomPublicState = Contracts.RoomPublicState;
-type TierId = Contracts.TierId;
-type TierItemId = Contracts.TierItemId;
 
 type Props = {
   state: RoomPublicState | null;
@@ -25,9 +22,6 @@ const totalAnimateS = ENTER_MS / 1000 + HOLD_MS / 1000;
 const enterFrac = totalAnimateS > 0 ? ENTER_MS / 1000 / totalAnimateS : 1;
 
 export function ItemPlacementReveal({ state }: Props) {
-  const [placedItemId, setPlacedItemId] = useState<TierItemId | null>(null);
-  const [placedTierId, setPlacedTierId] = useState<TierId | null>(null);
-
   const { isOpen, token } = usePhaseStartOverlay(state, {
     openOnPhase: "VOTE",
     openMs: REVEAL_TOTAL_MS,
@@ -35,39 +29,21 @@ export function ItemPlacementReveal({ state }: Props) {
     shouldOpen: () => !!state?.currentItem,
   });
 
-  const { itemName, imageSrc, tierName, tierColor } = useMemo(() => {
-    const meta = placedItemId ? state?.itemMetaById?.[placedItemId] : undefined;
-    const tierMeta = placedTierId
-      ? state?.tierMetaById?.[placedTierId]
-      : undefined;
+  const placedItemId = state?.currentItem ?? null;
+  const placedTierId = resolvePlacedTierId(state, placedItemId);
 
-    return {
-      itemName: meta?.name ?? placedItemId ?? "—",
-      imageSrc: meta?.imageSrc,
-      tierName: tierMeta?.name ?? placedTierId ?? "—",
-      tierColor: tierMeta?.color ?? "transparent",
-    };
-  }, [state, placedItemId, placedTierId]);
+  const meta = placedItemId ? state?.itemMetaById?.[placedItemId] : undefined;
+  const tierMeta = placedTierId ? state?.tierMetaById?.[placedTierId] : undefined;
 
-  const placedByPlayerName = useMemo(() => {
-    const id = state?.currentTurnPlayerId ?? null;
-    if (!id) return "—";
-    return state?.players?.find((p) => p.id === id)?.name ?? "—";
-  }, [state]);
+  const itemName = meta?.name ?? placedItemId ?? "--";
+  const imageSrc = meta?.imageSrc;
+  const tierName = tierMeta?.name ?? placedTierId ?? "--";
+  const tierColor = tierMeta?.color ?? "transparent";
 
-  useEffect(
-    function handleSnapshotOnOpen() {
-      if (!state) return;
-      if (!isOpen) return;
-
-      const currentItem = state.currentItem ?? null;
-      const placedTier =
-        state.pendingTierId ?? resolvePlacedTierId(state, currentItem);
-
-      setPlacedItemId(currentItem);
-      setPlacedTierId(placedTier);
-    },
-    [isOpen, state],
+  const placedByPlayerName = getPlayerNameById(
+    state?.players ?? [],
+    state?.currentTurnPlayerId ?? null,
+    "--",
   );
 
   return (

@@ -1,11 +1,10 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import { useMemo } from "react";
 import styles from "./PlayerTurnReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
 import { AnimatePresence, motion } from "framer-motion";
-import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
-import { OverlayDialog } from "../../../../components/OverlayDialog/OverlayDialog";
-import { usePhaseStartOverlay } from "../../../../lib/hooks/usePhaseStartOverlay";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
+import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
+import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
+import { getPlayerNameById } from "@/lib/players";
 type RoomPublicState = Contracts.RoomPublicState;
 
 type PlayerTurnRevealProps = {
@@ -27,11 +26,11 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
     shouldOpen: () => !!state?.currentTurnPlayerId,
   });
 
-  const playerName = useMemo(() => {
-    const id = state?.currentTurnPlayerId ?? null;
-    if (!id) return "—";
-    return state?.players?.find((p) => p.id === id)?.name ?? "—";
-  }, [state]);
+  const playerName = getPlayerNameById(
+    state?.players ?? [],
+    state?.currentTurnPlayerId ?? null,
+    "--",
+  );
 
   return (
     <OverlayDialog open={isOpen} ariaLabel="Reveal turn player">
@@ -63,7 +62,7 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
               className={styles.line}
               textAlign="center"
             >
-              IT`S
+              IT'S
             </MainTextTypography>
 
             <MainTextTypography

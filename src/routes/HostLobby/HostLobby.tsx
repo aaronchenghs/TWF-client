@@ -1,20 +1,22 @@
 import { useNavigate, useParams } from "react-router-dom";
 import clsx from "clsx";
 import styles from "./HostLobby.module.scss";
-import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
-import { AccentButton } from "../../components/AccentButton/AccentButton";
-import { SubtextDivider } from "../../components/SubtextDivider/SubtextDivider";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
+import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { SubtextDivider } from "@/components/SubtextDivider/SubtextDivider";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { roomSocket } from "../../services/sockets/roomSocket";
+import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
-import { normalizeCode } from "../../lib/codeUtils";
+import { normalizeCode } from "@/lib/codeUtils";
 import { TierSetGridEntry } from "./TierSetGridEntry/TierSetGridEntry";
-import { ConfirmationModal } from "../../components/ConfirmationModal/ConfirmationModal";
-import { CopyTextButton } from "../../components/CopyTextButton/CopyTextButton";
-import { ROUTES } from "../routes";
+import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
+import { CopyTextButton } from "@/components/CopyTextButton/CopyTextButton";
+import { ROUTES } from "@/routes/routes";
 import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
-import { getClientId } from "../../lib/session";
-import type { Guid } from "../../lib/guid";
+import { getClientId } from "@/lib/session";
+import type { Guid } from "@/lib/guid";
+import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
+import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -41,6 +43,7 @@ export default function HostLobby() {
   const selectedTierSetId = roomState?.tierSetId ?? null;
   const isStartEnabled = !!selectedTierSetId && playerCount >= 2;
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
+  const isRoomCodeValid = roomCode.length === CODE_LENGTH;
 
   const selectedTierSetName = useMemo(() => {
     if (!selectedTierSetId) return null;
@@ -51,7 +54,7 @@ export default function HostLobby() {
 
   const handleCloseLobby = useCallback(() => {
     roomSocket.closeRoom();
-    navigate("/");
+    navigate(ROUTES.LANDING);
   }, [navigate]);
 
   const handleSelectTierSet = useCallback((ts: TierSetSummary) => {
@@ -72,24 +75,33 @@ export default function HostLobby() {
     navigate(`${ROUTES.GAME_ROOM}/${roomCode}`);
   }, [navigate, roomCode]);
 
+  const handleRoomState = useCallback((state: RoomPublicState) => {
+    setRoomState(state);
+  }, []);
+
+  const handleRoomClosed = useCallback(() => {
+    navigate(ROUTES.LANDING, { replace: true });
+  }, [navigate]);
+
+  useRoomSubscriptions({
+    roomCode: isRoomCodeValid ? roomCode : null,
+    onState: handleRoomState,
+    onClosed: handleRoomClosed,
+  });
+
   useEffect(
     function handleRoomConnection() {
-      if (roomCode.length !== CODE_LENGTH) return;
+      if (!isRoomCodeValid) return;
 
       const clientId = getClientId();
 
-      roomSocket.joinRoomOrThrow({ code: roomCode, role: "host", clientId });
-      roomSocket.listTierSets().then(setTierSets);
+      roomSocket
+        .joinRoomOrThrow({ code: roomCode, role: "host", clientId })
+        .catch(() => handleRoomClosed());
 
-      const offState = roomSocket.onRoomState((state) => {
-        setRoomState(state);
-      });
-
-      return () => {
-        offState();
-      };
+      roomSocket.listTierSets().then(setTierSets).catch(() => setTierSets([]));
     },
-    [roomCode],
+    [roomCode, isRoomCodeValid, handleRoomClosed],
   );
 
   return (
@@ -106,11 +118,11 @@ export default function HostLobby() {
           <div className={styles.roomCodeContainer}>
             <CopyTextButton
               value={roomCode}
-              disabled={roomCode.length !== CODE_LENGTH}
+              disabled={!isRoomCodeValid}
               title="Copy room code"
             />
             <MainTextTypography className={styles.roomCode} variant="h2">
-              {roomCode || "— — — —"}
+              {roomCode || "----"}
             </MainTextTypography>
           </div>
         </div>
@@ -121,11 +133,11 @@ export default function HostLobby() {
           <SubtextDivider text="Choose a Tier List" />
 
           <div className={styles.presetGrid}>
-            {tierSets.length === 0 ? (
-              <MainTextTypography variant="body" muted>
-                Loading tier lists…
-              </MainTextTypography>
-            ) : (
+                {tierSets.length === 0 ? (
+                  <MainTextTypography variant="body" muted>
+                    Loading tier lists<AnimatedDots />
+                  </MainTextTypography>
+                ) : (
               tierSets.map((set) => (
                 <TierSetGridEntry
                   key={set.id}
@@ -147,15 +159,15 @@ export default function HostLobby() {
             </MainTextTypography>
 
             <ul className={styles.playerList}>
-              {players.length === 0 ? (
-                <MainTextTypography
-                  className={styles.player}
-                  variant="body"
-                  muted
-                >
-                  Waiting…
-                </MainTextTypography>
-              ) : (
+                  {players.length === 0 ? (
+                    <MainTextTypography
+                      className={styles.player}
+                      variant="body"
+                      muted
+                    >
+                      Waiting<AnimatedDots />
+                    </MainTextTypography>
+                  ) : (
                 players.map((player) => (
                   <li className={styles.playerEntry} key={player.id}>
                     <MainTextTypography className={styles.player} variant="h6">

@@ -1,0 +1,72 @@
+@use "../../styles/export" as *;
+
+.root {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+  background:
+    radial-gradient(1200px 600px at 15% 15%, rgba(211, 158, 0, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 85% 20%, rgba(255, 255, 255, 0.05), transparent 60%),
+    $bg-app;
+}
+
+.panel {
+  width: min(560px, 92vw);
+  padding: 28px 28px 24px;
+  border-radius: $radius-lg;
+  background: linear-gradient(180deg, rgba(26, 28, 34, 0.92), rgba(18, 19, 23, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+  display: grid;
+  gap: 14px;
+  text-align: center;
+}
+
+.logo {
+  width: 96px;
+  height: auto;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+
+.title {
+  letter-spacing: 0.12em;
+}
+
+.row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.subtitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: $accent;
+  animation: spin 0.9s linear infinite;
+}
+
+.bar {
+  height: 6px;
+  border-radius: $round;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  width: 45%;
+  border-radius: $round;
+  background: linear-gradient(90deg, rgba(211, 158, 0, 0.1), $accent, rgba(211, 158, 0, 0.4));
+  animation: sweep 1.4s ease-in-out infinite;
+}

@@ -3,7 +3,7 @@ import TWFLogo from "../../assets/public/TWF_Transparent.svg?react";
 import styles from "./Landing.module.scss";
 import { ROUTES } from "../routes";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
-import { MainTextTypography } from "../../components/MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { useMemo, useState } from "react";
 import { normalizeCode } from "../../lib/codeUtils";
@@ -13,6 +13,7 @@ import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
 import * as Contracts from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
 import { getClientId, saveRoomSession } from "../../lib/session";
+import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 
@@ -54,7 +55,13 @@ export default function Landing() {
                 disabled={isCreatingLobby}
                 onClick={handleCreateRoom}
               >
-                {isCreatingLobby ? "Creating..." : "Create Lobby"}
+                {isCreatingLobby ? (
+                  <>
+                    Creating<AnimatedDots />
+                  </>
+                ) : (
+                  "Create Lobby"
+                )}
               </AccentButton>
               <MainTextTypography variant="h3">or</MainTextTypography>
             </>

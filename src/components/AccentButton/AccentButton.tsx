@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import styles from "./AccentButton.module.scss";
-import { MainTextTypography } from "../MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 
 type Variant = "primary" | "secondary" | "ghost" | "destructive";
 type Size = "small";

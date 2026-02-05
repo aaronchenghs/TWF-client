@@ -1,15 +1,16 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TWFLogo from "../../../assets/public/TWF_Transparent.svg?react";
+import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerLobby.module.scss";
 import * as Contracts from "@twf/contracts";
-import { AccentButton } from "../../../components/AccentButton/AccentButton";
-import { ConfirmationModal } from "../../../components/ConfirmationModal/ConfirmationModal";
-import { HowToPlayModal } from "../../../components/HowToPlayModal/HowToPlayModal";
-import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
-import { socketClient } from "../../../services/sockets/socketClient";
-import { ROUTES } from "../../routes";
-import { getPlayerId } from "../../../lib/session";
+import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
+import { HowToPlayModal } from "@/components/HowToPlayModal/HowToPlayModal";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
+import { socketClient } from "@/services/sockets/socketClient";
+import { ROUTES } from "@/routes/routes";
+import { getPlayerId } from "@/lib/session";
+import { getPlayerNameById } from "@/lib/players";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -21,10 +22,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
 
   const myPlayerId = getPlayerId(state.code);
 
-  const myName = useMemo(() => {
-    if (!myPlayerId) return "PLAYER";
-    return state.players.find((p) => p.id === myPlayerId)?.name ?? "PLAYER";
-  }, [state.players, myPlayerId]);
+  const myName = getPlayerNameById(state.players, myPlayerId);
 
   const handleConfirmQuit = () => {
     socketClient.disconnect();

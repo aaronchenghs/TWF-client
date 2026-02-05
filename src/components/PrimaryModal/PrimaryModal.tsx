@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import clsx from "clsx";
 import styles from "./PrimaryModal.module.scss";
-import { MainTextTypography } from "../MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 
 export function PrimaryModal(props: {
   open: boolean;

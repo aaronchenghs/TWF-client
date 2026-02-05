@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type * as Contracts from "@twf/contracts";
 
 type RoomPublicState = Contracts.RoomPublicState;
@@ -55,70 +55,84 @@ export function usePhaseStartOverlay(
   const prevReopenKeyRef = useRef<typeof reopenKey>(undefined);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function clearCloseTimer() {
+  const clearCloseTimer = useCallback(() => {
     if (!closeTimeoutRef.current) return;
     clearTimeout(closeTimeoutRef.current);
     closeTimeoutRef.current = null;
-  }
+  }, []);
 
-  function open() {
+  const open = useCallback(() => {
     clearCloseTimer();
     setIsOpen(true);
     setRevealToken((t) => t + 1);
 
-    closeTimeoutRef.current = setTimeout(() => {
+    closeTimeoutRef.current = window.setTimeout(() => {
       setIsOpen(false);
     }, openMs);
-  }
+  }, [clearCloseTimer, openMs]);
 
-  function close() {
+  const close = useCallback(() => {
     clearCloseTimer();
     setIsOpen(false);
-  }
+  }, [clearCloseTimer]);
 
-  useEffect(
-    function handleEdgeOpen() {
-      if (!state) {
-        prevPhaseRef.current = null;
-        prevReopenKeyRef.current = reopenKey;
-        close();
-        return;
-      }
-
-      const prevPhase = prevPhaseRef.current;
-      const currPhase = state.phase;
-
-      const hasEnteredPhase =
-        prevPhase !== openOnPhase && currPhase === openOnPhase;
-
-      const isReopenKeyChanged =
-        currPhase === openOnPhase &&
-        reopenKey !== undefined &&
-        prevReopenKeyRef.current !== undefined &&
-        prevReopenKeyRef.current !== reopenKey;
-
-      prevPhaseRef.current = currPhase;
+  useEffect(() => {
+    if (!state) {
+      prevPhaseRef.current = null;
       prevReopenKeyRef.current = reopenKey;
+      clearCloseTimer();
+      queueMicrotask(() => setIsOpen(false));
+      return;
+    }
 
-      if (closeIfPhaseMismatch && currPhase !== openOnPhase) {
-        close();
-        return;
-      }
+    const prevPhase = prevPhaseRef.current;
+    const currPhase = state.phase;
 
-      if (!hasEnteredPhase && !isReopenKeyChanged) return;
-      if (!shouldOpen?.()) return;
+    const hasEnteredPhase =
+      prevPhase !== openOnPhase && currPhase === openOnPhase;
 
-      open();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    },
-    [state?.phase, reopenKey, !!state],
-  );
+    const isReopenKeyChanged =
+      currPhase === openOnPhase &&
+      reopenKey !== undefined &&
+      prevReopenKeyRef.current !== undefined &&
+      prevReopenKeyRef.current !== reopenKey;
 
-  useEffect(function handleCleanupOnUnmount() {
+    prevPhaseRef.current = currPhase;
+    prevReopenKeyRef.current = reopenKey;
+
+    if (closeIfPhaseMismatch && currPhase !== openOnPhase) {
+      clearCloseTimer();
+      queueMicrotask(() => setIsOpen(false));
+      return;
+    }
+
+    if (!hasEnteredPhase && !isReopenKeyChanged) return;
+    if (!shouldOpen?.()) return;
+
+    queueMicrotask(() => {
+      clearCloseTimer();
+      setIsOpen(true);
+      setRevealToken((t) => t + 1);
+
+      closeTimeoutRef.current = window.setTimeout(() => {
+        setIsOpen(false);
+      }, openMs);
+    });
+  }, [
+    state,
+    openOnPhase,
+    reopenKey,
+    closeIfPhaseMismatch,
+    shouldOpen,
+    clearCloseTimer,
+    openMs,
+  ]);
+
+  useEffect(() => {
     return () => {
       clearCloseTimer();
     };
-  }, []);
+  }, [clearCloseTimer]);
 
   return { isOpen, token: revealToken, open, close };
 }

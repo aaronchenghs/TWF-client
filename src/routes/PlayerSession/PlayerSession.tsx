@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ROUTES } from "../routes";
-import { normalizeCode, normalizeName } from "../../lib/codeUtils";
-import { socketClient } from "../../services/sockets/socketClient";
-import { roomSocket } from "../../services/sockets/roomSocket";
+import { ROUTES } from "@/routes/routes";
+import { normalizeCode, normalizeName } from "@/lib/codeUtils";
+import { socketClient } from "@/services/sockets/socketClient";
+import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
 import PlayerLobby from "./PlayerLobby/PlayerLobby";
 import PlayerGameController from "./PlayerGameController/PlayerGameController";
@@ -15,7 +15,9 @@ import {
   getRoomSession,
   savePlayerId,
   saveRoomSession,
-} from "../../lib/session";
+} from "@/lib/session";
+import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
+import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -27,15 +29,29 @@ export default function PlayerSession() {
   const [state, setState] = useState<RoomPublicState | null>(null);
 
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
+  const isRoomCodeValid = roomCode.length === CODE_LENGTH;
 
   const returnToLanding = useCallback(() => {
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);
 
+  const handleKicked = useCallback(() => {
+    clearRoomSession(roomCode);
+    clearPlayerId(roomCode);
+    returnToLanding();
+  }, [roomCode, returnToLanding]);
+
+  useRoomSubscriptions({
+    roomCode: isRoomCodeValid ? roomCode : null,
+    onState: setState,
+    onClosed: returnToLanding,
+    onKicked: handleKicked,
+  });
+
   useEffect(
     function handleStateAndConnection() {
-      if (!roomCode || roomCode.length !== CODE_LENGTH) {
+      if (!roomCode || !isRoomCodeValid) {
         returnToLanding();
         return;
       }
@@ -88,25 +104,20 @@ export default function PlayerSession() {
       }
 
       joinAndHydrateSession();
-      const offState = roomSocket.onRoomState((s) => setState(s));
-      const offClosed = roomSocket.onRoomClosed(() => returnToLanding());
-      const offKicked = roomSocket.onRoomKicked(() => {
-        clearRoomSession(roomCode);
-        clearPlayerId(roomCode);
-        returnToLanding();
-      });
 
       return () => {
         cancelled = true;
-        offState();
-        offClosed();
-        offKicked();
       };
     },
-    [roomCode, searchParams, returnToLanding],
+    [roomCode, isRoomCodeValid, searchParams, returnToLanding],
   );
 
-  if (!state) return <div>Connecting…</div>;
+  if (!state)
+    return (
+      <div>
+        Connecting<AnimatedDots />
+      </div>
+    );
 
   return state.phase === "LOBBY" ? (
     <PlayerLobby state={state} />

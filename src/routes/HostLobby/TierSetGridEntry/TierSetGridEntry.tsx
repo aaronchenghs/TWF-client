@@ -1,7 +1,7 @@
 import styles from "./TierSetGridEntry.module.scss";
 import clsx from "clsx";
 import { useCallback, useState } from "react";
-import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../../services/sockets/roomSocket";
 import { TierSetDetails } from "./TierSetDetails/TierSetDetails";
 import * as Contracts from "@twf/contracts";

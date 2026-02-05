@@ -1,23 +1,26 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TWFLogo from "../../../assets/public/TWF_Transparent.svg?react";
+import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerGameController.module.scss";
 import { AwaitingControls } from "./Controls/AwaitingControls";
 import { PlaceControls } from "./Controls/PlaceControls";
 import { VoteControls } from "./Controls/VoteControls";
 import * as Contracts from "@twf/contracts";
-import { AccentButton } from "../../../components/AccentButton/AccentButton";
-import { ConfirmationModal } from "../../../components/ConfirmationModal/ConfirmationModal";
-import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
-import { roomSocket } from "../../../services/sockets/roomSocket";
-import { socketClient } from "../../../services/sockets/socketClient";
-import { GameStatusCard } from "../../GameRoom/GameStatusCard/GameStatusCard";
-import { ROUTES } from "../../routes";
-import { getPlayerId } from "../../../lib/session";
-import { SHOW_CURRENT_ITEM_PHASES } from "../../../lib/tierItems";
+import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
+import { roomSocket } from "@/services/sockets/roomSocket";
+import { socketClient } from "@/services/sockets/socketClient";
+import { GameStatusCard } from "@/routes/GameRoom/GameStatusCard/GameStatusCard";
+import { ROUTES } from "@/routes/routes";
+import { getPlayerId } from "@/lib/session";
+import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
+import { getPlayerNameById } from "@/lib/players";
+import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
+type TierItem = Contracts.TierItem;
 type TierId = Contracts.TierId;
 type VoteValue = Contracts.VoteValue;
 
@@ -35,19 +38,16 @@ export default function PlayerGameController({
 
   const myPlayerId = getPlayerId(state.code);
 
-  const myName = useMemo(() => {
-    if (!myPlayerId) return "PLAYER";
-    return state.players.find((p) => p.id === myPlayerId)?.name ?? "PLAYER";
-  }, [state.players, myPlayerId]);
+  const myName = getPlayerNameById(state.players, myPlayerId);
 
   const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
   const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;
   const hasVoted = !!myPlayerId && state.votes?.[myPlayerId] !== undefined;
 
-  const currentItem = useMemo(() => {
-    if (!state.currentItem || !tierSet) return null;
-    return tierSet.items.find((it) => it.id === state.currentItem) ?? null;
-  }, [state.currentItem, tierSet]);
+  const currentItem: TierItem | null =
+    state.currentItem && tierSet
+      ? tierSet.items.find((it) => it.id === state.currentItem) ?? null
+      : null;
 
   const handleExit = useCallback(() => {
     socketClient.disconnect();
@@ -107,7 +107,7 @@ export default function PlayerGameController({
         <TWFLogo className={styles.logo} />
         <div className={styles.headerText}>
           <MainTextTypography variant="caption" muted letterSpacing="wide">
-            LOBBY {state.code} • {myName || "PLAYER"}
+            LOBBY {state.code} - {myName || "PLAYER"}
           </MainTextTypography>
         </div>
 
@@ -122,39 +122,19 @@ export default function PlayerGameController({
 
       <main className={styles.main}>
         <GameStatusCard label="CURRENT ITEM:">
-          {SHOW_CURRENT_ITEM_PHASES.has(state.phase) || isMyTurn ? (
-            currentItem ? (
-              <div className={styles.itemRow}>
-                {currentItem.imageSrc ? (
-                  <img
-                    className={styles.itemImage}
-                    src={currentItem.imageSrc}
-                    alt={currentItem.name}
-                    loading="lazy"
-                    draggable={false}
-                  />
-                ) : (
-                  <div className={styles.itemImageFallback} aria-hidden="true">
-                    <MainTextTypography variant="h4">
-                      {currentItem.name}
-                    </MainTextTypography>
-                  </div>
-                )}
-
-                <MainTextTypography variant="h4" className={styles.itemName}>
-                  {currentItem.name}
-                </MainTextTypography>
-              </div>
-            ) : (
-              <MainTextTypography textAlign="center" variant="body" muted>
-                —
-              </MainTextTypography>
-            )
-          ) : (
-            <MainTextTypography textAlign="center" variant="h4" muted>
-              ???
-            </MainTextTypography>
-          )}
+          <CurrentItemDisplay
+            item={
+              currentItem
+                ? { name: currentItem.name, imageSrc: currentItem.imageSrc }
+                : null
+            }
+            isVisible={SHOW_CURRENT_ITEM_PHASES.has(state.phase) || isMyTurn}
+            rowClassName={styles.itemRow}
+            imageClassName={styles.itemImage}
+            fallbackClassName={styles.itemImageFallback}
+            nameClassName={styles.itemName}
+            textAlign="center"
+          />
         </GameStatusCard>
       </main>
 

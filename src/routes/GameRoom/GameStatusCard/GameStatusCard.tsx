@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import clsx from "clsx";
 import styles from "./GameStatusCard.module.scss";
-import { MainTextTypography } from "../../../components/MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
 
 type GameStatusCardProps = {
   label: string;

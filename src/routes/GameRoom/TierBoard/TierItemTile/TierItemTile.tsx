@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import styles from "./TierItemTile.module.scss";
-import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
 import { getItemMeta } from "../../../../lib/tierItems";
 import * as Contracts from "@twf/contracts";
 import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";

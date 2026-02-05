@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AccentButton } from "../AccentButton/AccentButton";
-import { MainTextTypography } from "../MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
 
 type ConfirmationModalProps = {

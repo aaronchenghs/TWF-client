@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
 import clsx from "clsx";
 import styles from "./HowToPlayModal.module.scss";
-import { MainTextTypography } from "../MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 import { AccentButton } from "../AccentButton/AccentButton";
-
 import Step1Img from "../../assets/public/InstructionStep1.svg";
 import Step2Img from "../../assets/public/InstructionStep2.svg";
 import Step3Img from "../../assets/public/InstructionStep3.svg";

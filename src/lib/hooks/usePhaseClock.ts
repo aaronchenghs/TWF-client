@@ -10,14 +10,9 @@ export type PhaseClock = {
 };
 
 // Server timestamps are absolute epoch ms.
-// Only compute “how much time is left” for UI/animation.
+// Only compute "how much time is left" for UI/animation.
 export function usePhaseClock(state: RoomPublicState | null): PhaseClock {
   const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), 100);
-    return () => window.clearInterval(id);
-  }, []);
 
   const endsAt = useMemo(() => {
     if (!state) return null;
@@ -38,10 +33,16 @@ export function usePhaseClock(state: RoomPublicState | null): PhaseClock {
     }
   }, [state]);
 
+  useEffect(() => {
+    if (endsAt == null) return;
+    const id = window.setInterval(() => setNow(Date.now()), 100);
+    return () => window.clearInterval(id);
+  }, [endsAt]);
+
   const msLeft = endsAt == null ? null : Math.max(0, endsAt - now);
   const secondsLeft = msLeft == null ? null : Math.ceil(msLeft / 1000);
 
-  // If later include durations in contracts (e.g., buildMs/revealMs…),
+  // If later include durations in contracts (e.g., buildMs/revealMs...),
   // replace this with deterministic progress = 1 - msLeft/duration.
   const progress01 = endsAt == null ? null : null;
 

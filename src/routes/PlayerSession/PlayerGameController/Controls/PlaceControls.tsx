@@ -4,7 +4,7 @@ import styles from "./Controls.module.scss";
 import { AwaitingControls } from "./AwaitingControls";
 import * as Contracts from "@twf/contracts";
 import { AccentButton } from "../../../../components/AccentButton/AccentButton";
-import { MainTextTypography } from "../../../../components/MainTextTypography/MaintTextTypography";
+import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
 type Tier = Contracts.Tier;
 type TierItem = Contracts.TierItem;
 

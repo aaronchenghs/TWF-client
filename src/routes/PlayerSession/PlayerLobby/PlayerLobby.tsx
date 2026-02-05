@@ -32,7 +32,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
 
   return (
     <div className={styles.waiting}>
-      <TWFLogo className={styles.logo} />
+      <TWFLogo className={styles.logo} aria-hidden="true" />
 
       <section className={styles.identity}>
         <MainTextTypography variant="body" muted>

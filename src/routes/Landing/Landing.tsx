@@ -36,7 +36,7 @@ export default function Landing() {
   return (
     <div className={styles.landingPage}>
       <div className={styles.container}>
-        <TWFLogo className={styles.logo} />
+        <TWFLogo className={styles.logo} aria-hidden="true" />
 
         <button
           type="button"

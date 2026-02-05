@@ -105,7 +105,7 @@ export default function GameRoom() {
         <aside className={styles.sideSection}>
           <header className={styles.header}>
             <div className={styles.headerLeft}>
-              <TWFLogo className={styles.logo} />
+              <TWFLogo className={styles.logo} aria-hidden="true" />
             </div>
 
             <div className={styles.headerRight}>
@@ -188,12 +188,16 @@ export default function GameRoom() {
       {IS_DEBUG_ENABLED && (
         <div className={styles.devControls}>
           <span>DEV CONTROLS:</span>
-          <button onClick={roomSocket.debugTogglePause}>
+          <button type="button" onClick={roomSocket.debugTogglePause}>
             {state.debug?.paused ? "Resume" : "Pause"}
           </button>
           <div className={styles.prevnextButtonsGroup}>
-            <button onClick={() => roomSocket.debugPrev()}>Prev</button>
-            <button onClick={() => roomSocket.debugNext()}>Next</button>
+            <button type="button" onClick={() => roomSocket.debugPrev()}>
+              Prev
+            </button>
+            <button type="button" onClick={() => roomSocket.debugNext()}>
+              Next
+            </button>
           </div>
         </div>
       )}

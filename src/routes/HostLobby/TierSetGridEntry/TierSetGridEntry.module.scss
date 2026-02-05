@@ -43,6 +43,21 @@
   background: color-mix(in srgb, $accent 15%, transparent);
 }
 
+.selectButton {
+  appearance: none;
+  border: 1px solid color-mix(in srgb, $bg-elevated 70%, transparent);
+  background: transparent;
+  padding: $default-padding;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  text-align: left;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 35%, transparent);
+  }
+}
+
 .headerRow {
   display: flex;
   align-items: center;

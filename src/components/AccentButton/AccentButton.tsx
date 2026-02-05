@@ -18,11 +18,13 @@ export function AccentButton({
   size,
   color,
   className,
+  type = "button",
   children,
   ...props
 }: AccentButtonProps) {
   return (
     <button
+      type={type}
       className={clsx(
         styles.button,
         styles[variant],

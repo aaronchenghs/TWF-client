@@ -18,9 +18,13 @@ export function AccentTextInput({
   ...props
 }: AccentTextInputProps) {
   const resolvedWidth = fullWidth ? "100%" : (width ?? "120px");
+  const ariaLabel =
+    props["aria-label"] ??
+    (props["aria-labelledby"] ? undefined : props.placeholder ?? props.name);
   return (
     <input
       {...props}
+      aria-label={ariaLabel}
       className={clsx(styles.input, className)}
       style={{ ...style, width: resolvedWidth }}
     />

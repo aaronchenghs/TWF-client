@@ -1,13 +1,13 @@
 import styles from "./TierSetGridEntry.module.scss";
 import clsx from "clsx";
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../../services/sockets/roomSocket";
 import { TierSetDetails } from "./TierSetDetails/TierSetDetails";
 import * as Contracts from "@twf/contracts";
 import type { Guid } from "../../../lib/guid";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
-import { handleKeyDown } from "../../../lib/accessibility";
+import { handleKeyDown } from "@/lib/accessibility";
 
 type TierSetSummary = Contracts.TierSetSummary;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -29,6 +29,7 @@ export function TierSetGridEntry({
 }: TierSetGridEntryProps) {
   const [details, setDetails] = useState<TierSetDefinition | null>(null);
   const isDetailsOpen = openDetailsTierSetId === tierSet.id;
+  const detailsRegionId = useId();
 
   const toggleDetails = useCallback(
     async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,13 +73,17 @@ export function TierSetGridEntry({
           size="small"
           onClick={toggleDetails}
           aria-expanded={isDetailsOpen}
+          aria-controls={detailsRegionId}
         >
           {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
         </AccentButton>
       </div>
 
       <div className={styles.content}>
-        <div className={clsx(styles.collapse, isDetailsOpen && styles.open)}>
+        <div
+          id={detailsRegionId}
+          className={clsx(styles.collapse, isDetailsOpen && styles.open)}
+        >
           <TierSetDetails isLoading={!details} details={details} />
         </div>
 
@@ -99,9 +104,18 @@ export function TierSetGridEntry({
             SELECTED
           </MainTextTypography>
         ) : (
-          <MainTextTypography variant="caption" muted>
-            CLICK TO SELECT
-          </MainTextTypography>
+          <button
+            type="button"
+            className={styles.selectButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(tierSet);
+            }}
+          >
+            <MainTextTypography variant="caption" muted>
+              SELECT
+            </MainTextTypography>
+          </button>
         )}
       </div>
     </div>

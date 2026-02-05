@@ -13,30 +13,16 @@ $image-preview-height: 56px;
   max-height: 65vh;
   display: flex;
   flex-direction: column;
+  gap: $default-gap;
 
   max-width: $page-width-cutoff;
   margin-left: auto;
   margin-right: auto;
 }
 
-.controlsLabel {
-  margin-bottom: $default-padding;
-}
-
-.smallNote {
-  margin-top: $default-padding;
-  margin-bottom: $default-padding;
-}
-
-.grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $default-gap;
-}
-
 .grid3 {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: $default-gap;
 }
 
@@ -46,20 +32,6 @@ $image-preview-height: 56px;
   justify-content: center;
   height: $image-preview-height;
   border-radius: $radius-lg;
-}
-
-.controlsHeader {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: $default-gap;
-  margin-bottom: $default-padding;
-}
-
-.controlsHeaderLeft {
-  display: flex;
-  flex-direction: column;
-  gap: calc($default-gap / 2);
 }
 
 .tierPickList {
@@ -178,7 +150,7 @@ $image-preview-height: 56px;
 }
 
 .confirmRow {
-  margin-top: $default-padding;
+  margin-top: 0;
   flex: 0 0 auto;
 }
 
@@ -186,6 +158,16 @@ $image-preview-height: 56px;
   width: 100%;
   height: $image-preview-height;
   border-radius: $radius-lg;
+}
+
+.awaiting {
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-height: 0;
+  background: transparent;
+  border-color: transparent;
+  border-width: 0;
 }
 
 @media (max-height: $mobile-width) {

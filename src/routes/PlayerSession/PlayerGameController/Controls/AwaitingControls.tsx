@@ -1,12 +1,6 @@
-import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
+import clsx from "clsx";
 import styles from "./Controls.module.scss";
 
 export function AwaitingControls() {
-  return (
-    <div className={styles.controls}>
-      <MainTextTypography variant="body" muted className={styles.smallNote}>
-        Waiting…
-      </MainTextTypography>
-    </div>
-  );
+  return <div className={clsx(styles.controls, styles.awaiting)} aria-hidden="true" />;
 }

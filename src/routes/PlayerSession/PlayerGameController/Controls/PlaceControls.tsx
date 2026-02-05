@@ -12,10 +12,10 @@ export function PlaceControls(props: {
   tiers: Tier[];
   tierOrder: string[];
   disabled: boolean;
-  onPlace: (tierId: string) => void;
+  onConfirmPlacement: (tierId: string) => void;
   currentItem: TierItem | null;
 }) {
-  const { tiers, tierOrder, disabled, onPlace, currentItem } = props;
+  const { tiers, tierOrder, disabled, onConfirmPlacement, currentItem } = props;
 
   const [selectedTierId, setSelectedTierId] = useState<string | null>(null);
 
@@ -39,14 +39,6 @@ export function PlaceControls(props: {
 
   return (
     <div className={styles.controls}>
-      <div className={styles.controlsHeader}>
-        <div className={styles.controlsHeaderLeft}>
-          <MainTextTypography variant="label" muted letterSpacing="wide">
-            TAP A TIER
-          </MainTextTypography>
-        </div>
-      </div>
-
       <div
         className={styles.tierPickList}
         role="group"
@@ -116,10 +108,10 @@ export function PlaceControls(props: {
           disabled={isConfirmDisabled || !currentItem}
           onClick={() => {
             if (!selectedTierId || !currentItem) return;
-            onPlace(selectedTierId);
+            onConfirmPlacement(selectedTierId);
           }}
         >
-          Confirm
+          CONFIRM
         </AccentButton>
       </div>
     </div>

@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
+import clsx from "clsx";
 import styles from "./PlayerGameController.module.scss";
 import { AwaitingControls } from "./Controls/AwaitingControls";
 import { PlaceControls } from "./Controls/PlaceControls";
 import { VoteControls } from "./Controls/VoteControls";
 import * as Contracts from "@twf/contracts";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "@/services/sockets/roomSocket";
@@ -15,7 +16,6 @@ import { GameStatusCard } from "@/routes/GameRoom/GameStatusCard/GameStatusCard"
 import { ROUTES } from "@/routes/routes";
 import { getPlayerId } from "@/lib/session";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
-import { getPlayerNameById } from "@/lib/players";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
 
 type RoomPublicState = Contracts.RoomPublicState;
@@ -38,16 +38,23 @@ export default function PlayerGameController({
 
   const myPlayerId = getPlayerId(state.code);
 
-  const myName = getPlayerNameById(state.players, myPlayerId);
-
   const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
   const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;
   const hasVoted = !!myPlayerId && state.votes?.[myPlayerId] !== undefined;
 
   const currentItem: TierItem | null =
     state.currentItem && tierSet
-      ? tierSet.items.find((it) => it.id === state.currentItem) ?? null
+      ? (tierSet.items.find((it) => it.id === state.currentItem) ?? null)
       : null;
+
+  const statusLabel = (() => {
+    if (state.phase === "PLACE") return isMyTurn ? "Place" : "Waiting";
+    if (state.phase === "VOTE")
+      return !isMyTurn && !hasVoted ? "Vote" : "Waiting";
+    return "Waiting";
+  })();
+
+  const isWaiting = statusLabel === "Waiting";
 
   const handleExit = useCallback(() => {
     socketClient.disconnect();
@@ -103,35 +110,37 @@ export default function PlayerGameController({
 
   return (
     <div className={styles.root}>
-      <header className={styles.header}>
-        <TWFLogo className={styles.logo} />
-            <div className={styles.headerText}>
-              <div className={styles.headerLine}>
-                <MainTextTypography variant="caption" muted letterSpacing="wide">
-                  LOBBY {state.code} -
-                </MainTextTypography>
-                <MainTextTypography
-                  variant="caption"
-                  tone="player"
-                  letterSpacing="wide"
-                  className={styles.headerName}
-                >
-                  {myName || "PLAYER"}
-                </MainTextTypography>
-              </div>
-            </div>
-
-        <AccentButton
-          variant="secondary"
-          className={styles.exitButton}
-          onClick={() => setIsConfirmExitOpen(true)}
-        >
-          Exit
-        </AccentButton>
-      </header>
-
       <main className={styles.main}>
-        <GameStatusCard label="CURRENT ITEM:">
+        <div className={styles.topBar}>
+          <div className={styles.statusBar}>
+            <MainTextTypography
+              variant="label"
+              letterSpacing="wide"
+              className={clsx(
+                styles.statusPill,
+                statusLabel === "Place" && styles.statusPlace,
+                statusLabel === "Vote" && styles.statusVote,
+                statusLabel === "Waiting" && styles.statusWait,
+              )}
+            >
+              {statusLabel}
+              {isWaiting ? (
+                <AnimatedDots className={styles.statusDots} />
+              ) : null}
+            </MainTextTypography>
+          </div>
+
+          <AccentButton
+            variant="secondary"
+            size="small"
+            className={styles.exitButton}
+            onClick={() => setIsConfirmExitOpen(true)}
+          >
+            Exit
+          </AccentButton>
+        </div>
+
+        <GameStatusCard label="ITEM" className={styles.itemCard}>
           <CurrentItemDisplay
             item={
               currentItem
@@ -154,7 +163,7 @@ export default function PlayerGameController({
             disabled={!isMyTurn || isPlacing}
             tiers={tierSet ? tierSet.tiers : []}
             tierOrder={state.tierOrder}
-            onPlace={handlePlaceIntoTier}
+            onConfirmPlacement={handlePlaceIntoTier}
             currentItem={currentItem}
           />
         ) : state.phase === "VOTE" ? (

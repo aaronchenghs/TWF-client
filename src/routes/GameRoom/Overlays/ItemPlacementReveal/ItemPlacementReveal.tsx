@@ -8,9 +8,9 @@ import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypo
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { getPlayerNameById } from "@/lib/players";
 import {
+  buildFadeSlideScaleAnimation,
   buildHoldSlideAnimation,
   MOTION_EASE,
-  REDUCED_MOTION_TRANSITION,
 } from "@/lib/motionPresets";
 
 type RoomPublicState = Contracts.RoomPublicState;
@@ -60,9 +60,17 @@ export function ItemPlacementReveal({ state }: Props) {
     reduceMotion: prefersReducedMotion,
   });
 
-  const tierTransition = prefersReducedMotion
-    ? REDUCED_MOTION_TRANSITION
-    : { duration: 0.18, ease: MOTION_EASE.exit };
+  const tierRevealMotion = buildFadeSlideScaleAnimation({
+    axis: "y",
+    enterOffset: 10,
+    exitOffset: -6,
+    enterScale: 0.98,
+    exitScale: 0.985,
+    durationMs: 180,
+    ease: MOTION_EASE.exit,
+    reduceMotion: prefersReducedMotion,
+    includeExit: true,
+  });
 
   return (
     <OverlayDialog open={isOpen} ariaLabel="Reveal item placement">
@@ -103,10 +111,7 @@ export function ItemPlacementReveal({ state }: Props) {
                 <motion.div
                   key="tier"
                   className={styles.placedIntoRow}
-                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.985 }}
-                  transition={tierTransition}
+                  {...tierRevealMotion}
                 >
                   <div
                     className={styles.tierBadge}

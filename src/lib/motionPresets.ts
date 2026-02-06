@@ -43,10 +43,27 @@ type SimpleSlideOptions = {
 type MotionTriplet = {
   initial: TargetAndTransition;
   animate: TargetAndTransition;
-  exit: TargetAndTransition;
+  exit?: TargetAndTransition;
   transition?: Transition;
 };
 
+type FadeSlideScaleOptions = {
+  axis?: "x" | "y";
+  enterOffset?: number;
+  exitOffset?: number;
+  enterScale?: number;
+  exitScale?: number;
+  reduceMotion?: boolean | null;
+  durationMs?: number;
+  delay?: number;
+  ease?: Ease;
+  includeExit?: boolean;
+};
+
+/**
+ * Slides in over `enterMs`, then holds position for the remainder of `totalMs`,
+ * optionally fading/scaling on enter and a short slide/fade on exit.
+ */
 export function buildHoldSlideAnimation({
   axis,
   enterFrom,
@@ -96,6 +113,57 @@ export function buildHoldSlideAnimation({
   return { initial, animate, exit };
 }
 
+/**
+ * Fades and slides in over `durationMs`, with optional scale and optional exit
+ * fade/slide, while honoring reduced motion and optional start delay.
+ */
+export function buildFadeSlideScaleAnimation({
+  axis = "y",
+  enterOffset = 12,
+  exitOffset = -6,
+  enterScale,
+  exitScale,
+  reduceMotion = false,
+  durationMs = 180,
+  delay,
+  ease = MOTION_EASE.enter,
+  includeExit = false,
+}: FadeSlideScaleOptions): MotionTriplet {
+  const initial: TargetAndTransition = {
+    opacity: 0,
+    [axis]: enterOffset,
+  };
+  if (enterScale !== undefined) initial.scale = enterScale;
+
+  const animate: TargetAndTransition = {
+    opacity: 1,
+    [axis]: 0,
+  };
+  if (enterScale !== undefined) animate.scale = 1;
+
+  const transition = reduceMotion
+    ? REDUCED_MOTION_TRANSITION
+    : {
+        duration: durationMs / 1000,
+        ease,
+        ...(delay === undefined ? {} : { delay }),
+      };
+
+  const motion: MotionTriplet = { initial, animate, transition };
+
+  if (includeExit) {
+    const exit: TargetAndTransition = {
+      opacity: 0,
+      [axis]: exitOffset,
+    };
+    if (exitScale !== undefined) exit.scale = exitScale;
+    motion.exit = exit;
+  }
+
+  return motion;
+}
+
+/** Simple enter/exit slide with optional opacity values and a single duration. */
 export function buildSlideAnimation({
   axis,
   enterFrom,

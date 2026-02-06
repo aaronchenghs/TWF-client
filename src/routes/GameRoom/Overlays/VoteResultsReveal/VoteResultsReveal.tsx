@@ -9,6 +9,7 @@ import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypo
 import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
 import { getPlayerNameById } from "@/lib/players";
 import {
+  buildFadeSlideScaleAnimation,
   buildHoldSlideAnimation,
   MOTION_EASE,
   REDUCED_MOTION_TRANSITION,
@@ -65,37 +66,40 @@ export function VoteResultsReveal({
   });
 
   const { voteBuckets, votersCount } = useMemo(() => {
-    const buckets: Record<VoteBucket, VoteEntry[]> = {
+    const emptyBuckets: Record<VoteBucket, VoteEntry[]> = {
       up: [],
       agree: [],
       down: [],
     };
 
-    if (!state) return { voteBuckets: buckets, votersCount: 0 };
+    if (!state) return { voteBuckets: emptyBuckets, votersCount: 0 };
 
     const players = state.players ?? [];
     const orderById = new Map<PlayerId, number>(
       players.map((p, idx) => [p.id, idx]),
     );
 
-    const entries = Object.entries(state.votes ?? {}) as Array<
-      [PlayerId, VoteValue]
-    >;
-
-    entries.sort(
+    const orderedVotes = (
+      Object.entries(state.votes ?? {}) as Array<[PlayerId, VoteValue]>
+    ).sort(
       (a, b) => (orderById.get(a[0]) ?? 9999) - (orderById.get(b[0]) ?? 9999),
     );
 
-    for (const [playerId, value] of entries) {
-      const name = getPlayerNameById(players, playerId, "Unknown");
-      const entry: VoteEntry = { playerId, name, value };
+    const voteBuckets = orderedVotes.reduce(
+      (acc, [playerId, value]) => {
+        const name = getPlayerNameById(players, playerId, "Unknown");
+        const entry: VoteEntry = { playerId, name, value };
 
-      if (value === -1) buckets.up.push(entry);
-      else if (value === 1) buckets.down.push(entry);
-      else buckets.agree.push(entry);
-    }
+        if (value === -1) acc.up.push(entry);
+        else if (value === 1) acc.down.push(entry);
+        else acc.agree.push(entry);
 
-    return { voteBuckets: buckets, votersCount: entries.length };
+        return acc;
+      },
+      { up: [], agree: [], down: [] } as Record<VoteBucket, VoteEntry[]>,
+    );
+
+    return { voteBuckets, votersCount: orderedVotes.length };
   }, [state]);
 
   const meta = state?.currentItem
@@ -184,18 +188,14 @@ export function VoteResultsReveal({
                   <motion.div
                     key={config.key}
                     className={clsx(styles.column, styles[`col_${config.key}`])}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                      transition: prefersReducedMotion
-                        ? REDUCED_MOTION_TRANSITION
-                        : {
-                            delay: COLUMN_DELAY_BASE + idx * COLUMN_DELAY_STEP,
-                            duration: COLUMN_IN_DURATION,
-                            ease: MOTION_EASE.enter,
-                          },
-                    }}
+                    {...buildFadeSlideScaleAnimation({
+                      axis: "y",
+                      enterOffset: 12,
+                      durationMs: COLUMN_IN_DURATION * 1000,
+                      delay: COLUMN_DELAY_BASE + idx * COLUMN_DELAY_STEP,
+                      ease: MOTION_EASE.enter,
+                      reduceMotion: prefersReducedMotion,
+                    })}
                   >
                     <div className={styles.columnHeader}>
                       <span className={styles.columnTitle}>{config.label}</span>

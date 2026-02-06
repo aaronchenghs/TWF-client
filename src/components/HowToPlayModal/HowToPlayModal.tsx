@@ -51,7 +51,7 @@ export function HowToPlayModal(props: {
       footer={
         <div className={styles.footerRow}>
           <AccentButton
-            variant="secondary"
+            variant="primary"
             disabled={isFirst}
             onClick={() => setIndex((i) => Math.max(0, i - 1))}
           >

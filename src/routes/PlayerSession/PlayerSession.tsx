@@ -18,6 +18,8 @@ import {
 } from "@/lib/session";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
+import { pushSnackbar } from "@/store/slices/snackBarSlice";
+import { useAppDispatch } from "@/store/store";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -27,6 +29,7 @@ export default function PlayerSession() {
   const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
   const [state, setState] = useState<RoomPublicState | null>(null);
+  const dispatch = useAppDispatch();
 
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
@@ -36,16 +39,34 @@ export default function PlayerSession() {
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);
 
+  const handleRoomClosed = useCallback(() => {
+    dispatch(
+      pushSnackbar({
+        severity: "warn",
+        title: "Lobby closed",
+        message: "The host ended the session.",
+      }),
+    );
+    returnToLanding();
+  }, [dispatch, returnToLanding]);
+
   const handleKicked = useCallback(() => {
+    dispatch(
+      pushSnackbar({
+        severity: "warn",
+        title: "Kicked",
+        message: "The host removed you from the lobby.",
+      }),
+    );
     clearRoomSession(roomCode);
     clearPlayerId(roomCode);
     returnToLanding();
-  }, [roomCode, returnToLanding]);
+  }, [dispatch, roomCode, returnToLanding]);
 
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,
     onState: setState,
-    onClosed: returnToLanding,
+    onClosed: handleRoomClosed,
     onKicked: handleKicked,
   });
 
@@ -115,7 +136,8 @@ export default function PlayerSession() {
   if (!state)
     return (
       <div>
-        Connecting<AnimatedDots />
+        Connecting
+        <AnimatedDots />
       </div>
     );
 

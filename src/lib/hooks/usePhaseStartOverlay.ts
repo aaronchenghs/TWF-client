@@ -26,6 +26,12 @@ export type UsePhaseStartOverlayOpts = {
    * Example: require currentItem for placement reveal.
    */
   shouldOpen?: () => boolean;
+
+  /**
+   * If true, do not open on the very first state seen by this hook.
+   * Useful when joining mid-phase and you only want real phase transitions.
+   */
+  skipInitialOpen?: boolean;
 };
 
 export type usePhaseStartOverlayProps = {
@@ -46,6 +52,7 @@ export function usePhaseStartOverlay(
     openMs,
     closeIfPhaseMismatch = true,
     shouldOpen,
+    skipInitialOpen = false,
   } = opts;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -88,6 +95,20 @@ export function usePhaseStartOverlay(
     const prevPhase = prevPhaseRef.current;
     const currPhase = state.phase;
 
+    const isInitial = prevPhase === null;
+
+    if (skipInitialOpen && isInitial) {
+      prevPhaseRef.current = currPhase;
+      prevReopenKeyRef.current = reopenKey;
+
+      if (closeIfPhaseMismatch && currPhase !== openOnPhase) {
+        clearCloseTimer();
+        queueMicrotask(() => setIsOpen(false));
+      }
+
+      return;
+    }
+
     const hasEnteredPhase =
       prevPhase !== openOnPhase && currPhase === openOnPhase;
 
@@ -124,6 +145,7 @@ export function usePhaseStartOverlay(
     reopenKey,
     closeIfPhaseMismatch,
     shouldOpen,
+    skipInitialOpen,
     clearCloseTimer,
     openMs,
   ]);

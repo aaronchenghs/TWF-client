@@ -18,6 +18,23 @@ export type RoomErrorPayload = Parameters<
   ServerToClientEvents["room:error"]
 >[0];
 
+let lastRoomState: RoomPublicState | null = null;
+let lastRoomCode: string | null = null;
+
+const cacheRoomState = (state: RoomStatePayload) => {
+  lastRoomState = state as RoomPublicState;
+  lastRoomCode = state.code ?? null;
+};
+
+const clearRoomCache = () => {
+  lastRoomState = null;
+  lastRoomCode = null;
+};
+
+socketClient.on("room:state", cacheRoomState);
+socketClient.on("room:closed", clearRoomCache);
+socketClient.on("room:kicked", clearRoomCache);
+
 type ListenArgs<E extends keyof ServerToClientEvents> = Parameters<
   ServerToClientEvents[E]
 >;
@@ -84,6 +101,16 @@ function waitForEventOrError<E extends keyof ServerToClientEvents, T>(
  * Centralizes event names, payload shaping, and common room workflows.
  */
 export const roomSocket = {
+  getLastRoomState(code?: string | null): RoomPublicState | null {
+    if (!lastRoomState) return null;
+    if (!code) return lastRoomState;
+    const normalized = normalizeCode(code);
+    if (!normalized) return null;
+    const cached =
+      lastRoomCode == null ? null : normalizeCode(String(lastRoomCode));
+    return cached && cached === normalized ? lastRoomState : null;
+  },
+
   async createRoom(role: Role): Promise<RoomCreatedPayload> {
     socketClient.connect();
 
@@ -232,6 +259,7 @@ export const roomSocket = {
   closeRoom(): void {
     socketClient.emit("room:close");
     socketClient.disconnect();
+    clearRoomCache();
   },
 
   onRoomJoined(handler: (payload: RoomJoinedPayload) => void): () => void {

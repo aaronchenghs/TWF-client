@@ -15,8 +15,13 @@ export function RouteLoadingFallback() {
 
         <div className={styles.row}>
           <div className={styles.spinner} aria-hidden="true" />
-          <MainTextTypography variant="caption" className={styles.subtitle} muted>
-            Setting up your room<AnimatedDots />
+          <MainTextTypography
+            variant="caption"
+            className={styles.subtitle}
+            muted
+          >
+            Setting up your session
+            <AnimatedDots />
           </MainTextTypography>
         </div>
 

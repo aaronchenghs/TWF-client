@@ -30,6 +30,7 @@ export function ItemPlacementReveal({ state }: Props) {
     openMs: REVEAL_TOTAL_MS,
     closeIfPhaseMismatch: true,
     shouldOpen: () => !!state?.currentItem,
+    skipInitialOpen: true,
   });
 
   const placedItemId = state?.currentItem ?? null;

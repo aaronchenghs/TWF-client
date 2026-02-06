@@ -21,6 +21,11 @@ export function useRoomSubscriptions({
     function subscribeToRoomEvents() {
       if (!roomCode) return;
 
+      if (onState) {
+        const cached = roomSocket.getLastRoomState(roomCode);
+        if (cached) onState(cached);
+      }
+
       const offState = onState
         ? roomSocket.onRoomState(onState)
         : () => undefined;

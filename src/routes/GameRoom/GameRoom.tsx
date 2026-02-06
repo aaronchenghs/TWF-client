@@ -30,12 +30,15 @@ export default function GameRoom() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
 
+  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
+
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
-  const [state, setState] = useState<RoomPublicState | null>(null);
+  const [state, setState] = useState<RoomPublicState | null>(() =>
+    roomSocket.getLastRoomState(roomCode),
+  );
   const [isIntro, setIsIntro] = useState(true);
 
   const clock = usePhaseClock(state);
-  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
   const hasState = state != null;
 
   const currentItem = state?.currentItem

@@ -61,6 +61,7 @@ export function VoteResultsReveal({
     openMs: REVEAL_TOTAL_MS,
     closeIfPhaseMismatch: true,
     shouldOpen: () => !!state?.currentItem,
+    skipInitialOpen: true,
   });
 
   const { voteBuckets, votersCount } = useMemo(() => {

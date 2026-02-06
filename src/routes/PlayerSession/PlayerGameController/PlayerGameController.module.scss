@@ -42,16 +42,14 @@ $current-item-float-duration: 3s;
 }
 
 .statusPill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: $default-gap calc($default-gap * 2);
-  border-radius: $round;
+  background: $bg-elevated;
+  border: 1px solid $light-transparency;
+}
+
+.statusText {
   font-size: 14px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: $bg-elevated;
-  border: 1px solid $light-transparency;
 }
 
 .statusDots {

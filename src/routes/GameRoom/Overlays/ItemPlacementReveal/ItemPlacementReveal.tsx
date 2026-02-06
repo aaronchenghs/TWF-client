@@ -1,12 +1,17 @@
 import styles from "./ItemPlacementReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { resolvePlacedTierId } from "@/lib/tierItems";
 import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
 import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { getPlayerNameById } from "@/lib/players";
+import {
+  buildHoldSlideAnimation,
+  MOTION_EASE,
+  REDUCED_MOTION_TRANSITION,
+} from "@/lib/motionPresets";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -17,11 +22,9 @@ type Props = {
 const REVEAL_TOTAL_MS = 5000;
 const ENTER_MS = 700;
 
-const HOLD_MS = Math.max(0, REVEAL_TOTAL_MS - ENTER_MS);
-const totalAnimateS = ENTER_MS / 1000 + HOLD_MS / 1000;
-const enterFrac = totalAnimateS > 0 ? ENTER_MS / 1000 / totalAnimateS : 1;
-
 export function ItemPlacementReveal({ state }: Props) {
+  const prefersReducedMotion = useReducedMotion();
+
   const { isOpen, token } = usePhaseStartOverlay(state, {
     openOnPhase: "VOTE",
     openMs: REVEAL_TOTAL_MS,
@@ -47,6 +50,18 @@ export function ItemPlacementReveal({ state }: Props) {
     state?.currentTurnPlayerId ?? null,
     "--",
   );
+  const slide = buildHoldSlideAnimation({
+    axis: "x",
+    enterFrom: "-125vw",
+    exitTo: "-10vw",
+    totalMs: REVEAL_TOTAL_MS,
+    enterMs: ENTER_MS,
+    reduceMotion: prefersReducedMotion,
+  });
+
+  const tierTransition = prefersReducedMotion
+    ? REDUCED_MOTION_TRANSITION
+    : { duration: 0.18, ease: MOTION_EASE.exit };
 
   return (
     <OverlayDialog open={isOpen} ariaLabel="Reveal item placement">
@@ -55,21 +70,7 @@ export function ItemPlacementReveal({ state }: Props) {
           <motion.div
             key={`${token}:${placedItemId ?? "none"}:${placedTierId ?? "none"}`}
             className={styles.reveal}
-            initial={{ x: "-125vw", opacity: 0 }}
-            animate={{
-              x: ["-125vw", 0, 0],
-              opacity: [0, 1, 1],
-              transition: {
-                duration: totalAnimateS,
-                times: [0, enterFrac, 1],
-                ease: [0.16, 1, 0.3, 1],
-              },
-            }}
-            exit={{
-              opacity: 0,
-              x: "-10vw",
-              transition: { duration: 0.16, ease: [0.2, 0.9, 0.2, 1] },
-            }}
+            {...slide}
           >
             <LoadableImage
               src={imageSrc}
@@ -104,7 +105,7 @@ export function ItemPlacementReveal({ state }: Props) {
                   initial={{ opacity: 0, y: 10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -6, scale: 0.985 }}
-                  transition={{ duration: 0.18, ease: [0.2, 0.9, 0.2, 1] }}
+                  transition={tierTransition}
                 >
                   <div
                     className={styles.tierBadge}

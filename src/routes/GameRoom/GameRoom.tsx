@@ -19,6 +19,7 @@ import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemD
 import { ItemPlacementReveal } from "./Overlays/ItemPlacementReveal/ItemPlacementReveal";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { PlayerTurnReveal } from "./Overlays/PlayerTurnReveal/PlayerTurnReveal";
+import { VoteResultsReveal } from "./Overlays/VoteResultsReveal/VoteResultsReveal";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { getPlayerNameById } from "@/lib/players";
@@ -171,6 +172,8 @@ export default function GameRoom() {
       <PlayerTurnReveal state={state} />
 
       <ItemPlacementReveal state={state} />
+
+      <VoteResultsReveal state={state} />
 
       <ConfirmationModal
         open={isConfirmExitOpen}

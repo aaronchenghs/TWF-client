@@ -36,9 +36,6 @@
 }
 
 .selectedPill {
-  padding: $default-padding;
-  border-radius: $radius-sm;
-  white-space: nowrap;
   border: 1px solid color-mix(in srgb, $accent 50%, transparent);
   background: color-mix(in srgb, $accent 15%, transparent);
 }

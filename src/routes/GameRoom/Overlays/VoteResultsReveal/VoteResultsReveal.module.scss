@@ -1,0 +1,232 @@
+@use "../../../../styles/export.scss" as *;
+
+.reveal {
+  position: relative;
+  width: min(980px, 96vw);
+  padding: clamp(18px, 3vw, 28px);
+  border-radius: $radius-lg;
+  display: grid;
+  gap: clamp(12px, 2vw, 18px);
+  background:
+    radial-gradient(
+      120% 120% at 10% 10%,
+      $light-transparency 0%,
+      rgba(255, 255, 255, 0) 60%
+    ),
+    linear-gradient(140deg, rgba($bg-surface, 0.95), rgba($bg-app, 0.98));
+  border: 1px solid $light-transparency;
+  box-shadow:
+    0 12px 40px $box-shadow-color,
+    inset 0 0 0 1px color-mix(in srgb, $light-transparency 50%, transparent);
+  overflow: hidden;
+}
+
+.reveal::before,
+.reveal::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(
+    circle at 30% 20%,
+    rgba($accent, 0.2),
+    rgba(0, 0, 0, 0)
+  );
+  pointer-events: none;
+}
+
+.reveal::after {
+  inset: -40%;
+  background: radial-gradient(
+    circle at 80% 10%,
+    rgba(67, 160, 71, 0.18),
+    rgba(0, 0, 0, 0)
+  );
+  opacity: 0.8;
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $default-gap;
+  flex-wrap: wrap;
+}
+
+.titleBlock {
+  display: grid;
+  gap: calc($default-gap / 2);
+}
+
+.title {
+  letter-spacing: $ls-display;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  text-transform: uppercase;
+  letter-spacing: $ls-display;
+  opacity: $op-caption;
+}
+
+.itemChip {
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
+  padding: 6px 12px;
+  border-radius: $round;
+  background: $light-transparency;
+  border: 1px solid color-mix(in srgb, $light-transparency 120%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, $light-transparency 50%, transparent);
+}
+
+.itemThumb {
+  width: 52px;
+  aspect-ratio: 1 / 1;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background: $box-shadow-color;
+  display: grid;
+  place-items: center;
+  border: 1px solid $light-transparency;
+}
+
+.itemThumbImg {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+
+  :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+}
+
+.itemThumbFallback {
+  font-size: $fs-body;
+  font-weight: $fw-title;
+}
+
+.itemName {
+  font-weight: $fw-title;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.columns {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: $default-gap;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.column {
+  --accent: #1e88e5;
+  border-radius: $radius-md;
+  padding: $default-padding;
+  background: $box-shadow-color;
+  border: 1px solid $light-transparency;
+  min-height: 160px;
+  display: grid;
+  gap: $default-gap;
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, $light-transparency 35%, transparent);
+}
+
+.col_up {
+  --accent: #43a047;
+}
+
+.col_agree {
+  --accent: #1e88e5;
+}
+
+.col_down {
+  --accent: #e53935;
+}
+
+.columnHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $default-gap;
+}
+
+.columnTitle {
+  text-transform: uppercase;
+  letter-spacing: $ls-display;
+  font-size: $fs-label;
+  font-weight: $fw-title;
+  opacity: $op-label;
+}
+
+.countPill {
+  min-width: 30px;
+  text-align: center;
+  background: color-mix(in srgb, var(--accent) 45%, rgba(0, 0, 0, 0.5));
+  border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent);
+  font-weight: $fw-title;
+  font-size: $fs-label;
+}
+
+.voteList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.voteChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: $round;
+  background: color-mix(in srgb, var(--accent) 18%, rgba(0, 0, 0, 0.7));
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  font-weight: $fw-title;
+  font-size: $fs-label;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.voteIcon {
+  font-size: $fs-label;
+  opacity: 0.9;
+}
+
+.voteName {
+  opacity: 0.9;
+}
+
+.empty {
+  font-size: $fs-label;
+  opacity: $op-muted;
+  text-transform: uppercase;
+  letter-spacing: $ls-display;
+}
+
+@media (max-width: $mobile-width) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .itemChip {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

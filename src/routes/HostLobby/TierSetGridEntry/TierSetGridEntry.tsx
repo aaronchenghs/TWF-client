@@ -8,6 +8,7 @@ import * as Contracts from "@twf/contracts";
 import type { Guid } from "../../../lib/guid";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { handleKeyDown } from "@/lib/accessibility";
+import { Pill } from "@/components/Pill/Pill";
 
 type TierSetSummary = Contracts.TierSetSummary;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -100,9 +101,9 @@ export function TierSetGridEntry({
 
       <div className={styles.footerRow}>
         {selected ? (
-          <MainTextTypography variant="caption" className={styles.selectedPill}>
-            SELECTED
-          </MainTextTypography>
+          <Pill size="md" shape="soft" className={styles.selectedPill}>
+            <MainTextTypography variant="caption">SELECTED</MainTextTypography>
+          </Pill>
         ) : (
           <button
             type="button"

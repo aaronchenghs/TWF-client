@@ -1,0 +1,31 @@
+@use "../../styles/export.scss" as *;
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $default-gap;
+  border: 1px solid transparent;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.size_sm {
+  padding: 2px $default-padding;
+}
+
+.size_md {
+  padding: $default-padding;
+}
+
+.size_lg {
+  padding: $default-gap calc($default-gap * 2);
+}
+
+.shape_round {
+  border-radius: $round;
+}
+
+.shape_soft {
+  border-radius: $radius-sm;
+}

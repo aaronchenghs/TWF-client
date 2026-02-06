@@ -17,6 +17,8 @@ import { ROUTES } from "@/routes/routes";
 import { getPlayerId } from "@/lib/session";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
+import { Pill } from "@/components/Pill/Pill";
+import { VoteResultsReveal } from "@/routes/GameRoom/Overlays/VoteResultsReveal/VoteResultsReveal";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -113,9 +115,8 @@ export default function PlayerGameController({
       <main className={styles.main}>
         <div className={styles.topBar}>
           <div className={styles.statusBar}>
-            <MainTextTypography
-              variant="label"
-              letterSpacing="wide"
+            <Pill
+              size="lg"
               className={clsx(
                 styles.statusPill,
                 statusLabel === "Place" && styles.statusPlace,
@@ -123,11 +124,16 @@ export default function PlayerGameController({
                 statusLabel === "Waiting" && styles.statusWait,
               )}
             >
-              {statusLabel}
-              {isWaiting ? (
-                <AnimatedDots className={styles.statusDots} />
-              ) : null}
-            </MainTextTypography>
+              <MainTextTypography
+                variant="label"
+                className={styles.statusText}
+              >
+                {statusLabel}
+                {isWaiting ? (
+                  <AnimatedDots className={styles.statusDots} />
+                ) : null}
+              </MainTextTypography>
+            </Pill>
           </div>
 
           <AccentButton
@@ -187,6 +193,8 @@ export default function PlayerGameController({
         onCancel={() => setIsConfirmExitOpen(false)}
         onConfirm={handleConfirmExit}
       />
+
+      <VoteResultsReveal state={state} />
     </div>
   );
 }

@@ -23,7 +23,7 @@ export function AnimatedRoutes() {
       const from = prevPathRef.current;
       const to = location.pathname;
       setDirection(getRouteTransitionDirection(from, to));
-      prevPathRef.current = to;
+      prevPathRef.current = location.pathname;
     },
     [location.pathname],
   );
@@ -37,20 +37,43 @@ export function AnimatedRoutes() {
         overflow: "hidden",
       }}
     >
-      <Suspense fallback={<RouteLoadingFallback />}>
-        <RouteTransition routeKey={location.pathname} direction={direction}>
-          <Routes location={location}>
-            <Route path={ROUTES.LANDING} element={<Landing />} />
-            <Route path={`${ROUTES.HOST_LOBBY}/:code`} element={<HostLobby />} />
-            <Route
-              path={`${ROUTES.PLAYER_SESSION}/:code`}
-              element={<PlayerSession />}
-            />
-            <Route path={`${ROUTES.GAME_ROOM}/:code`} element={<GameRoom />} />
-            <Route path="*" element={<Navigate to={ROUTES.LANDING} replace />} />
-          </Routes>
-        </RouteTransition>
-      </Suspense>
+      <RouteTransition routeKey={location.pathname} direction={direction}>
+        <Routes location={location}>
+          <Route
+            path={ROUTES.LANDING}
+            element={
+              <Suspense fallback={<RouteLoadingFallback />}>
+                <Landing />
+              </Suspense>
+            }
+          />
+          <Route
+            path={`${ROUTES.HOST_LOBBY}/:code`}
+            element={
+              <Suspense fallback={<RouteLoadingFallback />}>
+                <HostLobby />
+              </Suspense>
+            }
+          />
+          <Route
+            path={`${ROUTES.PLAYER_SESSION}/:code`}
+            element={
+              <Suspense fallback={<RouteLoadingFallback />}>
+                <PlayerSession />
+              </Suspense>
+            }
+          />
+          <Route
+            path={`${ROUTES.GAME_ROOM}/:code`}
+            element={
+              <Suspense fallback={<RouteLoadingFallback />}>
+                <GameRoom />
+              </Suspense>
+            }
+          />
+          <Route path="*" element={<Navigate to={ROUTES.LANDING} replace />} />
+        </Routes>
+      </RouteTransition>
     </div>
   );
 }

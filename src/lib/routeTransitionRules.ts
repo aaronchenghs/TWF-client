@@ -14,13 +14,13 @@ export type RouteTransitionRule = {
 
 export const TRANSITION_RULES: readonly RouteTransitionRule[] = [
   { from: ROUTES.LANDING, to: ROUTES.HOST_LOBBY, dir: "right" },
-  { from: ROUTES.HOST_LOBBY, to: ROUTES.LANDING, dir: "right" },
+  { from: ROUTES.HOST_LOBBY, to: ROUTES.LANDING, dir: "left" },
 
   { from: ROUTES.HOST_LOBBY, to: ROUTES.GAME_ROOM, dir: "left" },
-  { from: ROUTES.GAME_ROOM, to: ROUTES.HOST_LOBBY, dir: "left" },
+  { from: ROUTES.GAME_ROOM, to: ROUTES.HOST_LOBBY, dir: "right" },
 
   { from: ROUTES.LANDING, to: ROUTES.PLAYER_SESSION, dir: "left" },
-  { from: ROUTES.PLAYER_SESSION, to: ROUTES.LANDING, dir: "left" },
+  { from: ROUTES.PLAYER_SESSION, to: ROUTES.LANDING, dir: "right" },
 ] as const;
 
 export function getRouteTransitionDirection(

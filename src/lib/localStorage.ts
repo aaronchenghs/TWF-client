@@ -1,0 +1,222 @@
+import * as Contracts from "@twf/contracts";
+
+type Role = Contracts.Role;
+
+export type RoomSessionStorage = {
+  code: string;
+  role: Role;
+  name?: string;
+};
+
+type StorageCodec<V> = {
+  parse: (raw: string) => V | null;
+  stringify: (value: V) => string;
+};
+
+type StorageVariable<K extends string, V> = {
+  name: string;
+  keyPattern: string;
+  isKey: (key: string) => key is K;
+  parse: (raw: string) => V | null;
+  stringify: (value: V) => string;
+  readonly __types?: {
+    key: K;
+    value: V;
+  };
+};
+
+type StorageVariableDefinition<K extends string, V = string> = {
+  name: string;
+  keyPattern: string;
+  isKey: (key: string) => key is K;
+  storage?: StorageCodec<V>;
+};
+
+const stringStorage: StorageCodec<string> = {
+  parse(raw: string): string {
+    return raw;
+  },
+  stringify(value: string): string {
+    return value;
+  },
+};
+
+function defineStorageVariable<K extends string>(
+  variable: StorageVariableDefinition<K>,
+): StorageVariable<K, string>;
+
+function defineStorageVariable<K extends string, V>(
+  variable: StorageVariableDefinition<K, V>,
+): StorageVariable<K, V>;
+
+function defineStorageVariable<K extends string, V>(
+  variable: StorageVariableDefinition<K, V>,
+): StorageVariable<K, V> {
+  const storage = (variable.storage ?? stringStorage) as StorageCodec<V>;
+  return {
+    name: variable.name,
+    keyPattern: variable.keyPattern,
+    isKey: variable.isKey,
+    parse: storage.parse,
+    stringify: storage.stringify,
+  };
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isRoomSessionStorage(value: unknown): value is RoomSessionStorage {
+  if (!isObject(value)) return false;
+  if (typeof value.code !== "string") return false;
+  if (typeof value.role !== "string") return false;
+  if (value.name != null && typeof value.name !== "string") return false;
+  return true;
+}
+
+const roomSessionStorage = {
+  parse(raw: string): RoomSessionStorage | null {
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      if (!isRoomSessionStorage(parsed)) return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  },
+  stringify(value: RoomSessionStorage): string {
+    return JSON.stringify(value);
+  },
+};
+
+export const LOCAL_STORAGE_KEYS = {
+  CLIENT_ID: "twf:clientId",
+  PLAYER_ID: (code: string): `twf:playerId:${string}` => `twf:playerId:${code}`,
+  ROOM_SESSION: (code: string): `twf:session:${string}` =>
+    `twf:session:${code}`,
+} as const;
+
+/**
+ * Central list of localStorage variables used by the app.
+ * Add new entries here first so keys/value types are easy to discover.
+ */
+export const LOCAL_STORAGE_VARIABLES = [
+  defineStorageVariable({
+    name: "clientId",
+    keyPattern: LOCAL_STORAGE_KEYS.CLIENT_ID,
+    isKey: (key): key is typeof LOCAL_STORAGE_KEYS.CLIENT_ID =>
+      key === LOCAL_STORAGE_KEYS.CLIENT_ID,
+  }),
+  defineStorageVariable({
+    name: "playerIdByRoomCode",
+    keyPattern: LOCAL_STORAGE_KEYS.PLAYER_ID("{roomCode}"),
+    isKey: (key): key is `twf:playerId:${string}` =>
+      key.startsWith(LOCAL_STORAGE_KEYS.PLAYER_ID("")),
+  }),
+  defineStorageVariable({
+    name: "roomSessionByRoomCode",
+    keyPattern: LOCAL_STORAGE_KEYS.ROOM_SESSION("{roomCode}"),
+    isKey: (key): key is `twf:session:${string}` =>
+      key.startsWith(LOCAL_STORAGE_KEYS.ROOM_SESSION("")),
+    storage: roomSessionStorage,
+  }),
+] as const;
+
+type LocalStorageVariable = (typeof LOCAL_STORAGE_VARIABLES)[number];
+type LocalStorageVariableTypeMap = NonNullable<LocalStorageVariable["__types"]>;
+
+export type AppLocalStorageKey = LocalStorageVariableTypeMap["key"];
+
+type AppLocalStorageValueForKey<
+  K extends AppLocalStorageKey,
+  M extends { key: AppLocalStorageKey; value: unknown } =
+    LocalStorageVariableTypeMap,
+> = M extends { key: infer Key; value: infer Value }
+  ? K extends Key
+    ? Value
+    : never
+  : never;
+
+export type AppLocalStorageValue<K extends AppLocalStorageKey> =
+  AppLocalStorageValueForKey<K>;
+
+function getStorage(): Storage | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
+function getVariableForKey(key: string): LocalStorageVariable | null {
+  for (const variable of LOCAL_STORAGE_VARIABLES) {
+    if (variable.isKey(key)) {
+      return variable;
+    }
+  }
+
+  return null;
+}
+
+/** Parses raw localStorage text into its typed value for a known key. */
+export function parseAppLocalStorageValue<K extends AppLocalStorageKey>(
+  key: K,
+  raw: string,
+): AppLocalStorageValue<K> | null {
+  const variable = getVariableForKey(key);
+  if (!variable) return null;
+  return variable.parse(raw) as AppLocalStorageValue<K> | null;
+}
+
+export function stringifyAppLocalStorageValue<K extends AppLocalStorageKey>(
+  key: K,
+  value: AppLocalStorageValue<K>,
+): string {
+  const variable = getVariableForKey(key);
+  if (!variable) return String(value);
+  return (variable.stringify as (v: AppLocalStorageValue<K>) => string)(value);
+}
+
+/** Safe typed getter for keys in the app schema. */
+export function getLocalStorageValue<K extends AppLocalStorageKey>(
+  key: K,
+): AppLocalStorageValue<K> | null {
+  const storage = getStorage();
+  if (!storage) return null;
+
+  try {
+    const raw = storage.getItem(key);
+    if (raw == null) return null;
+    return parseAppLocalStorageValue(key, raw);
+  } catch {
+    return null;
+  }
+}
+
+/** Safe typed setter for keys in the app schema. */
+export function setLocalStorageValue<K extends AppLocalStorageKey>(
+  key: K,
+  value: AppLocalStorageValue<K>,
+) {
+  const storage = getStorage();
+  if (!storage) return;
+
+  try {
+    storage.setItem(key, stringifyAppLocalStorageValue(key, value));
+  } catch {
+    return;
+  }
+}
+
+/** Safe typed remove for keys in the app schema. */
+export function removeLocalStorageValue(key: AppLocalStorageKey) {
+  const storage = getStorage();
+  if (!storage) return;
+
+  try {
+    storage.removeItem(key);
+  } catch {
+    return;
+  }
+}

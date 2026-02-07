@@ -29,14 +29,14 @@ type StorageVariableDefinition<K extends string, V = string> = {
   name: string;
   keyPattern: string;
   isKey: (key: string) => key is K;
-  storage?: StorageCodec<V>;
+  codec?: StorageCodec<V>;
 };
 
-const stringStorage: StorageCodec<string> = {
-  parse(raw: string): string {
+const stringCodec: StorageCodec<string> = {
+  parse(raw) {
     return raw;
   },
-  stringify(value: string): string {
+  stringify(value) {
     return value;
   },
 };
@@ -52,14 +52,22 @@ function defineStorageVariable<K extends string, V>(
 function defineStorageVariable<K extends string, V>(
   variable: StorageVariableDefinition<K, V>,
 ): StorageVariable<K, V> {
-  const storage = (variable.storage ?? stringStorage) as StorageCodec<V>;
+  const codec = (variable.codec ?? stringCodec) as StorageCodec<V>;
   return {
     name: variable.name,
     keyPattern: variable.keyPattern,
     isKey: variable.isKey,
-    parse: storage.parse,
-    stringify: storage.stringify,
+    parse: codec.parse,
+    stringify: codec.stringify,
   };
+}
+
+function exactKey<K extends string>(expected: K) {
+  return (key: string): key is K => key === expected;
+}
+
+function prefixedKey<P extends string>(prefix: P) {
+  return (key: string): key is `${P}${string}` => key.startsWith(prefix);
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -74,23 +82,24 @@ function isRoomSessionStorage(value: unknown): value is RoomSessionStorage {
   return true;
 }
 
-const roomSessionStorage = {
-  parse(raw: string): RoomSessionStorage | null {
+const roomSessionCodec: StorageCodec<RoomSessionStorage> = {
+  parse(raw) {
     try {
       const parsed: unknown = JSON.parse(raw);
-      if (!isRoomSessionStorage(parsed)) return null;
-      return parsed;
+      return isRoomSessionStorage(parsed) ? parsed : null;
     } catch {
       return null;
     }
   },
-  stringify(value: RoomSessionStorage): string {
+  stringify(value) {
     return JSON.stringify(value);
   },
 };
 
 export const LOCAL_STORAGE_KEYS = {
   CLIENT_ID: "twf:clientId",
+  PLAYER_ID_PREFIX: "twf:playerId:",
+  ROOM_SESSION_PREFIX: "twf:session:",
   PLAYER_ID: (code: string): `twf:playerId:${string}` => `twf:playerId:${code}`,
   ROOM_SESSION: (code: string): `twf:session:${string}` =>
     `twf:session:${code}`,
@@ -100,25 +109,22 @@ export const LOCAL_STORAGE_KEYS = {
  * Central list of localStorage variables used by the app.
  * Add new entries here first so keys/value types are easy to discover.
  */
-export const LOCAL_STORAGE_VARIABLES = [
+const LOCAL_STORAGE_VARIABLES = [
   defineStorageVariable({
     name: "clientId",
     keyPattern: LOCAL_STORAGE_KEYS.CLIENT_ID,
-    isKey: (key): key is typeof LOCAL_STORAGE_KEYS.CLIENT_ID =>
-      key === LOCAL_STORAGE_KEYS.CLIENT_ID,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.CLIENT_ID),
   }),
   defineStorageVariable({
     name: "playerIdByRoomCode",
-    keyPattern: LOCAL_STORAGE_KEYS.PLAYER_ID("{roomCode}"),
-    isKey: (key): key is `twf:playerId:${string}` =>
-      key.startsWith(LOCAL_STORAGE_KEYS.PLAYER_ID("")),
+    keyPattern: `${LOCAL_STORAGE_KEYS.PLAYER_ID_PREFIX}{roomCode}`,
+    isKey: prefixedKey(LOCAL_STORAGE_KEYS.PLAYER_ID_PREFIX),
   }),
   defineStorageVariable({
     name: "roomSessionByRoomCode",
-    keyPattern: LOCAL_STORAGE_KEYS.ROOM_SESSION("{roomCode}"),
-    isKey: (key): key is `twf:session:${string}` =>
-      key.startsWith(LOCAL_STORAGE_KEYS.ROOM_SESSION("")),
-    storage: roomSessionStorage,
+    keyPattern: `${LOCAL_STORAGE_KEYS.ROOM_SESSION_PREFIX}{roomCode}`,
+    isKey: prefixedKey(LOCAL_STORAGE_KEYS.ROOM_SESSION_PREFIX),
+    codec: roomSessionCodec,
   }),
 ] as const;
 
@@ -126,19 +132,10 @@ type LocalStorageVariable = (typeof LOCAL_STORAGE_VARIABLES)[number];
 type LocalStorageVariableTypeMap = NonNullable<LocalStorageVariable["__types"]>;
 
 export type AppLocalStorageKey = LocalStorageVariableTypeMap["key"];
-
-type AppLocalStorageValueForKey<
-  K extends AppLocalStorageKey,
-  M extends { key: AppLocalStorageKey; value: unknown } =
-    LocalStorageVariableTypeMap,
-> = M extends { key: infer Key; value: infer Value }
-  ? K extends Key
-    ? Value
-    : never
-  : never;
-
-export type AppLocalStorageValue<K extends AppLocalStorageKey> =
-  AppLocalStorageValueForKey<K>;
+export type AppLocalStorageValue<K extends AppLocalStorageKey> = Extract<
+  LocalStorageVariableTypeMap,
+  { key: K }
+>["value"];
 
 function getStorage(): Storage | null {
   if (typeof window === "undefined") return null;
@@ -151,11 +148,8 @@ function getStorage(): Storage | null {
 
 function getVariableForKey(key: string): LocalStorageVariable | null {
   for (const variable of LOCAL_STORAGE_VARIABLES) {
-    if (variable.isKey(key)) {
-      return variable;
-    }
+    if (variable.isKey(key)) return variable;
   }
-
   return null;
 }
 

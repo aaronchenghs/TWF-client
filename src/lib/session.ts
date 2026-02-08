@@ -5,6 +5,12 @@ import {
   setLocalStorageValue,
   type RoomSessionStorage,
 } from "./localStorage";
+import {
+  SESSION_STORAGE_KEYS,
+  getSessionStorageValue,
+  removeSessionStorageValue,
+  setSessionStorageValue,
+} from "./sessionStorage";
 
 /**
  * Generates or retrieves a persistent clientId for this browser/device.
@@ -52,4 +58,21 @@ export function saveRoomSession(session: RoomSession) {
  */
 export function clearRoomSession(code: string) {
   removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(code));
+}
+
+/**
+ * Marks a one-time rejoin notice for this browser tab.
+ */
+export function markPendingRejoinNotice() {
+  setSessionStorageValue(SESSION_STORAGE_KEYS.REJOIN_NOTICE, "1");
+}
+
+/**
+ * Consumes and clears the one-time rejoin notice flag, if present.
+ */
+export function consumePendingRejoinNotice(): boolean {
+  const exists =
+    getSessionStorageValue(SESSION_STORAGE_KEYS.REJOIN_NOTICE) === "1";
+  if (exists) removeSessionStorageValue(SESSION_STORAGE_KEYS.REJOIN_NOTICE);
+  return exists;
 }

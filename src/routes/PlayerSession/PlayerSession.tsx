@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ROUTES } from "@/routes/routes";
 import { normalizeCode, normalizeName } from "@/lib/codeUtils";
@@ -10,6 +10,7 @@ import PlayerGameController from "./PlayerGameController/PlayerGameController";
 import {
   clearPlayerId,
   clearRoomSession,
+  markPendingRejoinNotice,
   getClientId,
   getPlayerId,
   getRoomSession,
@@ -30,6 +31,7 @@ export default function PlayerSession() {
   const [searchParams] = useSearchParams();
   const [state, setState] = useState<RoomPublicState | null>(null);
   const dispatch = useAppDispatch();
+  const isInGameRef = useRef(false);
 
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
@@ -69,6 +71,35 @@ export default function PlayerSession() {
     onClosed: handleRoomClosed,
     onKicked: handleKicked,
   });
+
+  useEffect(
+    function keepLatestInGameFlag() {
+      isInGameRef.current =
+        !!state && state.phase !== "LOBBY" && state.phase !== "FINISHED";
+    },
+    [state],
+  );
+
+  useEffect(function markRejoinNoticeOnUnmount() {
+    return () => {
+      if (!isInGameRef.current) return;
+      if (!socketClient.isConnected()) return;
+      markPendingRejoinNotice();
+    };
+  }, []);
+
+  useEffect(function markRejoinNoticeOnPageHide() {
+    const handlePageHide = () => {
+      if (!isInGameRef.current) return;
+      if (!socketClient.isConnected()) return;
+      markPendingRejoinNotice();
+    };
+
+    window.addEventListener("pagehide", handlePageHide);
+    return () => {
+      window.removeEventListener("pagehide", handlePageHide);
+    };
+  }, []);
 
   useEffect(
     function handleStateAndConnection() {

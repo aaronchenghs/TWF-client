@@ -16,17 +16,17 @@ type ListenArgs<E extends keyof ServerToClientEvents> = Parameters<
 
 type ContractOn = <E extends keyof ServerToClientEvents>(
   event: E,
-  handler: ServerToClientEvents[E]
+  handler: ServerToClientEvents[E],
 ) => ContractSocket;
 
 type ContractOff = <E extends keyof ServerToClientEvents>(
   event: E,
-  handler: ServerToClientEvents[E]
+  handler: ServerToClientEvents[E],
 ) => ContractSocket;
 
 type ContractOnce = <E extends keyof ServerToClientEvents>(
   event: E,
-  handler: ServerToClientEvents[E]
+  handler: ServerToClientEvents[E],
 ) => ContractSocket;
 
 export class SocketClient {
@@ -54,6 +54,10 @@ export class SocketClient {
     if (!this.socket.connected) this.socket.connect();
   }
 
+  isConnected(): boolean {
+    return this.socket.connected;
+  }
+
   /** Disconnects the socket if currently connected. */
   disconnect(): void {
     if (this.socket.connected) this.socket.disconnect();
@@ -70,7 +74,7 @@ export class SocketClient {
   /** Subscribes to a contract-defined server->client event; returns an unsubscribe function. */
   on<E extends keyof ServerToClientEvents>(
     event: E,
-    handler: ServerToClientEvents[E]
+    handler: ServerToClientEvents[E],
   ): () => void {
     const on = this.socket.on as unknown as ContractOn;
     const off = this.socket.off as unknown as ContractOff;
@@ -84,7 +88,7 @@ export class SocketClient {
   /** Subscribes once to a contract-defined server->client event; returns a cleanup function. */
   once<E extends keyof ServerToClientEvents>(
     event: E,
-    handler: ServerToClientEvents[E]
+    handler: ServerToClientEvents[E],
   ): () => void {
     const once = this.socket.once as unknown as ContractOnce;
     const off = this.socket.off as unknown as ContractOff;
@@ -101,7 +105,7 @@ export class SocketClient {
    */
   waitFor<E extends keyof ServerToClientEvents>(
     event: E,
-    timeoutMs = 8000
+    timeoutMs = 8000,
   ): Promise<ListenArgs<E>> {
     return new Promise<ListenArgs<E>>((resolve, reject) => {
       const off = this.socket.off as unknown as ContractOff;

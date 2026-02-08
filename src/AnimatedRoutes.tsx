@@ -7,14 +7,20 @@ import {
   type TransitionDirection,
 } from "@/lib/routeTransitionRules";
 import { RouteLoadingFallback } from "@/components/RouteLoadingFallback/RouteLoadingFallback";
+import { consumePendingRejoinNotice } from "@/lib/session";
+import { useAppDispatch } from "@/store/store";
+import { pushSnackbar } from "@/store/slices/snackBarSlice";
 
 const Landing = lazy(() => import("@/routes/Landing/Landing"));
 const HostLobby = lazy(() => import("@/routes/HostLobby/HostLobby"));
-const PlayerSession = lazy(() => import("@/routes/PlayerSession/PlayerSession"));
+const PlayerSession = lazy(
+  () => import("@/routes/PlayerSession/PlayerSession"),
+);
 const GameRoom = lazy(() => import("@/routes/GameRoom/GameRoom"));
 
 export function AnimatedRoutes() {
   const location = useLocation();
+  const dispatch = useAppDispatch();
   const [direction, setDirection] = useState<TransitionDirection>("left");
   const prevPathRef = useRef(location.pathname);
 
@@ -26,6 +32,25 @@ export function AnimatedRoutes() {
       prevPathRef.current = location.pathname;
     },
     [location.pathname],
+  );
+
+  useEffect(
+    function showPendingRejoinNotice() {
+      const isPlayerRoute =
+        location.pathname === ROUTES.PLAYER_SESSION ||
+        location.pathname.startsWith(`${ROUTES.PLAYER_SESSION}/`);
+      if (isPlayerRoute) return;
+      if (!consumePendingRejoinNotice()) return;
+
+      dispatch(
+        pushSnackbar({
+          severity: "info",
+          title: "Rejoin Your Game",
+          message: "Enter the room code again with any name to rejoin.",
+        }),
+      );
+    },
+    [dispatch, location.pathname],
   );
 
   return (

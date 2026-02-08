@@ -18,13 +18,12 @@ import {
   clearRoomSession,
   getClientId,
   markHostStartedRoomCode,
-  markPendingRejoinNotice,
   saveRoomSession,
 } from "@/lib/session";
 import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
-import { socketClient } from "@/services/sockets/socketClient";
+import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -43,7 +42,6 @@ export default function HostLobby() {
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
   const suppressRejoinNoticeRef = useRef(false);
-  const isUnexpectedExitTrackingArmedRef = useRef(false);
 
   const players = useMemo(
     () => (roomState?.players ?? []).filter((p) => p.connected !== false),
@@ -97,6 +95,13 @@ export default function HostLobby() {
     }
   }, []);
 
+  useUnexpectedExitRejoinNotice({
+    kind: "host_lobby",
+    roomCode,
+    isEligible: isRoomCodeValid,
+    suppressRef: suppressRejoinNoticeRef,
+  });
+
   useEffect(
     function redirectStartedRoomToGameRoute() {
       if (!roomState) return;
@@ -139,46 +144,6 @@ export default function HostLobby() {
         .catch(() => setTierSets([]));
     },
     [roomCode, isRoomCodeValid, handleRoomClosed],
-  );
-
-  useEffect(function armUnexpectedExitTracking() {
-    const raf = requestAnimationFrame(() => {
-      isUnexpectedExitTrackingArmedRef.current = true;
-    });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      isUnexpectedExitTrackingArmedRef.current = false;
-    };
-  }, []);
-
-  useEffect(
-    function markHostRejoinNoticeOnUnmount() {
-      return () => {
-        if (suppressRejoinNoticeRef.current) return;
-        if (!isUnexpectedExitTrackingArmedRef.current) return;
-        if (!socketClient.isConnected()) return;
-        markPendingRejoinNotice({ kind: "host_lobby", roomCode });
-      };
-    },
-    [roomCode],
-  );
-
-  useEffect(
-    function markHostRejoinNoticeOnPageHide() {
-      const handlePageHide = () => {
-        if (suppressRejoinNoticeRef.current) return;
-        if (!isUnexpectedExitTrackingArmedRef.current) return;
-        if (!socketClient.isConnected()) return;
-        markPendingRejoinNotice({ kind: "host_lobby", roomCode });
-      };
-
-      window.addEventListener("pagehide", handlePageHide);
-      return () => {
-        window.removeEventListener("pagehide", handlePageHide);
-      };
-    },
-    [roomCode],
   );
 
   return (

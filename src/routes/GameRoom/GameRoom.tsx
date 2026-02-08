@@ -28,9 +28,9 @@ import {
   clearRoomSession,
   getClientId,
   markHostStartedRoomCode,
-  markPendingRejoinNotice,
   saveRoomSession,
 } from "@/lib/session";
+import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -48,8 +48,7 @@ export default function GameRoom() {
   );
   const [isIntro, setIsIntro] = useState(true);
   const suppressRejoinNoticeRef = useRef(false);
-  const shouldShowRejoinNoticeRef = useRef(false);
-  const isUnexpectedExitTrackingArmedRef = useRef(false);
+  const isHostUnexpectedExitEligible = !!state && state.phase !== "FINISHED";
 
   const clock = usePhaseClock(state);
   const hasState = state != null;
@@ -83,6 +82,13 @@ export default function GameRoom() {
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
 
+  useUnexpectedExitRejoinNotice({
+    kind: "host_game",
+    roomCode,
+    isEligible: isHostUnexpectedExitEligible,
+    suppressRef: suppressRejoinNoticeRef,
+  });
+
   useEffect(
     function endIntroAfterFirstFrame() {
       if (!hasState) return;
@@ -100,13 +106,6 @@ export default function GameRoom() {
       markHostStartedRoomCode(roomCode);
     },
     [state, roomCode],
-  );
-
-  useEffect(
-    function trackHostRejoinEligibility() {
-      shouldShowRejoinNoticeRef.current = !!state && state.phase !== "FINISHED";
-    },
-    [state],
   );
 
   useEffect(
@@ -137,48 +136,6 @@ export default function GameRoom() {
       };
     },
     [roomCode, isRoomCodeValid, handleRoomClosed],
-  );
-
-  useEffect(function armUnexpectedExitTracking() {
-    const raf = requestAnimationFrame(() => {
-      isUnexpectedExitTrackingArmedRef.current = true;
-    });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      isUnexpectedExitTrackingArmedRef.current = false;
-    };
-  }, []);
-
-  useEffect(
-    function markHostRejoinNoticeOnUnmount() {
-      return () => {
-        if (suppressRejoinNoticeRef.current) return;
-        if (!shouldShowRejoinNoticeRef.current) return;
-        if (!isUnexpectedExitTrackingArmedRef.current) return;
-        if (!socketClient.isConnected()) return;
-        markPendingRejoinNotice({ kind: "host_game", roomCode });
-      };
-    },
-    [roomCode],
-  );
-
-  useEffect(
-    function markHostRejoinNoticeOnPageHide() {
-      const handlePageHide = () => {
-        if (suppressRejoinNoticeRef.current) return;
-        if (!shouldShowRejoinNoticeRef.current) return;
-        if (!isUnexpectedExitTrackingArmedRef.current) return;
-        if (!socketClient.isConnected()) return;
-        markPendingRejoinNotice({ kind: "host_game", roomCode });
-      };
-
-      window.addEventListener("pagehide", handlePageHide);
-      return () => {
-        window.removeEventListener("pagehide", handlePageHide);
-      };
-    },
-    [roomCode],
   );
 
   useRoomSubscriptions({

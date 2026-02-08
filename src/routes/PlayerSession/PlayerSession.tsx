@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ROUTES } from "@/routes/routes";
 import { normalizeCode, normalizeName } from "@/lib/codeUtils";
@@ -11,7 +11,6 @@ import {
   clearPlayerId,
   clearRoomSession,
   getStartedHostSession,
-  markPendingRejoinNotice,
   getClientId,
   getPlayerId,
   getRoomSession,
@@ -22,6 +21,7 @@ import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
 import { useAppDispatch } from "@/store/store";
+import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -32,11 +32,11 @@ export default function PlayerSession() {
   const [searchParams] = useSearchParams();
   const [state, setState] = useState<RoomPublicState | null>(null);
   const dispatch = useAppDispatch();
-  const isInGameRef = useRef(false);
-  const isUnexpectedExitTrackingArmedRef = useRef(false);
 
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
+  const isPlayerUnexpectedExitEligible =
+    !!state && state.phase !== "LOBBY" && state.phase !== "FINISHED";
 
   const returnToLanding = useCallback(() => {
     socketClient.disconnect();
@@ -74,53 +74,11 @@ export default function PlayerSession() {
     onKicked: handleKicked,
   });
 
-  useEffect(
-    function keepLatestInGameFlag() {
-      isInGameRef.current =
-        !!state && state.phase !== "LOBBY" && state.phase !== "FINISHED";
-    },
-    [state],
-  );
-
-  useEffect(function armUnexpectedExitTracking() {
-    const raf = requestAnimationFrame(() => {
-      isUnexpectedExitTrackingArmedRef.current = true;
-    });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      isUnexpectedExitTrackingArmedRef.current = false;
-    };
-  }, []);
-
-  useEffect(
-    function markRejoinNoticeOnUnmount() {
-      return () => {
-        if (!isInGameRef.current) return;
-        if (!isUnexpectedExitTrackingArmedRef.current) return;
-        if (!socketClient.isConnected()) return;
-        markPendingRejoinNotice({ kind: "player", roomCode });
-      };
-    },
-    [roomCode],
-  );
-
-  useEffect(
-    function markRejoinNoticeOnPageHide() {
-      const handlePageHide = () => {
-        if (!isInGameRef.current) return;
-        if (!isUnexpectedExitTrackingArmedRef.current) return;
-        if (!socketClient.isConnected()) return;
-        markPendingRejoinNotice({ kind: "player", roomCode });
-      };
-
-      window.addEventListener("pagehide", handlePageHide);
-      return () => {
-        window.removeEventListener("pagehide", handlePageHide);
-      };
-    },
-    [roomCode],
-  );
+  useUnexpectedExitRejoinNotice({
+    kind: "player",
+    roomCode,
+    isEligible: isPlayerUnexpectedExitEligible,
+  });
 
   useEffect(
     function handleStateAndConnection() {

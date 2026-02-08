@@ -12,7 +12,11 @@ import { useMobileView } from "../../lib/hooks/useMobileView";
 import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
 import * as Contracts from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
-import { getClientId, saveRoomSession } from "../../lib/session";
+import {
+  getClientId,
+  getStartedHostSession,
+  saveRoomSession,
+} from "../../lib/session";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
@@ -27,6 +31,7 @@ export default function Landing() {
     setIsCreatingLobby(true);
     try {
       const { code } = await roomSocket.createRoom("host");
+      saveRoomSession({ code, role: "host" });
       navigate(`${ROUTES.HOST_LOBBY}/${code}`);
     } finally {
       setIsCreatingLobby(false);
@@ -57,7 +62,8 @@ export default function Landing() {
               >
                 {isCreatingLobby ? (
                   <>
-                    Creating<AnimatedDots />
+                    Creating
+                    <AnimatedDots />
                   </>
                 ) : (
                   "Create Lobby"
@@ -98,9 +104,15 @@ export function JoinRoomPanel() {
   const handleJoinRoom = async () => {
     if (!canJoin) return;
     setIsJoining(true);
-    const clientId = getClientId();
+    const hostSession = getStartedHostSession();
+    if (hostSession) {
+      navigate(`${ROUTES.GAME_ROOM}/${hostSession.code}`);
+      setIsJoining(false);
+      return;
+    }
 
     try {
+      const clientId = getClientId();
       await roomSocket.joinRoomOrThrow({
         code: normalizedCode,
         role: "player",

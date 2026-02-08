@@ -4,7 +4,7 @@ import styles from "./HostLobby.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { SubtextDivider } from "@/components/SubtextDivider/SubtextDivider";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
 import { normalizeCode } from "@/lib/codeUtils";
@@ -13,10 +13,18 @@ import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationMo
 import { CopyTextButton } from "@/components/CopyTextButton/CopyTextButton";
 import { ROUTES } from "@/routes/routes";
 import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
-import { getClientId } from "@/lib/session";
+import {
+  clearHostSession,
+  clearRoomSession,
+  getClientId,
+  markHostStartedRoomCode,
+  markPendingRejoinNotice,
+  saveRoomSession,
+} from "@/lib/session";
 import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
+import { socketClient } from "@/services/sockets/socketClient";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -34,6 +42,8 @@ export default function HostLobby() {
 
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
+  const suppressRejoinNoticeRef = useRef(false);
+  const isUnexpectedExitTrackingArmedRef = useRef(false);
 
   const players = useMemo(
     () => (roomState?.players ?? []).filter((p) => p.connected !== false),
@@ -53,9 +63,12 @@ export default function HostLobby() {
   }, [tierSets, selectedTierSetId]);
 
   const handleCloseLobby = useCallback(() => {
+    suppressRejoinNoticeRef.current = true;
+    clearHostSession();
+    if (roomCode) clearRoomSession(roomCode);
     roomSocket.closeRoom();
     navigate(ROUTES.LANDING);
-  }, [navigate]);
+  }, [navigate, roomCode]);
 
   const handleSelectTierSet = useCallback((ts: TierSetSummary) => {
     roomSocket.setTierSet(ts.id);
@@ -71,17 +84,35 @@ export default function HostLobby() {
   }, []);
 
   const handleCountdownComplete = useCallback(() => {
+    suppressRejoinNoticeRef.current = true;
+    markHostStartedRoomCode(roomCode);
     roomSocket.startGame(roomCode);
     navigate(`${ROUTES.GAME_ROOM}/${roomCode}`);
   }, [navigate, roomCode]);
 
   const handleRoomState = useCallback((state: RoomPublicState) => {
     setRoomState(state);
+    if (state.phase !== "LOBBY") {
+      markHostStartedRoomCode(state.code);
+    }
   }, []);
 
+  useEffect(
+    function redirectStartedRoomToGameRoute() {
+      if (!roomState) return;
+      if (roomState.phase === "LOBBY") return;
+      suppressRejoinNoticeRef.current = true;
+      navigate(`${ROUTES.GAME_ROOM}/${roomState.code}`, { replace: true });
+    },
+    [navigate, roomState],
+  );
+
   const handleRoomClosed = useCallback(() => {
+    suppressRejoinNoticeRef.current = true;
+    clearHostSession();
+    if (roomCode) clearRoomSession(roomCode);
     navigate(ROUTES.LANDING, { replace: true });
-  }, [navigate]);
+  }, [navigate, roomCode]);
 
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,
@@ -97,11 +128,57 @@ export default function HostLobby() {
 
       roomSocket
         .joinRoomOrThrow({ code: roomCode, role: "host", clientId })
+        .then(() => {
+          saveRoomSession({ code: roomCode, role: "host" });
+        })
         .catch(() => handleRoomClosed());
 
-      roomSocket.listTierSets().then(setTierSets).catch(() => setTierSets([]));
+      roomSocket
+        .listTierSets()
+        .then(setTierSets)
+        .catch(() => setTierSets([]));
     },
     [roomCode, isRoomCodeValid, handleRoomClosed],
+  );
+
+  useEffect(function armUnexpectedExitTracking() {
+    const raf = requestAnimationFrame(() => {
+      isUnexpectedExitTrackingArmedRef.current = true;
+    });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      isUnexpectedExitTrackingArmedRef.current = false;
+    };
+  }, []);
+
+  useEffect(
+    function markHostRejoinNoticeOnUnmount() {
+      return () => {
+        if (suppressRejoinNoticeRef.current) return;
+        if (!isUnexpectedExitTrackingArmedRef.current) return;
+        if (!socketClient.isConnected()) return;
+        markPendingRejoinNotice({ kind: "host_lobby", roomCode });
+      };
+    },
+    [roomCode],
+  );
+
+  useEffect(
+    function markHostRejoinNoticeOnPageHide() {
+      const handlePageHide = () => {
+        if (suppressRejoinNoticeRef.current) return;
+        if (!isUnexpectedExitTrackingArmedRef.current) return;
+        if (!socketClient.isConnected()) return;
+        markPendingRejoinNotice({ kind: "host_lobby", roomCode });
+      };
+
+      window.addEventListener("pagehide", handlePageHide);
+      return () => {
+        window.removeEventListener("pagehide", handlePageHide);
+      };
+    },
+    [roomCode],
   );
 
   return (
@@ -133,11 +210,12 @@ export default function HostLobby() {
           <SubtextDivider text="Choose a Tier List" />
 
           <div className={styles.presetGrid}>
-                {tierSets.length === 0 ? (
-                  <MainTextTypography variant="body" muted>
-                    Loading tier lists<AnimatedDots />
-                  </MainTextTypography>
-                ) : (
+            {tierSets.length === 0 ? (
+              <MainTextTypography variant="body" muted>
+                Loading tier lists
+                <AnimatedDots />
+              </MainTextTypography>
+            ) : (
               tierSets.map((set) => (
                 <TierSetGridEntry
                   key={set.id}
@@ -159,24 +237,25 @@ export default function HostLobby() {
             </MainTextTypography>
 
             <ul className={styles.playerList}>
-                  {players.length === 0 ? (
-                    <MainTextTypography
-                      className={styles.player}
-                      variant="body"
-                      muted
-                    >
-                      Waiting<AnimatedDots />
-                    </MainTextTypography>
-                  ) : (
+              {players.length === 0 ? (
+                <MainTextTypography
+                  className={styles.player}
+                  variant="body"
+                  muted
+                >
+                  Waiting
+                  <AnimatedDots />
+                </MainTextTypography>
+              ) : (
                 players.map((player) => (
                   <li className={styles.playerEntry} key={player.id}>
-                        <MainTextTypography
-                          className={styles.player}
-                          variant="h6"
-                          tone="player"
-                        >
-                          {player.name}
-                        </MainTextTypography>
+                    <MainTextTypography
+                      className={styles.player}
+                      variant="h6"
+                      tone="player"
+                    >
+                      {player.name}
+                    </MainTextTypography>
                     <AccentButton
                       variant="destructive"
                       size="small"

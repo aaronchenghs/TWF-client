@@ -7,7 +7,10 @@ import {
   type TransitionDirection,
 } from "@/lib/routeTransitionRules";
 import { RouteLoadingFallback } from "@/components/RouteLoadingFallback/RouteLoadingFallback";
-import { consumePendingRejoinNotice } from "@/lib/session";
+import {
+  consumePendingRejoinNotice,
+  type RejoinNotice,
+} from "@/lib/session";
 import { useAppDispatch } from "@/store/store";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
 
@@ -36,19 +39,48 @@ export function AnimatedRoutes() {
 
   useEffect(
     function showPendingRejoinNotice() {
-      const isPlayerRoute =
-        location.pathname === ROUTES.PLAYER_SESSION ||
-        location.pathname.startsWith(`${ROUTES.PLAYER_SESSION}/`);
-      if (isPlayerRoute) return;
-      if (!consumePendingRejoinNotice()) return;
+      let handled = false;
 
-      dispatch(
-        pushSnackbar({
-          severity: "info",
-          title: "Rejoin Your Game",
-          message: "Enter the room code again with any name to rejoin.",
-        }),
-      );
+      const showNotice = (notice: RejoinNotice) => {
+        const title =
+          notice.kind === "host_lobby" ? "Rejoin Your Lobby" : "Rejoin Your Game";
+        const message =
+          notice.kind === "player"
+            ? "Enter the room code again with any name to rejoin."
+            : notice.kind === "host_lobby"
+              ? `Reconnect as host in lobby ${notice.roomCode}.`
+              : `Reconnect as host in game ${notice.roomCode}.`;
+
+        dispatch(
+          pushSnackbar({
+            severity: "info",
+            title,
+            message,
+          }),
+        );
+      };
+
+      const consumeAndShow = () => {
+        if (handled) return;
+        const notice = consumePendingRejoinNotice();
+        if (!notice) return;
+        handled = true;
+        showNotice(notice);
+      };
+
+      consumeAndShow();
+      let attempts = 0;
+      const timer = window.setInterval(() => {
+        attempts += 1;
+        consumeAndShow();
+        if (handled || attempts >= 8) {
+          window.clearInterval(timer);
+        }
+      }, 50);
+
+      return () => {
+        window.clearInterval(timer);
+      };
     },
     [dispatch, location.pathname],
   );

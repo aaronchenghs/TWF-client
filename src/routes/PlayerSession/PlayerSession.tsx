@@ -10,6 +10,7 @@ import PlayerGameController from "./PlayerGameController/PlayerGameController";
 import {
   clearPlayerId,
   clearRoomSession,
+  getStartedHostSession,
   markPendingRejoinNotice,
   getClientId,
   getPlayerId,
@@ -32,6 +33,7 @@ export default function PlayerSession() {
   const [state, setState] = useState<RoomPublicState | null>(null);
   const dispatch = useAppDispatch();
   const isInGameRef = useRef(false);
+  const isUnexpectedExitTrackingArmedRef = useRef(false);
 
   const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
@@ -80,29 +82,54 @@ export default function PlayerSession() {
     [state],
   );
 
-  useEffect(function markRejoinNoticeOnUnmount() {
-    return () => {
-      if (!isInGameRef.current) return;
-      if (!socketClient.isConnected()) return;
-      markPendingRejoinNotice();
-    };
-  }, []);
+  useEffect(function armUnexpectedExitTracking() {
+    const raf = requestAnimationFrame(() => {
+      isUnexpectedExitTrackingArmedRef.current = true;
+    });
 
-  useEffect(function markRejoinNoticeOnPageHide() {
-    const handlePageHide = () => {
-      if (!isInGameRef.current) return;
-      if (!socketClient.isConnected()) return;
-      markPendingRejoinNotice();
-    };
-
-    window.addEventListener("pagehide", handlePageHide);
     return () => {
-      window.removeEventListener("pagehide", handlePageHide);
+      cancelAnimationFrame(raf);
+      isUnexpectedExitTrackingArmedRef.current = false;
     };
   }, []);
 
   useEffect(
+    function markRejoinNoticeOnUnmount() {
+      return () => {
+        if (!isInGameRef.current) return;
+        if (!isUnexpectedExitTrackingArmedRef.current) return;
+        if (!socketClient.isConnected()) return;
+        markPendingRejoinNotice({ kind: "player", roomCode });
+      };
+    },
+    [roomCode],
+  );
+
+  useEffect(
+    function markRejoinNoticeOnPageHide() {
+      const handlePageHide = () => {
+        if (!isInGameRef.current) return;
+        if (!isUnexpectedExitTrackingArmedRef.current) return;
+        if (!socketClient.isConnected()) return;
+        markPendingRejoinNotice({ kind: "player", roomCode });
+      };
+
+      window.addEventListener("pagehide", handlePageHide);
+      return () => {
+        window.removeEventListener("pagehide", handlePageHide);
+      };
+    },
+    [roomCode],
+  );
+
+  useEffect(
     function handleStateAndConnection() {
+      const hostSession = getStartedHostSession();
+      if (hostSession) {
+        navigate(`${ROUTES.GAME_ROOM}/${hostSession.code}`, { replace: true });
+        return;
+      }
+
       if (!roomCode || !isRoomCodeValid) {
         returnToLanding();
         return;
@@ -161,7 +188,7 @@ export default function PlayerSession() {
         cancelled = true;
       };
     },
-    [roomCode, isRoomCodeValid, searchParams, returnToLanding],
+    [navigate, roomCode, isRoomCodeValid, searchParams, returnToLanding],
   );
 
   if (!state)

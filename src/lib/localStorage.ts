@@ -98,6 +98,8 @@ const roomSessionCodec: StorageCodec<RoomSessionStorage> = {
 
 export const LOCAL_STORAGE_KEYS = {
   CLIENT_ID: "twf:clientId",
+  HOST_SESSION: "twf:hostSession",
+  HOST_STARTED_ROOM_CODE: "twf:hostStartedRoomCode",
   PLAYER_ID_PREFIX: "twf:playerId:",
   ROOM_SESSION_PREFIX: "twf:session:",
   PLAYER_ID: (code: string): `twf:playerId:${string}` => `twf:playerId:${code}`,
@@ -114,6 +116,17 @@ const LOCAL_STORAGE_VARIABLES = [
     name: "clientId",
     keyPattern: LOCAL_STORAGE_KEYS.CLIENT_ID,
     isKey: exactKey(LOCAL_STORAGE_KEYS.CLIENT_ID),
+  }),
+  defineStorageVariable({
+    name: "hostSession",
+    keyPattern: LOCAL_STORAGE_KEYS.HOST_SESSION,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.HOST_SESSION),
+    codec: roomSessionCodec,
+  }),
+  defineStorageVariable({
+    name: "hostStartedRoomCode",
+    keyPattern: LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE),
   }),
   defineStorageVariable({
     name: "playerIdByRoomCode",

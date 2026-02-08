@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import clsx from "clsx";
 import styles from "./VoteResultsReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
@@ -12,7 +12,6 @@ import {
   buildFadeSlideScaleAnimation,
   buildHoldSlideAnimation,
   MOTION_EASE,
-  REDUCED_MOTION_TRANSITION,
 } from "@/lib/motionPresets";
 import { Pill } from "@/components/Pill/Pill";
 
@@ -55,8 +54,6 @@ export function VoteResultsReveal({
 }: {
   state: RoomPublicState | null;
 }) {
-  const prefersReducedMotion = useReducedMotion();
-
   const { isOpen, token } = usePhaseStartOverlay(state, {
     openOnPhase: "RESULTS",
     openMs: REVEAL_TOTAL_MS,
@@ -121,14 +118,14 @@ export function VoteResultsReveal({
   };
 
   const slideAnimation = buildHoldSlideAnimation({
-    axis: "y",
-    enterFrom: "28vh",
-    exitTo: -10,
+    axis: "x",
+    enterFrom: "-110vw",
+    exitTo: "-10vw",
     totalMs: REVEAL_TOTAL_MS,
     enterMs: ENTER_MS,
     enterScale: 0.96,
     exitScale: 0.985,
-    reduceMotion: prefersReducedMotion,
+    reduceMotion: false,
   });
 
   return (
@@ -194,7 +191,7 @@ export function VoteResultsReveal({
                       durationMs: COLUMN_IN_DURATION * 1000,
                       delay: COLUMN_DELAY_BASE + idx * COLUMN_DELAY_STEP,
                       ease: MOTION_EASE.enter,
-                      reduceMotion: prefersReducedMotion,
+                      reduceMotion: false,
                     })}
                   >
                     <div className={styles.columnHeader}>
@@ -208,7 +205,7 @@ export function VoteResultsReveal({
                       <motion.ul
                         className={styles.voteList}
                         variants={listVariants}
-                        initial={prefersReducedMotion ? false : "hidden"}
+                        initial="hidden"
                         animate="show"
                       >
                         {entries.map((entry) => (
@@ -217,12 +214,10 @@ export function VoteResultsReveal({
                             className={styles.voteChip}
                             variants={chipVariants}
                             transition={
-                              prefersReducedMotion
-                                ? REDUCED_MOTION_TRANSITION
-                                : {
-                                    duration: CHIP_IN_DURATION,
-                                    ease: MOTION_EASE.enter,
-                                  }
+                              {
+                                duration: CHIP_IN_DURATION,
+                                ease: MOTION_EASE.enter,
+                              }
                             }
                           >
                             <span className={styles.voteIcon}>

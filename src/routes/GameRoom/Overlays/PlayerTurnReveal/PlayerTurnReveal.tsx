@@ -1,6 +1,6 @@
 import styles from "./PlayerTurnReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
@@ -16,7 +16,6 @@ const REVEAL_TOTAL_MS = 3000;
 const ENTER_MS = 700;
 
 export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
-  const prefersReducedMotion = useReducedMotion();
   const { isOpen, token } = usePhaseStartOverlay(state, {
     openOnPhase: "PLACE",
     reopenKey: state?.currentTurnPlayerId ?? null,
@@ -31,14 +30,14 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
     "--",
   );
   const slide = buildHoldSlideAnimation({
-    axis: "y",
-    enterFrom: "30vh",
-    exitTo: -10,
+    axis: "x",
+    enterFrom: "-110vw",
+    exitTo: "-10vw",
     totalMs: REVEAL_TOTAL_MS,
     enterMs: ENTER_MS,
     enterScale: 0.98,
     exitScale: 0.985,
-    reduceMotion: prefersReducedMotion,
+    reduceMotion: false,
   });
 
   return (

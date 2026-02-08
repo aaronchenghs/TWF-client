@@ -1,6 +1,6 @@
 import styles from "./ItemPlacementReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { resolvePlacedTierId } from "@/lib/tierItems";
 import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
 import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
@@ -23,8 +23,6 @@ const REVEAL_TOTAL_MS = 5000;
 const ENTER_MS = 700;
 
 export function ItemPlacementReveal({ state }: Props) {
-  const prefersReducedMotion = useReducedMotion();
-
   const { isOpen, token } = usePhaseStartOverlay(state, {
     openOnPhase: "VOTE",
     openMs: REVEAL_TOTAL_MS,
@@ -57,7 +55,7 @@ export function ItemPlacementReveal({ state }: Props) {
     exitTo: "-10vw",
     totalMs: REVEAL_TOTAL_MS,
     enterMs: ENTER_MS,
-    reduceMotion: prefersReducedMotion,
+    reduceMotion: false,
   });
 
   const tierRevealMotion = buildFadeSlideScaleAnimation({
@@ -68,7 +66,7 @@ export function ItemPlacementReveal({ state }: Props) {
     exitScale: 0.985,
     durationMs: 180,
     ease: MOTION_EASE.exit,
-    reduceMotion: prefersReducedMotion,
+    reduceMotion: false,
     includeExit: true,
   });
 

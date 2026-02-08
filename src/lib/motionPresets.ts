@@ -60,6 +60,14 @@ type FadeSlideScaleOptions = {
   includeExit?: boolean;
 };
 
+function getAxisRestValue(value: number | string): number | string {
+  if (typeof value === "number") return 0;
+
+  const unitMatch = value.trim().match(/[a-z%]+$/i);
+  if (!unitMatch) return "0";
+  return `0${unitMatch[0]}`;
+}
+
 /**
  * Slides in over `enterMs`, then holds position for the remainder of `totalMs`,
  * optionally fading/scaling on enter and a short slide/fade on exit.
@@ -67,7 +75,7 @@ type FadeSlideScaleOptions = {
 export function buildHoldSlideAnimation({
   axis,
   enterFrom,
-  exitTo = 0,
+  exitTo,
   totalMs,
   enterMs,
   enterScale,
@@ -78,6 +86,8 @@ export function buildHoldSlideAnimation({
   exitEase = MOTION_EASE.exit,
   exitMs = 160,
 }: SlideHoldOptions): MotionTriplet {
+  const restValue = getAxisRestValue(enterFrom);
+  const resolvedExitTo = exitTo === undefined ? restValue : exitTo;
   const holdMs = Math.max(0, totalMs - enterMs);
   const totalAnimateS = (enterMs + holdMs) / 1000;
   const enterFrac = totalAnimateS > 0 ? enterMs / 1000 / totalAnimateS : 1;
@@ -89,7 +99,7 @@ export function buildHoldSlideAnimation({
   if (enterScale !== undefined) initial.scale = enterScale;
 
   const animate: TargetAndTransition = {
-    [axis]: [enterFrom, 0, 0],
+    [axis]: [enterFrom, restValue, restValue],
   };
   if (fade) animate.opacity = [0, 1, 1];
   if (enterScale !== undefined) animate.scale = [enterScale, 1, 1];
@@ -102,7 +112,7 @@ export function buildHoldSlideAnimation({
       };
 
   const exit: TargetAndTransition = {
-    [axis]: exitTo,
+    [axis]: resolvedExitTo,
   };
   if (fade) exit.opacity = 0;
   if (exitScale !== undefined) exit.scale = exitScale;
@@ -176,10 +186,11 @@ export function buildSlideAnimation({
   const opacityFrom = opacity?.from ?? 0;
   const opacityTo = opacity?.to ?? 1;
   const opacityExit = opacity?.exit ?? 0;
+  const restValue = getAxisRestValue(enterFrom);
 
   return {
     initial: { opacity: opacityFrom, [axis]: enterFrom },
-    animate: { opacity: opacityTo, [axis]: 0 },
+    animate: { opacity: opacityTo, [axis]: restValue },
     exit: { opacity: opacityExit, [axis]: exitTo },
     transition: reduceMotion
       ? REDUCED_MOTION_TRANSITION

@@ -259,17 +259,6 @@ export default function HostLobby() {
               >
                 {selectedTierSetName ?? "No tier set selected"}
               </MainTextTypography>
-
-              {!selectedTierSetName ? (
-                <MainTextTypography
-                  variant="caption"
-                  textAlign="center"
-                  muted
-                  className={styles.selectedTierSetHint}
-                >
-                  Pick one from the list on the left to start the game.
-                </MainTextTypography>
-              ) : null}
             </div>
 
             <AccentButton

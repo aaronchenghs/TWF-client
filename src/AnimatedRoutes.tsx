@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useLocation, Routes, Route, Navigate } from "react-router-dom";
+import HostLobby from "@/routes/HostLobby/HostLobby";
 import { RouteTransition } from "@/components/RouteTransition";
 import { ROUTES } from "@/routes/routes";
 import {
@@ -10,7 +11,6 @@ import { RouteLoadingFallback } from "@/components/RouteLoadingFallback/RouteLoa
 import { usePendingRejoinSnackbar } from "@/lib/hooks/usePendingRejoinSnackbar";
 
 const Landing = lazy(() => import("@/routes/Landing/Landing"));
-const HostLobby = lazy(() => import("@/routes/HostLobby/HostLobby"));
 const PlayerSession = lazy(
   () => import("@/routes/PlayerSession/PlayerSession"),
 );
@@ -52,14 +52,7 @@ export function AnimatedRoutes() {
               </Suspense>
             }
           />
-          <Route
-            path={`${ROUTES.HOST_LOBBY}/:code`}
-            element={
-              <Suspense fallback={<RouteLoadingFallback />}>
-                <HostLobby />
-              </Suspense>
-            }
-          />
+          <Route path={`${ROUTES.HOST_LOBBY}/:code`} element={<HostLobby />} />
           <Route
             path={`${ROUTES.PLAYER_SESSION}/:code`}
             element={

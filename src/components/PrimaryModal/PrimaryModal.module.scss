@@ -23,7 +23,9 @@
     false
   );
   overflow: hidden;
-  box-shadow: $shadow-elevated-modal, 0 0 0 1px $light-transparency inset;
+  box-shadow:
+    $shadow-elevated-modal,
+    0 0 0 1px $light-transparency inset;
   display: flex;
   flex-direction: column;
   max-height: calc(100dvh - (#{$default-padding} * 2));
@@ -35,7 +37,6 @@
   justify-content: space-between;
   gap: $default-gap;
   padding: $default-padding;
-  border-bottom: 1px solid $light-transparency;
 
   flex: 0 0 auto;
 }
@@ -58,7 +59,9 @@
   display: grid;
   place-items: center;
   @include comicSkewInteractive($comic-skew-soft, 0deg, -0.08deg);
-  transition: transform $dur-fast ease, background $dur-fast ease;
+  transition:
+    transform $dur-fast ease,
+    background $dur-fast ease;
 
   &:hover {
     background: $light-transparency;
@@ -88,7 +91,6 @@
   justify-content: flex-end;
   gap: $default-gap;
   padding: $default-padding;
-  border-top: 1px solid $light-transparency;
   flex: 0 0 auto;
 }
 

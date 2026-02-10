@@ -14,13 +14,6 @@
 
   background: $box-shadow-color;
   backdrop-filter: blur(6px);
-
-  background-image: radial-gradient(
-    60% 45% at 50% 40%,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.03) 35%,
-    rgba(0, 0, 0, 0) 70%
-  );
 }
 
 .content {

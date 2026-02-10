@@ -15,9 +15,14 @@
 
   cursor: pointer;
   user-select: none;
+  box-shadow: $shadow-comic-icon;
+  @include comicSkewInteractive($comic-skew-soft, 0deg, -0.08deg);
 
-  transition: transform $dur-fast ease, filter $dur-fast ease,
-    background-color $dur-fast ease, border-color $dur-fast ease,
+  transition:
+    transform $dur-fast ease,
+    filter $dur-fast ease,
+    background-color $dur-fast ease,
+    border-color $dur-fast ease,
     opacity $dur-fast ease;
 
   &:hover:not(:disabled) {
@@ -26,7 +31,7 @@
   }
 
   &:active:not(:disabled) {
-    transform: translateY(1px);
+    transform: rotate(-0.08deg) translateY(0);
   }
 
   &:disabled {

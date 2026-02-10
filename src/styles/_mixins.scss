@@ -1,3 +1,5 @@
+@use "variables.scss" as *;
+
 // Fades top/bottom edges of a scroll container using a mask gradient.
 // Usage: @include scrollFade($fade: 24px);
 @mixin scrollFade($fade: 24px, $axis: y, $repeat: no-repeat) {
@@ -37,4 +39,49 @@
 
   -webkit-mask-repeat: $repeat;
   mask-repeat: $repeat;
+}
+
+@mixin dotTexture($dot-color: $comic-dot-color, $dot-size: $comic-dot-size) {
+  background-image: radial-gradient($dot-color 1px, transparent 1px);
+  background-size: $dot-size $dot-size;
+}
+
+@mixin comicPanel(
+  $rotate: $comic-skew-soft,
+  $radius: $radius-md,
+  $border-color: $bg-elevated,
+  $background: $bg-surface,
+  $shadow: true
+) {
+  border-radius: $radius;
+  border: 1px solid $border-color;
+  background: $background;
+  transform: rotate($rotate);
+
+  @if $shadow == true {
+    box-shadow: $shadow-comic-panel;
+  }
+}
+
+@mixin comicSkewInteractive(
+  $base-rotate: $comic-skew-base,
+  $hover-rotate: 0deg,
+  $active-rotate: -0.15deg
+) {
+  transform: rotate($base-rotate);
+  transition:
+    transform $dur-fast $ease-out,
+    box-shadow $dur-fast $ease-out,
+    border-color $dur-fast $ease-out,
+    background-color $dur-fast $ease-out,
+    color $dur-fast $ease-out;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    transform: rotate($hover-rotate) translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: rotate($active-rotate) translateY(0);
+  }
 }

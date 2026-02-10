@@ -3,9 +3,7 @@
 .presetCard {
   width: 100%;
   padding: $default-padding;
-  border-radius: $radius-md;
-  border: 1px solid $bg-elevated;
-  background: $bg-surface;
+  @include comicPanel($comic-skew-soft, $radius-md, $bg-elevated, $bg-surface);
 
   text-align: left;
   cursor: pointer;
@@ -20,7 +18,7 @@
     box-shadow $dur-fast ease;
 
   &:hover {
-    transform: translateY(-1px);
+    transform: rotate(0deg) translateY(-1px);
     border-color: color-mix(in srgb, $bg-elevated 70%, $text-primary);
   }
 

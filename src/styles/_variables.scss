@@ -16,6 +16,30 @@ $radius-md: 10px;
 $radius-lg: 16px;
 $round: 999px;
 
+$comic-skew-soft: -0.35deg;
+$comic-skew-base: -0.75deg;
+$comic-skew-strong: -1.1deg;
+$comic-outline: rgba(255, 255, 255, 0.14);
+$comic-dot-color: rgba(255, 255, 255, 0.12);
+$comic-dot-size: 16px;
+
+$shadow-elevated-sm: 0 8px 16px $box-shadow-color;
+$shadow-elevated-md: 0 10px 22px $box-shadow-color;
+$shadow-elevated-lg: 0 12px 26px $box-shadow-color;
+$shadow-elevated-hover: 0 14px 28px $box-shadow-color;
+$shadow-elevated-focus: 0 10px 26px $box-shadow-color;
+$shadow-elevated-modal: 0 16px 60px $box-shadow-color;
+
+$shadow-comic-icon: 2px 2px 0 rgba($black, 0.28);
+$shadow-comic-input-ink: 2px 2px 0 rgba($black, 0.24);
+$shadow-comic-control: 3px 3px 0 rgba($black, 0.32);
+$shadow-comic-panel-ink: 4px 4px 0 rgba($black, 0.28);
+$shadow-comic-panel-ink-hover: 5px 5px 0 rgba($black, 0.3);
+
+$shadow-comic-input: $shadow-comic-input-ink, 0 8px 22px $box-shadow-color;
+$shadow-comic-panel: $shadow-comic-panel-ink, $shadow-elevated-lg;
+$shadow-comic-panel-hover: $shadow-comic-panel-ink-hover, $shadow-elevated-hover;
+
 $dur-fast: 120ms;
 $dur-base: 220ms;
 $dur-easy: 350ms;
@@ -27,13 +51,13 @@ $page-width-cutoff: 1400px;
 
 $mobile-width: 768px;
 
-$font-display: "Luckiest Guy", sans-serif;
+$font-display: "Bangers", sans-serif;
 $font-body: "Nunito", sans-serif;
-$font-alt-display: "Bangers", sans-serif;
-$font-ui: "Inter", sans-serif;
+$font-alt-display: "Luckiest Guy", sans-serif;
+$font-ui: "Nunito", sans-serif;
 
 $fs-display: clamp(44px, 9vw, 76px);
-$ls-display: 0.22em;
+$ls-display: 0.08em;
 
 $fs-h1: clamp(40px, 6vw, 72px);
 $fs-h2: clamp(32px, 4.5vw, 56px);

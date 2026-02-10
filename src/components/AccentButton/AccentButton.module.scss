@@ -1,7 +1,5 @@
 @use "../../styles/export.scss" as *;
 
-$transition-med: $dur-base ease;
-
 .button {
   --accent: #{$accent};
   --radius: #{$radius-md};
@@ -14,6 +12,7 @@ $transition-med: $dur-base ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  isolation: isolate;
 
   padding: $default-padding calc($default-padding * 1.6);
   border-radius: var(--radius);
@@ -25,23 +24,27 @@ $transition-med: $dur-base ease;
   cursor: pointer;
   user-select: none;
   outline: none;
+  text-transform: uppercase;
 
-  transition:
-    background-color $transition-med,
-    color $transition-med,
-    border-color $transition-med,
-    box-shadow $transition-med,
-    transform $transition-med;
+  @include comicSkewInteractive();
+
+  box-shadow: $shadow-comic-control;
+
+  :global(*) {
+    transform: skewX(1.5deg);
+  }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px var(--accent-glow);
+    box-shadow:
+      0 0 0 3px var(--accent-glow),
+      $shadow-comic-control;
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     box-shadow: none;
-    transform: none;
+    transform: rotate(-0.2deg);
   }
 
   &:hover:not(:disabled) {
@@ -49,15 +52,14 @@ $transition-med: $dur-base ease;
     color: $text-primary;
     border-color: color-mix(in srgb, var(--accent) 92%, $black 8%);
     box-shadow:
-      0 10px 22px $box-shadow-color,
+      $shadow-elevated-md,
       0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
     transform: translateY(-1px);
   }
 
   &:active:not(:disabled) {
-    transform: translateY(0px);
     box-shadow:
-      0 6px 14px $box-shadow-color,
+      0 4px 10px $box-shadow-color,
       0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
   }
 }
@@ -66,6 +68,7 @@ $transition-med: $dur-base ease;
   padding: calc($default-padding * 0.55) calc($default-padding * 1.05);
   border-width: 1px;
   border-radius: $radius-sm;
+  @include comicSkewInteractive($comic-skew-soft, 0deg, -0.1deg);
 
   :global(*) {
     font-size: 0.9em;
@@ -87,7 +90,7 @@ $transition-med: $dur-base ease;
     background: $bg-surface;
     border-color: color-mix(in srgb, $bg-elevated 70%, #fff 30%);
     color: $text-primary;
-    box-shadow: 0 10px 22px $box-shadow-color;
+    box-shadow: $shadow-elevated-md;
   }
 
   &:focus-visible {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import clsx from "clsx";
 import styles from "./PrimaryModal.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
@@ -48,7 +48,7 @@ export function PrimaryModal(props: {
         document.body.style.overflow = prev;
       };
     },
-    [open]
+    [open],
   );
 
   useEffect(
@@ -60,7 +60,7 @@ export function PrimaryModal(props: {
       window.addEventListener("keydown", onKeyDown);
       return () => window.removeEventListener("keydown", onKeyDown);
     },
-    [open, closeOnEscape, onClose]
+    [open, closeOnEscape, onClose],
   );
 
   if (!open) return null;
@@ -116,7 +116,7 @@ export function PrimaryModal(props: {
                 onClick={onClose}
                 aria-label="Close"
               >
-                ✕
+                X
               </button>
             )}
           </header>

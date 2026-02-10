@@ -2,13 +2,22 @@
 
 .card {
   padding: $default-padding;
-  border-radius: $radius-lg;
-  background: $light-transparency;
-  border: 1px solid $light-transparency;
+  @include comicPanel(
+    $comic-skew-soft,
+    $radius-lg,
+    color-mix(in srgb, $light-transparency 75%, $bg-elevated),
+    color-mix(in srgb, $bg-surface 88%, $light-transparency 12%)
+  );
+  transition: transform $dur-fast $ease-out, box-shadow $dur-fast $ease-out;
   max-width: $page-width-cutoff;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+
+  &:hover {
+    transform: rotate(0deg) translateY(-1px);
+    box-shadow: $shadow-comic-panel-hover;
+  }
 
   .header {
     display: flex;

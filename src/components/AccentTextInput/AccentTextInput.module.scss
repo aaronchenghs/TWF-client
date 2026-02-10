@@ -16,16 +16,16 @@
   border: 1px solid rgba($text-primary, 0.2);
 
   border-radius: $radius-sm;
+  @include comicSkewInteractive($comic-skew-soft, 0deg, -0.08deg);
 
   outline: none;
   transition:
     border-color $dur-fast,
     box-shadow $dur-fast,
-    background $dur-fast;
+    background $dur-fast,
+    letter-spacing $dur-fast;
 
-  box-shadow:
-    0 1px 0 $light-transparency,
-    0 8px 22px $box-shadow-color;
+  box-shadow: $shadow-comic-input;
 
   &::placeholder {
     color: $text-secondary;
@@ -34,12 +34,14 @@
 
   &:hover {
     border-color: rgba($text-primary, 0.3);
+    @include textJitter(260ms);
   }
 
   &:focus {
     border-color: $accent;
     box-shadow:
       0 0 0 3px rgba($accent, 0.3),
-      0 10px 26px $box-shadow-color;
+      $shadow-elevated-focus;
+    @include textJitter(220ms);
   }
 }

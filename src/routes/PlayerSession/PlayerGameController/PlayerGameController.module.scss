@@ -99,7 +99,7 @@ $current-item-float-duration: 3s;
   overflow: hidden;
   border: 1px solid $light-transparency;
   background: $light-transparency;
-  box-shadow: 0 8px 16px $box-shadow-color;
+  box-shadow: $shadow-elevated-sm;
 
   :global(img) {
     width: 100%;

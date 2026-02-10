@@ -25,7 +25,7 @@
       padding: $default-padding calc($default-padding * 3);
       text-align: center;
       border: 2px solid $accent;
-      border-radius: $radius-lg;
+      @include comicPanel($comic-skew-soft, $radius-lg, $accent, $bg-surface, false);
 
       .roomCodeContainer {
         display: flex;
@@ -72,9 +72,13 @@
 
       .panel {
         padding: calc($default-padding * 2);
-        border-radius: $radius-md;
-        border: 1px solid $bg-elevated;
-        background: $bg-surface;
+        @include comicPanel($comic-skew-soft, $radius-md, $bg-elevated, $bg-surface);
+        transition: transform $dur-fast $ease-out, box-shadow $dur-fast $ease-out;
+
+        &:hover {
+          transform: rotate(0deg) translateY(-1px);
+          box-shadow: $shadow-comic-panel-hover;
+        }
       }
 
       .controls {

@@ -15,11 +15,15 @@
 .modal {
   @include appearPopIn(180ms);
   width: min(920px, 100%);
-  border-radius: $radius-lg;
+  @include comicPanel(
+    $comic-skew-soft,
+    $radius-lg,
+    $light-transparency,
+    rgba(20, 20, 24, 0.9),
+    false
+  );
   overflow: hidden;
-  background: rgba(20, 20, 24, 0.9);
-  border: 1px solid $light-transparency;
-  box-shadow: 0 16px 60px $box-shadow-color, 0 0 0 1px $light-transparency inset;
+  box-shadow: $shadow-elevated-modal, 0 0 0 1px $light-transparency inset;
   display: flex;
   flex-direction: column;
   max-height: calc(100dvh - (#{$default-padding} * 2));
@@ -53,15 +57,15 @@
   border-radius: $radius-md;
   display: grid;
   place-items: center;
+  @include comicSkewInteractive($comic-skew-soft, 0deg, -0.08deg);
   transition: transform $dur-fast ease, background $dur-fast ease;
 
   &:hover {
-    transform: translateY(-1px);
     background: $light-transparency;
   }
 
   &:active {
-    transform: translateY(0px);
+    transform: rotate(-0.08deg) translateY(0);
   }
 
   &:focus-visible {
@@ -94,5 +98,11 @@
   }
   .modal {
     max-height: calc(100dvh - 20px);
+  }
+}
+
+@media (max-width: $mobile-width) {
+  .modal {
+    transform: none;
   }
 }

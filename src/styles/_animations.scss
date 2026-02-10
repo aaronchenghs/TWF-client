@@ -158,3 +158,35 @@
     transform: translateX(180%);
   }
 }
+
+@keyframes textJitter {
+  0%,
+  100% {
+    letter-spacing: inherit;
+    text-shadow: 0 0 0 transparent;
+  }
+  20% {
+    letter-spacing: calc(0.02em + 0.01em);
+    text-shadow: 0.5px 0 0 rgba(255, 255, 255, 0.16);
+  }
+  40% {
+    letter-spacing: calc(0.02em - 0.008em);
+    text-shadow: -0.5px 0 0 rgba(255, 255, 255, 0.16);
+  }
+  60% {
+    letter-spacing: calc(0.02em + 0.012em);
+    text-shadow: 0 0 0 rgba(255, 255, 255, 0.1);
+  }
+  80% {
+    letter-spacing: calc(0.02em - 0.004em);
+    text-shadow: 0.3px 0 0 rgba(255, 255, 255, 0.12);
+  }
+}
+
+@mixin textJitter($duration: 280ms) {
+  animation: textJitter $duration steps(2, end) 1;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}

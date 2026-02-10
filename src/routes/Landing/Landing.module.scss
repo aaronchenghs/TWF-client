@@ -46,10 +46,13 @@
   width: min(560px, 92vw);
   gap: $default-gap;
   padding: $default-padding;
-  border-radius: $radius-md;
-  background: $bg-surface;
-  border: 1px solid $bg-elevated;
-  box-shadow: 0 10px 30px $box-shadow-color;
+  @include comicPanel($comic-skew-soft, $radius-md, $bg-elevated, $bg-surface);
+  transition: transform $dur-fast $ease-out, box-shadow $dur-fast $ease-out;
+
+  &:hover {
+    transform: rotate(0deg) translateY(-1px);
+    box-shadow: $shadow-comic-panel-hover;
+  }
 }
 
 .joinRow {

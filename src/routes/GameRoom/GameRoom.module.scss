@@ -134,7 +134,7 @@ $side-delay: 0.25s;
     object-fit: contain;
     border: 1px solid $light-transparency;
     background: $light-transparency;
-    box-shadow: 0 8px 16px $box-shadow-color;
+    box-shadow: $shadow-elevated-sm;
   }
 
   .itemImageFallback {

@@ -25,7 +25,13 @@
       padding: $default-padding calc($default-padding * 3);
       text-align: center;
       border: 2px solid $accent;
-      @include comicPanel($comic-skew-soft, $radius-lg, $accent, $bg-surface, false);
+      @include comicPanel(
+        $comic-skew-soft,
+        $radius-lg,
+        $accent,
+        $bg-surface,
+        false
+      );
 
       .roomCodeContainer {
         display: flex;
@@ -72,8 +78,15 @@
 
       .panel {
         padding: calc($default-padding * 2);
-        @include comicPanel($comic-skew-soft, $radius-md, $bg-elevated, $bg-surface);
-        transition: transform $dur-fast $ease-out, box-shadow $dur-fast $ease-out;
+        @include comicPanel(
+          $comic-skew-soft,
+          $radius-md,
+          $bg-elevated,
+          $bg-surface
+        );
+        transition:
+          transform $dur-fast $ease-out,
+          box-shadow $dur-fast $ease-out;
 
         &:hover {
           transform: rotate(0deg) translateY(-1px);
@@ -85,6 +98,58 @@
         display: flex;
         flex-direction: column;
         gap: calc($default-gap * 2);
+      }
+
+      .selectedTierSetCard {
+        @include comicPanel(
+          $comic-skew-soft,
+          $radius-sm,
+          color-mix(in srgb, $accent 45%, $bg-elevated),
+          color-mix(in srgb, $bg-surface 85%, $light-transparency 15%),
+          false
+        );
+
+        padding: calc($default-padding * 1.2);
+        display: flex;
+        flex-direction: column;
+        gap: calc($default-gap * 0.8);
+        transition:
+          transform $dur-fast $ease-out,
+          border-color $dur-fast $ease-out,
+          box-shadow $dur-fast $ease-out;
+
+        &:hover {
+          transform: rotate(0deg) translateY(-1px);
+          border-color: color-mix(in srgb, $accent 62%, $bg-elevated);
+          box-shadow: $shadow-comic-panel;
+        }
+      }
+
+      .selectedTierSetCardEmpty {
+        border-style: dashed;
+      }
+
+      .selectedTierSetHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $default-gap;
+      }
+
+      .selectedTierSetLabel {
+        text-transform: uppercase;
+      }
+
+      .selectedTierSetName {
+        min-height: 2.1em;
+        display: grid;
+        place-items: center;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .selectedTierSetHint {
+        opacity: 0.7;
       }
     }
 

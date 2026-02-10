@@ -235,15 +235,42 @@ export default function HostLobby() {
           </div>
 
           <div className={clsx(styles.panel, styles.controls)}>
-            <MainTextTypography
-              variant="body"
-              textAlign="center"
-              muted={!selectedTierSetName}
+            <div
+              className={clsx(
+                styles.selectedTierSetCard,
+                !selectedTierSetName && styles.selectedTierSetCardEmpty,
+              )}
             >
-              {selectedTierSetName
-                ? `${selectedTierSetName}`
-                : "Select a tier set"}
-            </MainTextTypography>
+              <div className={styles.selectedTierSetHeader}>
+                <MainTextTypography
+                  variant="caption"
+                  letterSpacing="wide"
+                  className={styles.selectedTierSetLabel}
+                >
+                  Selected Tier Set
+                </MainTextTypography>
+              </div>
+
+              <MainTextTypography
+                variant={selectedTierSetName ? "h4" : "body"}
+                textAlign="center"
+                muted={!selectedTierSetName}
+                className={styles.selectedTierSetName}
+              >
+                {selectedTierSetName ?? "No tier set selected"}
+              </MainTextTypography>
+
+              {!selectedTierSetName ? (
+                <MainTextTypography
+                  variant="caption"
+                  textAlign="center"
+                  muted
+                  className={styles.selectedTierSetHint}
+                >
+                  Pick one from the list on the left to start the game.
+                </MainTextTypography>
+              ) : null}
+            </div>
 
             <AccentButton
               variant="primary"

@@ -12,21 +12,25 @@ Server repo: https://github.com/aaronchenghs/TWF-server
 npm install
 ```
 
-2. Create `.env` in the project root:
+2. Create `.env` from `.env.example`:
 
-```env
-VITE_SOCKET_URL=http://localhost:3001
-VITE_ENABLE_DEBUG_CONTROLS=false
+```bash
+# macOS/Linux
+cp .env.example .env
+
+# Windows PowerShell
+Copy-Item .env.example .env
 ```
 
-3. Start the backend in `TWF-server` and allow this client origin in backend CORS config.
-4. Start the frontend:
+3. Update `.env` values for your environment if needed.
+4. Start the backend in `TWF-server` and allow this client origin in backend CORS config.
+5. Start the frontend:
 
 ```bash
 npm run dev
 ```
 
-5. Open the URL shown by Vite (usually `http://localhost:5173`).
+6. Open the URL shown by Vite (usually `http://localhost:5173`).
 
 ## Prerequisites
 
@@ -38,6 +42,8 @@ npm run dev
 ## Environment Variables
 
 The app reads environment variables from `import.meta.env`:
+
+Use `.env.example` as the canonical template for required/optional variables.
 
 | Variable                     | Required | Default                  | Description                                               |
 | ---------------------------- | -------- | ------------------------ | --------------------------------------------------------- |

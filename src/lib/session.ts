@@ -51,6 +51,16 @@ export function markHostStartedRoomCode(code: string) {
   setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE, code);
 }
 
+export function hasSeenHostLobbyPlayTip(): boolean {
+  return (
+    getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN) === true
+  );
+}
+
+export function markHostLobbyPlayTipSeen() {
+  setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN, true);
+}
+
 export function getStartedHostSession(): RoomSession | null {
   const hostSession = getHostSession();
   if (!hostSession) return null;

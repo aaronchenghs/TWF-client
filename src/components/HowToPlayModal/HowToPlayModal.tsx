@@ -117,10 +117,10 @@ export function HowToPlayModal(props: {
 
 const HOW_TO_STEPS: HowToPlayStep[] = [
   {
-    title: "Intro",
-    body: "Tier! With Friends is a game where you and your friends build a tier list together. Start by gathering friends in a lobby and picking an item set.",
+    title: "Best Setup",
+    body: "For the best experience, have one person host on a big screen or screen-share (like Discord), while everyone joins the room code from their own phone or device. The host can play too by joining on their phone or in a second tab.",
     imageSrc: Step1Img,
-    alt: "Intro",
+    alt: "Best setup",
   },
   {
     title: "The first placer is picked and an item is revealed to them",

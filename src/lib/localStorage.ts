@@ -41,6 +41,17 @@ const stringCodec: StorageCodec<string> = {
   },
 };
 
+const booleanCodec: StorageCodec<boolean> = {
+  parse(raw) {
+    if (raw === "true") return true;
+    if (raw === "false") return false;
+    return null;
+  },
+  stringify(value) {
+    return value ? "true" : "false";
+  },
+};
+
 function defineStorageVariable<K extends string>(
   variable: StorageVariableDefinition<K>,
 ): StorageVariable<K, string>;
@@ -100,6 +111,7 @@ export const LOCAL_STORAGE_KEYS = {
   CLIENT_ID: "twf:clientId",
   HOST_SESSION: "twf:hostSession",
   HOST_STARTED_ROOM_CODE: "twf:hostStartedRoomCode",
+  HOST_LOBBY_PLAY_TIP_SEEN: "twf:hostLobbyPlayTipSeen",
   PLAYER_ID_PREFIX: "twf:playerId:",
   ROOM_SESSION_PREFIX: "twf:session:",
   PLAYER_ID: (code: string): `twf:playerId:${string}` => `twf:playerId:${code}`,
@@ -127,6 +139,12 @@ const LOCAL_STORAGE_VARIABLES = [
     name: "hostStartedRoomCode",
     keyPattern: LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE,
     isKey: exactKey(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE),
+  }),
+  defineStorageVariable({
+    name: "hostLobbyPlayTipSeen",
+    keyPattern: LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN),
+    codec: booleanCodec,
   }),
   defineStorageVariable({
     name: "playerIdByRoomCode",

@@ -17,6 +17,8 @@ import {
   clearHostSession,
   clearRoomSession,
   getClientId,
+  hasSeenHostLobbyPlayTip,
+  markHostLobbyPlayTipSeen,
   markHostStartedRoomCode,
   saveRoomSession,
 } from "@/lib/session";
@@ -27,6 +29,7 @@ import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejo
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
+const BEST_PLAY_TIP_DELAY_MS = 500;
 type TierSetSummary = Contracts.TierSetSummary;
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -38,6 +41,7 @@ export default function HostLobby() {
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
   const [tierSetWithDetailsOpen, setTierSetWithDetailsOpen] =
     useState<Guid | null>(null);
+  const [showBestPlayTip, setShowBestPlayTip] = useState(false);
 
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
@@ -101,6 +105,22 @@ export default function HostLobby() {
     isEligible: isRoomCodeValid,
     suppressRef: suppressRejoinNoticeRef,
   });
+
+  useEffect(
+    function maybeShowBestPlayTip() {
+      if (!isRoomCodeValid) return;
+      if (hasSeenHostLobbyPlayTip()) return;
+
+      const tipTimer = window.setTimeout(() => {
+        setShowBestPlayTip(true);
+      }, BEST_PLAY_TIP_DELAY_MS);
+
+      return () => {
+        window.clearTimeout(tipTimer);
+      };
+    },
+    [isRoomCodeValid],
+  );
 
   useEffect(
     function redirectStartedRoomToGameRoute() {
@@ -289,6 +309,28 @@ export default function HostLobby() {
         onCancel={() => setIsConfirmCloseOpen(false)}
         onConfirm={handleCloseLobby}
       />
+
+      {showBestPlayTip ? (
+        <aside className={styles.bestPlayTip} role="status" aria-live="polite">
+          <MainTextTypography variant="h6" className={styles.bestPlayTipTitle}>
+            💡Best way to play
+          </MainTextTypography>
+          <MainTextTypography variant="body" muted>
+            Host on a big screen or screen-share, and have everyone join with
+            this room's code on their own phone or device. You can still play by
+            joining from your phone or a second tab!
+          </MainTextTypography>
+          <AccentButton
+            size="small"
+            onClick={() => {
+              markHostLobbyPlayTipSeen();
+              setShowBestPlayTip(false);
+            }}
+          >
+            Got it
+          </AccentButton>
+        </aside>
+      ) : null}
 
       <CountdownOverlay
         open={isStartCountdownOpen}

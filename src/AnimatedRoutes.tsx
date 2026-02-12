@@ -9,11 +9,9 @@ import {
 } from "@/lib/routeTransitionRules";
 import { RouteLoadingFallback } from "@/components/RouteLoadingFallback/RouteLoadingFallback";
 import { usePendingRejoinSnackbar } from "@/lib/hooks/usePendingRejoinSnackbar";
+import PlayerSession from "./routes/PlayerSession/PlayerSession";
 
 const Landing = lazy(() => import("@/routes/Landing/Landing"));
-const PlayerSession = lazy(
-  () => import("@/routes/PlayerSession/PlayerSession"),
-);
 const GameRoom = lazy(() => import("@/routes/GameRoom/GameRoom"));
 
 export function AnimatedRoutes() {

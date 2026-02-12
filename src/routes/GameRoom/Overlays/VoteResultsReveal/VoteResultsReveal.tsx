@@ -13,7 +13,6 @@ import {
   buildHoldSlideAnimation,
   MOTION_EASE,
 } from "@/lib/motionPresets";
-import { Pill } from "@/components/Pill/Pill";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type PlayerId = Contracts.PlayerId;
@@ -27,16 +26,15 @@ type VoteEntry = {
 
 type VoteBucket = "up" | "agree" | "down";
 
-const REVEAL_TOTAL_MS = 5200;
+const REVEAL_TOTAL_MS = 6000;
 const ENTER_MS = 700;
-const COLUMN_DELAY_BASE = 0.1;
-const COLUMN_DELAY_STEP = 0.06;
-const COLUMN_IN_DURATION = 0.24;
-const CHIP_STAGGER = 0.05;
-const CHIP_DELAY = 0.08;
-const CHIP_IN_DURATION = 0.18;
-const CHIP_OFFSET_Y = 8;
-const CHIP_SCALE = 0.96;
+const COLUMN_DELAY_BASE = 0.16;
+const COLUMN_DELAY_STEP = 0.08;
+const COLUMN_IN_DURATION = 0.3;
+const CHIP_STAGGER = 0.08;
+const CHIP_DELAY = 0.15;
+const CHIP_OFFSET_Y = 18;
+const CHIP_SCALE = 0.8;
 
 const voteConfig: Array<{
   key: VoteBucket;
@@ -44,9 +42,9 @@ const voteConfig: Array<{
   icon: string;
   value: VoteValue;
 }> = [
-  { key: "up", label: "Drift Up", icon: "▲", value: -1 },
-  { key: "agree", label: "Agree", icon: "●", value: 0 },
-  { key: "down", label: "Drift Down", icon: "▼", value: 1 },
+  { key: "up", label: "Drift Up", icon: "^", value: -1 },
+  { key: "agree", label: "Agree", icon: "=", value: 0 },
+  { key: "down", label: "Drift Down", icon: "v", value: 1 },
 ];
 
 export function VoteResultsReveal({
@@ -113,8 +111,18 @@ export function VoteResultsReveal({
   };
 
   const chipVariants = {
-    hidden: { opacity: 0, y: CHIP_OFFSET_Y, scale: CHIP_SCALE },
-    show: { opacity: 1, y: 0, scale: 1 },
+    hidden: (idx: number) => ({
+      opacity: 0,
+      y: CHIP_OFFSET_Y,
+      scale: CHIP_SCALE,
+      rotate: idx % 2 ? 4 : -4,
+    }),
+    show: (idx: number) => ({
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      rotate: idx % 2 ? 1.2 : -1.2,
+    }),
   };
 
   const slideAnimation = buildHoldSlideAnimation({
@@ -148,9 +156,10 @@ export function VoteResultsReveal({
                 </MainTextTypography>
 
                 <MainTextTypography
-                  variant="caption"
+                  variant="label"
                   className={styles.subtitle}
                   textAlign="left"
+                  letterSpacing="wide"
                 >
                   Votes revealed: {votersCount}
                 </MainTextTypography>
@@ -172,7 +181,7 @@ export function VoteResultsReveal({
                   />
                 </div>
 
-                <MainTextTypography variant="h5" className={styles.itemName}>
+                <MainTextTypography variant="h3" className={styles.itemName}>
                   {itemName}
                 </MainTextTypography>
               </div>
@@ -187,51 +196,79 @@ export function VoteResultsReveal({
                     className={clsx(styles.column, styles[`col_${config.key}`])}
                     {...buildFadeSlideScaleAnimation({
                       axis: "y",
-                      enterOffset: 12,
+                      enterOffset: 28,
+                      enterScale: 0.78,
                       durationMs: COLUMN_IN_DURATION * 1000,
                       delay: COLUMN_DELAY_BASE + idx * COLUMN_DELAY_STEP,
                       ease: MOTION_EASE.enter,
                       reduceMotion: false,
                     })}
                   >
-                    <div className={styles.columnHeader}>
-                      <span className={styles.columnTitle}>{config.label}</span>
-                      <Pill size="sm" className={styles.countPill}>
-                        {entries.length}
-                      </Pill>
-                    </div>
+                    <div className={styles.columnInner}>
+                      <div className={styles.columnHeader}>
+                        <MainTextTypography
+                          variant="h3"
+                          className={styles.columnTitle}
+                          letterSpacing="wide"
+                        >
+                          {config.label}
+                        </MainTextTypography>
+                        <MainTextTypography
+                          variant="h3"
+                          className={styles.countPill}
+                          textAlign="center"
+                        >
+                          {entries.length}
+                        </MainTextTypography>
+                      </div>
 
-                    {entries.length ? (
-                      <motion.ul
-                        className={styles.voteList}
-                        variants={listVariants}
-                        initial="hidden"
-                        animate="show"
-                      >
-                        {entries.map((entry) => (
-                          <motion.li
-                            key={`${entry.playerId}:${entry.value}`}
-                            className={styles.voteChip}
-                            variants={chipVariants}
-                            transition={
-                              {
-                                duration: CHIP_IN_DURATION,
-                                ease: MOTION_EASE.enter,
-                              }
-                            }
-                          >
-                            <span className={styles.voteIcon}>
-                              {config.icon}
-                            </span>
-                            <span className={styles.voteName}>
-                              {entry.name}
-                            </span>
-                          </motion.li>
-                        ))}
-                      </motion.ul>
-                    ) : (
-                      <div className={styles.empty}>No votes</div>
-                    )}
+                      {entries.length ? (
+                        <motion.ul
+                          className={styles.voteList}
+                          variants={listVariants}
+                          initial="hidden"
+                          animate="show"
+                        >
+                          {entries.map((entry, entryIdx) => (
+                            <motion.li
+                              key={`${entry.playerId}:${entry.value}`}
+                              className={styles.voteChip}
+                              custom={entryIdx}
+                              variants={chipVariants}
+                              transition={{
+                                type: "spring",
+                                stiffness: 440,
+                                damping: 24,
+                                mass: 0.6,
+                              }}
+                            >
+                              <MainTextTypography
+                                variant="h5"
+                                className={styles.voteIcon}
+                                textAlign="center"
+                              >
+                                {config.icon}
+                              </MainTextTypography>
+                              <MainTextTypography
+                                variant="h5"
+                                className={styles.voteName}
+                                letterSpacing="normal"
+                              >
+                                {entry.name}
+                              </MainTextTypography>
+                            </motion.li>
+                          ))}
+                        </motion.ul>
+                      ) : (
+                        <MainTextTypography
+                          variant="label"
+                          className={styles.empty}
+                          letterSpacing="wide"
+                        >
+                          No votes
+                        </MainTextTypography>
+                      )}
+                    </div>
                   </motion.div>
                 );
               })}

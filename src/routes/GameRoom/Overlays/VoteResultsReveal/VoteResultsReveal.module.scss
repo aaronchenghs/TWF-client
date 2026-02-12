@@ -2,95 +2,80 @@
 
 .reveal {
   position: relative;
-  width: min(980px, 96vw);
-  padding: clamp(18px, 3vw, 28px);
+  width: min(1000px, 96vw);
+  padding: clamp($default-padding, 2.1vw, 20px);
   border-radius: $radius-lg;
   display: grid;
-  gap: clamp(12px, 2vw, 18px);
-  background:
-    radial-gradient(
-      120% 120% at 10% 10%,
-      $light-transparency 0%,
-      rgba(255, 255, 255, 0) 60%
-    ),
-    linear-gradient(140deg, rgba($bg-surface, 0.95), rgba($bg-app, 0.98));
-  border: 1px solid $light-transparency;
-  box-shadow:
-    0 12px 40px $box-shadow-color,
-    inset 0 0 0 1px color-mix(in srgb, $light-transparency 50%, transparent);
+  gap: clamp($default-padding, 1.8vw, $radius-lg);
+  background: rgba($bg-app, 0.56);
+  border: 3px solid color-mix(in srgb, $comic-outline 170%, transparent);
+  box-shadow: $shadow-comic-panel;
   overflow: hidden;
+
+  @include float(6px, 3s);
 }
 
-.reveal::before,
-.reveal::after {
+.reveal::before {
   content: "";
   position: absolute;
-  inset: -30%;
-  background: radial-gradient(
-    circle at 30% 20%,
-    rgba($accent, 0.2),
-    rgba(0, 0, 0, 0)
-  );
+  inset: 0;
   pointer-events: none;
-}
-
-.reveal::after {
-  inset: -40%;
-  background: radial-gradient(
-    circle at 80% 10%,
-    rgba(67, 160, 71, 0.18),
-    rgba(0, 0, 0, 0)
-  );
-  opacity: 0.8;
+  opacity: 0.3;
+  @include dotTexture($comic-dot-color, $comic-dot-size);
 }
 
 .header {
   position: relative;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
   gap: $default-gap;
-  flex-wrap: wrap;
 }
 
 .titleBlock {
   display: grid;
-  gap: calc($default-gap / 2);
+  gap: $default-gap;
+  transform: rotate($comic-skew-strong);
 }
 
 .title {
-  letter-spacing: $ls-display;
-  text-transform: uppercase;
+  width: fit-content;
+  padding: calc($default-padding / 2) $default-padding;
+  text-shadow: 3px 3px 0 rgba($black, 0.46);
 }
 
 .subtitle {
-  text-transform: uppercase;
-  letter-spacing: $ls-display;
-  opacity: $op-caption;
+  width: fit-content;
+  padding: calc($default-padding / 2) $default-padding;
+  border-radius: $radius-sm;
+  border: 2px solid color-mix(in srgb, $comic-outline 130%, transparent);
+  background: rgba($black, 0.24);
+  font-weight: $fw-title;
+  opacity: 1;
 }
 
 .itemChip {
   display: flex;
   align-items: center;
   gap: $default-gap;
-  padding: 6px 12px;
-  border-radius: $round;
-  background: $light-transparency;
-  border: 1px solid color-mix(in srgb, $light-transparency 120%, transparent);
-  box-shadow: inset 0 0 0 1px
-    color-mix(in srgb, $light-transparency 50%, transparent);
+  padding: $default-padding;
+  border-radius: $radius-md;
+  background: rgba($bg-surface, 0.66);
+  border: 3px solid color-mix(in srgb, $comic-outline 145%, transparent);
+  box-shadow: $shadow-comic-control;
+  transform: rotate(0.9deg);
 }
 
 .itemThumb {
-  width: 52px;
+  width: 56px;
   aspect-ratio: 1 / 1;
   border-radius: $radius-sm;
   overflow: hidden;
-  background: $box-shadow-color;
+  background: rgba($bg-app, 0.74);
   display: grid;
   place-items: center;
-  border: 1px solid $light-transparency;
+  border: 2px solid color-mix(in srgb, $comic-outline 145%, transparent);
 }
 
 .itemThumbImg {
@@ -113,9 +98,8 @@
 }
 
 .itemName {
-  font-weight: $fw-title;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-size: clamp(24px, 3vw, 40px);
+  text-shadow: 2px 2px 0 rgba($black, 0.44);
 }
 
 .columns {
@@ -128,27 +112,38 @@
 
 .column {
   --accent: #1e88e5;
-  border-radius: $radius-md;
-  padding: $default-padding;
-  background: $box-shadow-color;
-  border: 1px solid $light-transparency;
-  min-height: 160px;
+  --tilt: #{$comic-skew-base};
+  min-height: 200px;
+}
+
+.columnInner {
+  height: 100%;
   display: grid;
+  grid-template-rows: auto 1fr;
   gap: $default-gap;
-  box-shadow: inset 0 0 0 1px
-    color-mix(in srgb, $light-transparency 35%, transparent);
+  padding: clamp(10px, 1.6vw, 14px);
+  border-radius: $radius-md;
+  background: color-mix(in srgb, var(--accent) 28%, rgba($bg-surface, 0.84));
+  border: 3px solid color-mix(in srgb, var(--accent) 65%, $light-transparency);
+  box-shadow:
+    $shadow-comic-panel-ink,
+    inset 0 0 0 1px $light-transparency;
+  transform: rotate(var(--tilt));
 }
 
 .col_up {
   --accent: #43a047;
+  --tilt: #{$comic-skew-strong};
 }
 
 .col_agree {
   --accent: #1e88e5;
+  --tilt: 0.65deg;
 }
 
 .col_down {
   --accent: #e53935;
+  --tilt: #{$comic-skew-soft};
 }
 
 .columnHeader {
@@ -156,77 +151,106 @@
   align-items: center;
   justify-content: space-between;
   gap: $default-gap;
+  padding: $default-padding;
+  border-radius: $radius-sm;
+  background: rgba($black, 0.24);
+  border: 2px solid $light-transparency;
 }
 
 .columnTitle {
-  text-transform: uppercase;
-  letter-spacing: $ls-display;
-  font-size: $fs-label;
-  font-weight: $fw-title;
-  opacity: $op-label;
+  font-size: clamp(24px, 2.8vw, 36px);
+  line-height: 0.9;
+  opacity: 1;
+  text-shadow: 2px 2px 0 rgba($black, 0.4);
 }
 
 .countPill {
-  min-width: 30px;
-  text-align: center;
-  background: color-mix(in srgb, var(--accent) 45%, rgba(0, 0, 0, 0.5));
-  border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent);
-  font-weight: $fw-title;
-  font-size: $fs-label;
+  min-width: 50px;
+  padding: $default-padding;
+  border-radius: $round;
+  border: 2px solid color-mix(in srgb, var(--accent) 72%, $light-transparency);
+  background: color-mix(in srgb, var(--accent) 64%, rgba($bg-app, 0.96));
+  box-shadow: $shadow-comic-icon;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 0.9;
 }
 
 .voteList {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  display: grid;
+  align-content: start;
+  gap: $default-gap;
 }
 
 .voteChip {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: 34px 1fr;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: $round;
-  background: color-mix(in srgb, var(--accent) 18%, rgba(0, 0, 0, 0.7));
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  font-weight: $fw-title;
-  font-size: $fs-label;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
+  gap: $default-gap;
+  padding: $default-padding;
+  border-radius: $radius-sm;
+  background: color-mix(in srgb, var(--accent) 24%, rgba($bg-app, 0.92));
+  border: 2px solid color-mix(in srgb, var(--accent) 62%, $light-transparency);
+  box-shadow: $shadow-comic-icon;
 }
 
 .voteIcon {
-  font-size: $fs-label;
-  opacity: 0.9;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid $light-transparency;
+  background: rgba($black, 0.26);
+  line-height: 1;
 }
 
 .voteName {
-  opacity: 0.9;
+  color: $text-primary;
+  font-size: clamp(18px, 2vw, 24px);
+  text-transform: uppercase;
 }
 
 .empty {
-  font-size: $fs-label;
-  opacity: $op-muted;
-  text-transform: uppercase;
-  letter-spacing: $ls-display;
+  padding: $default-padding;
+  border-radius: $radius-sm;
+  border: 2px dashed $text-secondary;
+  background: rgba($black, 0.22);
+  font-size: 14px;
+}
+
+@media (max-width: 980px) {
+  .columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .column:last-child {
+    grid-column: span 2;
+  }
 }
 
 @media (max-width: $mobile-width) {
-  .columns {
-    grid-template-columns: 1fr;
-  }
-
   .header {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 
   .itemChip {
     width: 100%;
-    justify-content: space-between;
+    transform: rotate(0.4deg);
+  }
+
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .column:last-child {
+    grid-column: auto;
+  }
+
+  .columnInner {
+    transform: rotate(0deg);
   }
 }

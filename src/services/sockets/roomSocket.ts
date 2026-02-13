@@ -256,6 +256,10 @@ export const roomSocket = {
     socketClient.emit("room:start", { code });
   },
 
+  playAgain(): void {
+    socketClient.emit("room:playAgain");
+  },
+
   closeRoom(): void {
     socketClient.emit("room:close");
     socketClient.disconnect();
@@ -276,6 +280,14 @@ export const roomSocket = {
 
   onRoomError(handler: (err: RoomErrorPayload) => void): () => void {
     return socketClient.on("room:error", handler);
+  },
+
+  onPlayAgainQueued(handler: () => void): () => void {
+    return socketClient.on("room:playAgainQueued", handler);
+  },
+
+  onPlayAgainStarted(handler: () => void): () => void {
+    return socketClient.on("room:playAgainStarted", handler);
   },
 
   // #region DEV TOOLS

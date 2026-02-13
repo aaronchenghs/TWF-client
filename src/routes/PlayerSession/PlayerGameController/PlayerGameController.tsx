@@ -36,6 +36,11 @@ export default function PlayerGameController({
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
   const [isPlacing, setIsPlacing] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
+
+  const [isPlayAgainSubmitting, setIsPlayAgainSubmitting] = useState(false);
+  const [isWaitingForHostRematch, setIsWaitingForHostRematch] = useState(false);
+  const [hasHostStartedRematch, setHasHostStartedRematch] = useState(false);
+
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
 
   const myPlayerId = getPlayerId(state.code);
@@ -53,6 +58,7 @@ export default function PlayerGameController({
     if (state.phase === "PLACE") return isMyTurn ? "Place" : "Waiting";
     if (state.phase === "VOTE")
       return !isMyTurn && !hasVoted ? "Vote" : "Waiting";
+    if (state.phase === "FINISHED") return "Finished";
     return "Waiting";
   })();
 
@@ -85,6 +91,13 @@ export default function PlayerGameController({
     setIsVoting(false);
   };
 
+  const handlePlayAgain = useCallback(() => {
+    if (state.phase !== "FINISHED") return;
+    if (isPlayAgainSubmitting || isWaitingForHostRematch) return;
+    setIsPlayAgainSubmitting(true);
+    roomSocket.playAgain();
+  }, [state.phase, isPlayAgainSubmitting, isWaitingForHostRematch]);
+
   useEffect(
     function handleIdentity() {
       if (myPlayerId) socketClient.setMyPlayerId(myPlayerId);
@@ -110,6 +123,30 @@ export default function PlayerGameController({
     [state.tierSetId],
   );
 
+  useEffect(
+    function subscribeToRematchSignalsWhileFinished() {
+      if (state.phase !== "FINISHED") return;
+
+      const offQueued = roomSocket.onPlayAgainQueued(() => {
+        setIsPlayAgainSubmitting(false);
+        setIsWaitingForHostRematch(true);
+        setHasHostStartedRematch(false);
+      });
+
+      const offStarted = roomSocket.onPlayAgainStarted(() => {
+        setIsPlayAgainSubmitting(false);
+        setIsWaitingForHostRematch(false);
+        setHasHostStartedRematch(true);
+      });
+
+      return () => {
+        offQueued();
+        offStarted();
+      };
+    },
+    [state.phase],
+  );
+
   return (
     <div className={styles.root}>
       <main className={styles.main}>
@@ -124,10 +161,7 @@ export default function PlayerGameController({
                 statusLabel === "Waiting" && styles.statusWait,
               )}
             >
-              <MainTextTypography
-                variant="label"
-                className={styles.statusText}
-              >
+              <MainTextTypography variant="label" className={styles.statusText}>
                 {statusLabel}
                 {isWaiting ? (
                   <AnimatedDots className={styles.statusDots} />
@@ -179,6 +213,35 @@ export default function PlayerGameController({
             onVote={handleVote}
             isPlacer={isMyTurn}
           />
+        ) : state.phase === "FINISHED" ? (
+          <div className={styles.finishedActions}>
+            <MainTextTypography
+              variant="body"
+              muted
+              textAlign="center"
+              className={styles.finishedMessage}
+            >
+              {hasHostStartedRematch
+                ? "Host started a new lobby. Join when ready."
+                : isWaitingForHostRematch
+                  ? "Waiting for host to play again."
+                  : "Ready for another round?"}
+            </MainTextTypography>
+            <AccentButton
+              onClick={handlePlayAgain}
+              disabled={isPlayAgainSubmitting || isWaitingForHostRematch}
+            >
+              {hasHostStartedRematch
+                ? isPlayAgainSubmitting
+                  ? "Joining..."
+                  : "Play Again"
+                : isWaitingForHostRematch
+                  ? "Waiting for host..."
+                  : isPlayAgainSubmitting
+                    ? "Sending..."
+                    : "Play Again"}
+            </AccentButton>
+          </div>
         ) : (
           <AwaitingControls />
         )}

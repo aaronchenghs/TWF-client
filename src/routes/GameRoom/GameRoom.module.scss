@@ -160,6 +160,12 @@ $side-delay: 0.25s;
     place-items: center;
   }
 
+  .rematchCard {
+    display: grid;
+    gap: $default-gap;
+    margin-top: calc($default-padding / 2);
+  }
+
   .devControls {
     display: flex;
     flex-direction: column;

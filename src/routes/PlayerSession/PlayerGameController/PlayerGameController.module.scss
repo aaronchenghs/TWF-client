@@ -87,6 +87,26 @@ $current-item-float-duration: 3s;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
 
+.finishedActions {
+  width: 100%;
+  border-radius: $radius-lg;
+  padding: $default-padding;
+  background: $box-shadow-color;
+  border: 1px solid $light-transparency;
+
+  max-width: $page-width-cutoff;
+  margin-left: auto;
+  margin-right: auto;
+
+  display: grid;
+  gap: $default-gap;
+}
+
+.finishedMessage {
+  max-width: 32ch;
+  margin: 0 auto;
+}
+
 // TODO: refactor common styles with for image renderer with GameRoom
 .itemImage {
   @include float(4px, $current-item-float-duration);

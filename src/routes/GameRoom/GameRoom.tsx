@@ -43,6 +43,7 @@ export default function GameRoom() {
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
 
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
+  const [isRematchSubmitting, setIsRematchSubmitting] = useState(false);
   const [state, setState] = useState<RoomPublicState | null>(() =>
     roomSocket.getLastRoomState(roomCode),
   );
@@ -82,6 +83,19 @@ export default function GameRoom() {
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
 
+  const handleRoomState = useCallback((nextState: RoomPublicState) => {
+    setState(nextState);
+    if (nextState.phase !== "FINISHED") {
+      setIsRematchSubmitting(false);
+    }
+  }, []);
+
+  const handlePlayAgain = useCallback(() => {
+    if (!state || state.phase !== "FINISHED") return;
+    setIsRematchSubmitting(true);
+    roomSocket.playAgain();
+  }, [state]);
+
   useUnexpectedExitRejoinNotice({
     kind: "host_game",
     roomCode,
@@ -106,6 +120,16 @@ export default function GameRoom() {
       markHostStartedRoomCode(roomCode);
     },
     [state, roomCode],
+  );
+
+  useEffect(
+    function redirectHostToLobbyAfterRematchRestart() {
+      if (!state) return;
+      if (state.phase !== "LOBBY") return;
+      if (!roomCode) return;
+      navigate(`${ROUTES.HOST_LOBBY}/${roomCode}`, { replace: true });
+    },
+    [navigate, roomCode, state],
   );
 
   useEffect(
@@ -140,7 +164,7 @@ export default function GameRoom() {
 
   useRoomSubscriptions({
     roomCode: roomCode || null,
-    onState: setState,
+    onState: handleRoomState,
     onClosed: handleRoomClosed,
   });
 
@@ -232,6 +256,22 @@ export default function GameRoom() {
               )}
             </div>
           </GameStatusCard>
+
+          {state.phase === "FINISHED" ? (
+            <GameStatusCard label="NEXT ROUND">
+              <div className={styles.rematchCard}>
+                <MainTextTypography variant="body" muted textAlign="center">
+                  Return to lobby with the same players and a new tier set.
+                </MainTextTypography>
+                <AccentButton
+                  onClick={handlePlayAgain}
+                  disabled={isRematchSubmitting}
+                >
+                  {isRematchSubmitting ? "Starting..." : "Play Again"}
+                </AccentButton>
+              </div>
+            </GameStatusCard>
+          ) : null}
         </aside>
       </main>
 

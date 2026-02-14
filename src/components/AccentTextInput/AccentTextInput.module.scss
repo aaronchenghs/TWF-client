@@ -34,7 +34,6 @@
 
   &:hover {
     border-color: rgba($text-primary, 0.3);
-    @include textJitter(260ms);
   }
 
   &:focus {
@@ -42,6 +41,5 @@
     box-shadow:
       0 0 0 3px rgba($accent, 0.3),
       $shadow-elevated-focus;
-    @include textJitter(220ms);
   }
 }

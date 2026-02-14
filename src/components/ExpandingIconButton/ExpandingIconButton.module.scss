@@ -1,0 +1,131 @@
+@use "../../styles/export.scss" as *;
+
+$expanding-button-size: $default-padding * 4;
+$expanding-icon-size: $default-padding * 2;
+$expanding-inline-padding: $default-padding;
+$expanding-content-gap: $default-gap;
+$expanding-border-width: 1px;
+$collapsed-icon-offset: calc(
+  (
+      #{$expanding-button-size} - (#{$expanding-border-width} * 2) -
+        #{$expanding-icon-size}
+    ) /
+    2
+);
+
+.button {
+  --label-width: calc(var(--label-length, 8) * 1ch + #{$expanding-content-gap});
+  --expanded-width: calc(#{$expanding-button-size} + var(--label-width));
+
+  height: $expanding-button-size;
+  width: var(--expanded-width);
+  max-width: $expanding-button-size;
+  padding: 0;
+  border: $expanding-border-width solid $bg-elevated;
+  border-radius: $radius-md;
+  background: $bg-surface;
+  color: $text-primary;
+
+  display: inline-flex;
+  align-items: center;
+  gap: $expanding-content-gap;
+
+  box-shadow: $shadow-comic-icon;
+  transform: rotate($comic-skew-soft);
+
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+
+  transition:
+    max-width $dur-base $ease-out,
+    filter $dur-fast ease,
+    border-color $dur-fast ease,
+    background-color $dur-fast ease,
+    box-shadow $dur-fast ease,
+    transform $dur-fast $ease-out;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    max-width: var(--expanded-width);
+    border-color: $accent;
+    background: $bg-elevated;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+}
+
+.expandRight {
+  justify-content: flex-start;
+}
+
+.expandLeft {
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+
+.iconWrap {
+  width: $expanding-icon-size;
+  min-width: $expanding-icon-size;
+  height: $expanding-icon-size;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: margin $dur-base $ease-out;
+
+  :global(svg) {
+    width: $expanding-icon-size;
+    height: $expanding-icon-size;
+  }
+}
+
+.expandRight .iconWrap {
+  margin: 0 0 0 $collapsed-icon-offset;
+}
+
+.expandLeft .iconWrap {
+  margin: 0 $collapsed-icon-offset 0 0;
+}
+
+.expandRight:hover:not(:disabled) .iconWrap,
+.expandRight:focus-visible:not(:disabled) .iconWrap {
+  margin: 0 0 0 $expanding-inline-padding;
+}
+
+.expandLeft:hover:not(:disabled) .iconWrap,
+.expandLeft:focus-visible:not(:disabled) .iconWrap {
+  margin: 0 $expanding-inline-padding 0 0;
+}
+
+.label {
+  opacity: 0;
+  transform: translateX(-3px);
+  transition:
+    opacity $dur-base $ease-out,
+    transform $dur-base $ease-out;
+}
+
+.expandLeft .label {
+  transform: translateX(3px);
+}
+
+.button:hover:not(:disabled) .label,
+.button:focus-visible:not(:disabled) .label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .label {
+    transition: none;
+  }
+}

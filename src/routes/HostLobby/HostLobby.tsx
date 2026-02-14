@@ -26,6 +26,8 @@ import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
+import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
+import { Bug, CircleHelp, Settings } from "lucide-react";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -138,6 +140,11 @@ export default function HostLobby() {
     if (roomCode) clearRoomSession(roomCode);
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
+
+  // TODO: Implement
+  const handleSettingsClick = useCallback(() => void 0, []);
+  const handleHelpClick = useCallback(() => void 0, []);
+  const handleReportIssueClick = useCallback(() => void 0, []);
 
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,
@@ -337,6 +344,27 @@ export default function HostLobby() {
         onCancel={handleCancelCountdown}
         onComplete={handleCountdownComplete}
       />
+
+      <div className={styles.quickActions}>
+        <ExpandingIconButton
+          icon={<Settings aria-hidden="true" />}
+          label="Settings"
+          onClick={handleSettingsClick}
+          expandDirection="right"
+        />
+        <ExpandingIconButton
+          icon={<CircleHelp aria-hidden="true" />}
+          label="Help"
+          onClick={handleHelpClick}
+          expandDirection="right"
+        />
+        <ExpandingIconButton
+          icon={<Bug aria-hidden="true" />}
+          label="Report Issue"
+          onClick={handleReportIssueClick}
+          expandDirection="right"
+        />
+      </div>
     </div>
   );
 }

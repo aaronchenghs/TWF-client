@@ -7,15 +7,15 @@ $expanding-content-gap: $default-gap;
 $expanding-border-width: 1px;
 $collapsed-icon-offset: calc(
   (
-      #{$expanding-button-size} - (#{$expanding-border-width} * 2) -
-        #{$expanding-icon-size}
+      $expanding-button-size - ($expanding-border-width * 2) -
+        $expanding-icon-size
     ) /
     2
 );
 
 .button {
-  --label-width: calc(var(--label-length, 8) * 1ch + #{$expanding-content-gap});
-  --expanded-width: calc(#{$expanding-button-size} + var(--label-width));
+  --label-width: calc(var(--label-length, 8) * 1ch + $expanding-content-gap);
+  --expanded-width: calc($expanding-button-size + var(--label-width));
 
   height: $expanding-button-size;
   width: var(--expanded-width);

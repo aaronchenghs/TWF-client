@@ -54,7 +54,9 @@ export async function submitIssueReport(
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to submit issue (${response.status})`);
+    throw new Error(
+      `Failed to submit issue (${response.status} ${response.statusText})`,
+    );
   }
 }
 

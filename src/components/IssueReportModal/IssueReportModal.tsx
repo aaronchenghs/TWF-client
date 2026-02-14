@@ -55,7 +55,8 @@ export function IssueReportModal() {
             severity: "success",
           }),
         );
-      } catch {
+      } catch (error) {
+        console.error("Failed to submit issue:", error);
         dispatch(setIssueReportSubmitting(false));
         dispatch(
           pushSnackbar({

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 type IssueReportState = {
   isIssueReportModalOpen: boolean;
@@ -21,7 +21,7 @@ export const issueReportSlice = createSlice({
       state.isIssueReportModalOpen = false;
       state.isSubmitting = false;
     },
-    setIssueReportSubmitting: (state, action) => {
+    setIssueReportSubmitting: (state, action: PayloadAction<boolean>) => {
       state.isSubmitting = action.payload;
     },
   },

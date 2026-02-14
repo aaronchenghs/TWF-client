@@ -175,46 +175,6 @@
   }
 }
 
-.bestPlayTip {
-  position: fixed;
-  right: calc(env(safe-area-inset-right, 0px) + 20px);
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
-  z-index: 50;
-
-  width: min(390px, calc(100vw - 24px));
-  display: flex;
-  flex-direction: column;
-  gap: $default-gap;
-  padding: calc($default-padding * 1.2);
-
-  @include comicPanel(
-    $comic-skew-soft,
-    $radius-md,
-    color-mix(in srgb, $accent 62%, $bg-elevated),
-    color-mix(in srgb, $bg-surface 90%, $light-transparency 10%),
-    false
-  );
-  box-shadow: $shadow-comic-panel;
-  animation:
-    popIn 220ms cubic-bezier(0.2, 0.9, 0.2, 1) both,
-    float 3.2s ease-in-out 240ms infinite;
-  will-change: transform, opacity;
-}
-
-.bestPlayTipTitle {
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-@media (max-width: $mobile-width) {
-  .bestPlayTip {
-    right: $default-padding;
-    left: $default-padding;
-    width: auto;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + $default-padding);
-  }
-}
-
 .quickActions {
   position: fixed;
   left: calc(env(safe-area-inset-left, 0px) + $default-gap);

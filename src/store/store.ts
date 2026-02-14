@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import snackbarReducer from "./slices/snackBarSlice";
+import tipsPopupReducer from "./slices/tipsPopupSlice";
 import userSettingsReducer from "./slices/userSettingsSlice";
 import {
   type TypedUseSelectorHook,
@@ -10,6 +11,7 @@ import {
 export const store = configureStore({
   reducer: {
     snackbar: snackbarReducer,
+    tipsPopup: tipsPopupReducer,
     userSettings: userSettingsReducer,
   },
 });

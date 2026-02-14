@@ -4,12 +4,14 @@ import { LOCAL_STORAGE_KEYS, getLocalStorageValue } from "@/lib/localStorage";
 type UserSettingsState = {
   isSettingsModalOpen: boolean;
   isReduceMotion: boolean;
+  isShowTips: boolean;
 };
 
 const initialState: UserSettingsState = {
   isSettingsModalOpen: false,
   isReduceMotion:
     getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_REDUCE_MOTION) === true,
+  isShowTips: getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_SHOW_TIPS) !== false,
 };
 
 export const userSettingsSlice = createSlice({
@@ -25,10 +27,18 @@ export const userSettingsSlice = createSlice({
     setReduceMotion: (state, action: PayloadAction<boolean>) => {
       state.isReduceMotion = action.payload;
     },
+    setShowTips: (state, action: PayloadAction<boolean>) => {
+      state.isShowTips = action.payload;
+    },
   },
 });
 
-export const { openSettingsModal, closeSettingsModal, setReduceMotion } =
+export const {
+  openSettingsModal,
+  closeSettingsModal,
+  setReduceMotion,
+  setShowTips,
+} =
   userSettingsSlice.actions;
 
 export default userSettingsSlice.reducer;

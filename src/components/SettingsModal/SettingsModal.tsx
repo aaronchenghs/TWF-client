@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import {
   closeSettingsModal,
   setReduceMotion,
+  setShowTips,
 } from "@/store/slices/userSettingsSlice";
 
 export function SettingsModal() {
@@ -18,6 +19,9 @@ export function SettingsModal() {
   const $isReduceMotion = useAppSelector(
     (state: AppState) => state.userSettings.isReduceMotion,
   );
+  const $isShowTips = useAppSelector(
+    (state: AppState) => state.userSettings.isShowTips,
+  );
 
   useEffect(
     function syncReduceMotion() {
@@ -27,6 +31,13 @@ export function SettingsModal() {
       );
     },
     [$isReduceMotion],
+  );
+
+  useEffect(
+    function syncShowTips() {
+      setLocalStorageValue(LOCAL_STORAGE_KEYS.USER_SHOW_TIPS, $isShowTips);
+    },
+    [$isShowTips],
   );
 
   return (
@@ -50,6 +61,18 @@ export function SettingsModal() {
             checked={$isReduceMotion}
             onChange={(nextValue) => dispatch(setReduceMotion(nextValue))}
             ariaLabel="Toggle reduce motion"
+          />
+        }
+      />
+
+      <SettingsOptionRow
+        title="Show Tips"
+        description="Shows gameplay tips and guidance popups."
+        control={
+          <AccentToggle
+            checked={$isShowTips}
+            onChange={(nextValue) => dispatch(setShowTips(nextValue))}
+            ariaLabel="Toggle show tips"
           />
         }
       />

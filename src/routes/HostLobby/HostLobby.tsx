@@ -18,7 +18,6 @@ import {
   clearRoomSession,
   getClientId,
   hasSeenHostLobbyPlayTip,
-  markHostLobbyPlayTipSeen,
   markHostStartedRoomCode,
   saveRoomSession,
 } from "@/lib/session";
@@ -28,8 +27,13 @@ import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
 import { Bug, CircleHelp, Settings } from "lucide-react";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import { openSettingsModal } from "@/store/slices/userSettingsSlice";
+import {
+  hideTipByKind,
+  showTip,
+  TIP_KINDS,
+} from "@/store/slices/tipsPopupSlice";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -40,13 +44,15 @@ type RoomPublicState = Contracts.RoomPublicState;
 export default function HostLobby() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const $isShowTips = useAppSelector(
+    (state: AppState) => state.userSettings.isShowTips,
+  );
   const { code } = useParams<{ code: string }>();
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
   const [tierSetWithDetailsOpen, setTierSetWithDetailsOpen] =
     useState<Guid | null>(null);
-  const [showBestPlayTip, setShowBestPlayTip] = useState(false);
 
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
@@ -114,17 +120,35 @@ export default function HostLobby() {
   useEffect(
     function maybeShowBestPlayTip() {
       if (!isRoomCodeValid) return;
+      if (!$isShowTips) return;
       if (hasSeenHostLobbyPlayTip()) return;
 
       const tipTimer = window.setTimeout(() => {
-        setShowBestPlayTip(true);
+        dispatch(showTip(TIP_KINDS.HOST_LOBBY_BEST_PLAY));
       }, BEST_PLAY_TIP_DELAY_MS);
 
       return () => {
         window.clearTimeout(tipTimer);
       };
     },
-    [isRoomCodeValid],
+    [isRoomCodeValid, $isShowTips, dispatch],
+  );
+
+  useEffect(
+    function hideBestPlayTipWhenDisabled() {
+      if ($isShowTips) return;
+      dispatch(hideTipByKind(TIP_KINDS.HOST_LOBBY_BEST_PLAY));
+    },
+    [$isShowTips, dispatch],
+  );
+
+  useEffect(
+    function cleanupBestPlayTipOnLeave() {
+      return () => {
+        dispatch(hideTipByKind(TIP_KINDS.HOST_LOBBY_BEST_PLAY));
+      };
+    },
+    [dispatch],
   );
 
   useEffect(
@@ -321,28 +345,6 @@ export default function HostLobby() {
         onCancel={() => setIsConfirmCloseOpen(false)}
         onConfirm={handleCloseLobby}
       />
-
-      {showBestPlayTip ? (
-        <aside className={styles.bestPlayTip} role="status" aria-live="polite">
-          <MainTextTypography variant="h6" className={styles.bestPlayTipTitle}>
-            💡Best way to play
-          </MainTextTypography>
-          <MainTextTypography variant="body" muted>
-            Host on a big screen or screen-share, and have everyone join with
-            this room's code on their own phone or device. You can still play by
-            joining from your phone or a second tab!
-          </MainTextTypography>
-          <AccentButton
-            size="small"
-            onClick={() => {
-              markHostLobbyPlayTipSeen();
-              setShowBestPlayTip(false);
-            }}
-          >
-            Got it
-          </AccentButton>
-        </aside>
-      ) : null}
 
       <CountdownOverlay
         open={isStartCountdownOpen}

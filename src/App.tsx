@@ -4,6 +4,7 @@ import "./App.module.scss";
 import { SnackbarHost } from "@/components/Snackbar/Snackbar";
 import { AnimatedRoutes } from "@/AnimatedRoutes";
 import { SettingsModal } from "@/components/SettingsModal/SettingsModal";
+import { TipsPopupHost } from "@/components/TipsPopupHost/TipsPopupHost";
 import { useAppSelector, type AppState } from "@/store/store";
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
         <AnimatedRoutes />
       </BrowserRouter>
       <SettingsModal />
+      <TipsPopupHost />
     </>
   );
 }

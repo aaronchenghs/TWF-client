@@ -34,6 +34,7 @@ import {
   showTip,
   TIP_KINDS,
 } from "@/store/slices/tipsPopupSlice";
+import { openIssueReportModal } from "@/store/slices/issueReportSlice";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -173,7 +174,9 @@ export default function HostLobby() {
     [dispatch],
   );
   const handleHelpClick = useCallback(() => void 0, []);
-  const handleReportIssueClick = useCallback(() => void 0, []);
+  const handleReportIssueClick = useCallback(() => {
+    dispatch(openIssueReportModal());
+  }, [dispatch]);
 
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,

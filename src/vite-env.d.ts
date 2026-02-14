@@ -2,6 +2,9 @@
 
 interface ImportMetaEnv {
   readonly VITE_APP_VERSION?: string;
+  readonly VITE_SOCKET_URL?: string;
+  readonly VITE_ENABLE_DEBUG_CONTROLS?: string;
+  readonly VITE_ISSUES_URL?: string;
 }
 
 interface ImportMeta {

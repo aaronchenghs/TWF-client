@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import issueReportReducer from "./slices/issueReportSlice";
 import snackbarReducer from "./slices/snackBarSlice";
 import tipsPopupReducer from "./slices/tipsPopupSlice";
 import userSettingsReducer from "./slices/userSettingsSlice";
@@ -10,6 +11,7 @@ import {
 
 export const store = configureStore({
   reducer: {
+    issueReport: issueReportReducer,
     snackbar: snackbarReducer,
     tipsPopup: tipsPopupReducer,
     userSettings: userSettingsReducer,

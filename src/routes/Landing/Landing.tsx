@@ -18,9 +18,9 @@ import {
   saveRoomSession,
 } from "../../lib/session";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
+import { APP_VERSION } from "@/config/env";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
-const APP_VERSION = (import.meta.env.VITE_APP_VERSION ?? "0.0.0").trim();
 
 export default function Landing() {
   const navigate = useNavigate();

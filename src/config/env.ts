@@ -3,3 +3,6 @@ export const SOCKET_URL =
 
 export const IS_DEBUG_ENABLED =
   import.meta.env.VITE_ENABLE_DEBUG_CONTROLS === "true";
+
+export const APP_VERSION =
+  (import.meta.env.VITE_APP_VERSION ?? "0.0.0").trim();

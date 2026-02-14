@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /host/
+Disallow: /player/
+Disallow: /game/

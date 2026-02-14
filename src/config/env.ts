@@ -9,3 +9,6 @@ export const APP_VERSION =
 
 export const ISSUE_REPORT_FORM_URL =
   (import.meta.env.VITE_ISSUE_REPORT_FORM_URL ?? "").trim();
+
+export const SITE_URL =
+  (import.meta.env.VITE_SITE_URL ?? "").trim() || window.location.origin;

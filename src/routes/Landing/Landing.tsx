@@ -53,6 +53,7 @@ export default function Landing() {
   return (
     <div className={styles.landingPage}>
       <div className={styles.container}>
+        <h1 className={styles.seoHeading}>Tiers! With Friends</h1>
         <TWFLogo className={styles.logo} aria-hidden="true" />
 
         <button

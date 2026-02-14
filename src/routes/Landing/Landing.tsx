@@ -20,6 +20,7 @@ import {
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
+const APP_VERSION = (import.meta.env.VITE_APP_VERSION ?? "0.0.0").trim();
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -82,6 +83,14 @@ export default function Landing() {
         open={isHowToOpen}
         onClose={() => setIsHowToOpen(false)}
       />
+
+      <MainTextTypography
+        className={styles.versionTag}
+        variant="caption"
+        letterSpacing="wide"
+      >
+        v{APP_VERSION}
+      </MainTextTypography>
     </div>
   );
 }

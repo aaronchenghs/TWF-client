@@ -29,6 +29,12 @@ $toggle-thumb-travel: calc(
     border-color $dur-base $ease-out,
     box-shadow $dur-fast $ease-out;
 
+  &:hover:not(:disabled) {
+    background: $bg-elevated;
+    border-color: $text-secondary;
+    box-shadow: $shadow-comic-control;
+  }
+
   &:focus-visible {
     outline: 2px solid $accent;
     outline-offset: 2px;
@@ -48,7 +54,12 @@ $toggle-thumb-travel: calc(
   box-shadow: $shadow-comic-icon;
   transition:
     transform $dur-base $ease-out,
-    background-color $dur-base $ease-out;
+    background-color $dur-base $ease-out,
+    box-shadow $dur-fast $ease-out;
+}
+
+.toggle:hover:not(:disabled) .thumb {
+  box-shadow: $shadow-comic-control;
 }
 
 .checked {

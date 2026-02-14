@@ -12,7 +12,7 @@ import { useMobileView } from "../../lib/hooks/useMobileView";
 import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
 import * as Contracts from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
-import { Bug, CircleHelp, Settings } from "lucide-react";
+import { Bug, Settings } from "lucide-react";
 import {
   getClientId,
   getStartedHostSession,
@@ -21,18 +21,19 @@ import {
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_VERSION } from "@/config/env";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
+import { useAppDispatch } from "@/store/store";
+import { openSettingsModal } from "@/store/slices/userSettingsSlice";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 
 export default function Landing() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const isMobile = useMobileView();
   const [isCreatingLobby, setIsCreatingLobby] = useState<boolean>(false);
   const [isHowToOpen, setIsHowToOpen] = useState(false);
 
-  // TODO: Implement
-  const handleSettingsClick = () => void 0;
-  const handleHelpClick = () => void 0;
+  const handleSettingsClick = () => dispatch(openSettingsModal());
   const handleReportIssueClick = () => void 0;
 
   const handleCreateRoom = async () => {
@@ -104,12 +105,6 @@ export default function Landing() {
           icon={<Settings aria-hidden="true" />}
           label="Settings"
           onClick={handleSettingsClick}
-          expandDirection="right"
-        />
-        <ExpandingIconButton
-          icon={<CircleHelp aria-hidden="true" />}
-          label="Help"
-          onClick={handleHelpClick}
           expandDirection="right"
         />
         <ExpandingIconButton

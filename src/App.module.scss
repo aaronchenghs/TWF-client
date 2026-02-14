@@ -71,3 +71,12 @@ button {
 a {
   color: inherit;
 }
+
+:global(html[data-reduce-motion="true"]) *,
+:global(html[data-reduce-motion="true"]) *::before,
+:global(html[data-reduce-motion="true"]) *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 1ms !important;
+  scroll-behavior: auto !important;
+}

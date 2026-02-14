@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./ExpandingIconButton.module.scss";
 
@@ -23,8 +24,31 @@ export function ExpandingIconButton({
   type = "button",
   ...buttonProps
 }: ExpandingIconButtonProps) {
+  const labelRef = useRef<HTMLSpanElement | null>(null);
+  const [labelWidthPx, setLabelWidthPx] = useState(0);
+
+  useLayoutEffect(
+    function measureLabelWidth() {
+      const labelElement = labelRef.current;
+      if (!labelElement) return;
+
+      const measure = () => {
+        setLabelWidthPx(Math.ceil(labelElement.scrollWidth));
+      };
+
+      measure();
+
+      if (typeof ResizeObserver === "undefined") return;
+      const observer = new ResizeObserver(() => measure());
+      observer.observe(labelElement);
+      return () => observer.disconnect();
+    },
+    [label],
+  );
+
   const dynamicStyle = {
     "--label-length": Math.max(label.trim().length, 4),
+    "--label-width-px": `${labelWidthPx}px`,
   } as CSSProperties;
 
   return (
@@ -43,7 +67,7 @@ export function ExpandingIconButton({
       <span className={styles.iconWrap} aria-hidden="true">
         {icon}
       </span>
-      <span className={styles.label} aria-hidden="true">
+      <span ref={labelRef} className={styles.label} aria-hidden="true">
         {label}
       </span>
     </button>

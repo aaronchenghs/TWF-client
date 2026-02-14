@@ -1,0 +1,62 @@
+@use "../../styles/export.scss" as *;
+
+$toggle-width: $default-padding * 5;
+$toggle-height: $default-padding * 3;
+$toggle-thumb-size: $default-padding * 2;
+$toggle-border-width: 1px;
+$toggle-padding: calc($default-gap / 2);
+$toggle-thumb-travel: calc(
+  $toggle-width - ($toggle-border-width * 2) - ($toggle-padding * 2) -
+    $toggle-thumb-size
+);
+
+.toggle {
+  width: $toggle-width;
+  height: $toggle-height;
+  border-radius: $round;
+  border: $toggle-border-width solid $bg-elevated;
+  background: $bg-surface;
+  padding: $toggle-padding;
+
+  display: inline-flex;
+  align-items: center;
+
+  box-shadow: $shadow-comic-icon;
+  transform: rotate($comic-skew-soft);
+
+  transition:
+    background-color $dur-base $ease-out,
+    border-color $dur-base $ease-out,
+    box-shadow $dur-fast $ease-out;
+
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.thumb {
+  width: $toggle-thumb-size;
+  height: $toggle-thumb-size;
+  border-radius: $round;
+  background: $text-secondary;
+  box-shadow: $shadow-comic-icon;
+  transition:
+    transform $dur-base $ease-out,
+    background-color $dur-base $ease-out;
+}
+
+.checked {
+  background: $bg-elevated;
+  border-color: $accent;
+
+  .thumb {
+    background: $accent;
+    transform: translateX($toggle-thumb-travel);
+  }
+}

@@ -1,0 +1,29 @@
+@use "../../styles/export.scss" as *;
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $default-gap;
+  padding: $default-padding;
+
+  @include comicPanel(
+    $comic-skew-soft,
+    $radius-md,
+    $bg-elevated,
+    $bg-surface,
+    false
+  );
+}
+
+.settingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -4,6 +4,7 @@ $expanding-button-size: $default-padding * 4;
 $expanding-icon-size: $default-padding * 2;
 $expanding-inline-padding: $default-padding;
 $expanding-content-gap: $default-gap;
+$expanding-label-trailing-space: $default-gap;
 $expanding-border-width: 1px;
 $collapsed-icon-offset: calc(
   (
@@ -14,13 +15,18 @@ $collapsed-icon-offset: calc(
 );
 
 .button {
-  --label-width: calc(var(--label-length, 8) * 1ch + $expanding-content-gap);
-  --expanded-width: calc($expanding-button-size + var(--label-width));
+  --label-width: var(--label-width-px, calc(var(--label-length, 8) * 0.72em));
+  --expanded-width: calc(
+    ($expanding-border-width * 2) + ($expanding-inline-padding * 2) +
+      $expanding-icon-size + $expanding-content-gap + var(--label-width) +
+      $expanding-label-trailing-space
+  );
 
   height: $expanding-button-size;
   width: var(--expanded-width);
   max-width: $expanding-button-size;
   padding: 0;
+  padding-right: $default-padding;
   border: $expanding-border-width solid $bg-elevated;
   border-radius: $radius-md;
   background: $bg-surface;
@@ -106,6 +112,8 @@ $collapsed-icon-offset: calc(
 }
 
 .label {
+  width: var(--label-width);
+  flex: 0 0 var(--label-width);
   opacity: 0;
   transform: translateX(-3px);
   transition:

@@ -28,6 +28,8 @@ import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
 import { Bug, CircleHelp, Settings } from "lucide-react";
+import { useAppDispatch } from "@/store/store";
+import { openSettingsModal } from "@/store/slices/userSettingsSlice";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -37,6 +39,7 @@ type RoomPublicState = Contracts.RoomPublicState;
 
 export default function HostLobby() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { code } = useParams<{ code: string }>();
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
@@ -141,8 +144,10 @@ export default function HostLobby() {
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
 
-  // TODO: Implement
-  const handleSettingsClick = useCallback(() => void 0, []);
+  const handleSettingsClick = useCallback(
+    () => dispatch(openSettingsModal()),
+    [dispatch],
+  );
   const handleHelpClick = useCallback(() => void 0, []);
   const handleReportIssueClick = useCallback(() => void 0, []);
 

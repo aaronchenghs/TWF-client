@@ -11,7 +11,7 @@ import { dismissSnackbar } from "../../store/slices/snackBarSlice";
 import type { Guid } from "../../lib/guid";
 
 export function SnackbarHost() {
-  const items = useAppSelector((state: AppState) => state.snackbar.items);
+  const $items = useAppSelector((state: AppState) => state.snackbar.items);
   const dispatch = useAppDispatch();
 
   const handleDismiss = useCallback(
@@ -27,7 +27,7 @@ export function SnackbarHost() {
       aria-live="assertive"
       aria-relevant="additions removals"
     >
-      {items.map((item) => (
+      {$items.map((item) => (
         <SnackbarCard key={item.id} item={item} onDismiss={handleDismiss} />
       ))}
     </div>

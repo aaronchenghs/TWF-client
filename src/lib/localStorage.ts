@@ -112,6 +112,7 @@ export const LOCAL_STORAGE_KEYS = {
   HOST_SESSION: "twf:hostSession",
   HOST_STARTED_ROOM_CODE: "twf:hostStartedRoomCode",
   HOST_LOBBY_PLAY_TIP_SEEN: "twf:hostLobbyPlayTipSeen",
+  USER_REDUCE_MOTION: "twf:userReduceMotion",
   PLAYER_ID_PREFIX: "twf:playerId:",
   ROOM_SESSION_PREFIX: "twf:session:",
   PLAYER_ID: (code: string): `twf:playerId:${string}` => `twf:playerId:${code}`,
@@ -144,6 +145,12 @@ const LOCAL_STORAGE_VARIABLES = [
     name: "hostLobbyPlayTipSeen",
     keyPattern: LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN,
     isKey: exactKey(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN),
+    codec: booleanCodec,
+  }),
+  defineStorageVariable({
+    name: "userReduceMotion",
+    keyPattern: LOCAL_STORAGE_KEYS.USER_REDUCE_MOTION,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.USER_REDUCE_MOTION),
     codec: booleanCodec,
   }),
   defineStorageVariable({

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { memo, useLayoutEffect, useRef, useState } from "react";
 import styles from "./TierBoard.module.scss";
 import clsx from "clsx";
 import * as Contracts from "@twf/contracts";
@@ -8,7 +8,11 @@ type RoomPublicState = Contracts.RoomPublicState;
 type TierId = Contracts.TierId;
 type TierItemId = Contracts.TierItemId;
 
-export function TierBoard({ state }: { state: RoomPublicState }) {
+export const TierBoard = memo(function TierBoard({
+  state,
+}: {
+  state: RoomPublicState;
+}) {
   const tierOrder = state.tierOrder ?? [];
   const tiers = state.tiers ?? ({} as Record<TierId, TierItemId[]>);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -105,4 +109,4 @@ export function TierBoard({ state }: { state: RoomPublicState }) {
       </div>
     </div>
   );
-}
+});

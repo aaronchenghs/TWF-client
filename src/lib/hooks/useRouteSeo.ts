@@ -63,7 +63,9 @@ function ensureMetaTag(name: string, content: string) {
     document.head.appendChild(tag);
   }
 
-  tag.setAttribute("content", content);
+  if (tag.getAttribute("content") !== content) {
+    tag.setAttribute("content", content);
+  }
 }
 
 function ensureOgMetaTag(property: string, content: string) {
@@ -77,7 +79,9 @@ function ensureOgMetaTag(property: string, content: string) {
     document.head.appendChild(tag);
   }
 
-  tag.setAttribute("content", content);
+  if (tag.getAttribute("content") !== content) {
+    tag.setAttribute("content", content);
+  }
 }
 
 function ensureCanonical(href: string) {
@@ -91,19 +95,22 @@ function ensureCanonical(href: string) {
     document.head.appendChild(canonical);
   }
 
-  canonical.setAttribute("href", href);
+  if (canonical.getAttribute("href") !== href) {
+    canonical.setAttribute("href", href);
+  }
 }
 
 export function useRouteSeo() {
-  const location = useLocation();
+  const { pathname } = useLocation();
 
   useEffect(
     function syncRouteMeta() {
-      const { pathname } = location;
       const meta = resolveMeta(pathname);
       const canonical = new URL(pathname, SITE_URL).toString();
 
-      document.title = meta.title;
+      if (document.title !== meta.title) {
+        document.title = meta.title;
+      }
       ensureMetaTag("description", meta.description);
       ensureMetaTag("robots", meta.robots);
       ensureMetaTag("twitter:card", "summary");
@@ -118,6 +125,6 @@ export function useRouteSeo() {
 
       ensureCanonical(canonical);
     },
-    [location],
+    [pathname],
   );
 }

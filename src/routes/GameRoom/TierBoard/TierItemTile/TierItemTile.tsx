@@ -1,3 +1,4 @@
+import { memo } from "react";
 import clsx from "clsx";
 import styles from "./TierItemTile.module.scss";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
@@ -14,7 +15,12 @@ type Props = {
   className?: string;
 };
 
-export function TierItemTile({ state, itemId, ghost, className }: Props) {
+export const TierItemTile = memo(function TierItemTile({
+  state,
+  itemId,
+  ghost,
+  className,
+}: Props) {
   const { name, imageSrc } = getItemMeta(state, itemId);
   return (
     <div
@@ -46,4 +52,4 @@ export function TierItemTile({ state, itemId, ghost, className }: Props) {
       </MainTextTypography>
     </div>
   );
-}
+});

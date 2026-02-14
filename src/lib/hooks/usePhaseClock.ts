@@ -11,7 +11,10 @@ export type PhaseClock = {
 
 // Server timestamps are absolute epoch ms.
 // Only compute "how much time is left" for UI/animation.
-export function usePhaseClock(state: RoomPublicState | null): PhaseClock {
+export function usePhaseClock(
+  state: RoomPublicState | null,
+  tickMs = 1000,
+): PhaseClock {
   const [now, setNow] = useState(() => Date.now());
 
   const endsAt = useMemo(() => {
@@ -35,9 +38,9 @@ export function usePhaseClock(state: RoomPublicState | null): PhaseClock {
 
   useEffect(function syncPhaseClock() {
     if (endsAt == null) return;
-    const id = window.setInterval(() => setNow(Date.now()), 100);
+    const id = window.setInterval(() => setNow(Date.now()), tickMs);
     return () => window.clearInterval(id);
-  }, [endsAt]);
+  }, [endsAt, tickMs]);
 
   const msLeft = endsAt == null ? null : Math.max(0, endsAt - now);
   const secondsLeft = msLeft == null ? null : Math.ceil(msLeft / 1000);

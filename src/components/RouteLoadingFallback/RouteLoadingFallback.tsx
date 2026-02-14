@@ -14,7 +14,6 @@ export function RouteLoadingFallback() {
         </MainTextTypography>
 
         <div className={styles.row}>
-          <div className={styles.spinner} aria-hidden="true" />
           <MainTextTypography
             variant="caption"
             className={styles.subtitle}

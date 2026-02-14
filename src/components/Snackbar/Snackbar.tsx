@@ -42,49 +42,70 @@ function SnackbarCard(props: {
 
   const [isPaused, setPaused] = useState(false);
 
-  const deadlineRef = useRef<number | null>(null);
-  const lastTickRef = useRef<number>(0);
-  const rafRef = useRef<number | null>(null);
+  const remainingMsRef = useRef<number>(0);
+  const pauseStartRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const dismissedRef = useRef(false);
 
+  const clearDismissTimeout = useCallback(() => {
+    if (timeoutRef.current === null) return;
+    window.clearTimeout(timeoutRef.current);
+    timeoutRef.current = null;
+  }, []);
+
+  const scheduleDismiss = useCallback(() => {
+    clearDismissTimeout();
+    if (remainingMsRef.current <= 0) {
+      dismissedRef.current = true;
+      onDismiss(item.id);
+      return;
+    }
+
+    timeoutRef.current = window.setTimeout(() => {
+      dismissedRef.current = true;
+      onDismiss(item.id);
+    }, remainingMsRef.current);
+  }, [clearDismissTimeout, item.id, onDismiss]);
+
   useEffect(
-    function manageSnackbarTimer() {
+    function initializeSnackbarTimer() {
       dismissedRef.current = false;
+      pauseStartRef.current = null;
+      clearDismissTimeout();
 
       if (item.durationMs === null) return;
 
-      const now0 = Date.now();
-      deadlineRef.current = now0 + item.durationMs;
-      lastTickRef.current = now0;
-
-      const tick = () => {
-        rafRef.current = window.requestAnimationFrame(tick);
-
-        if (dismissedRef.current) return;
-
-        const now = Date.now();
-        const dt = now - lastTickRef.current;
-        lastTickRef.current = now;
-
-        if (isPaused) {
-          if (deadlineRef.current !== null) deadlineRef.current += dt;
-          return;
-        }
-
-        if (deadlineRef.current !== null && now >= deadlineRef.current) {
-          dismissedRef.current = true;
-          onDismiss(item.id);
-        }
-      };
-
-      rafRef.current = window.requestAnimationFrame(tick);
+      remainingMsRef.current = item.durationMs;
+      if (!isPaused) scheduleDismiss();
 
       return () => {
-        if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
+        clearDismissTimeout();
       };
     },
-    [item.id, item.durationMs, isPaused, onDismiss],
+    // Intentionally exclude isPaused: this effect initializes per item,
+    // while pause/resume adjustments are handled in syncPausedState below.
+    [item.id, item.durationMs, clearDismissTimeout, scheduleDismiss],
+  );
+
+  useEffect(
+    function syncPausedState() {
+      if (item.durationMs === null || dismissedRef.current) return;
+
+      if (isPaused) {
+        pauseStartRef.current = Date.now();
+        clearDismissTimeout();
+        return;
+      }
+
+      if (pauseStartRef.current !== null) {
+        const pausedMs = Date.now() - pauseStartRef.current;
+        remainingMsRef.current = Math.max(0, remainingMsRef.current - pausedMs);
+        pauseStartRef.current = null;
+      }
+
+      scheduleDismiss();
+    },
+    [isPaused, item.durationMs, clearDismissTimeout, scheduleDismiss],
   );
 
   return (

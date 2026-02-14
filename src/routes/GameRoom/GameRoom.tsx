@@ -8,7 +8,6 @@ import { roomSocket } from "@/services/sockets/roomSocket";
 import { normalizeCode } from "@/lib/codeUtils";
 import { ROUTES } from "@/routes/routes";
 import * as Contracts from "@twf/contracts";
-import { usePhaseClock } from "@/lib/hooks/usePhaseClock";
 import { TierBoard } from "./TierBoard/TierBoard";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
@@ -31,6 +30,7 @@ import {
   saveRoomSession,
 } from "@/lib/session";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
+import { PhaseCountdown } from "./PhaseCountdown/PhaseCountdown";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -51,7 +51,6 @@ export default function GameRoom() {
   const suppressRejoinNoticeRef = useRef(false);
   const isHostUnexpectedExitEligible = !!state && state.phase !== "FINISHED";
 
-  const clock = usePhaseClock(state);
   const hasState = state != null;
 
   const currentItem = state?.currentItem
@@ -217,9 +216,7 @@ export default function GameRoom() {
                 {state.phase}
               </MainTextTypography>
 
-              <MainTextTypography variant="h3" className={styles.bigText}>
-                {clock.secondsLeft ?? "--"}
-              </MainTextTypography>
+              <PhaseCountdown state={state} className={styles.bigText} />
             </div>
           </GameStatusCard>
 

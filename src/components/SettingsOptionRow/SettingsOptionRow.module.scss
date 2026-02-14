@@ -23,6 +23,26 @@
   gap: $default-gap;
 }
 
+.titleRow {
+  display: inline-flex;
+  align-items: center;
+  gap: $default-gap;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent;
+
+  :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .control {
   display: inline-flex;
   align-items: center;

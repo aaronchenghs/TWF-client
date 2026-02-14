@@ -1,0 +1,7 @@
+@use "../../styles/export.scss" as *;
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}

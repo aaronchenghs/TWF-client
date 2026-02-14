@@ -2,6 +2,7 @@ import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
 import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
 import { SettingsOptionRow } from "@/components/SettingsOptionRow/SettingsOptionRow";
+import { CircleHelp, Contrast, VibrateOff } from "lucide-react";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import {
   closeSettingsModal,
@@ -9,6 +10,7 @@ import {
   setReduceMotion,
   setShowTips,
 } from "@/store/slices/userSettingsSlice";
+import styles from "./SettingsModal.module.scss";
 
 export function SettingsModal() {
   const dispatch = useAppDispatch();
@@ -38,41 +40,46 @@ export function SettingsModal() {
         </AccentButton>
       }
     >
-      <SettingsOptionRow
-        title="Reduce Motion"
-        description="Reduces most animations and transitions across the app."
-        control={
-          <AccentToggle
-            checked={$isReduceMotion}
-            onChange={(nextValue) => dispatch(setReduceMotion(nextValue))}
-            ariaLabel="Toggle reduce motion"
-          />
-        }
-      />
+      <div className={styles.rows}>
+        <SettingsOptionRow
+          icon={<VibrateOff />}
+          title="Reduce Motion"
+          description="Reduces most animations and transitions across the app."
+          control={
+            <AccentToggle
+              checked={$isReduceMotion}
+              onChange={(nextValue) => dispatch(setReduceMotion(nextValue))}
+              ariaLabel="Toggle reduce motion"
+            />
+          }
+        />
 
-      <SettingsOptionRow
-        title="Show Tips"
-        description="Shows gameplay tips and guidance popups."
-        control={
-          <AccentToggle
-            checked={$isShowTips}
-            onChange={(nextValue) => dispatch(setShowTips(nextValue))}
-            ariaLabel="Toggle show tips"
-          />
-        }
-      />
+        <SettingsOptionRow
+          icon={<Contrast />}
+          title="High Contrast"
+          description="Boosts contrast for readability and visual clarity."
+          control={
+            <AccentToggle
+              checked={$isHighContrast}
+              onChange={(nextValue) => dispatch(setHighContrast(nextValue))}
+              ariaLabel="Toggle high contrast mode"
+            />
+          }
+        />
 
-      <SettingsOptionRow
-        title="High Contrast"
-        description="Boosts contrast for readability and visual clarity."
-        control={
-          <AccentToggle
-            checked={$isHighContrast}
-            onChange={(nextValue) => dispatch(setHighContrast(nextValue))}
-            ariaLabel="Toggle high contrast mode"
-          />
-        }
-      />
+        <SettingsOptionRow
+          icon={<CircleHelp />}
+          title="Show Tips"
+          description="Shows gameplay tips and guidance popups."
+          control={
+            <AccentToggle
+              checked={$isShowTips}
+              onChange={(nextValue) => dispatch(setShowTips(nextValue))}
+              ariaLabel="Toggle show tips"
+            />
+          }
+        />
+      </div>
     </PrimaryModal>
   );
 }

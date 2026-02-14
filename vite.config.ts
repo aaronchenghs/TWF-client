@@ -14,7 +14,7 @@ const packageVersion = packageJson.version ?? "0.0.0";
 export default defineConfig({
   plugins: [react(), svgr()],
   define: {
-    "import.meta.env.VITE_APP_VERSION": JSON.stringify(packageVersion),
+    __APP_VERSION__: JSON.stringify(packageVersion),
   },
   resolve: {
     alias: {

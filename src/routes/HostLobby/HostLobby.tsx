@@ -25,6 +25,7 @@ import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
+import { openIssueReportForm } from "@/lib/openIssueReportForm";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
 import { Bug, CircleHelp, Settings } from "lucide-react";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
@@ -34,7 +35,6 @@ import {
   showTip,
   TIP_KINDS,
 } from "@/store/slices/tipsPopupSlice";
-import { openIssueReportModal } from "@/store/slices/issueReportSlice";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -175,8 +175,8 @@ export default function HostLobby() {
   );
   const handleHelpClick = useCallback(() => void 0, []);
   const handleReportIssueClick = useCallback(() => {
-    dispatch(openIssueReportModal());
-  }, [dispatch]);
+    openIssueReportForm();
+  }, []);
 
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,

@@ -21,8 +21,8 @@ import {
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_VERSION } from "@/config/env";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
+import { openIssueReportForm } from "@/lib/openIssueReportForm";
 import { useAppDispatch } from "@/store/store";
-import { openIssueReportModal } from "@/store/slices/issueReportSlice";
 import { openSettingsModal } from "@/store/slices/userSettingsSlice";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
@@ -36,7 +36,7 @@ export default function Landing() {
 
   const handleSettingsClick = () => dispatch(openSettingsModal());
   const handleReportIssueClick = () => {
-    dispatch(openIssueReportModal());
+    openIssueReportForm();
   };
 
   const handleCreateRoom = async () => {

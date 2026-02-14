@@ -5,6 +5,7 @@ export const IS_DEBUG_ENABLED =
   import.meta.env.VITE_ENABLE_DEBUG_CONTROLS === "true";
 
 export const APP_VERSION =
-  (import.meta.env.VITE_APP_VERSION ?? "0.0.0").trim();
+  (__APP_VERSION__ ?? "0.0.0").trim();
 
-export const ISSUES_URL = (import.meta.env.VITE_ISSUES_URL ?? "").trim();
+export const ISSUE_REPORT_FORM_URL =
+  (import.meta.env.VITE_ISSUE_REPORT_FORM_URL ?? "").trim();

@@ -1,9 +1,14 @@
 @use "./styles/export.scss" as *;
+@use "./styles/themes.scss";
 
 :root {
   color-scheme: dark;
   --bg-app: #{$bg-app};
+  --bg-surface: #{$bg-surface};
+  --bg-elevated: #{$bg-elevated};
   --text-primary: #{$text-primary};
+  --text-secondary: #{$text-secondary};
+  --accent-primary: #{$accent};
 }
 
 * {
@@ -28,8 +33,8 @@ body {
   background:
     linear-gradient(
       160deg,
-      color-mix(in srgb, $bg-app 85%, #090a0c 15%) 0%,
-      color-mix(in srgb, $bg-app 96%, #08090b 4%) 45%,
+      color-mix(in srgb, var(--bg-app) 85%, #090a0c 15%) 0%,
+      color-mix(in srgb, var(--bg-app) 96%, #08090b 4%) 45%,
       #0d0f13 100%
     );
   color: var(--text-primary);
@@ -79,4 +84,26 @@ a {
   animation-iteration-count: 1 !important;
   transition-duration: 1ms !important;
   scroll-behavior: auto !important;
+}
+
+:global(html[data-theme="contrast"] body) {
+  background: var(--bg-app) !important;
+  color: var(--text-primary);
+}
+
+:global(html[data-theme="contrast"] body::before),
+:global(html[data-theme="contrast"] body::after) {
+  opacity: 0.08;
+}
+
+:global(html[data-theme="contrast"] button),
+:global(html[data-theme="contrast"] input),
+:global(html[data-theme="contrast"] textarea),
+:global(html[data-theme="contrast"] select) {
+  border-color: var(--text-primary) !important;
+}
+
+:global(html[data-theme="contrast"] a) {
+  color: #ffff00;
+  text-decoration: underline;
 }

@@ -1,13 +1,33 @@
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-app: #121317;
+  --bg-surface: #1a1c22;
+  --bg-elevated: #22252d;
+  --text-primary: #f5f6f7;
+  --text-secondary: #b3b6be;
+  --accent-primary: #d39e00;
+}
+
 [data-theme="light"] {
   color-scheme: light;
 
   --bg-app: #f4f5f7;
+  --bg-surface: #ffffff;
+  --bg-elevated: #e9edf2;
   --text-primary: #0f1115;
+  --text-secondary: #3c4048;
 
   --accent-primary: #e53935;
 }
 
 [data-theme="contrast"] {
+  color-scheme: dark;
+
   --bg-app: #000000;
+  --bg-surface: #000000;
+  --bg-elevated: #111111;
   --text-primary: #ffffff;
+  --text-secondary: #ffffff;
+  --accent-primary: #ffff00;
 }

@@ -1,12 +1,11 @@
-import { useEffect } from "react";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
 import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
 import { SettingsOptionRow } from "@/components/SettingsOptionRow/SettingsOptionRow";
-import { LOCAL_STORAGE_KEYS, setLocalStorageValue } from "@/lib/localStorage";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import {
   closeSettingsModal,
+  setHighContrast,
   setReduceMotion,
   setShowTips,
 } from "@/store/slices/userSettingsSlice";
@@ -22,22 +21,8 @@ export function SettingsModal() {
   const $isShowTips = useAppSelector(
     (state: AppState) => state.userSettings.isShowTips,
   );
-
-  useEffect(
-    function syncReduceMotion() {
-      setLocalStorageValue(
-        LOCAL_STORAGE_KEYS.USER_REDUCE_MOTION,
-        $isReduceMotion,
-      );
-    },
-    [$isReduceMotion],
-  );
-
-  useEffect(
-    function syncShowTips() {
-      setLocalStorageValue(LOCAL_STORAGE_KEYS.USER_SHOW_TIPS, $isShowTips);
-    },
-    [$isShowTips],
+  const $isHighContrast = useAppSelector(
+    (state: AppState) => state.userSettings.isHighContrast,
   );
 
   return (
@@ -73,6 +58,18 @@ export function SettingsModal() {
             checked={$isShowTips}
             onChange={(nextValue) => dispatch(setShowTips(nextValue))}
             ariaLabel="Toggle show tips"
+          />
+        }
+      />
+
+      <SettingsOptionRow
+        title="High Contrast"
+        description="Boosts contrast for readability and visual clarity."
+        control={
+          <AccentToggle
+            checked={$isHighContrast}
+            onChange={(nextValue) => dispatch(setHighContrast(nextValue))}
+            ariaLabel="Toggle high contrast mode"
           />
         }
       />

@@ -5,6 +5,7 @@ type UserSettingsState = {
   isSettingsModalOpen: boolean;
   isReduceMotion: boolean;
   isShowTips: boolean;
+  isHighContrast: boolean;
 };
 
 const initialState: UserSettingsState = {
@@ -12,6 +13,8 @@ const initialState: UserSettingsState = {
   isReduceMotion:
     getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_REDUCE_MOTION) === true,
   isShowTips: getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_SHOW_TIPS) !== false,
+  isHighContrast:
+    getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_HIGH_CONTRAST) === true,
 };
 
 export const userSettingsSlice = createSlice({
@@ -30,6 +33,9 @@ export const userSettingsSlice = createSlice({
     setShowTips: (state, action: PayloadAction<boolean>) => {
       state.isShowTips = action.payload;
     },
+    setHighContrast: (state, action: PayloadAction<boolean>) => {
+      state.isHighContrast = action.payload;
+    },
   },
 });
 
@@ -38,6 +44,7 @@ export const {
   closeSettingsModal,
   setReduceMotion,
   setShowTips,
+  setHighContrast,
 } =
   userSettingsSlice.actions;
 

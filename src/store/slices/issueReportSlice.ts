@@ -2,10 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 type IssueReportState = {
   isIssueReportModalOpen: boolean;
+  isSubmitting: boolean;
 };
 
 const initialState: IssueReportState = {
   isIssueReportModalOpen: false,
+  isSubmitting: false,
 };
 
 export const issueReportSlice = createSlice({
@@ -17,11 +19,18 @@ export const issueReportSlice = createSlice({
     },
     closeIssueReportModal: (state) => {
       state.isIssueReportModalOpen = false;
+      state.isSubmitting = false;
+    },
+    setIssueReportSubmitting: (state, action) => {
+      state.isSubmitting = action.payload;
     },
   },
 });
 
-export const { openIssueReportModal, closeIssueReportModal } =
-  issueReportSlice.actions;
+export const {
+  openIssueReportModal,
+  closeIssueReportModal,
+  setIssueReportSubmitting,
+} = issueReportSlice.actions;
 
 export default issueReportSlice.reducer;

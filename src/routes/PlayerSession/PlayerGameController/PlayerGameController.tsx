@@ -50,6 +50,7 @@ export default function PlayerGameController({
   const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
   const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;
   const hasVoted = !!myPlayerId && state.votes?.[myPlayerId] !== undefined;
+
   const shouldRemainLockedByKey = useMemo<Record<ActionLockKey, boolean>>(
     () => ({
       place: state.phase === "PLACE" && isMyTurn,
@@ -57,9 +58,11 @@ export default function PlayerGameController({
     }),
     [state.phase, isMyTurn, canVote, hasVoted],
   );
+
   const actionLocks = useActionLocks(shouldRemainLockedByKey, {
     timeoutMs: ACTION_LOCK_TIMEOUT_MS,
   });
+
   const isPlacing = actionLocks.isLocked("place");
   const isVoting = actionLocks.isLocked("vote");
 

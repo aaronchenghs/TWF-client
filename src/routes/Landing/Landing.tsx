@@ -103,6 +103,7 @@ export function JoinRoomPanel() {
   const [isJoining, setIsJoining] = useState<boolean>(false);
 
   const normalizedCode = useMemo(() => normalizeCode(code), [code]);
+
   const normalizedName = useMemo(() => name.trim(), [name]);
 
   const canJoin =

@@ -12,6 +12,7 @@ import { usePendingRejoinSnackbar } from "@/lib/hooks/usePendingRejoinSnackbar";
 import PlayerSession from "./routes/PlayerSession/PlayerSession";
 
 const Landing = lazy(() => import("@/routes/Landing/Landing"));
+
 const GameRoom = lazy(() => import("@/routes/GameRoom/GameRoom"));
 
 export function AnimatedRoutes() {

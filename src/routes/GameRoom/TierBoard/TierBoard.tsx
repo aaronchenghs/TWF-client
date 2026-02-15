@@ -26,6 +26,7 @@ export const TierBoard = memo(function TierBoard({
     if (!container || !content) return;
 
     let frame = 0;
+
     const updateScale = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {

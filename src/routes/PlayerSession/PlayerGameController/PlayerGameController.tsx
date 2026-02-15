@@ -64,21 +64,27 @@ export default function PlayerGameController({
 
   const isWaiting = statusLabel === "Waiting";
 
-  const handlePlaceIntoTier = async (tierId: TierId) => {
+  const handlePlaceIntoTier = (tierId: TierId) => {
     if (state.phase !== "PLACE" || !isMyTurn) return;
     if (isPlacing) return;
 
     setIsPlacing(true);
-    socketClient.emit("game:place", { tierId });
-    setIsPlacing(false);
+    try {
+      socketClient.emit("game:place", { tierId });
+    } catch {
+      setIsPlacing(false);
+    }
   };
 
-  const handleVote = async (vote: VoteValue) => {
+  const handleVote = (vote: VoteValue) => {
     if (!canVote || hasVoted || isVoting) return;
 
     setIsVoting(true);
-    socketClient.emit("game:vote", { vote });
-    setIsVoting(false);
+    try {
+      socketClient.emit("game:vote", { vote });
+    } catch {
+      setIsVoting(false);
+    }
   };
 
   const handleExit = useCallback(() => {
@@ -103,6 +109,22 @@ export default function PlayerGameController({
       if (myPlayerId) socketClient.setMyPlayerId(myPlayerId);
     },
     [myPlayerId],
+  );
+
+  useEffect(
+    function releasePlaceLockAfterStateAdvances() {
+      if (state.phase === "PLACE" && isMyTurn) return;
+      setIsPlacing(false);
+    },
+    [state.phase, isMyTurn],
+  );
+
+  useEffect(
+    function releaseVoteLockAfterStateAdvances() {
+      if (state.phase === "VOTE" && canVote && !hasVoted) return;
+      setIsVoting(false);
+    },
+    [state.phase, canVote, hasVoted],
   );
 
   useEffect(

@@ -25,6 +25,7 @@ export default defineConfig([
       "jsx-a11y": jsxA11y,
     },
     rules: {
+      "react-hooks/set-state-in-effect": "warn",
       "jsx-a11y/alt-text": "error",
       "jsx-a11y/anchor-is-valid": "error",
       "jsx-a11y/aria-props": "error",

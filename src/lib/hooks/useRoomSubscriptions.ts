@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
+import { normalizeCode } from "@/lib/codeUtils";
 import type * as Contracts from "@twf/contracts";
 
 type RoomPublicState = Contracts.RoomPublicState;
@@ -20,6 +21,7 @@ export function useRoomSubscriptions({
   useEffect(
     function subscribeToRoomEvents() {
       if (!roomCode) return;
+      const normalizedRoomCode = normalizeCode(roomCode);
 
       if (onState) {
         const cached = roomSocket.getLastRoomState(roomCode);
@@ -27,11 +29,16 @@ export function useRoomSubscriptions({
       }
 
       const offState = onState
-        ? roomSocket.onRoomState(onState)
+        ? roomSocket.onRoomState((nextState) => {
+            if (normalizeCode(nextState.code) !== normalizedRoomCode) return;
+            onState(nextState);
+          })
         : () => undefined;
+
       const offClosed = onClosed
         ? roomSocket.onRoomClosed(onClosed)
         : () => undefined;
+
       const offKicked = onKicked
         ? roomSocket.onRoomKicked(onKicked)
         : () => undefined;

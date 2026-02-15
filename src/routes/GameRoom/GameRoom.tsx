@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./GameRoom.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
@@ -39,18 +39,18 @@ export default function GameRoom() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
 
-  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
-  const isRoomCodeValid = roomCode.length === CODE_LENGTH;
-
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
   const [isRematchSubmitting, setIsRematchSubmitting] = useState(false);
   const [state, setState] = useState<RoomPublicState | null>(() =>
-    roomSocket.getLastRoomState(roomCode),
+    roomSocket.getLastRoomState(normalizeCode(code ?? "")),
   );
   const [isIntro, setIsIntro] = useState(true);
-  const suppressRejoinNoticeRef = useRef(false);
-  const isHostUnexpectedExitEligible = !!state && state.phase !== "FINISHED";
 
+  const suppressRejoinNoticeRef = useRef(false);
+
+  const roomCode = normalizeCode(code ?? "");
+  const isRoomCodeValid = roomCode.length === CODE_LENGTH;
+  const isHostUnexpectedExitEligible = !!state && state.phase !== "FINISHED";
   const hasState = state != null;
 
   const currentItem = state?.currentItem
@@ -100,6 +100,12 @@ export default function GameRoom() {
     roomCode,
     isEligible: isHostUnexpectedExitEligible,
     suppressRef: suppressRejoinNoticeRef,
+  });
+
+  useRoomSubscriptions({
+    roomCode: roomCode || null,
+    onState: handleRoomState,
+    onClosed: handleRoomClosed,
   });
 
   useEffect(
@@ -160,12 +166,6 @@ export default function GameRoom() {
     },
     [roomCode, isRoomCodeValid, handleRoomClosed],
   );
-
-  useRoomSubscriptions({
-    roomCode: roomCode || null,
-    onState: handleRoomState,
-    onClosed: handleRoomClosed,
-  });
 
   if (!state) {
     return (

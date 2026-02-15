@@ -13,11 +13,12 @@ export const TierBoard = memo(function TierBoard({
 }: {
   state: RoomPublicState;
 }) {
-  const tierOrder = state.tierOrder ?? [];
-  const tiers = state.tiers ?? ({} as Record<TierId, TierItemId[]>);
+  const [scale, setScale] = useState(1);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const [scale, setScale] = useState(1);
+
+  const tierOrder = state.tierOrder ?? [];
+  const tiers = state.tiers ?? ({} as Record<TierId, TierItemId[]>);
 
   useLayoutEffect(function measureBoardScale() {
     const container = containerRef.current;

@@ -144,11 +144,6 @@ $side-delay: 0.25s;
     user-select: none;
   }
 
-  .itemName {
-    @include float(4px, $current-item-float-duration);
-    min-width: 0;
-  }
-
   .bigText {
     display: block;
     margin-top: 0.25rem;

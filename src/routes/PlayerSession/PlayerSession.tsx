@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ROUTES } from "@/routes/routes";
 import { normalizeCode, normalizeName } from "@/lib/codeUtils";
@@ -30,10 +30,10 @@ export default function PlayerSession() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
-  const [state, setState] = useState<RoomPublicState | null>(null);
   const dispatch = useAppDispatch();
+  const [state, setState] = useState<RoomPublicState | null>(null);
 
-  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
+  const roomCode = normalizeCode(code ?? "");
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
   const isPlayerUnexpectedExitEligible =
     !!state && state.phase !== "LOBBY" && state.phase !== "FINISHED";
@@ -67,17 +67,17 @@ export default function PlayerSession() {
     returnToLanding();
   }, [dispatch, roomCode, returnToLanding]);
 
+  useUnexpectedExitRejoinNotice({
+    kind: "player",
+    roomCode,
+    isEligible: isPlayerUnexpectedExitEligible,
+  });
+
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,
     onState: setState,
     onClosed: handleRoomClosed,
     onKicked: handleKicked,
-  });
-
-  useUnexpectedExitRejoinNotice({
-    kind: "player",
-    roomCode,
-    isEligible: isPlayerUnexpectedExitEligible,
   });
 
   useEffect(

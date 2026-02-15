@@ -24,8 +24,13 @@ export function ExpandingIconButton({
   type = "button",
   ...buttonProps
 }: ExpandingIconButtonProps) {
-  const labelRef = useRef<HTMLSpanElement | null>(null);
   const [labelWidthPx, setLabelWidthPx] = useState(0);
+  const labelRef = useRef<HTMLSpanElement | null>(null);
+
+  const dynamicStyle = {
+    "--label-length": Math.max(label.trim().length, 4),
+    "--label-width-px": `${labelWidthPx}px`,
+  } as CSSProperties;
 
   useLayoutEffect(
     function measureLabelWidth() {
@@ -45,11 +50,6 @@ export function ExpandingIconButton({
     },
     [label],
   );
-
-  const dynamicStyle = {
-    "--label-length": Math.max(label.trim().length, 4),
-    "--label-width-px": `${labelWidthPx}px`,
-  } as CSSProperties;
 
   return (
     <button

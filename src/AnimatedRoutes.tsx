@@ -16,10 +16,10 @@ const GameRoom = lazy(() => import("@/routes/GameRoom/GameRoom"));
 
 export function AnimatedRoutes() {
   const location = useLocation();
+  usePendingRejoinSnackbar(location.pathname);
+
   const [direction, setDirection] = useState<TransitionDirection>("left");
   const prevPathRef = useRef(location.pathname);
-
-  usePendingRejoinSnackbar(location.pathname);
 
   useEffect(
     function determineTransitionDirection() {

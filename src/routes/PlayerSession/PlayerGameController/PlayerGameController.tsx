@@ -64,16 +64,6 @@ export default function PlayerGameController({
 
   const isWaiting = statusLabel === "Waiting";
 
-  const handleExit = useCallback(() => {
-    socketClient.disconnect();
-    navigate(ROUTES.LANDING, { replace: true });
-  }, [navigate]);
-
-  const handleConfirmExit = useCallback(() => {
-    setIsConfirmExitOpen(false);
-    handleExit();
-  }, [handleExit]);
-
   const handlePlaceIntoTier = async (tierId: TierId) => {
     if (state.phase !== "PLACE" || !isMyTurn) return;
     if (isPlacing) return;
@@ -90,6 +80,16 @@ export default function PlayerGameController({
     socketClient.emit("game:vote", { vote });
     setIsVoting(false);
   };
+
+  const handleExit = useCallback(() => {
+    socketClient.disconnect();
+    navigate(ROUTES.LANDING, { replace: true });
+  }, [navigate]);
+
+  const handleConfirmExit = useCallback(() => {
+    setIsConfirmExitOpen(false);
+    handleExit();
+  }, [handleExit]);
 
   const handlePlayAgain = useCallback(() => {
     if (state.phase !== "FINISHED") return;

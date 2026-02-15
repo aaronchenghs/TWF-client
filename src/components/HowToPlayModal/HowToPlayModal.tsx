@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 import styles from "./HowToPlayModal.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
@@ -24,13 +24,10 @@ export function HowToPlayModal(props: {
   initialIndex?: number;
 }) {
   const { open, onClose, initialIndex = 0 } = props;
-
-  const safeInitial = useMemo(() => {
+  const [index, setIndex] = useState(() => {
     if (!HOW_TO_STEPS.length) return 0;
     return Math.min(Math.max(initialIndex, 0), HOW_TO_STEPS.length - 1);
-  }, [initialIndex]);
-
-  const [index, setIndex] = useState(() => safeInitial);
+  });
 
   const step = HOW_TO_STEPS[index];
   const isFirst = index === 0;

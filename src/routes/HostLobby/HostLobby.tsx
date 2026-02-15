@@ -25,11 +25,7 @@ import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
-import { openIssueReportForm } from "@/lib/openIssueReportForm";
-import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
-import { Bug, CircleHelp, Settings } from "lucide-react";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
-import { openSettingsModal } from "@/store/slices/userSettingsSlice";
 import {
   hideTipByKind,
   showTip,
@@ -45,10 +41,11 @@ type RoomPublicState = Contracts.RoomPublicState;
 export default function HostLobby() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { code } = useParams<{ code: string }>();
+
   const $isShowTips = useAppSelector(
     (state: AppState) => state.userSettings.isShowTips,
   );
-  const { code } = useParams<{ code: string }>();
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
@@ -59,6 +56,9 @@ export default function HostLobby() {
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
   const suppressRejoinNoticeRef = useRef(false);
 
+  const roomCode = normalizeCode(code ?? "");
+  const isRoomCodeValid = roomCode.length === CODE_LENGTH;
+
   const players = useMemo(
     () => (roomState?.players ?? []).filter((p) => p.connected !== false),
     [roomState],
@@ -66,8 +66,6 @@ export default function HostLobby() {
   const playerCount = players.length;
   const selectedTierSetId = roomState?.tierSetId ?? null;
   const isStartEnabled = !!selectedTierSetId && playerCount >= 2;
-  const roomCode = useMemo(() => normalizeCode(code ?? ""), [code]);
-  const isRoomCodeValid = roomCode.length === CODE_LENGTH;
 
   const selectedTierSetName = useMemo(() => {
     if (!selectedTierSetId) return null;
@@ -111,11 +109,24 @@ export default function HostLobby() {
     }
   }, []);
 
+  const handleRoomClosed = useCallback(() => {
+    suppressRejoinNoticeRef.current = true;
+    clearHostSession();
+    if (roomCode) clearRoomSession(roomCode);
+    navigate(ROUTES.LANDING, { replace: true });
+  }, [navigate, roomCode]);
+
   useUnexpectedExitRejoinNotice({
     kind: "host_lobby",
     roomCode,
     isEligible: isRoomCodeValid,
     suppressRef: suppressRejoinNoticeRef,
+  });
+
+  useRoomSubscriptions({
+    roomCode: isRoomCodeValid ? roomCode : null,
+    onState: handleRoomState,
+    onClosed: handleRoomClosed,
   });
 
   useEffect(
@@ -161,28 +172,6 @@ export default function HostLobby() {
     },
     [navigate, roomState],
   );
-
-  const handleRoomClosed = useCallback(() => {
-    suppressRejoinNoticeRef.current = true;
-    clearHostSession();
-    if (roomCode) clearRoomSession(roomCode);
-    navigate(ROUTES.LANDING, { replace: true });
-  }, [navigate, roomCode]);
-
-  const handleSettingsClick = useCallback(
-    () => dispatch(openSettingsModal()),
-    [dispatch],
-  );
-  const handleHelpClick = useCallback(() => void 0, []);
-  const handleReportIssueClick = useCallback(() => {
-    openIssueReportForm();
-  }, []);
-
-  useRoomSubscriptions({
-    roomCode: isRoomCodeValid ? roomCode : null,
-    onState: handleRoomState,
-    onClosed: handleRoomClosed,
-  });
 
   useEffect(
     function handleRoomConnection() {
@@ -354,27 +343,6 @@ export default function HostLobby() {
         onCancel={handleCancelCountdown}
         onComplete={handleCountdownComplete}
       />
-
-      <div className={styles.quickActions}>
-        <ExpandingIconButton
-          icon={<Settings aria-hidden="true" />}
-          label="Settings"
-          onClick={handleSettingsClick}
-          expandDirection="right"
-        />
-        <ExpandingIconButton
-          icon={<CircleHelp aria-hidden="true" />}
-          label="Help"
-          onClick={handleHelpClick}
-          expandDirection="right"
-        />
-        <ExpandingIconButton
-          icon={<Bug aria-hidden="true" />}
-          label="Report Issue"
-          onClick={handleReportIssueClick}
-          expandDirection="right"
-        />
-      </div>
     </div>
   );
 }

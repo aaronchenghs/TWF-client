@@ -6,6 +6,7 @@ import { SettingsModal } from "@/components/SettingsModal/SettingsModal";
 import { TipsPopupHost } from "@/components/TipsPopupHost/TipsPopupHost";
 import { useUserSettingsSync } from "@/lib/hooks/useUserSettingsSync";
 import { useRouteSeo } from "@/lib/hooks/useRouteSeo";
+import { GlobalQuickActions } from "@/components/GlobalQuickActions/GlobalQuickActions";
 
 function SeoManager() {
   useRouteSeo();
@@ -18,10 +19,13 @@ export default function App() {
   return (
     <>
       <SnackbarHost />
+
       <BrowserRouter>
         <SeoManager />
         <AnimatedRoutes />
       </BrowserRouter>
+
+      <GlobalQuickActions />
       <SettingsModal />
       <TipsPopupHost />
     </>

@@ -22,6 +22,7 @@ import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
 import { useAppDispatch } from "@/store/store";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
+import { TAB_TITLES } from "@/lib/tabTitles";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -79,6 +80,18 @@ export default function PlayerSession() {
     onClosed: handleRoomClosed,
     onKicked: handleKicked,
   });
+
+  useEffect(
+    function syncPlayerSessionTitle() {
+      const nextTitle =
+        state?.phase !== "LOBBY"
+          ? TAB_TITLES.PLAYER_IN_GAME
+          : TAB_TITLES.PLAYER_LOBBY;
+
+      if (document.title !== nextTitle) document.title = nextTitle;
+    },
+    [state?.phase],
+  );
 
   useEffect(
     function handleStateAndConnection() {

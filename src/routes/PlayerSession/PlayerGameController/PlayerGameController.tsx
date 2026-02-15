@@ -20,6 +20,7 @@ import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemD
 import { Pill } from "@/components/Pill/Pill";
 import { VoteResultsReveal } from "@/routes/GameRoom/Overlays/VoteResultsReveal/VoteResultsReveal";
 import { useActionLocks } from "@/lib/hooks/useActionLocks";
+import { useTurnTabAttention } from "@/lib/hooks/useTurnTabAttention";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -50,6 +51,8 @@ export default function PlayerGameController({
   const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
   const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;
   const hasVoted = !!myPlayerId && state.votes?.[myPlayerId] !== undefined;
+
+  useTurnTabAttention({ isMyTurn });
 
   const shouldRemainLockedByKey = useMemo<Record<ActionLockKey, boolean>>(
     () => ({

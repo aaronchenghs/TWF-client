@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import styles from "./PlayerGameController.module.scss";
@@ -19,12 +19,16 @@ import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
 import { Pill } from "@/components/Pill/Pill";
 import { VoteResultsReveal } from "@/routes/GameRoom/Overlays/VoteResultsReveal/VoteResultsReveal";
+import { useActionLocks } from "@/lib/hooks/useActionLocks";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
 type TierItem = Contracts.TierItem;
 type TierId = Contracts.TierId;
 type VoteValue = Contracts.VoteValue;
+
+const ACTION_LOCK_TIMEOUT_MS = 6000;
+type ActionLockKey = "place" | "vote";
 
 export default function PlayerGameController({
   state,
@@ -34,8 +38,6 @@ export default function PlayerGameController({
   const navigate = useNavigate();
 
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
-  const [isPlacing, setIsPlacing] = useState(false);
-  const [isVoting, setIsVoting] = useState(false);
 
   const [isPlayAgainSubmitting, setIsPlayAgainSubmitting] = useState(false);
   const [isWaitingForHostRematch, setIsWaitingForHostRematch] = useState(false);
@@ -48,6 +50,18 @@ export default function PlayerGameController({
   const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
   const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;
   const hasVoted = !!myPlayerId && state.votes?.[myPlayerId] !== undefined;
+  const shouldRemainLockedByKey = useMemo<Record<ActionLockKey, boolean>>(
+    () => ({
+      place: state.phase === "PLACE" && isMyTurn,
+      vote: state.phase === "VOTE" && canVote && !hasVoted,
+    }),
+    [state.phase, isMyTurn, canVote, hasVoted],
+  );
+  const actionLocks = useActionLocks(shouldRemainLockedByKey, {
+    timeoutMs: ACTION_LOCK_TIMEOUT_MS,
+  });
+  const isPlacing = actionLocks.isLocked("place");
+  const isVoting = actionLocks.isLocked("vote");
 
   const currentItem: TierItem | null =
     state.currentItem && tierSet
@@ -67,23 +81,25 @@ export default function PlayerGameController({
   const handlePlaceIntoTier = (tierId: TierId) => {
     if (state.phase !== "PLACE" || !isMyTurn) return;
     if (isPlacing) return;
+    if (!socketClient.isConnected()) return;
 
-    setIsPlacing(true);
+    actionLocks.lock("place");
     try {
       socketClient.emit("game:place", { tierId });
     } catch {
-      setIsPlacing(false);
+      actionLocks.unlock("place");
     }
   };
 
   const handleVote = (vote: VoteValue) => {
     if (!canVote || hasVoted || isVoting) return;
+    if (!socketClient.isConnected()) return;
 
-    setIsVoting(true);
+    actionLocks.lock("vote");
     try {
       socketClient.emit("game:vote", { vote });
     } catch {
-      setIsVoting(false);
+      actionLocks.unlock("vote");
     }
   };
 
@@ -109,22 +125,6 @@ export default function PlayerGameController({
       if (myPlayerId) socketClient.setMyPlayerId(myPlayerId);
     },
     [myPlayerId],
-  );
-
-  useEffect(
-    function releasePlaceLockAfterStateAdvances() {
-      if (state.phase === "PLACE" && isMyTurn) return;
-      setIsPlacing(false);
-    },
-    [state.phase, isMyTurn],
-  );
-
-  useEffect(
-    function releaseVoteLockAfterStateAdvances() {
-      if (state.phase === "VOTE" && canVote && !hasVoted) return;
-      setIsVoting(false);
-    },
-    [state.phase, canVote, hasVoted],
   );
 
   useEffect(

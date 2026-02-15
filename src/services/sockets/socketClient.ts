@@ -29,6 +29,12 @@ type ContractOnce = <E extends keyof ServerToClientEvents>(
   handler: ServerToClientEvents[E],
 ) => ContractSocket;
 
+type RawSocketHandler = (...args: unknown[]) => void;
+
+type RawOn = (event: string, handler: RawSocketHandler) => ContractSocket;
+
+type RawOff = (event: string, handler: RawSocketHandler) => ContractSocket;
+
 export class SocketClient {
   private readonly socket: ContractSocket;
   private myPlayerId: string | null = null;
@@ -96,6 +102,20 @@ export class SocketClient {
     once.call(this.socket, event, handler);
     return () => {
       off.call(this.socket, event, handler);
+    };
+  }
+
+  /** Subscribes to low-level socket disconnect events; returns an unsubscribe function. */
+  onDisconnect(handler: () => void): () => void {
+    const on = this.socket.on as unknown as RawOn;
+    const off = this.socket.off as unknown as RawOff;
+    const rawHandler: RawSocketHandler = () => {
+      handler();
+    };
+
+    on.call(this.socket, "disconnect", rawHandler);
+    return () => {
+      off.call(this.socket, "disconnect", rawHandler);
     };
   }
 

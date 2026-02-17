@@ -3,11 +3,16 @@ import clsx from "clsx";
 import styles from "./VoteResultsReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowBigUpDash,
+  ArrowBigDownDash,
+  Minus,
+  type LucideIcon,
+} from "lucide-react";
 import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
-import { getPlayerNameById } from "@/lib/players";
 import {
   buildFadeSlideScaleAnimation,
   buildHoldSlideAnimation,
@@ -15,14 +20,7 @@ import {
 } from "@/lib/motionPresets";
 
 type RoomPublicState = Contracts.RoomPublicState;
-type PlayerId = Contracts.PlayerId;
 type VoteValue = Contracts.VoteValue;
-
-type VoteEntry = {
-  playerId: PlayerId;
-  name: string;
-  value: VoteValue;
-};
 
 type VoteBucket = "up" | "agree" | "down";
 
@@ -31,20 +29,16 @@ const ENTER_MS = 700;
 const COLUMN_DELAY_BASE = 0.16;
 const COLUMN_DELAY_STEP = 0.08;
 const COLUMN_IN_DURATION = 0.3;
-const CHIP_STAGGER = 0.08;
-const CHIP_DELAY = 0.15;
-const CHIP_OFFSET_Y = 18;
-const CHIP_SCALE = 0.8;
 
 const voteConfig: Array<{
   key: VoteBucket;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   value: VoteValue;
 }> = [
-  { key: "up", label: "Drift Up", icon: "^", value: -1 },
-  { key: "agree", label: "Agree", icon: "=", value: 0 },
-  { key: "down", label: "Drift Down", icon: "v", value: 1 },
+  { key: "up", label: "Drift Up", icon: ArrowBigUpDash, value: -1 },
+  { key: "agree", label: "Agree", icon: Minus, value: 0 },
+  { key: "down", label: "Drift Down", icon: ArrowBigDownDash, value: 1 },
 ];
 
 export function VoteResultsReveal({
@@ -52,6 +46,12 @@ export function VoteResultsReveal({
 }: {
   state: RoomPublicState | null;
 }) {
+  const meta = state?.currentItem
+    ? state?.itemMetaById?.[state.currentItem]
+    : undefined;
+  const itemName = meta?.name ?? state?.currentItem ?? "--";
+  const imageSrc = meta?.imageSrc;
+
   const { isOpen, token } = usePhaseStartOverlay(state, {
     openOnPhase: "RESULTS",
     openMs: REVEAL_TOTAL_MS,
@@ -59,71 +59,6 @@ export function VoteResultsReveal({
     shouldOpen: () => !!state?.currentItem,
     skipInitialOpen: true,
   });
-
-  const { voteBuckets, votersCount } = useMemo(() => {
-    const emptyBuckets: Record<VoteBucket, VoteEntry[]> = {
-      up: [],
-      agree: [],
-      down: [],
-    };
-
-    if (!state) return { voteBuckets: emptyBuckets, votersCount: 0 };
-
-    const players = state.players ?? [];
-    const orderById = new Map<PlayerId, number>(
-      players.map((p, idx) => [p.id, idx]),
-    );
-
-    const orderedVotes = (
-      Object.entries(state.votes ?? {}) as Array<[PlayerId, VoteValue]>
-    ).sort(
-      (a, b) => (orderById.get(a[0]) ?? 9999) - (orderById.get(b[0]) ?? 9999),
-    );
-
-    const voteBuckets = orderedVotes.reduce(
-      (acc, [playerId, value]) => {
-        const name = getPlayerNameById(players, playerId, "Unknown");
-        const entry: VoteEntry = { playerId, name, value };
-
-        if (value === -1) acc.up.push(entry);
-        else if (value === 1) acc.down.push(entry);
-        else acc.agree.push(entry);
-
-        return acc;
-      },
-      { up: [], agree: [], down: [] } as Record<VoteBucket, VoteEntry[]>,
-    );
-
-    return { voteBuckets, votersCount: orderedVotes.length };
-  }, [state]);
-
-  const meta = state?.currentItem
-    ? state?.itemMetaById?.[state.currentItem]
-    : undefined;
-  const itemName = meta?.name ?? state?.currentItem ?? "--";
-  const imageSrc = meta?.imageSrc;
-
-  const listVariants = {
-    hidden: {},
-    show: {
-      transition: { staggerChildren: CHIP_STAGGER, delayChildren: CHIP_DELAY },
-    },
-  };
-
-  const chipVariants = {
-    hidden: (idx: number) => ({
-      opacity: 0,
-      y: CHIP_OFFSET_Y,
-      scale: CHIP_SCALE,
-      rotate: idx % 2 ? 4 : -4,
-    }),
-    show: (idx: number) => ({
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      rotate: idx % 2 ? 1.2 : -1.2,
-    }),
-  };
 
   const slideAnimation = buildHoldSlideAnimation({
     axis: "x",
@@ -135,6 +70,31 @@ export function VoteResultsReveal({
     exitScale: 0.985,
     reduceMotion: false,
   });
+
+  const { voteCounts, votersCount } = useMemo(() => {
+    const emptyCounts: Record<VoteBucket, number> = {
+      up: 0,
+      agree: 0,
+      down: 0,
+    };
+
+    if (!state) return { voteCounts: emptyCounts, votersCount: 0 };
+
+    const orderedVotes = Object.values(state.votes ?? {}) as VoteValue[];
+
+    const voteCounts = orderedVotes.reduce(
+      (acc, value) => {
+        if (value === -1) acc.up += 1;
+        else if (value === 1) acc.down += 1;
+        else acc.agree += 1;
+
+        return acc;
+      },
+      { up: 0, agree: 0, down: 0 } as Record<VoteBucket, number>,
+    );
+
+    return { voteCounts, votersCount: orderedVotes.length };
+  }, [state]);
 
   return (
     <OverlayDialog open={isOpen} ariaLabel="Reveal vote results">
@@ -189,7 +149,8 @@ export function VoteResultsReveal({
 
             <div className={styles.columns}>
               {voteConfig.map((config, idx) => {
-                const entries = voteBuckets[config.key];
+                const count = voteCounts[config.key];
+                const Icon = config.icon;
                 return (
                   <motion.div
                     key={config.key}
@@ -204,71 +165,41 @@ export function VoteResultsReveal({
                       reduceMotion: false,
                     })}
                   >
-                    <div className={styles.columnInner}>
-                      <div className={styles.columnHeader}>
-                        <MainTextTypography
-                          variant="h3"
-                          className={styles.columnTitle}
-                          letterSpacing="wide"
-                        >
-                          {config.label}
-                        </MainTextTypography>
-                        <MainTextTypography
-                          variant="h3"
-                          className={styles.countPill}
-                          textAlign="center"
-                        >
-                          {entries.length}
-                        </MainTextTypography>
-                      </div>
-
-                      {entries.length ? (
-                        <motion.ul
-                          className={styles.voteList}
-                          variants={listVariants}
-                          initial="hidden"
-                          animate="show"
-                        >
-                          {entries.map((entry, entryIdx) => (
-                            <motion.li
-                              key={`${entry.playerId}:${entry.value}`}
-                              className={styles.voteChip}
-                              custom={entryIdx}
-                              variants={chipVariants}
-                              transition={{
-                                type: "spring",
-                                stiffness: 440,
-                                damping: 24,
-                                mass: 0.6,
-                              }}
-                            >
-                              <MainTextTypography
-                                variant="h5"
-                                className={styles.voteIcon}
-                                textAlign="center"
-                              >
-                                {config.icon}
-                              </MainTextTypography>
-                              <MainTextTypography
-                                variant="h5"
-                                className={styles.voteName}
-                                letterSpacing="normal"
-                              >
-                                {entry.name}
-                              </MainTextTypography>
-                            </motion.li>
-                          ))}
-                        </motion.ul>
-                      ) : (
-                        <MainTextTypography
-                          variant="label"
-                          className={styles.empty}
-                          letterSpacing="wide"
-                        >
-                          No votes
-                        </MainTextTypography>
-                      )}
-                    </div>
+                    <MainTextTypography
+                      variant="h2"
+                      className={styles.columnIcon}
+                      textAlign="center"
+                    >
+                      <Icon
+                        className={styles.columnIconSvg}
+                        size={50}
+                        strokeWidth={3}
+                        aria-hidden
+                      />
+                    </MainTextTypography>
+                    <MainTextTypography
+                      variant="h3"
+                      className={styles.columnTitle}
+                      letterSpacing="wide"
+                      textAlign="center"
+                    >
+                      {config.label}
+                    </MainTextTypography>
+                    <MainTextTypography
+                      variant="display"
+                      className={styles.columnCount}
+                      textAlign="center"
+                    >
+                      {count}
+                    </MainTextTypography>
+                    <MainTextTypography
+                      variant="label"
+                      className={styles.columnCountLabel}
+                      letterSpacing="wide"
+                      textAlign="center"
+                    >
+                      {count === 1 ? "vote" : "votes"}
+                    </MainTextTypography>
                   </motion.div>
                 );
               })}

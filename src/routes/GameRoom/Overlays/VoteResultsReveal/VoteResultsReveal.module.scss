@@ -7,9 +7,7 @@
   border-radius: $radius-lg;
   display: grid;
   gap: clamp($default-padding, 1.8vw, $radius-lg);
-  background: rgba($bg-app, 0.56);
-  border: 3px solid color-mix(in srgb, $comic-outline 170%, transparent);
-  box-shadow: $shadow-comic-panel;
+  background: rgba($bg-app, 0.5);
   overflow: hidden;
 
   @include float(6px, 3s);
@@ -49,7 +47,6 @@
   width: fit-content;
   padding: calc($default-padding / 2) $default-padding;
   border-radius: $radius-sm;
-  border: 2px solid color-mix(in srgb, $comic-outline 130%, transparent);
   background: rgba($black, 0.24);
   font-weight: $fw-title;
   opacity: 1;
@@ -61,9 +58,6 @@
   gap: $default-gap;
   padding: $default-padding;
   border-radius: $radius-md;
-  background: rgba($bg-surface, 0.66);
-  border: 3px solid color-mix(in srgb, $comic-outline 145%, transparent);
-  box-shadow: $shadow-comic-control;
   transform: rotate(0.9deg);
 }
 
@@ -75,7 +69,6 @@
   background: rgba($bg-app, 0.74);
   display: grid;
   place-items: center;
-  border: 2px solid color-mix(in srgb, $comic-outline 145%, transparent);
 }
 
 .itemThumbImg {
@@ -114,20 +107,11 @@
   --accent: #1e88e5;
   --tilt: #{$comic-skew-base};
   min-height: 200px;
-}
-
-.columnInner {
-  height: 100%;
   display: grid;
-  grid-template-rows: auto 1fr;
+  place-items: center;
+  align-content: center;
   gap: $default-gap;
   padding: clamp(10px, 1.6vw, 14px);
-  border-radius: $radius-md;
-  background: color-mix(in srgb, var(--accent) 28%, rgba($bg-surface, 0.84));
-  border: 3px solid color-mix(in srgb, var(--accent) 65%, $light-transparency);
-  box-shadow:
-    $shadow-comic-panel-ink,
-    inset 0 0 0 1px $light-transparency;
   transform: rotate(var(--tilt));
 }
 
@@ -146,15 +130,12 @@
   --tilt: #{$comic-skew-soft};
 }
 
-.columnHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $default-gap;
-  padding: $default-padding;
-  border-radius: $radius-sm;
-  background: rgba($black, 0.24);
-  border: 2px solid $light-transparency;
+.columnIcon {
+  color: var(--accent);
+}
+
+.columnIconSvg {
+  display: block;
 }
 
 .columnTitle {
@@ -164,61 +145,15 @@
   text-shadow: 2px 2px 0 rgba($black, 0.4);
 }
 
-.countPill {
-  min-width: 50px;
-  padding: $default-padding;
-  border-radius: $round;
-  border: 2px solid color-mix(in srgb, var(--accent) 72%, $light-transparency);
-  background: color-mix(in srgb, var(--accent) 64%, rgba($bg-app, 0.96));
-  box-shadow: $shadow-comic-icon;
-  font-size: clamp(22px, 2.4vw, 30px);
+.columnCount {
+  color: var(--accent);
+  font-size: clamp(44px, 8vw, 96px);
   line-height: 0.9;
+  text-shadow: 3px 3px 0 rgba($black, 0.3);
 }
 
-.voteList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  align-content: start;
-  gap: $default-gap;
-}
-
-.voteChip {
-  display: grid;
-  grid-template-columns: 34px 1fr;
-  align-items: center;
-  gap: $default-gap;
-  padding: $default-padding;
-  border-radius: $radius-sm;
-  background: color-mix(in srgb, var(--accent) 24%, rgba($bg-app, 0.92));
-  border: 2px solid color-mix(in srgb, var(--accent) 62%, $light-transparency);
-  box-shadow: $shadow-comic-icon;
-}
-
-.voteIcon {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  border: 2px solid $light-transparency;
-  background: rgba($black, 0.26);
-  line-height: 1;
-}
-
-.voteName {
-  color: $text-primary;
-  font-size: clamp(18px, 2vw, 24px);
-  text-transform: uppercase;
-}
-
-.empty {
-  padding: $default-padding;
-  border-radius: $radius-sm;
-  border: 2px dashed $text-secondary;
-  background: rgba($black, 0.22);
-  font-size: 14px;
+.columnCountLabel {
+  color: $text-secondary;
 }
 
 @media (max-width: 980px) {
@@ -250,7 +185,7 @@
     grid-column: auto;
   }
 
-  .columnInner {
+  .column {
     transform: rotate(0deg);
   }
 }

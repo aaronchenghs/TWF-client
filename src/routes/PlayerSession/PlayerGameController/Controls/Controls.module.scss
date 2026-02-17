@@ -34,6 +34,19 @@ $image-preview-height: 56px;
   border-radius: $radius-lg;
 }
 
+.discussionNotice {
+  display: grid;
+  gap: $default-gap;
+  padding: $default-padding;
+  border-radius: $radius-md;
+  background: $light-transparency;
+  border: 1px dashed $comic-outline;
+}
+
+.discussionTitle {
+  text-transform: uppercase;
+}
+
 .tierPickList {
   display: flex;
   flex-direction: column;

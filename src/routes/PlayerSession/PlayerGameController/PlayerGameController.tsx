@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import styles from "./PlayerGameController.module.scss";
@@ -29,6 +29,7 @@ type TierId = Contracts.TierId;
 type VoteValue = Contracts.VoteValue;
 
 const ACTION_LOCK_TIMEOUT_MS = 6000;
+const DISCUSSION_LOCK_MS = 10000;
 type ActionLockKey = "place" | "vote";
 
 export default function PlayerGameController({
@@ -45,6 +46,9 @@ export default function PlayerGameController({
   const [hasHostStartedRematch, setHasHostStartedRematch] = useState(false);
 
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
+  const [voteUnlockAt, setVoteUnlockAt] = useState<number | null>(null);
+  const [now, setNow] = useState<number>(() => Date.now());
+  const lastVoteWindowKeyRef = useRef<string | null>(null);
 
   const myPlayerId = getPlayerId(state.code);
 
@@ -68,6 +72,13 @@ export default function PlayerGameController({
 
   const isPlacing = actionLocks.isLocked("place");
   const isVoting = actionLocks.isLocked("vote");
+  const discussionMsLeft =
+    state.phase === "VOTE" && voteUnlockAt !== null
+      ? Math.max(0, voteUnlockAt - now)
+      : 0;
+  const discussionSecondsLeft = Math.ceil(discussionMsLeft / 1000);
+  const isVoteDiscussionLocked =
+    canVote && !hasVoted && discussionSecondsLeft > 0;
 
   const currentItem: TierItem | null =
     state.currentItem && tierSet
@@ -98,6 +109,7 @@ export default function PlayerGameController({
   };
 
   const handleVote = (vote: VoteValue) => {
+    if (isVoteDiscussionLocked) return;
     if (!canVote || hasVoted || isVoting) return;
     if (!socketClient.isConnected()) return;
 
@@ -125,6 +137,46 @@ export default function PlayerGameController({
     setIsPlayAgainSubmitting(true);
     roomSocket.playAgain();
   }, [state.phase, isPlayAgainSubmitting, isWaitingForHostRematch]);
+
+  useEffect(
+    function initializeVoteDiscussionLockWindow() {
+      if (state.phase !== "VOTE") {
+        lastVoteWindowKeyRef.current = null;
+        setVoteUnlockAt(null);
+        return;
+      }
+
+      const voteWindowKey = `${state.turnIndex}:${state.currentItem ?? "none"}`;
+      if (lastVoteWindowKeyRef.current === voteWindowKey) return;
+      lastVoteWindowKeyRef.current = voteWindowKey;
+
+      const localUnlockAt = Date.now() + DISCUSSION_LOCK_MS;
+      const voteEndsAt = state.timers.voteEndsAt;
+      setVoteUnlockAt(
+        typeof voteEndsAt === "number"
+          ? Math.min(localUnlockAt, voteEndsAt)
+          : localUnlockAt,
+      );
+      setNow(Date.now());
+    },
+    [state.phase, state.turnIndex, state.currentItem, state.timers.voteEndsAt],
+  );
+
+  useEffect(
+    function tickVoteDiscussionTimer() {
+      if (state.phase !== "VOTE") return;
+      if (voteUnlockAt === null) return;
+      if (voteUnlockAt <= Date.now()) return;
+
+      const id = window.setInterval(() => {
+        const nextNow = Date.now();
+        setNow(nextNow);
+        if (nextNow >= voteUnlockAt) window.clearInterval(id);
+      }, 250);
+      return () => window.clearInterval(id);
+    },
+    [state.phase, voteUnlockAt],
+  );
 
   useEffect(
     function handleIdentity() {
@@ -236,10 +288,13 @@ export default function PlayerGameController({
           />
         ) : state.phase === "VOTE" ? (
           <VoteControls
-            disabled={!canVote || hasVoted || isVoting}
+            disabled={
+              !canVote || hasVoted || isVoting || isVoteDiscussionLocked
+            }
             alreadyVoted={hasVoted}
             onVote={handleVote}
             isPlacer={isMyTurn}
+            discussionSecondsLeft={discussionSecondsLeft}
           />
         ) : state.phase === "FINISHED" ? (
           <div className={styles.finishedActions}>

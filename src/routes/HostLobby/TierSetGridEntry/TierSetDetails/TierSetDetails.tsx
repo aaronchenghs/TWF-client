@@ -3,6 +3,7 @@ import { MainTextTypography } from "../../../../components/MainTextTypography/Ma
 import * as Contracts from "@twf/contracts";
 import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
 import { handleKeyDown } from "@/lib/accessibility";
+import pluralize from "pluralize";
 type TierSetDefinition = Contracts.TierSetDefinition;
 
 type TierSetDetailsProps = {
@@ -44,7 +45,7 @@ export function TierSetDetails({ isLoading, details }: TierSetDetailsProps) {
 
           <div className={styles.detailsSection}>
             <MainTextTypography variant="h5">
-              Items ({details.items.length})
+              {pluralize("Item", details.items.length)} ({details.items.length})
             </MainTextTypography>
             <div className={styles.itemsList}>
               {details.items.map((item) => (

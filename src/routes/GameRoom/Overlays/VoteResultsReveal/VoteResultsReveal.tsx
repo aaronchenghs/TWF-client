@@ -9,6 +9,7 @@ import {
   Minus,
   type LucideIcon,
 } from "lucide-react";
+import pluralize from "pluralize";
 import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
@@ -121,7 +122,7 @@ export function VoteResultsReveal({
                   textAlign="left"
                   letterSpacing="wide"
                 >
-                  Votes revealed: {votersCount}
+                  Revealed: {pluralize("vote", votersCount, true)}
                 </MainTextTypography>
               </div>
 
@@ -198,7 +199,7 @@ export function VoteResultsReveal({
                       letterSpacing="wide"
                       textAlign="center"
                     >
-                      {count === 1 ? "vote" : "votes"}
+                      {pluralize("vote", count)}
                     </MainTextTypography>
                   </motion.div>
                 );

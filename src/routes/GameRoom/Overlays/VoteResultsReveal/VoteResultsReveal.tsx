@@ -3,17 +3,12 @@ import clsx from "clsx";
 import styles from "./VoteResultsReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowBigUpDash,
-  ArrowBigDownDash,
-  Minus,
-  type LucideIcon,
-} from "lucide-react";
 import pluralize from "pluralize";
 import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
+import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
 import {
   buildFadeSlideScaleAnimation,
   buildHoldSlideAnimation,
@@ -24,6 +19,11 @@ type RoomPublicState = Contracts.RoomPublicState;
 type VoteValue = Contracts.VoteValue;
 
 type VoteBucket = "up" | "agree" | "down";
+const {
+  up: VoteUpIcon,
+  agree: VoteAgreeIcon,
+  down: VoteDownIcon,
+} = APP_ICONS.vote;
 
 const REVEAL_TOTAL_MS = 6000;
 const ENTER_MS = 700;
@@ -34,12 +34,12 @@ const COLUMN_IN_DURATION = 0.3;
 const voteConfig: Array<{
   key: VoteBucket;
   label: string;
-  icon: LucideIcon;
+  icon: typeof APP_ICONS.vote.up;
   value: VoteValue;
 }> = [
-  { key: "up", label: "Drift Up", icon: ArrowBigUpDash, value: -1 },
-  { key: "agree", label: "Agree", icon: Minus, value: 0 },
-  { key: "down", label: "Drift Down", icon: ArrowBigDownDash, value: 1 },
+  { key: "up", label: "Drift Up", icon: VoteUpIcon, value: -1 },
+  { key: "agree", label: "Agree", icon: VoteAgreeIcon, value: 0 },
+  { key: "down", label: "Drift Down", icon: VoteDownIcon, value: 1 },
 ];
 
 export function VoteResultsReveal({
@@ -173,8 +173,7 @@ export function VoteResultsReveal({
                     >
                       <Icon
                         className={styles.columnIconSvg}
-                        size={50}
-                        strokeWidth={3}
+                        {...ICON_PROPS.vote.results}
                         aria-hidden
                       />
                     </MainTextTypography>

@@ -34,6 +34,17 @@ $image-preview-height: 56px;
   border-radius: $radius-lg;
 }
 
+.voteButtonContent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $default-gap;
+}
+
+.voteButtonIcon {
+  display: block;
+}
+
 .discussionNotice {
   display: grid;
   gap: $default-gap;

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import { Copy, Check } from "lucide-react";
 import styles from "./CopyTextButton.module.scss";
+import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
 
 const DEFAULT_COPIED_MS = 900;
+const { copy: CopyIcon, copied: CopiedIcon } = APP_ICONS;
 
 type CopyTextButtonProps = {
   value: string;
@@ -18,6 +19,7 @@ export function CopyTextButton({
   className,
   title = "Copy",
 }: CopyTextButtonProps) {
+  const iconProps = ICON_PROPS.copyButton;
   const [isCopied, setIsCopied] = useState(false);
   const timerRef = useRef<number | null>(null);
   const isDisabled = disabled || !value;
@@ -76,9 +78,9 @@ export function CopyTextButton({
       title={isCopied ? "Copied" : title}
     >
       {isCopied ? (
-        <Check className={styles.icon} aria-hidden="true" />
+        <CopiedIcon className={styles.icon} {...iconProps} aria-hidden="true" />
       ) : (
-        <Copy className={styles.icon} aria-hidden="true" />
+        <CopyIcon className={styles.icon} {...iconProps} aria-hidden="true" />
       )}
     </button>
   );

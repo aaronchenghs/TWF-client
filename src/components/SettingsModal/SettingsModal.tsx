@@ -2,7 +2,6 @@ import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
 import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
 import { SettingsOptionRow } from "@/components/SettingsOptionRow/SettingsOptionRow";
-import { CircleHelp, Contrast, VibrateOff } from "lucide-react";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import {
   closeSettingsModal,
@@ -11,9 +10,17 @@ import {
   setShowTips,
 } from "@/store/slices/userSettingsSlice";
 import styles from "./SettingsModal.module.scss";
+import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
+
+const {
+  reduceMotion: ReduceMotionIcon,
+  highContrast: HighContrastIcon,
+  showTips: ShowTipsIcon,
+} = APP_ICONS;
 
 export function SettingsModal() {
   const dispatch = useAppDispatch();
+  const iconProps = ICON_PROPS.settingsRow;
   const $isSettingsModalOpen = useAppSelector(
     (state: AppState) => state.userSettings.isSettingsModalOpen,
   );
@@ -42,7 +49,7 @@ export function SettingsModal() {
     >
       <div className={styles.rows}>
         <SettingsOptionRow
-          icon={<VibrateOff />}
+          icon={<ReduceMotionIcon {...iconProps} />}
           title="Reduce Motion"
           description="Reduces most animations and transitions across the app."
           control={
@@ -55,7 +62,7 @@ export function SettingsModal() {
         />
 
         <SettingsOptionRow
-          icon={<Contrast />}
+          icon={<HighContrastIcon {...iconProps} />}
           title="High Contrast"
           description="Boosts contrast for readability and visual clarity."
           control={
@@ -68,7 +75,7 @@ export function SettingsModal() {
         />
 
         <SettingsOptionRow
-          icon={<CircleHelp />}
+          icon={<ShowTipsIcon {...iconProps} />}
           title="Show Tips"
           description="Shows gameplay tips and guidance popups."
           control={

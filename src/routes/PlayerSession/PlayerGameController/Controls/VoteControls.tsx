@@ -4,8 +4,14 @@ import * as Contracts from "@twf/contracts";
 import { AccentButton } from "../../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import pluralize from "pluralize";
+import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
 
 type VoteValue = Contracts.VoteValue;
+const {
+  up: VoteUpIcon,
+  agree: VoteAgreeIcon,
+  down: VoteDownIcon,
+} = APP_ICONS.vote;
 
 export function VoteControls(props: {
   disabled: boolean;
@@ -22,6 +28,7 @@ export function VoteControls(props: {
     discussionSecondsLeft = 0,
   } = props;
   const isDiscussionLocked = discussionSecondsLeft > 0;
+  const voteButtonIconProps = ICON_PROPS.vote.controls;
 
   if (isPlacer || alreadyVoted) return <AwaitingControls />;
   return (
@@ -55,7 +62,14 @@ export function VoteControls(props: {
           onClick={() => onVote(-1)}
           aria-label="Vote drift up"
         >
-          Drift Up 👆
+          <span className={styles.voteButtonContent}>
+            <VoteUpIcon
+              className={styles.voteButtonIcon}
+              {...voteButtonIconProps}
+              aria-hidden
+            />
+            Drift Up
+          </span>
         </AccentButton>
 
         <AccentButton
@@ -65,7 +79,14 @@ export function VoteControls(props: {
           onClick={() => onVote(0)}
           aria-label="Vote agree"
         >
-          Agree 🤝
+          <span className={styles.voteButtonContent}>
+            <VoteAgreeIcon
+              className={styles.voteButtonIcon}
+              {...voteButtonIconProps}
+              aria-hidden
+            />
+            Agree
+          </span>
         </AccentButton>
 
         <AccentButton
@@ -75,7 +96,14 @@ export function VoteControls(props: {
           onClick={() => onVote(1)}
           aria-label="Vote drift down"
         >
-          Drift Down 👇
+          <span className={styles.voteButtonContent}>
+            <VoteDownIcon
+              className={styles.voteButtonIcon}
+              {...voteButtonIconProps}
+              aria-hidden
+            />
+            Drift Down
+          </span>
         </AccentButton>
       </div>
     </div>

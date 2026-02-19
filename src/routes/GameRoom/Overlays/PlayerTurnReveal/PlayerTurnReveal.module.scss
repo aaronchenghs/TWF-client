@@ -31,3 +31,8 @@
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+
+.avatar {
+  @include float(5px, 2s);
+  filter: drop-shadow(0 8px 16px $box-shadow-color);
+}

@@ -6,6 +6,7 @@ import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { getPlayerNameById } from "@/lib/players";
 import { buildHoldSlideAnimation } from "@/lib/motionPresets";
+import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 type RoomPublicState = Contracts.RoomPublicState;
 
 type PlayerTurnRevealProps = {
@@ -29,6 +30,13 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
     state?.currentTurnPlayerId ?? null,
     "--",
   );
+
+  const currentTurnPlayer = state?.currentTurnPlayerId
+    ? (state?.players.find(
+        (player) => player.id === state.currentTurnPlayerId,
+      ) ?? null)
+    : null;
+
   const slide = buildHoldSlideAnimation({
     axis: "x",
     enterFrom: "-110vw",
@@ -56,6 +64,12 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
             >
               IT'S
             </MainTextTypography>
+
+            <PlayerAvatar
+              avatar={currentTurnPlayer?.avatar}
+              size={100}
+              className={styles.avatar}
+            />
 
             <MainTextTypography
               variant="display"

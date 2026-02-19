@@ -21,7 +21,6 @@ import { PlayerTurnReveal } from "./Overlays/PlayerTurnReveal/PlayerTurnReveal";
 import { VoteResultsReveal } from "./Overlays/VoteResultsReveal/VoteResultsReveal";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
-import { getPlayerNameById } from "@/lib/players";
 import {
   clearHostSession,
   clearRoomSession,
@@ -31,6 +30,7 @@ import {
 } from "@/lib/session";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { PhaseCountdown } from "./PhaseCountdown/PhaseCountdown";
+import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -61,9 +61,12 @@ export default function GameRoom() {
       }
     : null;
 
-  const currentTurnName = state?.currentTurnPlayerId
-    ? getPlayerNameById(state.players, state.currentTurnPlayerId, "")
-    : "";
+  const currentTurnPlayer = state?.currentTurnPlayerId
+    ? (state.players.find(
+        (player) => player.id === state.currentTurnPlayerId,
+      ) ?? null)
+    : null;
+  const currentTurnName = currentTurnPlayer?.name ?? "";
 
   const handleExit = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
@@ -235,16 +238,23 @@ export default function GameRoom() {
             <div className={styles.itemRow}>
               {currentTurnName ? (
                 <div className={styles.turnRow}>
-                  <MainTextTypography
-                    variant="h3"
-                    tone="player"
-                    className={styles.turnName}
-                  >
-                    {currentTurnName}
-                  </MainTextTypography>
-                  <MainTextTypography variant="h3" muted>
-                    {"'s turn"}
-                  </MainTextTypography>
+                  <PlayerAvatar
+                    avatar={currentTurnPlayer?.avatar}
+                    size={45}
+                    className={styles.turnAvatar}
+                  />
+                  <div className={styles.turnPhrase}>
+                    <MainTextTypography
+                      variant="h3"
+                      tone="player"
+                      className={styles.turnName}
+                    >
+                      {currentTurnName}
+                    </MainTextTypography>
+                    <MainTextTypography variant="h3" muted>
+                      {"'s turn"}
+                    </MainTextTypography>
+                  </div>
                 </div>
               ) : (
                 <MainTextTypography variant="h3" muted>

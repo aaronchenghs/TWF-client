@@ -161,11 +161,19 @@
         gap: $default-gap;
         min-width: 0;
       }
+
+      .playerIdentity {
+        display: flex;
+        align-items: center;
+        gap: $default-gap;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
     }
 
     .player {
-      padding: calc($default-padding / 2) 0;
-      flex: 1 1 auto;
+      padding: $default-padding 0 $default-padding 2px;
+      flex: 1 1 0;
       min-width: 0;
       display: block;
       overflow: hidden;

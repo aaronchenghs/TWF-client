@@ -31,6 +31,7 @@ import {
   showTip,
   TIP_KINDS,
 } from "@/store/slices/tipsPopupSlice";
+import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -262,13 +263,16 @@ export default function HostLobby() {
               ) : (
                 players.map((player) => (
                   <li className={styles.playerEntry} key={player.id}>
-                    <MainTextTypography
-                      className={styles.player}
-                      variant="h6"
-                      tone="player"
-                    >
-                      {player.name}
-                    </MainTextTypography>
+                    <div className={styles.playerIdentity}>
+                      <PlayerAvatar avatar={player.avatar} size={40} />
+                      <MainTextTypography
+                        className={styles.player}
+                        variant="h6"
+                        tone="player"
+                      >
+                        {player.name}
+                      </MainTextTypography>
+                    </div>
                     <AccentButton
                       variant="destructive"
                       size="small"

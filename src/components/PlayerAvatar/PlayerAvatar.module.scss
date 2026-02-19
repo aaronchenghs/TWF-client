@@ -1,0 +1,28 @@
+@use "../../styles/export" as *;
+
+.root {
+  --avatar-size: 36px;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  min-width: var(--avatar-size);
+  position: relative;
+  overflow: hidden;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.fallback {
+  border-radius: $radius-sm;
+  background: color-mix(in srgb, $accent 25%, $bg-elevated);
+  border: 1px solid color-mix(in srgb, $accent 50%, $bg-elevated);
+}
+

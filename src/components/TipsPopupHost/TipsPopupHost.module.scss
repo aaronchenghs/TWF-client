@@ -22,7 +22,7 @@
   box-shadow: $shadow-comic-panel;
   animation:
     popIn $dur-base cubic-bezier(0.2, 0.9, 0.2, 1) both,
-    float 3.2s ease-in-out 240ms infinite;
+    float 3.2s ease-in-out $dur-base infinite;
   will-change: transform, opacity;
 }
 

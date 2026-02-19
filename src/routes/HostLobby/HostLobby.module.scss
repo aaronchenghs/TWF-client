@@ -160,6 +160,7 @@
         align-items: center;
         gap: $default-gap;
         min-width: 0;
+        @include appearPopIn($dur-base);
       }
 
       .playerIdentity {

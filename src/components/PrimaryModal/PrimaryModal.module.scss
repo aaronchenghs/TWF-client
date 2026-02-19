@@ -1,7 +1,7 @@
 @use "../../styles/export.scss" as *;
 
 .overlay {
-  @include appearFadeIn(140ms);
+  @include appearFadeIn($dur-fast);
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -13,7 +13,7 @@
 }
 
 .modal {
-  @include appearPopIn(180ms);
+  @include appearPopIn($dur-fast);
   width: min(920px, 100%);
   @include comicPanel(
     $comic-skew-soft,

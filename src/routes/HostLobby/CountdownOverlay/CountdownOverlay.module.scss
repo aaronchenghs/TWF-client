@@ -29,15 +29,15 @@
 }
 
 .countSvg :global(path[fill="currentColor"]) {
-  transition: fill 120ms ease;
+  transition: fill $dur-fast ease;
 }
 
 .in {
-  @include appearPopIn(180ms);
+  @include appearPopIn($dur-fast);
 }
 
 .out {
-  @include appearPopOut(140ms);
+  @include appearPopOut($dur-fast);
 }
 
 .actions {

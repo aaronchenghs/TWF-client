@@ -75,7 +75,7 @@
   }
 }
 
-@mixin appearPopIn($duration: 180ms) {
+@mixin appearPopIn($duration: $dur-fast) {
   animation: popIn $duration cubic-bezier(0.2, 0.9, 0.2, 1) both;
   will-change: transform, opacity;
 }
@@ -91,7 +91,7 @@
   }
 }
 
-@mixin appearPopOut($duration: 140ms) {
+@mixin appearPopOut($duration: $dur-fast) {
   animation: popOut $duration cubic-bezier(0.2, 0.9, 0.2, 1) both;
   will-change: transform, opacity;
 }
@@ -105,7 +105,7 @@
   }
 }
 
-@mixin appearFadeIn($duration: 140ms) {
+@mixin appearFadeIn($duration: $dur-fast) {
   animation: fadeIn $duration ease-out both;
   will-change: opacity;
 }
@@ -119,7 +119,7 @@
   }
 }
 
-@mixin shimmerAnimation($duration: 900ms) {
+@mixin shimmerAnimation($duration: $dur-long) {
   animation: shimmer $duration linear infinite;
 }
 

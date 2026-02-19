@@ -1,7 +1,7 @@
 @use "../../styles/export.scss" as *;
 
 .overlay {
-  @include appearFadeIn(140ms);
+  @include appearFadeIn($dur-fast);
 
   position: fixed;
   inset: 0;

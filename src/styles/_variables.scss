@@ -36,13 +36,17 @@ $shadow-comic-control: 3px 3px 0 rgba($black, 0.32);
 $shadow-comic-panel-ink: 4px 4px 0 rgba($black, 0.28);
 $shadow-comic-panel-ink-hover: 5px 5px 0 rgba($black, 0.3);
 
-$shadow-comic-input: $shadow-comic-input-ink, 0 8px 22px $box-shadow-color;
+$shadow-comic-input:
+  $shadow-comic-input-ink,
+  0 8px 22px $box-shadow-color;
 $shadow-comic-panel: $shadow-comic-panel-ink, $shadow-elevated-lg;
-$shadow-comic-panel-hover: $shadow-comic-panel-ink-hover, $shadow-elevated-hover;
+$shadow-comic-panel-hover:
+  $shadow-comic-panel-ink-hover, $shadow-elevated-hover;
 
 $dur-fast: 120ms;
 $dur-base: 220ms;
 $dur-easy: 350ms;
+$dur-long: 500ms;
 $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
 $default-gap: 8px;

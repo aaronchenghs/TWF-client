@@ -17,7 +17,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  @include appearFadeIn(500ms);
+  @include appearFadeIn($dur-long);
 
   .container {
     width: 100%;

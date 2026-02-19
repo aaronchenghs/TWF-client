@@ -24,7 +24,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
 
   const myPlayerId = getPlayerId(state.code);
   const myPlayer = myPlayerId
-    ? state.players.find((player) => player.id === myPlayerId) ?? null
+    ? (state.players.find((player) => player.id === myPlayerId) ?? null)
     : null;
 
   const myName = myPlayer?.name ?? getPlayerNameById(state.players, myPlayerId);
@@ -43,7 +43,11 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
           YOU ARE:
         </MainTextTypography>
         <div className={styles.identityRow}>
-          <PlayerAvatar avatar={myPlayer?.avatar} size={52} />
+          <PlayerAvatar
+            avatar={myPlayer?.avatar}
+            className={styles.playerAvatarSway}
+            size={52}
+          />
           <MainTextTypography
             variant="h2"
             weight="medium"

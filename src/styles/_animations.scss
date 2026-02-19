@@ -123,6 +123,29 @@
   animation: shimmer $duration linear infinite;
 }
 
+@keyframes swayX {
+  0% {
+    transform: translateX(calc(var(--sway-x-offset, 1px) * -1))
+      rotate(calc(var(--sway-rotation, 1.5deg) * -1));
+  }
+  50% {
+    transform: translateX(var(--sway-x-offset, 1px))
+      rotate(var(--sway-rotation, 1.5deg));
+  }
+  100% {
+    transform: translateX(calc(var(--sway-x-offset, 1px) * -1))
+      rotate(calc(var(--sway-rotation, 1.5deg) * -1));
+  }
+}
+
+@mixin swayX($duration: 2s, $intensity: 1) {
+  --sway-x-offset: #{1px * $intensity};
+  --sway-rotation: #{1.5deg * $intensity};
+  animation: swayX $duration ease-in-out infinite;
+  transform-origin: center bottom;
+  will-change: transform;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

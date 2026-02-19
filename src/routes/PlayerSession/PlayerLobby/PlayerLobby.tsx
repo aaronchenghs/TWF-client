@@ -12,6 +12,7 @@ import { socketClient } from "@/services/sockets/socketClient";
 import { ROUTES } from "@/routes/routes";
 import { getPlayerId } from "@/lib/session";
 import { getPlayerNameById } from "@/lib/players";
+import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -22,8 +23,11 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const [isHowToOpen, setIsHowToOpen] = useState(false);
 
   const myPlayerId = getPlayerId(state.code);
+  const myPlayer = myPlayerId
+    ? state.players.find((player) => player.id === myPlayerId) ?? null
+    : null;
 
-  const myName = getPlayerNameById(state.players, myPlayerId);
+  const myName = myPlayer?.name ?? getPlayerNameById(state.players, myPlayerId);
 
   const handleConfirmQuit = () => {
     socketClient.disconnect();
@@ -38,15 +42,18 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
         <MainTextTypography variant="body" muted>
           YOU ARE:
         </MainTextTypography>
-        <MainTextTypography
-          variant="h2"
-          weight="medium"
-          letterSpacing="wide"
-          className={styles.identityName}
-          tone="player"
-        >
-          {myName}
-        </MainTextTypography>
+        <div className={styles.identityRow}>
+          <PlayerAvatar avatar={myPlayer?.avatar} size={52} />
+          <MainTextTypography
+            variant="h2"
+            weight="medium"
+            letterSpacing="wide"
+            className={styles.identityName}
+            tone="player"
+          >
+            {myName}
+          </MainTextTypography>
+        </div>
       </section>
 
       <section className={styles.instructions}>

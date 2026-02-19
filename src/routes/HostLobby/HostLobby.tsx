@@ -264,10 +264,10 @@ export default function HostLobby() {
                 players.map((player) => (
                   <li className={styles.playerEntry} key={player.id}>
                     <div className={styles.playerIdentity}>
-                      <PlayerAvatar avatar={player.avatar} size={40} />
+                      <PlayerAvatar avatar={player.avatar} size={44} />
                       <MainTextTypography
                         className={styles.player}
-                        variant="h6"
+                        variant="h5"
                         tone="player"
                       >
                         {player.name}

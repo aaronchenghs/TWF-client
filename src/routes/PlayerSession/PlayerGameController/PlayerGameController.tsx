@@ -21,6 +21,7 @@ import { Pill } from "@/components/Pill/Pill";
 import { VoteResultsReveal } from "@/routes/GameRoom/Overlays/VoteResultsReveal/VoteResultsReveal";
 import { useActionLocks } from "@/lib/hooks/useActionLocks";
 import { useTurnTabAttention } from "@/lib/hooks/useTurnTabAttention";
+import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -51,6 +52,11 @@ export default function PlayerGameController({
   const lastVoteWindowKeyRef = useRef<string | null>(null);
 
   const myPlayerId = getPlayerId(state.code);
+  const myPlayer = useMemo(
+    () => state.players.find((player) => player.id === myPlayerId) ?? null,
+    [state.players, myPlayerId],
+  );
+  const myName = myPlayer?.name ?? "PLAYER";
 
   const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
   const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;
@@ -231,6 +237,17 @@ export default function PlayerGameController({
     <div className={styles.root}>
       <main className={styles.main}>
         <div className={styles.topBar}>
+          <div className={styles.identity}>
+            <PlayerAvatar avatar={myPlayer?.avatar} size={34} />
+            <MainTextTypography
+              variant="label"
+              tone="player"
+              className={styles.identityName}
+            >
+              {myName}
+            </MainTextTypography>
+          </div>
+
           <div className={styles.statusBar}>
             <Pill
               size="lg"

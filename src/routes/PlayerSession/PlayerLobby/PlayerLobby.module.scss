@@ -51,9 +51,24 @@ $logo-max-height: 160px;
 }
 
 .identityName {
+  text-align: left;
+  min-width: 0;
+  flex: 0 1 auto;
+  max-width: min(58vw, 240px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.identityRow {
+  width: auto;
   max-width: 100%;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  margin: 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc($default-gap * 0.9);
+  min-width: 0;
 }
 
 .status {

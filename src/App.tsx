@@ -23,9 +23,9 @@ export default function App() {
       <BrowserRouter>
         <SeoManager />
         <AnimatedRoutes />
+        <GlobalQuickActions />
       </BrowserRouter>
 
-      <GlobalQuickActions />
       <SettingsModal />
       <TipsPopupHost />
     </>

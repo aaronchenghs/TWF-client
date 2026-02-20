@@ -5,10 +5,12 @@
   @include comicPanel(
     $comic-skew-soft,
     $radius-lg,
-    color-mix(in srgb, $light-transparency 75%, $bg-elevated),
-    color-mix(in srgb, $bg-surface 88%, $light-transparency 12%)
+    rgba(255, 255, 255, 0.1),
+    rgba($bg-surface, 0.88)
   );
-  transition: transform $dur-fast $ease-out, box-shadow $dur-fast $ease-out;
+  transition:
+    transform $dur-fast $ease-out,
+    box-shadow $dur-fast $ease-out;
   max-width: $page-width-cutoff;
   margin-left: auto;
   margin-right: auto;

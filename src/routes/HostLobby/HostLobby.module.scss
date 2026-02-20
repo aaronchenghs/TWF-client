@@ -104,8 +104,8 @@
         @include comicPanel(
           $comic-skew-soft,
           $radius-sm,
-          color-mix(in srgb, $accent 45%, $bg-elevated),
-          color-mix(in srgb, $bg-surface 85%, $light-transparency 15%),
+          rgba($accent, 0.45),
+          rgba($bg-surface, 0.9),
           false
         );
 
@@ -120,7 +120,7 @@
 
         &:hover {
           transform: rotate(0deg) translateY(-1px);
-          border-color: color-mix(in srgb, $accent 62%, $bg-elevated);
+          border-color: rgba($accent, 0.62);
           box-shadow: $shadow-comic-panel;
         }
       }

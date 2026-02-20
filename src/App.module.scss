@@ -30,13 +30,12 @@ body {
 
 body {
   font-family: $font-ui;
-  background:
-    linear-gradient(
-      160deg,
-      color-mix(in srgb, var(--bg-app) 85%, #090a0c 15%) 0%,
-      color-mix(in srgb, var(--bg-app) 96%, #08090b 4%) 45%,
-      #0d0f13 100%
-    );
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--bg-app) 85%, #090a0c 15%) 0%,
+    color-mix(in srgb, var(--bg-app) 96%, #08090b 4%) 45%,
+    #0d0f13 100%
+  );
   color: var(--text-primary);
   position: relative;
   overflow-x: hidden;
@@ -47,7 +46,7 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.22;
+  opacity: 0.24;
   @include dotTexture();
 }
 
@@ -61,7 +60,7 @@ body::after {
     rgba(255, 255, 255, 0.06),
     rgba(255, 255, 255, 0) 45%
   );
-  opacity: 0.18;
+  opacity: 0.2;
 }
 
 input,

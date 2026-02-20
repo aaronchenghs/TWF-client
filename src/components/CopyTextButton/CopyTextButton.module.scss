@@ -27,7 +27,7 @@
 
   &:hover:not(:disabled) {
     filter: brightness(1.06);
-    border-color: color-mix(in srgb, $accent 35%, $bg-elevated);
+    border-color: rgba($accent, 0.35);
   }
 
   &:active:not(:disabled) {
@@ -40,13 +40,13 @@
   }
 
   &:focus-visible {
-    outline: 2px solid color-mix(in srgb, $accent 65%, transparent);
+    outline: 2px solid rgba($accent, 0.65);
   }
 }
 
 .copied {
-  border-color: color-mix(in srgb, $accent 55%, $bg-elevated);
-  background: color-mix(in srgb, $accent 12%, $bg-surface);
+  border-color: rgba($accent, 0.55);
+  background: rgba($accent, 0.12);
 }
 
 .icon {

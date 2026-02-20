@@ -22,7 +22,6 @@
 
 .fallback {
   border-radius: $radius-sm;
-  background: color-mix(in srgb, $accent 25%, $bg-elevated);
-  border: 1px solid color-mix(in srgb, $accent 50%, $bg-elevated);
+  background: rgba($accent, 0.25);
+  border: 1px solid rgba($accent, 0.5);
 }
-

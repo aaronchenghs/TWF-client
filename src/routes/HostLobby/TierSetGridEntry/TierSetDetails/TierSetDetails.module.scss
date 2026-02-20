@@ -32,7 +32,7 @@
   padding: $default-padding;
   border-radius: $radius-sm;
   border: 1px solid $bg-elevated;
-  background: color-mix(in srgb, $bg-surface 75%, $bg-elevated);
+  background: rgba($bg-surface, 0.75);
 }
 
 .itemsList {
@@ -50,7 +50,7 @@
   padding: $default-padding;
   border-radius: $radius-sm;
 
-  border: 1px solid color-mix(in srgb, $bg-elevated 70%, transparent);
+  border: 1px solid rgba($bg-elevated, 0.7);
   background-color: rgba(0, 0, 0, 0.3);
 }
 

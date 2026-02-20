@@ -19,28 +19,28 @@
 
   &:hover {
     transform: rotate(0deg) translateY(-1px);
-    border-color: color-mix(in srgb, $bg-elevated 70%, $text-primary);
+    border-color: rgba($text-primary, 0.3);
   }
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 35%, transparent);
+    box-shadow: 0 0 0 2px rgba($accent, 0.35);
   }
 }
 
 .presetCardSelected {
   border: 1px solid $accent;
-  box-shadow: 0 0 0 2px color-mix(in srgb, $accent 30%, transparent);
+  box-shadow: 0 0 0 2px rgba($accent, 0.3);
 }
 
 .selectedPill {
-  border: 1px solid color-mix(in srgb, $accent 50%, transparent);
-  background: color-mix(in srgb, $accent 15%, transparent);
+  border: 1px solid rgba($accent, 0.5);
+  background: rgba($accent, 0.15);
 }
 
 .selectButton {
   appearance: none;
-  border: 1px solid color-mix(in srgb, $bg-elevated 70%, transparent);
+  border: 1px solid rgba($bg-elevated, 0.7);
   background: transparent;
   padding: $default-padding;
   border-radius: $radius-sm;
@@ -49,7 +49,7 @@
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px color-mix(in srgb, $accent 35%, transparent);
+    box-shadow: 0 0 0 2px rgba($accent, 0.35);
   }
 }
 

@@ -4,9 +4,9 @@
   --accent: #{$accent};
   --radius: #{$radius-md};
 
-  --accent-border: color-mix(in srgb, var(--accent) 88%, #fff 12%);
+  --accent-border: var(--accent);
   --accent-fill: var(--accent);
-  --accent-glow: color-mix(in srgb, var(--accent) 55%, transparent);
+  --accent-glow: rgba(211, 158, 0, 0.45);
 
   position: relative;
   display: inline-flex;
@@ -14,7 +14,7 @@
   justify-content: center;
   isolation: isolate;
 
-  padding: $default-padding calc($default-padding * 1.6);
+  padding: $default-padding calc($default-padding * 1.5);
   border-radius: var(--radius);
 
   border: 2px solid var(--accent-border);
@@ -50,22 +50,18 @@
   &:hover:not(:disabled) {
     background: var(--accent-fill);
     color: $text-primary;
-    border-color: color-mix(in srgb, var(--accent) 92%, $black 8%);
-    box-shadow:
-      $shadow-elevated-md,
-      0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+    border-color: var(--accent);
+    box-shadow: $shadow-elevated-md;
     transform: translateY(-1px);
   }
 
   &:active:not(:disabled) {
-    box-shadow:
-      0 4px 10px $box-shadow-color,
-      0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
+    box-shadow: 0 4px 10px $box-shadow-color;
   }
 }
 
 .small {
-  padding: calc($default-padding * 0.55) calc($default-padding * 1.05);
+  padding: calc($default-padding * 0.5) $default-padding;
   border-width: 1px;
   border-radius: $radius-sm;
   @include comicSkewInteractive($comic-skew-soft, 0deg, -0.1deg);
@@ -88,13 +84,13 @@
 
   &:hover:not(:disabled) {
     background: $bg-surface;
-    border-color: color-mix(in srgb, $bg-elevated 70%, #fff 30%);
+    border-color: rgba(255, 255, 255, 0.24);
     color: $text-primary;
     box-shadow: $shadow-elevated-md;
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px color-mix(in srgb, $bg-elevated 55%, transparent);
+    box-shadow: 0 0 0 3px rgba($bg-elevated, 0.55);
   }
 }
 
@@ -105,7 +101,7 @@
   box-shadow: none;
 
   &:hover:not(:disabled) {
-    background: color-mix(in srgb, $bg-surface 65%, transparent);
+    background: rgba($bg-surface, 0.65);
     border-color: transparent;
     color: $text-primary;
     box-shadow: none;
@@ -118,6 +114,6 @@
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px color-mix(in srgb, $bg-elevated 55%, transparent);
+    box-shadow: 0 0 0 3px rgba($bg-elevated, 0.55);
   }
 }

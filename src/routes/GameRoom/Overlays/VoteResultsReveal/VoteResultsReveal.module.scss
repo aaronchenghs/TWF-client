@@ -104,7 +104,7 @@
 }
 
 .column {
-  --accent: #1e88e5;
+  --accent: #{$severityInfo};
   --tilt: #{$comic-skew-base};
   min-height: 200px;
   display: grid;
@@ -116,17 +116,17 @@
 }
 
 .col_up {
-  --accent: #43a047;
+  --accent: #{$severitySuccess};
   --tilt: #{$comic-skew-strong};
 }
 
 .col_agree {
-  --accent: #1e88e5;
+  --accent: #{$severityInfo};
   --tilt: 0.65deg;
 }
 
 .col_down {
-  --accent: #e53935;
+  --accent: #{$severityError};
   --tilt: #{$comic-skew-soft};
 }
 

@@ -84,7 +84,7 @@ $current-item-float-duration: 3s;
 }
 
 .statusVote {
-  background: rgba(255, 255, 255, 0.08);
+  background: $light-transparency;
   border-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -93,7 +93,7 @@ $current-item-float-duration: 3s;
 }
 
 .itemCard {
-  background: rgba(255, 255, 255, 0.04);
+  background: $light-transparency;
 }
 
 .actionBar {

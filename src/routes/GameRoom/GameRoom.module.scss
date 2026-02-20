@@ -114,6 +114,7 @@ $side-delay: 0.25s;
 
   .turnAvatar {
     flex: 0 0 auto;
+    @include swayX();
   }
 
   .turnPhrase {

@@ -37,8 +37,11 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   });
 
   const handleConfirmQuit = () => {
-    socketClient.disconnect();
-    navigate(ROUTES.LANDING, { replace: true });
+    setIsConfirmQuitOpen(false);
+    window.requestAnimationFrame(() => {
+      socketClient.disconnect();
+      navigate(ROUTES.LANDING, { replace: true });
+    });
   };
 
   return (

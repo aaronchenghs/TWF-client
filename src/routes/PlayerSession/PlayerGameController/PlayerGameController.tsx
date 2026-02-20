@@ -134,7 +134,7 @@ export default function PlayerGameController({
 
   const handleConfirmExit = useCallback(() => {
     setIsConfirmExitOpen(false);
-    handleExit();
+    window.requestAnimationFrame(handleExit);
   }, [handleExit]);
 
   const handlePlayAgain = useCallback(() => {

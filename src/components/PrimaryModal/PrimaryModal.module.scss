@@ -4,7 +4,7 @@
   @include appearFadeIn($dur-fast);
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 20000;
   display: grid;
   place-items: center;
   background: $box-shadow-color;

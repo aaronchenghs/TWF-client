@@ -1,4 +1,5 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import clsx from "clsx";
 import styles from "./PrimaryModal.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
@@ -68,7 +69,7 @@ export function PrimaryModal(props: {
   const maxWidthStyle =
     typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth;
 
-  return (
+  const content = (
     <div
       className={styles.overlay}
       role="dialog"
@@ -128,4 +129,6 @@ export function PrimaryModal(props: {
       </div>
     </div>
   );
+
+  return createPortal(content, document.body);
 }

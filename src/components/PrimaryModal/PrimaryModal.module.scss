@@ -8,7 +8,7 @@
   display: grid;
   place-items: center;
   background: $box-shadow-color;
-  backdrop-filter: blur(6px);
+  backdrop-filter: $backdrop-blur;
   padding: $default-padding;
 }
 
@@ -28,7 +28,7 @@
     0 0 0 1px $light-transparency inset;
   display: flex;
   flex-direction: column;
-  max-height: calc(100dvh - (#{$default-padding} * 2));
+  max-height: calc(100dvh - ($default-padding * 2));
 }
 
 .header {
@@ -96,10 +96,10 @@
 
 @media (max-height: 560px) {
   .overlay {
-    padding: 10px;
+    padding: $default-padding;
   }
   .modal {
-    max-height: calc(100dvh - 20px);
+    max-height: calc(100dvh - ($default-padding * 2));
   }
 }
 

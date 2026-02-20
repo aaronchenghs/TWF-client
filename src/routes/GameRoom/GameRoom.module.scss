@@ -191,7 +191,7 @@ $side-delay: 0.25s;
     border: 2px solid $accent;
 
     background: $box-shadow-color;
-    backdrop-filter: blur(6px);
+    backdrop-filter: $backdrop-blur;
 
     .prevnextButtonsGroup {
       display: flex;

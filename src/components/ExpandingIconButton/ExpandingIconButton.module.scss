@@ -15,7 +15,7 @@ $collapsed-icon-offset: calc(
 );
 
 .button {
-  --label-width: var(--label-width-px, calc(var(--label-length, 8) * 0.72em));
+  --label-width: var(--label-width-px, calc(var(--label-length, 8) * 0.7em));
   --expanded-width: calc(
     ($expanding-border-width * 2) + ($expanding-inline-padding * 2) +
       $expanding-icon-size + $expanding-content-gap + var(--label-width) +

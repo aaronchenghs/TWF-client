@@ -64,7 +64,9 @@
   border-radius: $round;
   background: $light-transparency;
 
-  transition: transform $dur-fast ease, background $dur-fast ease;
+  transition:
+    transform $dur-fast ease,
+    background $dur-fast ease;
 }
 
 .dot:hover {

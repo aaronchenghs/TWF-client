@@ -37,19 +37,19 @@
   color: $text-primary;
 
   transform: translateY(-6px);
-  animation: snackIn $dur-fast ease-out forwards;
+  @include appearPopIn($dur-base);
 }
 
 .content {
   min-width: 0;
-  padding-left: $default-gap;
+  padding-left: $default-padding;
 }
 
 .title {
   font-size: $fs-h6;
   font-weight: bold;
   letter-spacing: 0.02em;
-  margin-bottom: $default-gap;
+  margin-bottom: $default-padding;
 }
 
 .message {
@@ -139,17 +139,12 @@
 
 @media (max-width: $mobile-width) {
   .card {
-    padding: $default-padding $default-gap;
+    padding: $default-padding;
     border-radius: $radius-md;
   }
 
+  .title,
   .message {
-    font-size: $fs-caption;
-  }
-}
-
-@keyframes snackIn {
-  to {
-    transform: translateY(0);
+    font-size: $fs-h5;
   }
 }

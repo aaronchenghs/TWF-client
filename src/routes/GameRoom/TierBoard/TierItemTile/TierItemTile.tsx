@@ -1,10 +1,11 @@
-import { memo } from "react";
+import { memo, useRef } from "react";
 import clsx from "clsx";
 import styles from "./TierItemTile.module.scss";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
 import { getItemMeta } from "../../../../lib/tierItems";
 import * as Contracts from "@twf/contracts";
 import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
+import { useAutoFitText } from "../../../../lib/hooks/useAutoFitText";
 type RoomPublicState = Contracts.RoomPublicState;
 type TierItemId = Contracts.TierItemId;
 
@@ -22,6 +23,13 @@ export const TierItemTile = memo(function TierItemTile({
   className,
 }: Props) {
   const { name, imageSrc } = getItemMeta(state, itemId);
+  const itemNameRef = useRef<HTMLSpanElement | null>(null);
+
+  useAutoFitText(itemNameRef, {
+    minFontSizePx: 16,
+    watch: name,
+  });
+
   return (
     <div
       className={clsx(styles.itemTile, ghost && styles.ghost, className)}
@@ -47,6 +55,7 @@ export const TierItemTile = memo(function TierItemTile({
         weight="bold"
         textAlign="center"
         className={styles.itemName}
+        ref={itemNameRef}
       >
         {name}
       </MainTextTypography>

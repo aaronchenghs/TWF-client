@@ -31,6 +31,7 @@ import {
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { PhaseCountdown } from "./PhaseCountdown/PhaseCountdown";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
+import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -47,6 +48,7 @@ export default function GameRoom() {
   const [isIntro, setIsIntro] = useState(true);
 
   const suppressRejoinNoticeRef = useRef(false);
+  const turnNameRef = useRef<HTMLSpanElement | null>(null);
 
   const roomCode = normalizeCode(code ?? "");
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
@@ -67,6 +69,12 @@ export default function GameRoom() {
       ) ?? null)
     : null;
   const currentTurnName = currentTurnPlayer?.name ?? "";
+
+  useAutoFitText(turnNameRef, {
+    minFontSizePx: 22,
+    watch: currentTurnName,
+    enabled: !!currentTurnName,
+  });
 
   const handleExit = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
@@ -248,6 +256,7 @@ export default function GameRoom() {
                       variant="h3"
                       tone="player"
                       className={styles.turnName}
+                      ref={turnNameRef}
                     >
                       {currentTurnName}
                     </MainTextTypography>

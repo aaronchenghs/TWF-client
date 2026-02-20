@@ -1,7 +1,7 @@
 @use "../../../../styles/export.scss" as *;
 
 .itemTile {
-  width: 116px;
+  width: 168px;
   display: flex;
   flex-direction: column;
   border-radius: $radius-sm;
@@ -58,7 +58,6 @@
     background: rgba(0, 0, 0, 0.5);
 
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
 
     text-transform: uppercase;

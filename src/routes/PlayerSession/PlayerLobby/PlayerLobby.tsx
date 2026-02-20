@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerLobby.module.scss";
@@ -13,6 +13,7 @@ import { ROUTES } from "@/routes/routes";
 import { getPlayerId } from "@/lib/session";
 import { getPlayerNameById } from "@/lib/players";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
+import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -21,6 +22,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
 
   const [isConfirmQuitOpen, setIsConfirmQuitOpen] = useState(false);
   const [isHowToOpen, setIsHowToOpen] = useState(false);
+  const identityNameRef = useRef<HTMLSpanElement | null>(null);
 
   const myPlayerId = getPlayerId(state.code);
   const myPlayer = myPlayerId
@@ -28,6 +30,11 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
     : null;
 
   const myName = myPlayer?.name ?? getPlayerNameById(state.players, myPlayerId);
+
+  useAutoFitText(identityNameRef, {
+    minFontSizePx: 20,
+    watch: myName,
+  });
 
   const handleConfirmQuit = () => {
     socketClient.disconnect();
@@ -53,6 +60,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
             weight="medium"
             letterSpacing="wide"
             className={styles.identityName}
+            ref={identityNameRef}
             tone="player"
           >
             {myName}

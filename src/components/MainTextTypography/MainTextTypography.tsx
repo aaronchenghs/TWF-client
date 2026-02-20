@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import clsx from "clsx";
 import styles from "./MainTextTypography.module.scss";
 
@@ -30,18 +31,25 @@ interface MainTextTypographyProps {
   tone?: Tone;
 }
 
-export function MainTextTypography({
-  variant = "body",
-  className,
-  children,
-  muted,
-  letterSpacing = "normal",
-  weight,
-  textAlign,
-  tone = "default",
-}: MainTextTypographyProps) {
+export const MainTextTypography = forwardRef<
+  HTMLSpanElement,
+  MainTextTypographyProps
+>(function MainTextTypography(
+  {
+    variant = "body",
+    className,
+    children,
+    muted,
+    letterSpacing = "normal",
+    weight,
+    textAlign,
+    tone = "default",
+  },
+  ref,
+) {
   return (
     <span
+      ref={ref}
       className={clsx(
         styles.text,
         styles[variant],
@@ -56,4 +64,6 @@ export function MainTextTypography({
       {children}
     </span>
   );
-}
+});
+
+MainTextTypography.displayName = "MainTextTypography";

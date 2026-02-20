@@ -54,17 +54,16 @@ $logo-max-height: 160px;
   text-align: left;
   min-width: 0;
   flex: 0 1 auto;
-  max-width: min(58vw, 240px);
+  max-width: calc(100% - (25px + $default-gap));
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .identityRow {
-  width: auto;
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: $default-gap;
@@ -171,4 +170,10 @@ $logo-max-height: 160px;
 
 .playerAvatarSway {
   @include swayX(2s, 1.5);
+}
+
+@media (max-width: $mobile-width) {
+  .identity {
+    padding: $default-padding;
+  }
 }

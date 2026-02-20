@@ -2,6 +2,7 @@ import React from "react";
 import clsx from "clsx";
 import styles from "./AccentButton.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
+import { useMobileView } from "@/lib/hooks/useMobileView";
 
 type Variant = "primary" | "secondary" | "ghost" | "destructive";
 type Size = "small";
@@ -22,6 +23,10 @@ export function AccentButton({
   children,
   ...props
 }: AccentButtonProps) {
+  const isMobile = useMobileView();
+  const labelVariant =
+    size === "small" ? (isMobile ? "h5" : "h6") : isMobile ? "h2" : "h3";
+
   return (
     <button
       type={type}
@@ -38,9 +43,7 @@ export function AccentButton({
       }
       {...props}
     >
-      <MainTextTypography variant={size === "small" ? "h6" : "h4"}>
-        {children}
-      </MainTextTypography>
+      <MainTextTypography variant={labelVariant}>{children}</MainTextTypography>
     </button>
   );
 }

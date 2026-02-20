@@ -117,3 +117,13 @@
   pointer-events: none;
   user-select: none;
 }
+
+@media (max-width: $mobile-width) {
+  .joinCard {
+    transform: none;
+  }
+
+  .joinCard:hover {
+    transform: none;
+  }
+}

@@ -3,12 +3,15 @@
 .input {
   height: 50px;
   padding: $default-padding;
+  appearance: none;
+  -webkit-appearance: none;
 
   text-transform: uppercase;
   text-align: center;
   font-family: $font-display;
   letter-spacing: 0.08em;
   font-size: $fs-h5;
+  line-height: 1;
 
   color: $text-primary;
 
@@ -41,5 +44,28 @@
     box-shadow:
       0 0 0 3px rgba($accent, 0.3),
       $shadow-elevated-focus;
+  }
+}
+
+@media (max-width: $mobile-width) {
+  .input {
+    transform: none !important;
+    font-size: $fs-h2;
+    transition:
+      border-color $dur-fast,
+      box-shadow $dur-fast,
+      background $dur-fast,
+      letter-spacing $dur-fast;
+  }
+
+  .input::placeholder {
+    font-size: $fs-h2;
+    line-height: 1;
+  }
+  .input:hover:not(:disabled),
+  .input:focus-visible:not(:disabled),
+  .input:active:not(:disabled),
+  .input:focus:not(:disabled) {
+    transform: none !important;
   }
 }

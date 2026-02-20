@@ -25,7 +25,7 @@ $defaultTierColor: $light-transparency;
   --tierColor: $defaultTierColor;
 
   display: grid;
-  grid-template-columns: 0.1fr 1fr;
+  grid-template-columns: minmax(132px, 0.12fr) 1fr;
   gap: $default-gap;
   min-height: 232px;
 
@@ -61,11 +61,20 @@ $defaultTierColor: $light-transparency;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 132px;
 
     background: var(--tierColor);
     border-radius: $radius-sm;
-    padding: $default-padding;
+    padding: $default-padding calc($default-padding * 2);
     box-shadow: 0 4px 0 $box-shadow-color;
+  }
+
+  .tierLabelText {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   .items {

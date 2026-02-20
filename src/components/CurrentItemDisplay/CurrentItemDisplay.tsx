@@ -35,7 +35,7 @@ export function CurrentItemDisplay({
 }: CurrentItemDisplayProps) {
   if (!isVisible) {
     return (
-      <MainTextTypography textAlign={textAlign} variant="h4" muted>
+      <MainTextTypography textAlign={textAlign} variant="h2" muted>
         {hiddenText}
       </MainTextTypography>
     );
@@ -43,7 +43,7 @@ export function CurrentItemDisplay({
 
   if (!item) {
     return (
-      <MainTextTypography textAlign={textAlign} variant="body" muted>
+      <MainTextTypography textAlign={textAlign} variant="h2" muted>
         {emptyText}
       </MainTextTypography>
     );
@@ -60,7 +60,7 @@ export function CurrentItemDisplay({
         draggable={false}
         fallback={
           <div className={fallbackClassName} aria-hidden="true">
-            <MainTextTypography textAlign={textAlign} variant="h4">
+            <MainTextTypography textAlign={textAlign} variant="h2">
               {item.name}
             </MainTextTypography>
           </div>
@@ -68,7 +68,7 @@ export function CurrentItemDisplay({
       />
       <MainTextTypography
         textAlign={textAlign}
-        variant="h4"
+        variant="h2"
         className={nameClassName}
       >
         {item.name}

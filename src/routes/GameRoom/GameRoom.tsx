@@ -223,7 +223,7 @@ export default function GameRoom() {
 
           <GameStatusCard label="PHASE">
             <div className={styles.itemRow}>
-              <MainTextTypography variant="h3" className={styles.bigText}>
+              <MainTextTypography variant="h2" className={styles.bigText}>
                 {state.phase}
               </MainTextTypography>
 
@@ -253,20 +253,20 @@ export default function GameRoom() {
                   />
                   <div className={styles.turnPhrase}>
                     <MainTextTypography
-                      variant="h3"
+                      variant="h2"
                       tone="player"
                       className={styles.turnName}
                       ref={turnNameRef}
                     >
                       {currentTurnName}
                     </MainTextTypography>
-                    <MainTextTypography variant="h3" muted>
+                    <MainTextTypography variant="h2" muted>
                       {"'s turn"}
                     </MainTextTypography>
                   </div>
                 </div>
               ) : (
-                <MainTextTypography variant="h3" muted>
+                <MainTextTypography variant="h2" muted>
                   —
                 </MainTextTypography>
               )}

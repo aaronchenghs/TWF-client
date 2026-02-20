@@ -4,9 +4,11 @@ import clsx from "clsx";
 import * as Contracts from "@twf/contracts";
 import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
 import { TierItemTile } from "./TierItemTile/TierItemTile";
+import { useAutoFitText } from "../../../lib/hooks/useAutoFitText";
 type RoomPublicState = Contracts.RoomPublicState;
 type TierId = Contracts.TierId;
 type TierItemId = Contracts.TierItemId;
+const MIN_TIER_LABEL_FONT_SIZE_PX = 26;
 
 export const TierBoard = memo(function TierBoard({
   state,
@@ -87,9 +89,7 @@ export const TierBoard = memo(function TierBoard({
               style={{ ["--tierColor" as string]: tierColor }}
             >
               <div className={styles.tierLabel}>
-                <MainTextTypography variant="h5" weight="bold">
-                  {tierMeta?.name ?? tierId}
-                </MainTextTypography>
+                <TierLabelText label={tierMeta?.name ?? tierId} />
               </div>
 
               <div className={styles.items}>
@@ -110,5 +110,31 @@ export const TierBoard = memo(function TierBoard({
         })}
       </div>
     </div>
+  );
+});
+
+const TierLabelText = memo(function TierLabelText({
+  label,
+}: {
+  label: string;
+}) {
+  const labelRef = useRef<HTMLSpanElement | null>(null);
+
+  useAutoFitText(labelRef, {
+    minFontSizePx: MIN_TIER_LABEL_FONT_SIZE_PX,
+    watch: label,
+    enabled: label.length > 0,
+  });
+
+  return (
+    <MainTextTypography
+      variant="h2"
+      weight="bold"
+      textAlign="center"
+      className={styles.tierLabelText}
+      ref={labelRef}
+    >
+      {label}
+    </MainTextTypography>
   );
 });

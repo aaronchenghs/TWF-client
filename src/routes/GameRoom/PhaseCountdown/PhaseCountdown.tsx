@@ -14,7 +14,7 @@ export const PhaseCountdown = memo(function PhaseCountdown({
 }) {
   const clock = usePhaseClock(state);
   return (
-    <MainTextTypography variant="h3" className={className}>
+    <MainTextTypography variant="h2" className={className}>
       {clock.secondsLeft ?? "--"}
     </MainTextTypography>
   );

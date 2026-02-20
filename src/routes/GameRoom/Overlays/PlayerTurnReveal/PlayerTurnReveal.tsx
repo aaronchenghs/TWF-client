@@ -57,14 +57,6 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
             className={styles.reveal}
             {...slide}
           >
-            <MainTextTypography
-              variant="h2"
-              className={styles.line}
-              textAlign="center"
-            >
-              IT'S
-            </MainTextTypography>
-
             <PlayerAvatar
               avatar={currentTurnPlayer?.avatar}
               size={100}

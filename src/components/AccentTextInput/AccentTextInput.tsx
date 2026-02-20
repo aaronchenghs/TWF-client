@@ -20,7 +20,8 @@ export function AccentTextInput({
   const resolvedWidth = fullWidth ? "100%" : (width ?? "120px");
   const ariaLabel =
     props["aria-label"] ??
-    (props["aria-labelledby"] ? undefined : props.placeholder ?? props.name);
+    (props["aria-labelledby"] ? undefined : (props.placeholder ?? props.name));
+
   return (
     <input
       {...props}

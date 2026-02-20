@@ -155,6 +155,7 @@ export function JoinRoomPanel() {
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="CODE"
+          autoComplete="off"
           maxLength={CODE_LENGTH}
           fullWidth
         />
@@ -163,6 +164,7 @@ export function JoinRoomPanel() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="YOUR NAME"
+          autoComplete="off"
           maxLength={MAX_NAME_LENGTH}
           fullWidth
         />

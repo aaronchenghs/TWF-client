@@ -343,7 +343,10 @@ export default function HostLobby() {
         confirmText="Close"
         destructive
         onCancel={() => setIsConfirmCloseOpen(false)}
-        onConfirm={handleCloseLobby}
+        onConfirm={() => {
+          setIsConfirmCloseOpen(false);
+          window.requestAnimationFrame(handleCloseLobby);
+        }}
       />
 
       <CountdownOverlay

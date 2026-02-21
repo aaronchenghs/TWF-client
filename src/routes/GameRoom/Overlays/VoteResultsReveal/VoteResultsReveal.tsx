@@ -33,13 +33,12 @@ const COLUMN_IN_DURATION = 0.3;
 
 const voteConfig: Array<{
   key: VoteBucket;
-  label: string;
   icon: typeof APP_ICONS.vote.up;
   value: VoteValue;
 }> = [
-  { key: "up", label: "Drift Up", icon: VoteUpIcon, value: -1 },
-  { key: "agree", label: "Agree", icon: VoteAgreeIcon, value: 0 },
-  { key: "down", label: "Drift Down", icon: VoteDownIcon, value: 1 },
+  { key: "up", icon: VoteUpIcon, value: -1 },
+  { key: "agree", icon: VoteAgreeIcon, value: 0 },
+  { key: "down", icon: VoteDownIcon, value: 1 },
 ];
 
 export function VoteResultsReveal({
@@ -68,18 +67,18 @@ export function VoteResultsReveal({
     totalMs: REVEAL_TOTAL_MS,
     enterMs: ENTER_MS,
     enterScale: 0.96,
-    exitScale: 0.985,
+    exitScale: 0.98,
     reduceMotion: false,
   });
 
-  const { voteCounts, votersCount } = useMemo(() => {
+  const voteCounts = useMemo(() => {
     const emptyCounts: Record<VoteBucket, number> = {
       up: 0,
       agree: 0,
       down: 0,
     };
 
-    if (!state) return { voteCounts: emptyCounts, votersCount: 0 };
+    if (!state) return emptyCounts;
 
     const orderedVotes = Object.values(state.votes ?? {}) as VoteValue[];
 
@@ -94,7 +93,7 @@ export function VoteResultsReveal({
       { up: 0, agree: 0, down: 0 } as Record<VoteBucket, number>,
     );
 
-    return { voteCounts, votersCount: orderedVotes.length };
+    return voteCounts;
   }, [state]);
 
   return (
@@ -114,15 +113,6 @@ export function VoteResultsReveal({
                   textAlign="left"
                 >
                   RESULTS!
-                </MainTextTypography>
-
-                <MainTextTypography
-                  variant="label"
-                  className={styles.subtitle}
-                  textAlign="left"
-                  letterSpacing="wide"
-                >
-                  Revealed: {pluralize("vote", votersCount, true)}
                 </MainTextTypography>
               </div>
 
@@ -176,14 +166,6 @@ export function VoteResultsReveal({
                         {...ICON_PROPS.vote.results}
                         aria-hidden
                       />
-                    </MainTextTypography>
-                    <MainTextTypography
-                      variant="h3"
-                      className={styles.columnTitle}
-                      letterSpacing="wide"
-                      textAlign="center"
-                    >
-                      {config.label}
                     </MainTextTypography>
                     <MainTextTypography
                       variant="display"

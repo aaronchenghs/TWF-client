@@ -2,22 +2,12 @@
 
 .reveal {
   position: relative;
-  width: min(1000px, 96vw);
-  padding: clamp($default-padding, 2.1vw, 20px);
+  width: min(800px, 80vw);
+  padding: clamp($default-padding, 2vw, 20px);
   border-radius: $radius-lg;
   display: grid;
-  gap: clamp($default-padding, 1.8vw, $radius-lg);
-  background: rgba($bg-app, 0.5);
+  background: rgba($bg-app, 0.8);
   @include float(6px, 3s);
-}
-
-.reveal::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.3;
-  @include dotTexture($comic-dot-color, $comic-dot-size);
 }
 
 .header {
@@ -38,14 +28,14 @@
 .title {
   width: fit-content;
   padding: calc($default-padding / 2) $default-padding;
-  text-shadow: 3px 3px 0 rgba($black, 0.46);
+  text-shadow: 3px 3px 0 rgba($black, 0.5);
 }
 
 .subtitle {
   width: fit-content;
   padding: calc($default-padding / 2) $default-padding;
   border-radius: $radius-sm;
-  background: rgba($black, 0.24);
+  background: rgba($black, 0.25);
   font-weight: $fw-title;
   opacity: 1;
 }
@@ -63,7 +53,7 @@
   width: 56px;
   aspect-ratio: 1 / 1;
   border-radius: $radius-sm;
-  background: rgba($bg-app, 0.74);
+  background: rgba($bg-app, 0.75);
   display: grid;
   place-items: center;
 }
@@ -89,7 +79,7 @@
 
 .itemName {
   font-size: clamp(24px, 3vw, 40px);
-  text-shadow: 2px 2px 0 rgba($black, 0.44);
+  text-shadow: 2px 2px 0 rgba($black, 0.4);
 }
 
 .columns {
@@ -108,7 +98,7 @@
   place-items: center;
   align-content: center;
   gap: $default-gap;
-  padding: clamp(10px, 1.6vw, 14px);
+  padding: clamp($default-gap, 1.5vw, 14px);
   transform: rotate(var(--tilt));
 }
 
@@ -137,8 +127,6 @@
 
 .columnTitle {
   font-size: clamp(24px, 2.8vw, 36px);
-  line-height: 0.9;
-  opacity: 1;
   text-shadow: 2px 2px 0 rgba($black, 0.4);
 }
 
@@ -151,38 +139,4 @@
 
 .columnCountLabel {
   color: $text-secondary;
-}
-
-@media (max-width: 980px) {
-  .columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .column:last-child {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: $mobile-width) {
-  .header {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-  .itemChip {
-    width: 100%;
-    transform: rotate(0.4deg);
-  }
-
-  .columns {
-    grid-template-columns: 1fr;
-  }
-
-  .column:last-child {
-    grid-column: auto;
-  }
-
-  .column {
-    transform: rotate(0deg);
-  }
 }

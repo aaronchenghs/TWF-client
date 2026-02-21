@@ -8,6 +8,11 @@
   margin: calc($default-gap * 2) 0;
 }
 
+.noMargin {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .line {
   flex: 1;
   height: 1px;

@@ -1,5 +1,8 @@
 @use "../../styles/export.scss" as *;
 
+$header-height: 12vh;
+$bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
+
 .root {
   max-width: $page-width-cutoff;
   margin: 0 auto;
@@ -14,42 +17,10 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    padding-top: 36px;
+    height: $header-height;
 
     .title {
       @include float(6px, 3s);
-    }
-
-    .roomMeta {
-      @include glow($accent, 2.5s, 8px, 25%);
-      padding: $default-padding calc($default-padding * 3);
-      text-align: center;
-      border: 2px solid $accent;
-      @include comicPanel(
-        $comic-skew-soft,
-        $radius-lg,
-        $accent,
-        $bg-surface,
-        false
-      );
-
-      .roomCodeContainer {
-        display: flex;
-        align-items: center;
-        gap: $default-gap;
-      }
-
-      .roomLabel {
-        display: block;
-        opacity: 0.8;
-      }
-
-      .roomCode {
-        font-weight: 800;
-        letter-spacing: 0.16em;
-        font-variant-numeric: tabular-nums;
-        text-shadow: 0 1px 0 $box-shadow-color;
-      }
     }
   }
 
@@ -64,7 +35,7 @@
       .presetGrid {
         display: flex;
         flex-direction: column;
-        max-height: 70vh;
+        max-height: $bottom-part-height;
         overflow-y: auto;
         gap: $default-gap;
         @include scrollFade(24px, y);
@@ -77,9 +48,57 @@
       display: flex;
       flex-direction: column;
       gap: $default-gap;
+      max-height: $bottom-part-height;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      .roomMeta {
+        padding: $default-padding calc($default-padding * 3);
+        margin: $default-gap;
+        border: 2px solid $accent;
+        border-radius: $radius-lg;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: $default-gap;
+        text-align: center;
+
+        @include glow($duration: 2.5s, $spread: 8px, $strength: 18%);
+        will-change: filter;
+
+        @include comicPanel(
+          $comic-skew-soft,
+          $radius-lg,
+          $accent,
+          $bg-surface,
+          false
+        );
+
+        .roomCodeContainer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: calc($default-gap * 1.5);
+          width: 100%;
+        }
+
+        .roomLabel {
+          display: block;
+          text-align: center;
+        }
+
+        .roomCode {
+          font-weight: 800;
+          letter-spacing: 0.16em;
+          font-variant-numeric: tabular-nums;
+          text-shadow: 0 1px 0 $box-shadow-color;
+        }
+      }
 
       .panel {
-        padding: calc($default-padding * 2);
+        padding: $default-padding;
         @include comicPanel(
           $comic-skew-soft,
           $radius-md,
@@ -99,10 +118,19 @@
       .controls {
         display: flex;
         flex-direction: column;
-        gap: calc($default-gap * 2);
+        gap: calc($default-gap * 1.5);
       }
 
       .selectedTierSetCard {
+        padding: $default-padding;
+        display: flex;
+        flex-direction: column;
+        gap: calc($default-gap * 0.5);
+        transition:
+          transform $dur-fast $ease-out,
+          border-color $dur-fast $ease-out,
+          box-shadow $dur-fast $ease-out;
+
         @include comicPanel(
           $comic-skew-soft,
           $radius-sm,
@@ -111,18 +139,9 @@
           false
         );
 
-        padding: calc($default-padding * 1.2);
-        display: flex;
-        flex-direction: column;
-        gap: calc($default-gap * 0.8);
-        transition:
-          transform $dur-fast $ease-out,
-          border-color $dur-fast $ease-out,
-          box-shadow $dur-fast $ease-out;
-
         &:hover {
           transform: rotate(0deg) translateY(-1px);
-          border-color: rgba($accent, 0.62);
+          border-color: rgba($accent, 0.6);
           box-shadow: $shadow-comic-panel;
         }
       }
@@ -143,7 +162,7 @@
       }
 
       .selectedTierSetName {
-        min-height: 2.1em;
+        min-height: 1.5em;
         display: grid;
         place-items: center;
         overflow-wrap: anywhere;

@@ -201,27 +201,11 @@ export default function HostLobby() {
         <MainTextTypography variant="h1" className={styles.title}>
           Hosting Lobby
         </MainTextTypography>
-
-        <div className={styles.roomMeta}>
-          <MainTextTypography className={styles.roomLabel} variant="h4">
-            Room Code:
-          </MainTextTypography>
-          <div className={styles.roomCodeContainer}>
-            <CopyTextButton
-              value={roomCode}
-              disabled={!isRoomCodeValid}
-              title="Copy room code"
-            />
-            <MainTextTypography className={styles.roomCode} variant="h2">
-              {roomCode || "----"}
-            </MainTextTypography>
-          </div>
-        </div>
       </header>
 
       <div className={styles.layout}>
         <section className={styles.left}>
-          <SubtextDivider text="Choose a Tier List" />
+          <SubtextDivider text="Choose a Tier List" noMargin />
 
           <div className={styles.presetGrid}>
             {tierSets.length === 0 ? (
@@ -245,6 +229,22 @@ export default function HostLobby() {
         </section>
 
         <aside className={styles.sidePanel}>
+          <div className={styles.roomMeta}>
+            <MainTextTypography className={styles.roomLabel} muted variant="h4">
+              Room Code:
+            </MainTextTypography>
+            <div className={styles.roomCodeContainer}>
+              <CopyTextButton
+                value={roomCode}
+                disabled={!isRoomCodeValid}
+                title="Copy room code"
+              />
+              <MainTextTypography className={styles.roomCode} variant="h2">
+                {roomCode || "----"}
+              </MainTextTypography>
+            </div>
+          </div>
+
           <div className={styles.panel}>
             <MainTextTypography variant="h3">
               Players ({playerCount}/{LOBBY_CAPACITY})

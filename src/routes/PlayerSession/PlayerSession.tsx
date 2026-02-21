@@ -7,10 +7,7 @@ import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
 import PlayerLobby from "./PlayerLobby/PlayerLobby";
 import PlayerGameController from "./PlayerGameController/PlayerGameController";
-import {
-  getStartedHostSession,
-  getClientId,
-} from "@/lib/session";
+import { getStartedHostSession, getClientId } from "@/lib/session";
 import {
   clearPlayerRoomState,
   persistPlayerJoinState,
@@ -23,6 +20,7 @@ import { pushSnackbar } from "@/store/slices/snackBarSlice";
 import { useAppDispatch } from "@/store/store";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { TAB_TITLES } from "@/lib/tabTitles";
+import { getErrorMessage } from "@/lib/errors";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -50,7 +48,7 @@ export default function PlayerSession() {
       pushSnackbar({
         severity: "warn",
         title: "Lobby closed",
-        message: "The host ended the session.",
+        message: getErrorMessage("ROOM_CLOSED"),
       }),
     );
     returnToLanding();
@@ -61,7 +59,7 @@ export default function PlayerSession() {
       pushSnackbar({
         severity: "warn",
         title: "Kicked",
-        message: "The host removed you from the lobby.",
+        message: getErrorMessage("PLAYER_KICKED"),
       }),
     );
     clearPlayerRoomState(roomCode);

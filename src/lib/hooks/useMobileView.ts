@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 const MOBILE_WIDTH = 768;
 
-export type UseMobileViewOptions = {
+type UseMobileViewOptions = {
   breakpoint?: number;
   /** initial value during SSR/hydration; default false */
   defaultValue?: boolean;
@@ -45,7 +45,7 @@ export function useMobileView(options: UseMobileViewOptions = {}): boolean {
         return () => mql.removeListener(onChange);
       }
     },
-    [query, defaultValue]
+    [query, defaultValue],
   );
 
   return isMobileView;

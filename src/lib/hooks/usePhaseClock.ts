@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import * as Contracts from "@twf/contracts";
 type RoomPublicState = Contracts.RoomPublicState;
 
-export type PhaseClock = {
+type PhaseClock = {
   endsAt: number | null;
   msLeft: number | null;
   secondsLeft: number | null;

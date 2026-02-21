@@ -11,7 +11,7 @@ import Step5Img from "../../assets/public/InstructionStep5.svg";
 import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
 import { LoadableImage } from "../LoadableImage/LoadableImage";
 
-export type HowToPlayStep = {
+type HowToPlayStep = {
   title: string;
   body: string;
   imageSrc: string;

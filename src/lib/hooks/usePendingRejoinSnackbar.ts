@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { consumePendingRejoinNotice, type RejoinNotice } from "@/lib/session";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
+import { getErrorMessage } from "@/lib/errors";
 
 const NOTICE_CONSUME_RETRY_MS = 50;
 const MAX_NOTICE_CONSUME_ATTEMPTS = 8;
@@ -12,10 +13,10 @@ function getRejoinSnackbarCopy(notice: RejoinNotice, isStreamerMode: boolean) {
   const roomCode = isStreamerMode ? "****" : notice.roomCode;
   const message =
     notice.kind === "player"
-      ? "Enter the room code again with any name to rejoin."
+      ? getErrorMessage("REJOIN_PLAYER_INSTRUCTIONS")
       : notice.kind === "host_lobby"
-        ? `Reconnect as host in lobby ${roomCode}.`
-        : `Reconnect as host in game ${roomCode}.`;
+        ? getErrorMessage("REJOIN_HOST_LOBBY", { roomCode })
+        : getErrorMessage("REJOIN_HOST_GAME", { roomCode });
 
   return { title, message };
 }

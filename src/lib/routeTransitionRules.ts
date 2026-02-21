@@ -6,13 +6,13 @@ function routeMatches(pathname: string, base: RoutePath) {
   return pathname === base || pathname.startsWith(base + "/");
 }
 
-export type RouteTransitionRule = {
+type RouteTransitionRule = {
   from: RoutePath;
   to: RoutePath;
   dir: TransitionDirection;
 };
 
-export const TRANSITION_RULES: readonly RouteTransitionRule[] = [
+const TRANSITION_RULES: readonly RouteTransitionRule[] = [
   { from: ROUTES.LANDING, to: ROUTES.HOST_LOBBY, dir: "right" },
   { from: ROUTES.HOST_LOBBY, to: ROUTES.LANDING, dir: "left" },
 

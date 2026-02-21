@@ -5,6 +5,7 @@ import {
 import { socketClient } from "@/services/sockets/socketClient";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
 import { store } from "@/store/store";
+import { getErrorMessage } from "@/lib/errors";
 
 const CONNECT_ERROR_TOAST_COOLDOWN_MS = 60_000;
 
@@ -30,7 +31,7 @@ export function initSocketErrorToasts(): () => void {
     const normalizedMessage = message.trim().toLowerCase();
     const friendlyMessage =
       normalizedMessage === "timeout"
-        ? "Unable to reach the game server. Check device network privacy settings and server access."
+        ? getErrorMessage("CONNECTION_TIMEOUT")
         : message;
 
     store.dispatch(

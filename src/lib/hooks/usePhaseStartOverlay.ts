@@ -3,7 +3,7 @@ import type * as Contracts from "@twf/contracts";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
-export type UsePhaseStartOverlayOpts = {
+type UsePhaseStartOverlayOpts = {
   /** Phase that should edge-trigger the reveal (entering that phase). */
   openOnPhase: RoomPublicState["phase"];
   /**
@@ -34,7 +34,7 @@ export type UsePhaseStartOverlayOpts = {
   skipInitialOpen?: boolean;
 };
 
-export type usePhaseStartOverlayProps = {
+type usePhaseStartOverlayProps = {
   isOpen: boolean;
   /** Bumps on every open; use in motion key to restart animations. */
   token: number;

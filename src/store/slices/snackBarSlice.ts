@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { newGuid, type Guid } from "../../lib/guid";
 
-export type SnackbarSeverity = "error" | "warn" | "info" | "success";
+type SnackbarSeverity = "error" | "warn" | "info" | "success";
 
 export type SnackbarItem = {
   id: Guid;
@@ -31,7 +31,7 @@ const initialState: SnackbarState = {
   items: [],
 };
 
-export const snackbarSlice = createSlice({
+const snackbarSlice = createSlice({
   name: "snackbar",
   initialState,
   reducers: {
@@ -52,12 +52,8 @@ export const snackbarSlice = createSlice({
     dismissSnackbar: (state, action: PayloadAction<Guid>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
-    clearSnackbars: (state) => {
-      state.items = [];
-    },
   },
 });
 
-export const { pushSnackbar, dismissSnackbar, clearSnackbars } =
-  snackbarSlice.actions;
+export const { pushSnackbar, dismissSnackbar } = snackbarSlice.actions;
 export default snackbarSlice.reducer;

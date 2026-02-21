@@ -9,7 +9,7 @@ export const MOTION_EASE = {
   route: easeInOut,
 };
 
-export const REDUCED_MOTION_TRANSITION = { duration: 0.01 };
+const REDUCED_MOTION_TRANSITION = { duration: 0.01 };
 
 type SlideHoldOptions = {
   axis: "x" | "y";

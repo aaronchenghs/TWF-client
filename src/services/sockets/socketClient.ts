@@ -37,7 +37,7 @@ type RawOff = (event: string, handler: RawSocketHandler) => ContractSocket;
 
 type ConnectErrorHandler = (errorMessage: string) => void;
 
-export class SocketClient {
+class SocketClient {
   private readonly socket: ContractSocket;
   private myPlayerId: string | null = null;
 

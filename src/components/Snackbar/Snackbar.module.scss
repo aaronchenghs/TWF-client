@@ -79,21 +79,6 @@
   background: $light-transparency;
 }
 
-.progressTrack {
-  margin-top: $default-padding;
-  height: 3px;
-  border-radius: $round;
-  background: $light-transparency;
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  border-radius: $round;
-  background: rgba(255, 255, 255, 0.55);
-  transition: width $dur-fast linear;
-}
-
 .sev_error {
   --snackbarSeverityColor: #{$severityError};
 }
@@ -119,13 +104,6 @@
   box-shadow:
     0 8px 28px $box-shadow-color,
     inset 4px 0 0 var(--snackbarSeverityColor);
-}
-
-.sev_error .progressFill,
-.sev_warn .progressFill,
-.sev_info .progressFill,
-.sev_success .progressFill {
-  background: var(--snackbarSeverityColor);
 }
 
 @media (max-width: $mobile-width) {

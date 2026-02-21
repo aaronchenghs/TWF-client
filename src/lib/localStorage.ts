@@ -190,8 +190,8 @@ const LOCAL_STORAGE_VARIABLES = [
 type LocalStorageVariable = (typeof LOCAL_STORAGE_VARIABLES)[number];
 type LocalStorageVariableTypeMap = NonNullable<LocalStorageVariable["__types"]>;
 
-export type AppLocalStorageKey = LocalStorageVariableTypeMap["key"];
-export type AppLocalStorageValue<K extends AppLocalStorageKey> = Extract<
+type AppLocalStorageKey = LocalStorageVariableTypeMap["key"];
+type AppLocalStorageValue<K extends AppLocalStorageKey> = Extract<
   LocalStorageVariableTypeMap,
   { key: K }
 >["value"];
@@ -213,7 +213,7 @@ function getVariableForKey(key: string): LocalStorageVariable | null {
 }
 
 /** Parses raw localStorage text into its typed value for a known key. */
-export function parseAppLocalStorageValue<K extends AppLocalStorageKey>(
+function parseAppLocalStorageValue<K extends AppLocalStorageKey>(
   key: K,
   raw: string,
 ): AppLocalStorageValue<K> | null {
@@ -222,7 +222,7 @@ export function parseAppLocalStorageValue<K extends AppLocalStorageKey>(
   return variable.parse(raw) as AppLocalStorageValue<K> | null;
 }
 
-export function stringifyAppLocalStorageValue<K extends AppLocalStorageKey>(
+function stringifyAppLocalStorageValue<K extends AppLocalStorageKey>(
   key: K,
   value: AppLocalStorageValue<K>,
 ): string {

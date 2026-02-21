@@ -4,7 +4,7 @@ export const TIP_KINDS = {
   HOST_LOBBY_BEST_PLAY: "host_lobby_best_play",
 } as const;
 
-export type TipKind = (typeof TIP_KINDS)[keyof typeof TIP_KINDS];
+type TipKind = (typeof TIP_KINDS)[keyof typeof TIP_KINDS];
 
 type TipsPopupState = {
   activeTipKind: TipKind | null;
@@ -14,7 +14,7 @@ const initialState: TipsPopupState = {
   activeTipKind: null,
 };
 
-export const tipsPopupSlice = createSlice({
+const tipsPopupSlice = createSlice({
   name: "tipsPopup",
   initialState,
   reducers: {

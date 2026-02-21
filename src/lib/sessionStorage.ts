@@ -3,7 +3,7 @@ export const SESSION_STORAGE_KEYS = {
   ACTIVE_PLAYER_ROOM_CODE: "twf:activePlayerRoomCode",
 } as const;
 
-export type AppSessionStorageKey =
+type AppSessionStorageKey =
   (typeof SESSION_STORAGE_KEYS)[keyof typeof SESSION_STORAGE_KEYS];
 
 function getSessionStorage(): Storage | null {

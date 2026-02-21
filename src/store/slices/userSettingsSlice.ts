@@ -20,7 +20,7 @@ const initialState: UserSettingsState = {
     getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_STREAMER_MODE) === true,
 };
 
-export const userSettingsSlice = createSlice({
+const userSettingsSlice = createSlice({
   name: "userSettings",
   initialState,
   reducers: {

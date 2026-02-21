@@ -50,9 +50,7 @@ export function getClientId(): string {
   return createdId;
 }
 
-export type RoomSession = RoomSessionStorage;
-
-export function getStartedHostSession(): RoomSession | null {
+export function getStartedHostSession(): RoomSessionStorage | null {
   const hostSession = getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION);
   if (!hostSession) return null;
   const startedRoomCode = getLocalStorageValue(
@@ -65,7 +63,7 @@ export function getStartedHostSession(): RoomSession | null {
 /**
  * Saves or updates the room session for the given code.
  */
-export function saveRoomSession(session: RoomSession) {
+export function saveRoomSession(session: RoomSessionStorage) {
   setLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(session.code), session);
   if (session.role === "host")
     setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION, session);

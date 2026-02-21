@@ -1,7 +1,6 @@
 import {
   LOCAL_STORAGE_KEYS,
   getLocalStorageValue,
-  removeLocalStorageValue,
   setLocalStorageValue,
   type RoomSessionStorage,
 } from "./localStorage";
@@ -61,21 +60,6 @@ export function getStartedHostSession(): RoomSession | null {
   );
   if (startedRoomCode !== hostSession.code) return null;
   return hostSession;
-}
-
-export function clearHostSession() {
-  removeLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION);
-  removeLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE);
-}
-
-export function getActivePlayerSession(): RoomSession | null {
-  const code = getSessionStorageValue(
-    SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE,
-  );
-  if (!code) return null;
-  const session = getLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(code));
-  if (!session || session.role !== "player") return null;
-  return session;
 }
 
 /**

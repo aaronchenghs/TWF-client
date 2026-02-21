@@ -13,13 +13,7 @@ import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationMo
 import { CopyTextButton } from "@/components/CopyTextButton/CopyTextButton";
 import { ROUTES } from "@/routes/routes";
 import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
-import { clearHostSession, getClientId, saveRoomSession } from "@/lib/session";
-import {
-  LOCAL_STORAGE_KEYS,
-  getLocalStorageValue,
-  removeLocalStorageValue,
-  setLocalStorageValue,
-} from "@/lib/localStorage";
+import { getClientId, saveRoomSession } from "@/lib/session";
 import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
@@ -31,6 +25,12 @@ import {
   TIP_KINDS,
 } from "@/store/slices/tipsPopupSlice";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
+import {
+  clearHostRoomState,
+  markHostRoomStarted,
+  readHostRoomCode,
+} from "@/lib/roomClientState";
+import { getLocalStorageValue, LOCAL_STORAGE_KEYS } from "@/lib/localStorage";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
@@ -58,9 +58,7 @@ export default function HostLobby() {
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
   const suppressRejoinNoticeRef = useRef(false);
 
-  const roomCode = normalizeCode(
-    getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION)?.code ?? "",
-  );
+  const roomCode = normalizeCode(readHostRoomCode());
   const displayRoomCode = $isStreamerMode
     ? roomCode
       ? "****"
@@ -85,9 +83,7 @@ export default function HostLobby() {
 
   const handleCloseLobby = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
-    clearHostSession();
-    if (roomCode)
-      removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
+    clearHostRoomState(roomCode);
     roomSocket.closeRoom();
     navigate(ROUTES.LANDING);
   }, [navigate, roomCode]);
@@ -107,26 +103,19 @@ export default function HostLobby() {
 
   const handleCountdownComplete = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
-    setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE, roomCode);
+    markHostRoomStarted(roomCode);
     roomSocket.startGame(roomCode);
     navigate(ROUTES.GAME_ROOM);
   }, [navigate, roomCode]);
 
   const handleRoomState = useCallback((state: RoomPublicState) => {
     setRoomState(state);
-    if (state.phase !== "LOBBY") {
-      setLocalStorageValue(
-        LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE,
-        state.code,
-      );
-    }
+    if (state.phase !== "LOBBY") markHostRoomStarted(state.code);
   }, []);
 
   const handleRoomClosed = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
-    clearHostSession();
-    if (roomCode)
-      removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
+    clearHostRoomState(roomCode);
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
 

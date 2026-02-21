@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
-import { LOCAL_STORAGE_KEYS, setLocalStorageValue } from "@/lib/localStorage";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import { hideTip, TIP_KINDS } from "@/store/slices/tipsPopupSlice";
 import styles from "./TipsPopupHost.module.scss";
+import { LOCAL_STORAGE_KEYS, setLocalStorageValue } from "@/lib/localStorage";
 
 export function TipsPopupHost() {
   const dispatch = useAppDispatch();

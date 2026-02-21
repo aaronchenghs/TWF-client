@@ -17,10 +17,7 @@ import {
   getStartedHostSession,
   saveRoomSession,
 } from "../../lib/session";
-import {
-  SESSION_STORAGE_KEYS,
-  setSessionStorageValue,
-} from "@/lib/sessionStorage";
+import { persistPlayerJoinState } from "@/lib/roomClientState";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_VERSION } from "@/config/env";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -150,15 +147,10 @@ export function JoinRoomPanel() {
         clientId,
       });
 
-      saveRoomSession({
-        code: normalizedCode,
-        role: "player",
+      persistPlayerJoinState({
+        roomCode: normalizedCode,
         name: normalizedName,
       });
-      setSessionStorageValue(
-        SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE,
-        normalizedCode,
-      );
 
       navigate(ROUTES.PLAYER_SESSION);
     } catch {

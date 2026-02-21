@@ -14,11 +14,6 @@ import { roomSocket } from "@/services/sockets/roomSocket";
 import { socketClient } from "@/services/sockets/socketClient";
 import { GameStatusCard } from "@/routes/GameRoom/GameStatusCard/GameStatusCard";
 import { ROUTES } from "@/routes/routes";
-import { LOCAL_STORAGE_KEYS, getLocalStorageValue } from "@/lib/localStorage";
-import {
-  SESSION_STORAGE_KEYS,
-  removeSessionStorageValue,
-} from "@/lib/sessionStorage";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
 import { Pill } from "@/components/Pill/Pill";
@@ -26,6 +21,7 @@ import { useActionLocks } from "@/lib/hooks/useActionLocks";
 import { useTurnTabAttention } from "@/lib/hooks/useTurnTabAttention";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
+import { clearPlayerRoomState, readPlayerRuntime } from "@/lib/roomClientState";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -57,9 +53,7 @@ export default function PlayerGameController({
   const [now, setNow] = useState<number>(() => Date.now());
   const lastVoteWindowKeyRef = useRef<string | null>(null);
 
-  const myPlayerId = getLocalStorageValue(
-    LOCAL_STORAGE_KEYS.PLAYER_ID(state.code),
-  );
+  const { playerId: myPlayerId } = readPlayerRuntime(state.code);
 
   const myPlayer = useMemo(
     () => state.players.find((player) => player.id === myPlayerId) ?? null,
@@ -137,10 +131,10 @@ export default function PlayerGameController({
   };
 
   const handleExit = useCallback(() => {
-    removeSessionStorageValue(SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE);
+    clearPlayerRoomState(state.code);
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
-  }, [navigate]);
+  }, [navigate, state.code]);
 
   const handleConfirmExit = useCallback(() => {
     setIsConfirmExitOpen(false);

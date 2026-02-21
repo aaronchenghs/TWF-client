@@ -8,22 +8,15 @@ import * as Contracts from "@twf/contracts";
 import PlayerLobby from "./PlayerLobby/PlayerLobby";
 import PlayerGameController from "./PlayerGameController/PlayerGameController";
 import {
-  getActivePlayerSession,
   getStartedHostSession,
   getClientId,
-  saveRoomSession,
 } from "@/lib/session";
 import {
-  LOCAL_STORAGE_KEYS,
-  getLocalStorageValue,
-  removeLocalStorageValue,
-  setLocalStorageValue,
-} from "@/lib/localStorage";
-import {
-  SESSION_STORAGE_KEYS,
-  removeSessionStorageValue,
-  setSessionStorageValue,
-} from "@/lib/sessionStorage";
+  clearPlayerRoomState,
+  persistPlayerJoinState,
+  readActivePlayerSession,
+  readPlayerRuntime,
+} from "@/lib/roomClientState";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
@@ -39,7 +32,7 @@ export default function PlayerSession() {
   const [searchParams] = useSearchParams();
   const dispatch = useAppDispatch();
   const [state, setState] = useState<RoomPublicState | null>(null);
-  const activePlayerSession = getActivePlayerSession();
+  const activePlayerSession = readActivePlayerSession();
 
   const roomCode = normalizeCode(activePlayerSession?.code ?? "");
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
@@ -47,10 +40,10 @@ export default function PlayerSession() {
     !!state && state.phase !== "LOBBY" && state.phase !== "FINISHED";
 
   const returnToLanding = useCallback(() => {
-    removeSessionStorageValue(SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE);
+    clearPlayerRoomState(roomCode);
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
-  }, [navigate]);
+  }, [navigate, roomCode]);
 
   const handleRoomClosed = useCallback(() => {
     dispatch(
@@ -71,8 +64,7 @@ export default function PlayerSession() {
         message: "The host removed you from the lobby.",
       }),
     );
-    removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
-    removeLocalStorageValue(LOCAL_STORAGE_KEYS.PLAYER_ID(roomCode));
+    clearPlayerRoomState(roomCode);
     returnToLanding();
   }, [dispatch, roomCode, returnToLanding]);
 
@@ -134,16 +126,7 @@ export default function PlayerSession() {
           });
 
           const { state: initialState, playerId } = result;
-
-          const existingPlayerId = getLocalStorageValue(
-            LOCAL_STORAGE_KEYS.PLAYER_ID(roomCode),
-          );
-
-          if (playerId)
-            setLocalStorageValue(
-              LOCAL_STORAGE_KEYS.PLAYER_ID(roomCode),
-              playerId,
-            );
+          const { playerId: existingPlayerId } = readPlayerRuntime(roomCode);
 
           const finalPlayerId = playerId ?? existingPlayerId ?? null;
           const canonicalName =
@@ -153,20 +136,15 @@ export default function PlayerSession() {
                 )?.name
               : null) ?? effectiveName;
 
-          saveRoomSession({
-            code: roomCode,
-            role: "player",
-            name: canonicalName,
-          });
-          setSessionStorageValue(
-            SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE,
+          persistPlayerJoinState({
             roomCode,
-          );
+            name: canonicalName,
+            playerId: finalPlayerId,
+          });
 
           if (!cancelled) setState(initialState);
         } catch {
-          removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
-          removeLocalStorageValue(LOCAL_STORAGE_KEYS.PLAYER_ID(roomCode));
+          clearPlayerRoomState(roomCode);
           if (!cancelled) returnToLanding();
         }
       }

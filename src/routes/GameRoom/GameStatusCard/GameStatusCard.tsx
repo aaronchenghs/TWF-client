@@ -4,7 +4,7 @@ import styles from "./GameStatusCard.module.scss";
 import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
 
 type GameStatusCardProps = {
-  label: string;
+  label?: string;
   headerRight?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -21,9 +21,11 @@ export function GameStatusCard({
   return (
     <section className={clsx(styles.card, className)}>
       <div className={styles.header}>
-        <MainTextTypography variant="label" muted letterSpacing="wide">
-          {label}
-        </MainTextTypography>
+        {label ? (
+          <MainTextTypography variant="label" muted letterSpacing="wide">
+            {label}
+          </MainTextTypography>
+        ) : null}
 
         {headerRight ? (
           <div className={styles.headerRight}>{headerRight}</div>

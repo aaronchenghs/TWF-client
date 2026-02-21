@@ -6,7 +6,7 @@ $current-item-float-duration: 3s;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  padding: calc($default-gap * 2) calc($default-gap * 2)
+  padding: $default-gap $default-gap
     calc($default-gap + env(safe-area-inset-bottom));
   gap: $default-gap;
 }
@@ -15,15 +15,16 @@ $current-item-float-duration: 3s;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: calc($default-gap * 1.5);
-  padding-bottom: calc($default-gap * 2);
+  gap: $default-gap;
+  padding-bottom: $default-padding;
 }
 
 .itemRow {
   display: flex;
   align-items: center;
-  flex-direction: column;
   justify-content: center;
+  width: 100%;
+  min-width: 0;
   gap: $default-gap;
   margin-top: $default-padding;
 }
@@ -41,14 +42,6 @@ $current-item-float-duration: 3s;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: calc($default-gap * 0.75);
-}
-
-.identityName {
-  max-width: min(36vw, 160px);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .statusBar {
@@ -127,8 +120,8 @@ $current-item-float-duration: 3s;
 .itemImage {
   @include float(4px, $current-item-float-duration);
   & {
-    width: clamp(96px, 36vw, 160px);
-    height: clamp(96px, 36vw, 160px);
+    width: clamp(56px, 16vw, 72px);
+    height: clamp(56px, 16vw, 72px);
   }
   flex: 0 0 auto;
   border-radius: $default-gap;
@@ -146,6 +139,9 @@ $current-item-float-duration: 3s;
 
 .itemName {
   @include float(4px, $current-item-float-duration);
+  display: block;
+  flex: 0 1 auto;
+  max-width: min(68vw, 320px);
   min-width: 0;
 }
 

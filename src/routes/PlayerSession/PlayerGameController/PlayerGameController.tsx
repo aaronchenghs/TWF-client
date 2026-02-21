@@ -22,6 +22,7 @@ import { VoteResultsReveal } from "@/routes/GameRoom/Overlays/VoteResultsReveal/
 import { useActionLocks } from "@/lib/hooks/useActionLocks";
 import { useTurnTabAttention } from "@/lib/hooks/useTurnTabAttention";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
+import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -40,6 +41,8 @@ export default function PlayerGameController({
 }) {
   const navigate = useNavigate();
 
+  useAutoScroll();
+
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
 
   const [isPlayAgainSubmitting, setIsPlayAgainSubmitting] = useState(false);
@@ -56,7 +59,6 @@ export default function PlayerGameController({
     () => state.players.find((player) => player.id === myPlayerId) ?? null,
     [state.players, myPlayerId],
   );
-  const myName = myPlayer?.name ?? "PLAYER";
 
   const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
   const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;
@@ -239,13 +241,6 @@ export default function PlayerGameController({
         <div className={styles.topBar}>
           <div className={styles.identity}>
             <PlayerAvatar avatar={myPlayer?.avatar} size={34} />
-            <MainTextTypography
-              variant="label"
-              tone="player"
-              className={styles.identityName}
-            >
-              {myName}
-            </MainTextTypography>
           </div>
 
           <div className={styles.statusBar}>
@@ -277,7 +272,7 @@ export default function PlayerGameController({
           </AccentButton>
         </div>
 
-        <GameStatusCard label="ITEM" className={styles.itemCard}>
+        <GameStatusCard className={styles.itemCard}>
           <CurrentItemDisplay
             item={
               currentItem

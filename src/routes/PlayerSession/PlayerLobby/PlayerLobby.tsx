@@ -6,7 +6,6 @@ import * as Contracts from "@twf/contracts";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { HowToPlayModal } from "@/components/HowToPlayModal/HowToPlayModal";
-import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { socketClient } from "@/services/sockets/socketClient";
 import { ROUTES } from "@/routes/routes";
@@ -14,11 +13,13 @@ import { getPlayerId } from "@/lib/session";
 import { getPlayerNameById } from "@/lib/players";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
+import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
 export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const navigate = useNavigate();
+  useAutoScroll();
 
   const [isConfirmQuitOpen, setIsConfirmQuitOpen] = useState(false);
   const [isHowToOpen, setIsHowToOpen] = useState(false);
@@ -85,21 +86,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
               Game Instructions
             </MainTextTypography>
           </div>
-
-          <span className={styles.chevron} aria-hidden="true" />
         </button>
-      </section>
-
-      <section className={styles.status}>
-        <MainTextTypography
-          variant="body"
-          muted
-          letterSpacing="wide"
-          className={styles.statusLabel}
-        >
-          WAITING FOR HOST TO START
-          <AnimatedDots className={styles.statusDots} />
-        </MainTextTypography>
       </section>
 
       <div className={styles.actions}>

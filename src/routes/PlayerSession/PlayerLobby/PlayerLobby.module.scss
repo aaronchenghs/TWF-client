@@ -70,29 +70,6 @@ $logo-max-height: 160px;
   min-width: 0;
 }
 
-.status {
-  width: 100%;
-  max-width: $max-lobby-width;
-
-  margin-top: $lobby-padding;
-
-  padding: $default-padding;
-  background: $bg-surface;
-  border: 1px solid $bg-elevated;
-  border-radius: $radius-sm;
-}
-
-.statusLabel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: $default-gap;
-}
-
-.statusDots {
-  opacity: 0.7;
-}
-
 .actions {
   width: 100%;
   max-width: $max-lobby-width;
@@ -127,12 +104,12 @@ $logo-max-height: 160px;
 
   appearance: none;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
   padding: 0;
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: $default-gap;
 
   padding: $lobby-padding;
@@ -155,17 +132,8 @@ $logo-max-height: 160px;
 .instructionsSummaryText {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: calc($default-gap * 0.5);
-}
-
-.chevron {
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid $bg-surface;
-  border-bottom: 2px solid $bg-surface;
-  transform: rotate(45deg);
-  transition: transform $dur-fast ease;
-  flex: 0 0 auto;
 }
 
 .playerAvatarSway {

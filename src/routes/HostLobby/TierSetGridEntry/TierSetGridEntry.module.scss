@@ -19,7 +19,7 @@
 
   &:hover {
     transform: rotate(0deg) translateY(-1px);
-    border-color: rgba($text-primary, 0.3);
+    border-color: $accent;
   }
 
   &:focus-visible {

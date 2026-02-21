@@ -1,5 +1,5 @@
 import * as Contracts from "@twf/contracts";
-import { normalizeCode } from "@/lib/codeUtils";
+import { normalizeCode } from "@/lib/stringNormalizers";
 import {
   LOCAL_STORAGE_KEYS,
   getLocalStorageValue,

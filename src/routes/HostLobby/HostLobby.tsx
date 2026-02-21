@@ -7,7 +7,7 @@ import { SubtextDivider } from "@/components/SubtextDivider/SubtextDivider";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
-import { normalizeCode } from "@/lib/codeUtils";
+import { normalizeCode } from "@/lib/stringNormalizers";
 import { TierSetGridEntry } from "./TierSetGridEntry/TierSetGridEntry";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { CopyTextButton } from "@/components/CopyTextButton/CopyTextButton";

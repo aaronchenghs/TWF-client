@@ -5,7 +5,7 @@ import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypo
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { socketClient } from "@/services/sockets/socketClient";
 import { roomSocket } from "@/services/sockets/roomSocket";
-import { normalizeCode } from "@/lib/codeUtils";
+import { normalizeCode } from "@/lib/stringNormalizers";
 import { ROUTES } from "@/routes/routes";
 import * as Contracts from "@twf/contracts";
 import { TierBoard } from "./TierBoard/TierBoard";

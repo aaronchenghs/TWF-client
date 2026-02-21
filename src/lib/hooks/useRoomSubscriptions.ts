@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
-import { normalizeCode } from "@/lib/codeUtils";
+import { normalizeCode } from "@/lib/stringNormalizers";
 import type * as Contracts from "@twf/contracts";
 
 type RoomPublicState = Contracts.RoomPublicState;

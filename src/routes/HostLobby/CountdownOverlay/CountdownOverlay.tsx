@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./CountdownOverlay.module.scss";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
-import { DEFAULT_TIER_COLORS } from "../../../lib/colors";
+import { DEFAULT_TIER_COLORS } from "../../../lib/constants/colors";
 import One from "../../../assets/public/1.svg?react";
 import Two from "../../../assets/public/2.svg?react";
 import Three from "../../../assets/public/3.svg?react";

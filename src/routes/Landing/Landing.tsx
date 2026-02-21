@@ -6,7 +6,7 @@ import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { normalizeCode } from "../../lib/codeUtils";
+import { normalizeCode } from "../../lib/stringNormalizers";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
 import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";

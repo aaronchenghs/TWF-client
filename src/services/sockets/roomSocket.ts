@@ -1,5 +1,5 @@
 import { socketClient } from "@/services/sockets/socketClient";
-import { normalizeCode } from "@/lib/codeUtils";
+import { normalizeCode } from "@/lib/stringNormalizers";
 import * as Contracts from "@twf/contracts";
 
 type Role = Contracts.Role;
@@ -89,9 +89,7 @@ function waitForEventOrError<E extends keyof ServerToClientEvents, T>(
     });
 
     timer = window.setTimeout(() => {
-      settle(() =>
-        reject(new Error(`Timed out waiting for ${timeoutLabel}`)),
-      );
+      settle(() => reject(new Error(`Timed out waiting for ${timeoutLabel}`)));
     }, timeoutMs);
   });
 }
@@ -243,7 +241,9 @@ export const roomSocket = {
 
       timer = window.setTimeout(() => {
         settle(() =>
-          reject(new Error(`Timed out waiting for room join (${normalizedCode})`)),
+          reject(
+            new Error(`Timed out waiting for room join (${normalizedCode})`),
+          ),
         );
       }, timeoutMs);
 

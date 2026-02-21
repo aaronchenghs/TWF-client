@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { SITE_URL } from "@/config/env";
-import { TAB_TITLES } from "@/lib/tabTitles";
+import { TAB_TITLES } from "@/lib/constants/tabTitles";
 import { ROUTES } from "@/routes/routes";
 
 type MetaConfig = {

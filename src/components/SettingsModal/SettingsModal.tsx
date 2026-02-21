@@ -11,7 +11,7 @@ import {
   setStreamerMode,
 } from "@/store/slices/userSettingsSlice";
 import styles from "./SettingsModal.module.scss";
-import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 
 const {
   reduceMotion: ReduceMotionIcon,

@@ -8,7 +8,7 @@ import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
-import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import {
   buildFadeSlideScaleAnimation,
   buildHoldSlideAnimation,

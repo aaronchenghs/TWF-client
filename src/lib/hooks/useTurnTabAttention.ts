@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { TAB_TITLES } from "@/lib/tabTitles";
+import { TAB_TITLES } from "@/lib/constants/tabTitles";
 
 const ALERT_TITLE = TAB_TITLES.TURN_ALERT;
 const ALERT_BLINK_MS = 1000;

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ROUTES } from "@/routes/routes";
-import { normalizeCode, normalizeName } from "@/lib/codeUtils";
+import { normalizeCode, normalizeName } from "@/lib/stringNormalizers";
 import { socketClient } from "@/services/sockets/socketClient";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
@@ -19,7 +19,7 @@ import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
 import { useAppDispatch } from "@/store/store";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
-import { TAB_TITLES } from "@/lib/tabTitles";
+import { TAB_TITLES } from "@/lib/constants/tabTitles";
 import { getErrorMessage } from "@/lib/errors";
 
 type RoomPublicState = Contracts.RoomPublicState;

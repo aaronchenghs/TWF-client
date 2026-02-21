@@ -5,7 +5,7 @@ import * as Contracts from "@twf/contracts";
 import { AccentButton } from "../../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import pluralize from "pluralize";
-import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 
 type VoteValue = Contracts.VoteValue;
 const {

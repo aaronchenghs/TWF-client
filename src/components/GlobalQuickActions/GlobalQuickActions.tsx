@@ -3,7 +3,7 @@ import { openIssueReportForm } from "@/lib/openIssueReportForm";
 import { useAppDispatch } from "@/store/store";
 import { openSettingsModal } from "@/store/slices/userSettingsSlice";
 import styles from "./GlobalQuickActions.module.scss";
-import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { matchPath, useLocation } from "react-router-dom";
 import { QUICK_ACTIONS_HIDDEN_ROUTE_PATTERNS } from "@/routes/routes";
 

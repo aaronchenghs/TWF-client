@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./CopyTextButton.module.scss";
-import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 
 const DEFAULT_COPIED_MS = 900;
 const { copy: CopyIcon, copied: CopiedIcon } = APP_ICONS;
@@ -58,7 +58,7 @@ export function CopyTextButton({
     if (timerRef.current) window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(
       () => setIsCopied(false),
-      DEFAULT_COPIED_MS
+      DEFAULT_COPIED_MS,
     );
   }, [disabled, handleCopy]);
 

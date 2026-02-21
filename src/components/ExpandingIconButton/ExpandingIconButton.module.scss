@@ -1,40 +1,36 @@
 @use "../../styles/export.scss" as *;
 
-$expanding-button-size: $default-padding * 4;
-$expanding-icon-size: $default-padding * 2;
-$expanding-inline-padding: $default-padding;
-$expanding-content-gap: $default-gap;
-$expanding-label-trailing-space: $default-gap;
-$expanding-border-width: 1px;
+$button-size: $default-padding * 4;
+$icon-size: $default-padding * 2;
+$button-size-mobile: $button-size * 0.9;
+$icon-size-mobile: $icon-size * 0.9;
+$inline-padding: $default-padding;
+$label-trailing-space: $default-gap;
+$border-width: 1px;
 $collapsed-icon-offset: calc(
-  (
-      $expanding-button-size - ($expanding-border-width * 2) -
-        $expanding-icon-size
-    ) /
-    2
+  ($button-size - ($border-width * 2) - $icon-size) / 2
 );
 
 .button {
   --label-width: var(--label-width-px, calc(var(--label-length, 8) * 0.7em));
   --expanded-width: calc(
-    ($expanding-border-width * 2) + ($expanding-inline-padding * 2) +
-      $expanding-icon-size + $expanding-content-gap + var(--label-width) +
-      $expanding-label-trailing-space
+    ($border-width * 2) + ($inline-padding * 2) + $icon-size + $default-gap +
+      var(--label-width) + $label-trailing-space
   );
 
-  height: $expanding-button-size;
+  height: $button-size;
   width: var(--expanded-width);
-  max-width: $expanding-button-size;
+  max-width: $button-size;
   padding: 0;
   padding-right: $default-padding;
-  border: $expanding-border-width solid $bg-elevated;
+  border: $border-width solid $bg-elevated;
   border-radius: $radius-md;
   background: $bg-surface;
   color: $text-primary;
 
   display: inline-flex;
   align-items: center;
-  gap: $expanding-content-gap;
+  gap: $default-gap;
 
   box-shadow: $shadow-comic-icon;
   transform: rotate($comic-skew-soft);
@@ -79,17 +75,17 @@ $collapsed-icon-offset: calc(
 }
 
 .iconWrap {
-  width: $expanding-icon-size;
-  min-width: $expanding-icon-size;
-  height: $expanding-icon-size;
+  width: $icon-size;
+  min-width: $icon-size;
+  height: $icon-size;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: margin $dur-base $ease-out;
 
   :global(svg) {
-    width: $expanding-icon-size;
-    height: $expanding-icon-size;
+    width: $icon-size;
+    height: $icon-size;
   }
 }
 
@@ -103,12 +99,12 @@ $collapsed-icon-offset: calc(
 
 .expandRight:hover:not(:disabled) .iconWrap,
 .expandRight:focus-visible:not(:disabled) .iconWrap {
-  margin: 0 0 0 $expanding-inline-padding;
+  margin: 0 0 0 $inline-padding;
 }
 
 .expandLeft:hover:not(:disabled) .iconWrap,
 .expandLeft:focus-visible:not(:disabled) .iconWrap {
-  margin: 0 $expanding-inline-padding 0 0;
+  margin: 0 $inline-padding 0 0;
 }
 
 .label {
@@ -135,5 +131,49 @@ $collapsed-icon-offset: calc(
   .button,
   .label {
     transition: none;
+  }
+}
+
+@media (max-width: $mobile-width) {
+  .button {
+    width: $button-size-mobile;
+    max-width: $button-size-mobile;
+    height: $button-size-mobile;
+    padding-right: 0;
+  }
+
+  .expandRight,
+  .expandLeft {
+    justify-content: center;
+    flex-direction: row;
+  }
+
+  .iconWrap {
+    width: $icon-size-mobile;
+    min-width: $icon-size-mobile;
+    height: $icon-size-mobile;
+  }
+
+  .iconWrap :global(svg) {
+    width: $icon-size-mobile;
+    height: $icon-size-mobile;
+  }
+
+  .expandRight .iconWrap,
+  .expandLeft .iconWrap,
+  .expandRight:hover:not(:disabled) .iconWrap,
+  .expandRight:focus-visible:not(:disabled) .iconWrap,
+  .expandLeft:hover:not(:disabled) .iconWrap,
+  .expandLeft:focus-visible:not(:disabled) .iconWrap {
+    margin: 0;
+  }
+
+  .button:hover:not(:disabled),
+  .button:focus-visible:not(:disabled) {
+    max-width: $button-size-mobile;
+  }
+
+  .label {
+    display: none;
   }
 }

@@ -9,3 +9,9 @@
   flex-direction: column;
   gap: $default-gap;
 }
+
+@media (max-width: $mobile-width) {
+  .quickActions {
+    flex-direction: row-reverse;
+  }
+}

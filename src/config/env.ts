@@ -4,6 +4,22 @@ function isLoopbackHost(hostname: string): boolean {
   );
 }
 
+function shouldUseViteSocketProxy(rawUrl: string | undefined): boolean {
+  // In dev, prefer same-origin Socket.IO so Vite can proxy to the backend.
+  // This avoids CORS/LAN quirks on some mobile devices.
+  if (!import.meta.env.DEV) return false;
+
+  const trimmed = rawUrl?.trim() ?? "";
+  if (!trimmed) return true;
+
+  try {
+    const parsed = new URL(trimmed, window.location.origin);
+    return isLoopbackHost(parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function resolveRuntimeUrl(rawUrl: string | undefined): string {
   const trimmed = rawUrl?.trim() ?? "";
   if (!trimmed) return "";
@@ -21,8 +37,12 @@ function resolveRuntimeUrl(rawUrl: string | undefined): string {
   }
 }
 
-export const SOCKET_URL =
-  resolveRuntimeUrl(import.meta.env.VITE_SOCKET_URL) || window.location.origin;
+export const SOCKET_URL = shouldUseViteSocketProxy(
+  import.meta.env.VITE_SOCKET_URL,
+)
+  ? window.location.origin
+  : resolveRuntimeUrl(import.meta.env.VITE_SOCKET_URL) ||
+    window.location.origin;
 
 export const IS_DEBUG_ENABLED =
   import.meta.env.VITE_ENABLE_DEBUG_CONTROLS === "true";

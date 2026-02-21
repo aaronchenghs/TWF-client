@@ -43,9 +43,11 @@ export class SocketClient {
 
   constructor(url: string) {
     this.socket = io(url, {
-      transports: ["websocket", "polling"],
+      transports: ["polling", "websocket"],
+      tryAllTransports: true,
       withCredentials: true,
       autoConnect: false,
+      timeout: 12_000,
     });
   }
 
@@ -68,7 +70,7 @@ export class SocketClient {
 
   /** Disconnects the socket if currently connected. */
   disconnect(): void {
-    if (this.socket.connected) this.socket.disconnect();
+    this.socket.disconnect();
   }
 
   /** Emits a contract-defined client->server event with the correct argument tuple. */

@@ -72,7 +72,9 @@ Use `.env.example` as the canonical template for required/optional variables.
 
 Use this when testing from another device on your local network.
 
-1. Start backend (`TWF-server`) and ensure `CLIENT_ORIGINS` includes your frontend origin(s).
+1. Start backend (`TWF-server`) and ensure your client origin is allowed:
+   - Add it to `CLIENT_ORIGINS`, or
+   - Keep `ALLOW_PRIVATE_NETWORK_ORIGINS=true` (recommended for LAN testing).
 2. Start frontend with:
 
 ```bash
@@ -80,6 +82,7 @@ npm run host
 ```
 
 3. Open the LAN URL shown by Vite (example: `http://192.168.0.72:5173`).
+4. If the phone can load the site but joins time out, try leaving `VITE_SOCKET_URL` unset/blank so Vite proxies Socket.IO via the same origin (see `vite.config.ts`).
 
 ## Build and Run Production Bundle
 
@@ -102,11 +105,13 @@ Then open the preview URL printed in the terminal.
   Ensure Git is installed and your machine has access to the GitHub repo referenced in `package.json`.
 
 - Backend works on your machine but not on another device:
-  Set `VITE_SOCKET_URL` to your LAN IP (for example `http://192.168.1.10:3001`) and run:
+  Preferred: leave `VITE_SOCKET_URL` unset/blank so Vite proxies Socket.IO for LAN devices, then run:
 
 ```bash
 npm run host
 ```
+
+  Alternative: set `VITE_SOCKET_URL` to your LAN IP (for example `http://192.168.1.10:3001`).
 
 - iPhone joins time out but desktop/other phones work:
   On the iPhone, go to `Settings > Wi-Fi > <your network>`, disable `Limit IP Address Tracking`, then retry.

@@ -5,7 +5,7 @@ import { ROUTES } from "../routes";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../services/sockets/roomSocket";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { normalizeCode } from "../../lib/codeUtils";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
@@ -38,6 +38,7 @@ export default function Landing() {
       saveRoomSession({ code, role: "host" });
       navigate(`${ROUTES.HOST_LOBBY}/${code}`);
     } catch (e) {
+      socketClient.disconnect();
       dispatch(
         pushSnackbar({
           severity: "error",
@@ -110,6 +111,7 @@ export default function Landing() {
 export function JoinRoomPanel() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const [code, setCode] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [isJoining, setIsJoining] = useState<boolean>(false);
@@ -123,6 +125,18 @@ export function JoinRoomPanel() {
     normalizedName.length >= 1 &&
     normalizedName.length <= MAX_NAME_LENGTH &&
     !isJoining;
+
+  const handleCodeInputEnter = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    nameInputRef.current?.focus();
+  };
+
+  const handleNameInputEnter = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    void handleJoinRoom();
+  };
 
   const handleJoinRoom = async () => {
     if (!canJoin) return;
@@ -170,18 +184,23 @@ export function JoinRoomPanel() {
       <MainTextTypography variant="h4">Join a Lobby</MainTextTypography>
       <div className={styles.joinRow}>
         <AccentTextInput
-          name="lobbycode"
+          name="lobby code"
           value={code}
           onChange={(e) => setCode(e.target.value)}
+          onKeyDown={handleCodeInputEnter}
+          enterKeyHint="next"
           placeholder="CODE"
           autoComplete="off"
           maxLength={CODE_LENGTH}
           fullWidth
         />
         <AccentTextInput
+          ref={nameInputRef}
           name="username"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          onKeyDown={handleNameInputEnter}
+          enterKeyHint="go"
           placeholder="YOUR NAME"
           autoComplete="off"
           maxLength={MAX_NAME_LENGTH}

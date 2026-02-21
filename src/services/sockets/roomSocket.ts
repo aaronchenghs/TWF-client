@@ -187,7 +187,7 @@ export const roomSocket = {
 
   async joinRoomOrThrow(
     input: RoomJoinPayload,
-    timeoutMs = 3000,
+    timeoutMs = DEFAULT_TIMEOUT_MS,
   ): Promise<{ state: RoomPublicState; playerId?: string }> {
     const normalizedCode = normalizeCode(input.code);
     const isPlayer = input.role === "player";

@@ -6,7 +6,11 @@ import { socketClient } from "@/services/sockets/socketClient";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
 import { store } from "@/store/store";
 
+const CONNECT_ERROR_TOAST_COOLDOWN_MS = 60_000;
+
 export function initSocketErrorToasts(): () => void {
+  let lastConnectErrorAt = 0;
+
   const offRoomError = roomSocket.onRoomError((err: RoomErrorPayload) => {
     store.dispatch(
       pushSnackbar({
@@ -19,11 +23,21 @@ export function initSocketErrorToasts(): () => void {
   });
 
   const offConnectError = socketClient.onConnectError((message) => {
+    const now = Date.now();
+    if (now - lastConnectErrorAt < CONNECT_ERROR_TOAST_COOLDOWN_MS) return;
+    lastConnectErrorAt = now;
+
+    const normalizedMessage = message.trim().toLowerCase();
+    const friendlyMessage =
+      normalizedMessage === "timeout"
+        ? "Unable to reach the game server. Check device network privacy settings and server access."
+        : message;
+
     store.dispatch(
       pushSnackbar({
         severity: "error",
         title: "Connection failed",
-        message,
+        message: friendlyMessage,
         durationMs: 4500,
       }),
     );

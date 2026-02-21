@@ -1,6 +1,6 @@
 @use "../../styles/export.scss" as *;
 
-$header-height: 12vh;
+$header-height: 10vh;
 $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 
 .root {

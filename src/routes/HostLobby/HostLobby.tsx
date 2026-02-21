@@ -198,7 +198,7 @@ export default function HostLobby() {
   return (
     <div className={styles.root}>
       <header className={styles.header}>
-        <MainTextTypography variant="h1" className={styles.title}>
+        <MainTextTypography variant="h2" className={styles.title}>
           Hosting Lobby
         </MainTextTypography>
       </header>

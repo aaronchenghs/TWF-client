@@ -35,6 +35,8 @@ type RawOn = (event: string, handler: RawSocketHandler) => ContractSocket;
 
 type RawOff = (event: string, handler: RawSocketHandler) => ContractSocket;
 
+type ConnectErrorHandler = (errorMessage: string) => void;
+
 export class SocketClient {
   private readonly socket: ContractSocket;
   private myPlayerId: string | null = null;
@@ -116,6 +118,28 @@ export class SocketClient {
     on.call(this.socket, "disconnect", rawHandler);
     return () => {
       off.call(this.socket, "disconnect", rawHandler);
+    };
+  }
+
+  /** Subscribes to low-level socket connection errors; returns an unsubscribe function. */
+  onConnectError(handler: ConnectErrorHandler): () => void {
+    const on = this.socket.on as unknown as RawOn;
+    const off = this.socket.off as unknown as RawOff;
+    const rawHandler: RawSocketHandler = (errorLike: unknown) => {
+      if (errorLike instanceof Error) {
+        handler(errorLike.message);
+        return;
+      }
+      if (typeof errorLike === "string") {
+        handler(errorLike);
+        return;
+      }
+      handler("Unable to connect to server.");
+    };
+
+    on.call(this.socket, "connect_error", rawHandler);
+    return () => {
+      off.call(this.socket, "connect_error", rawHandler);
     };
   }
 

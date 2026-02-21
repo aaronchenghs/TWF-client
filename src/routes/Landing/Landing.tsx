@@ -19,11 +19,14 @@ import {
 } from "../../lib/session";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_VERSION } from "@/config/env";
+import { useAppDispatch } from "@/store/store";
+import { pushSnackbar } from "@/store/slices/snackBarSlice";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 
 export default function Landing() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const isMobile = useMobileView();
   const [isCreatingLobby, setIsCreatingLobby] = useState<boolean>(false);
   const [isHowToOpen, setIsHowToOpen] = useState(false);
@@ -34,6 +37,14 @@ export default function Landing() {
       const { code } = await roomSocket.createRoom("host");
       saveRoomSession({ code, role: "host" });
       navigate(`${ROUTES.HOST_LOBBY}/${code}`);
+    } catch (e) {
+      dispatch(
+        pushSnackbar({
+          severity: "error",
+          title: "Could not create lobby",
+          message: e instanceof Error ? e.message : "Request timed out.",
+        }),
+      );
     } finally {
       setIsCreatingLobby(false);
     }
@@ -98,6 +109,7 @@ export default function Landing() {
 
 export function JoinRoomPanel() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [code, setCode] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [isJoining, setIsJoining] = useState<boolean>(false);
@@ -140,6 +152,13 @@ export function JoinRoomPanel() {
       navigate(`${ROUTES.PLAYER_SESSION}/${normalizedCode}`);
     } catch (e) {
       console.error(e);
+      dispatch(
+        pushSnackbar({
+          severity: "error",
+          title: "Could not join",
+          message: e instanceof Error ? e.message : "Request timed out.",
+        }),
+      );
       socketClient.disconnect();
     } finally {
       setIsJoining(false);

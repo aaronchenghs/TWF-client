@@ -55,6 +55,7 @@ Use `.env.example` as the canonical template for required/optional variables.
 | Script              | What it does                                                               |
 | ------------------- | -------------------------------------------------------------------------- |
 | `npm run dev`       | Starts Vite dev server with hot reload.                                    |
+| `npm run host`      | Starts Vite bound to LAN (`0.0.0.0`) so phones/devices can connect.        |
 | `npm run build`     | Runs TypeScript build (`tsc -b`) and outputs production assets to `dist/`. |
 | `npm run preview`   | Serves the production build locally for verification.                      |
 | `npm run lint`      | Runs ESLint.                                                               |
@@ -66,6 +67,19 @@ Use `.env.example` as the canonical template for required/optional variables.
 2. Start the frontend with `npm run dev`.
 3. In one browser tab, create a lobby (host flow).
 4. In another tab or device, join with lobby code and player name.
+
+## LAN / Phone Testing
+
+Use this when testing from another device on your local network.
+
+1. Start backend (`TWF-server`) and ensure `CLIENT_ORIGINS` includes your frontend origin(s).
+2. Start frontend with:
+
+```bash
+npm run host
+```
+
+3. Open the LAN URL shown by Vite (example: `http://192.168.0.72:5173`).
 
 ## Build and Run Production Bundle
 
@@ -88,11 +102,14 @@ Then open the preview URL printed in the terminal.
   Ensure Git is installed and your machine has access to the GitHub repo referenced in `package.json`.
 
 - Backend works on your machine but not on another device:
-  Set `VITE_SOCKET_URL` to your LAN IP (for example `http://192.168.1.10:3001`) and run Vite with host binding:
+  Set `VITE_SOCKET_URL` to your LAN IP (for example `http://192.168.1.10:3001`) and run:
 
 ```bash
-npm run dev -- --host
+npm run host
 ```
+
+- iPhone joins time out but desktop/other phones work:
+  On the iPhone, go to `Settings > Wi-Fi > <your network>`, disable `Limit IP Address Tracking`, then retry.
 
 ## Tech Stack
 

@@ -63,7 +63,12 @@ export function PlaceControls(props: {
               aria-pressed={isSelected}
             >
               <div className={styles.tierPickLabel}>
-                <MainTextTypography variant="h5" weight="bold">
+                <MainTextTypography
+                  variant="h5"
+                  weight="bold"
+                  textAlign="center"
+                  className={styles.tierPickLabelText}
+                >
                   {tier.name ?? tierId}
                 </MainTextTypography>
               </div>

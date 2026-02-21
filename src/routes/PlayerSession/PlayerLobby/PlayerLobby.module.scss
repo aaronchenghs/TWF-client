@@ -54,8 +54,7 @@ $logo-max-height: 160px;
   text-align: left;
   min-width: 0;
   flex: 0 1 auto;
-  max-width: calc(100% - (25px + $default-gap));
-  overflow: hidden;
+  max-width: calc(100% - ($default-gap * 2));
   white-space: nowrap;
 }
 
@@ -80,13 +79,25 @@ $logo-max-height: 160px;
 }
 
 .footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc($default-padding + env(safe-area-inset-bottom));
   width: 100%;
-
   margin-top: auto;
-  max-width: $max-lobby-width;
-
-  padding-top: $lobby-padding;
+  padding: 0 $lobby-padding;
   text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.waitingStatus {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.waitingDots {
+  width: 16px;
 }
 
 .instructions {

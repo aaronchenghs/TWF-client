@@ -7,6 +7,7 @@ import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { HowToPlayModal } from "@/components/HowToPlayModal/HowToPlayModal";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
+import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { socketClient } from "@/services/sockets/socketClient";
 import { ROUTES } from "@/routes/routes";
 import { getPlayerNameById } from "@/lib/players";
@@ -97,8 +98,14 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
       </div>
 
       <footer className={styles.footer}>
-        <MainTextTypography variant="caption" muted letterSpacing="wide">
-          KEEP THIS TAB OPEN
+        <MainTextTypography
+          variant="caption"
+          muted
+          letterSpacing="wide"
+          className={styles.waitingStatus}
+        >
+          Waiting for host
+          <AnimatedDots className={styles.waitingDots} />
         </MainTextTypography>
       </footer>
 

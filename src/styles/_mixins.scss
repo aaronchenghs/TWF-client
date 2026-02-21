@@ -85,3 +85,11 @@
     transform: rotate($active-rotate) translateY(0);
   }
 }
+
+@mixin flexFixed($basis: auto) {
+  flex: 0 0 $basis;
+}
+
+@mixin flexFill($basis: auto) {
+  flex: 1 1 $basis;
+}

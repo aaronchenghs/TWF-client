@@ -31,7 +31,7 @@ $logo-max-height: 160px;
 
   display: block;
   margin: $lobby-padding auto;
-  flex: 0 0 auto;
+  @include flexFixed();
   @include float(6px, 3.5s);
 }
 

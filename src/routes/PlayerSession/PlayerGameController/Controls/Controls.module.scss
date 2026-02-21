@@ -22,7 +22,7 @@ $image-preview-height: 56px;
 }
 
 .placeControls {
-  flex: 1 1 auto;
+  @include flexFill();
 }
 
 .voteControls {
@@ -72,7 +72,7 @@ $image-preview-height: 56px;
   flex-direction: column;
   gap: $default-gap;
 
-  flex: 1 1 auto;
+  @include flexFill();
   min-height: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -195,7 +195,7 @@ $image-preview-height: 56px;
 .confirmRow {
   margin-top: auto;
   padding-top: $default-gap;
-  flex: 0 0 auto;
+  @include flexFixed();
 }
 
 .confirmButton {

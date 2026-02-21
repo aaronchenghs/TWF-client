@@ -188,14 +188,14 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
         display: flex;
         align-items: center;
         gap: $default-gap;
-        flex: 1 1 auto;
+        @include flexFill();
         min-width: 0;
       }
     }
 
     .player {
       padding: $default-padding 0 $default-padding 2px;
-      flex: 1 1 0;
+      @include flexFill(0);
       min-width: 0;
       display: block;
       overflow: hidden;

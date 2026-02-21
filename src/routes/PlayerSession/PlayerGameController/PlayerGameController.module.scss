@@ -14,7 +14,7 @@ $current-item-float-duration: 3s;
 }
 
 .main {
-  flex: 0 0 auto;
+  @include flexFixed();
   display: flex;
   flex-direction: column;
   gap: $default-gap;
@@ -99,7 +99,7 @@ $current-item-float-duration: 3s;
 }
 
 .actionBar {
-  flex: 1 1 auto;
+  @include flexFill();
   min-height: 0;
   padding: 0;
   display: flex;
@@ -135,7 +135,7 @@ $current-item-float-duration: 3s;
     width: clamp(56px, 16vw, 72px);
     height: clamp(56px, 16vw, 72px);
   }
-  flex: 0 0 auto;
+  @include flexFixed();
   border-radius: $default-gap;
   overflow: hidden;
   border: 1px solid $light-transparency;

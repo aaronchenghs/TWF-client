@@ -47,7 +47,7 @@ $side-delay: 0.25s;
     grid-template-columns: 1fr 480px;
     gap: $default-gap;
     align-items: start;
-    flex: 1 1 auto;
+    @include flexFill();
     min-height: 0;
     height: 100%;
   }
@@ -113,7 +113,7 @@ $side-delay: 0.25s;
   }
 
   .turnAvatar {
-    flex: 0 0 auto;
+    @include flexFixed();
   }
 
   .turnPhrase {
@@ -136,7 +136,7 @@ $side-delay: 0.25s;
   .itemImageFallback {
     width: 56px;
     height: 56px;
-    flex: 0 0 auto;
+    @include flexFixed();
     border-radius: $default-gap;
   }
 

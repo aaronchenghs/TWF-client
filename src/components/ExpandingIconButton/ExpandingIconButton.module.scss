@@ -109,7 +109,7 @@ $collapsed-icon-offset: calc(
 
 .label {
   width: var(--label-width);
-  flex: 0 0 var(--label-width);
+  @include flexFixed(var(--label-width));
   opacity: 0;
   transform: translateX(-3px);
   transition:

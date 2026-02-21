@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import styles from "./Controls.module.scss";
 import { AwaitingControls } from "./AwaitingControls";
 import * as Contracts from "@twf/contracts";
@@ -32,7 +33,7 @@ export function VoteControls(props: {
 
   if (isPlacer || alreadyVoted) return <AwaitingControls />;
   return (
-    <div className={styles.controls}>
+    <div className={clsx(styles.controls, styles.voteControls)}>
       {isDiscussionLocked ? (
         <div
           className={styles.discussionNotice}

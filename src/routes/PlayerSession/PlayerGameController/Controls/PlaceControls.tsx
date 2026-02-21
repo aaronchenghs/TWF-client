@@ -38,7 +38,7 @@ export function PlaceControls(props: {
   const isConfirmDisabled = !selectedTierId;
 
   return (
-    <div className={styles.controls}>
+    <div className={clsx(styles.controls, styles.placeControls)}>
       <div
         className={styles.tierPickList}
         role="group"

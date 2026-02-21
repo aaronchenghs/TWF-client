@@ -76,7 +76,9 @@ $image-preview-height: 56px;
   min-height: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  @include scrollFade($default-padding, y);
 
+  padding-block: $default-gap;
   padding-right: calc($default-padding / 2);
 }
 

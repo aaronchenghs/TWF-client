@@ -191,10 +191,6 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
         flex: 1 1 auto;
         min-width: 0;
       }
-
-      .playerAvatarSway {
-        @include swayX(2s, 1.5);
-      }
     }
 
     .player {

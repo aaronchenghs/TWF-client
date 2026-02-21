@@ -61,6 +61,7 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
               avatar={currentTurnPlayer?.avatar}
               size={100}
               className={styles.avatar}
+              sway
             />
 
             <MainTextTypography

@@ -114,7 +114,6 @@ $side-delay: 0.25s;
 
   .turnAvatar {
     flex: 0 0 auto;
-    @include swayX();
   }
 
   .turnPhrase {
@@ -128,8 +127,7 @@ $side-delay: 0.25s;
 
   .turnName {
     min-width: 0;
-    max-width: min(100%, 180px);
-    overflow: hidden;
+    max-width: min(100%, 188px);
     white-space: nowrap;
   }
 

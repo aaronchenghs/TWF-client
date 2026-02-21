@@ -54,11 +54,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
           YOU ARE:
         </MainTextTypography>
         <div className={styles.identityRow}>
-          <PlayerAvatar
-            avatar={myPlayer?.avatar}
-            className={styles.playerAvatarSway}
-            size={52}
-          />
+          <PlayerAvatar avatar={myPlayer?.avatar} sway size={52} />
           <MainTextTypography
             variant="h2"
             weight="medium"

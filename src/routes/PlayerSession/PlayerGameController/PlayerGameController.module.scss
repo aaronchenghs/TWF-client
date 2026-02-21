@@ -44,6 +44,13 @@ $current-item-float-duration: 3s;
   align-items: center;
 }
 
+.identityAvatar {
+  --sway-x-offset: 2px;
+  --sway-x-offset-neg: -2px;
+  --sway-rotation: 3deg;
+  --sway-rotation-neg: -3deg;
+}
+
 .statusBar {
   display: flex;
   justify-content: center;

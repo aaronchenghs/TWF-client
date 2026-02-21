@@ -136,10 +136,6 @@ $logo-max-height: 160px;
   gap: calc($default-gap * 0.5);
 }
 
-.playerAvatarSway {
-  @include swayX(2s, 1.5);
-}
-
 @media (max-width: $mobile-width) {
   .identity {
     padding: $default-padding;

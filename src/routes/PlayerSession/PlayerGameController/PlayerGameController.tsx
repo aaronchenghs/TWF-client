@@ -18,7 +18,6 @@ import { getPlayerId } from "@/lib/session";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
 import { Pill } from "@/components/Pill/Pill";
-import { VoteResultsReveal } from "@/routes/GameRoom/Overlays/VoteResultsReveal/VoteResultsReveal";
 import { useActionLocks } from "@/lib/hooks/useActionLocks";
 import { useTurnTabAttention } from "@/lib/hooks/useTurnTabAttention";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
@@ -97,6 +96,7 @@ export default function PlayerGameController({
     if (state.phase === "PLACE") return isMyTurn ? "Place" : "Waiting";
     if (state.phase === "VOTE")
       return !isMyTurn && !hasVoted ? "Vote" : "Waiting";
+    if (state.phase === "RESULTS") return "Results!";
     if (state.phase === "FINISHED") return "Finished";
     return "Waiting";
   })();
@@ -240,7 +240,12 @@ export default function PlayerGameController({
       <main className={styles.main}>
         <div className={styles.topBar}>
           <div className={styles.identity}>
-            <PlayerAvatar avatar={myPlayer?.avatar} size={34} />
+            <PlayerAvatar
+              sway
+              avatar={myPlayer?.avatar}
+              size={34}
+              className={styles.identityAvatar}
+            />
           </div>
 
           <div className={styles.statusBar}>
@@ -351,8 +356,6 @@ export default function PlayerGameController({
         onCancel={() => setIsConfirmExitOpen(false)}
         onConfirm={handleConfirmExit}
       />
-
-      <VoteResultsReveal state={state} />
     </div>
   );
 }

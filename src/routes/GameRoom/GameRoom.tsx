@@ -250,6 +250,7 @@ export default function GameRoom() {
                     avatar={currentTurnPlayer?.avatar}
                     size={45}
                     className={styles.turnAvatar}
+                    sway
                   />
                   <div className={styles.turnPhrase}>
                     <MainTextTypography

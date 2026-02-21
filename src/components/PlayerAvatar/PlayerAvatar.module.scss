@@ -2,6 +2,10 @@
 
 .root {
   --avatar-size: 36px;
+  --sway-x-offset: 1.5px;
+  --sway-x-offset-neg: -1.5px;
+  --sway-rotation: 2.25deg;
+  --sway-rotation-neg: -2.25deg;
   width: var(--avatar-size);
   height: var(--avatar-size);
   min-width: var(--avatar-size);
@@ -24,4 +28,28 @@
   border-radius: $radius-sm;
   background: rgba($accent, 0.25);
   border: 1px solid rgba($accent, 0.5);
+}
+
+@keyframes avatarSway {
+  0%,
+  100% {
+    transform: translate3d(var(--sway-x-offset-neg), 0, 0)
+      rotate(var(--sway-rotation-neg));
+  }
+  50% {
+    transform: translate3d(var(--sway-x-offset), 0, 0)
+      rotate(var(--sway-rotation));
+  }
+}
+
+.sway {
+  animation: avatarSway 2s ease-in-out infinite;
+  transform-origin: center bottom;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+:global(html[data-reduce-motion="true"]) .sway {
+  animation: avatarSway 2s ease-in-out infinite !important;
 }

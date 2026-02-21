@@ -8,9 +8,15 @@ type PlayerAvatarProps = {
   avatar: Avatar | string | null | undefined;
   className?: string;
   size?: number;
+  sway?: boolean;
 };
 
-export function PlayerAvatar({ avatar, className, size = 36 }: PlayerAvatarProps) {
+export function PlayerAvatar({
+  avatar,
+  className,
+  size = 36,
+  sway = false,
+}: PlayerAvatarProps) {
   const layers = resolvePlayerAvatarLayers(avatar);
 
   const rootStyle = {
@@ -20,7 +26,12 @@ export function PlayerAvatar({ avatar, className, size = 36 }: PlayerAvatarProps
   if (!layers) {
     return (
       <div
-        className={clsx(styles.root, styles.fallback, className)}
+        className={clsx(
+          styles.root,
+          styles.fallback,
+          sway && styles.sway,
+          className,
+        )}
         style={rootStyle}
         aria-hidden="true"
       />
@@ -28,11 +39,29 @@ export function PlayerAvatar({ avatar, className, size = 36 }: PlayerAvatarProps
   }
 
   return (
-    <div className={clsx(styles.root, className)} style={rootStyle} aria-hidden="true">
-      <img className={styles.layer} src={layers.bodySrc} alt="" decoding="async" />
-      <img className={styles.layer} src={layers.mouthSrc} alt="" decoding="async" />
-      <img className={styles.layer} src={layers.eyesSrc} alt="" decoding="async" />
+    <div
+      className={clsx(styles.root, sway && styles.sway, className)}
+      style={rootStyle}
+      aria-hidden="true"
+    >
+      <img
+        className={styles.layer}
+        src={layers.bodySrc}
+        alt=""
+        decoding="async"
+      />
+      <img
+        className={styles.layer}
+        src={layers.mouthSrc}
+        alt=""
+        decoding="async"
+      />
+      <img
+        className={styles.layer}
+        src={layers.eyesSrc}
+        alt=""
+        decoding="async"
+      />
     </div>
   );
 }
-

@@ -9,6 +9,7 @@ import {
 import type { SnackbarItem } from "../../store/slices/snackBarSlice";
 import { dismissSnackbar } from "../../store/slices/snackBarSlice";
 import type { Guid } from "../../lib/guid";
+import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 
 export function SnackbarHost() {
   const $items = useAppSelector((state: AppState) => state.snackbar.items);
@@ -118,7 +119,9 @@ function SnackbarCard(props: {
       onBlurCapture={() => setPaused(false)}
     >
       <div className={styles.content}>
-        {item.title ? <div className={styles.title}>{item.title}</div> : null}
+        {item.title ? (
+          <MainTextTypography variant="h4">{item.title}</MainTextTypography>
+        ) : null}
         <div className={styles.message}>{item.message}</div>
       </div>
 

@@ -8,8 +8,6 @@
   display: grid;
   gap: clamp($default-padding, 1.8vw, $radius-lg);
   background: rgba($bg-app, 0.5);
-  overflow: hidden;
-
   @include float(6px, 3s);
 }
 
@@ -65,7 +63,6 @@
   width: 56px;
   aspect-ratio: 1 / 1;
   border-radius: $radius-sm;
-  overflow: hidden;
   background: rgba($bg-app, 0.74);
   display: grid;
   place-items: center;

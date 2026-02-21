@@ -110,7 +110,6 @@ export default function Landing() {
 
 export function JoinRoomPanel() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const nameInputRef = useRef<HTMLInputElement>(null);
   const [code, setCode] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -166,13 +165,6 @@ export function JoinRoomPanel() {
       navigate(`${ROUTES.PLAYER_SESSION}/${normalizedCode}`);
     } catch (e) {
       console.error(e);
-      dispatch(
-        pushSnackbar({
-          severity: "error",
-          title: "Could not join",
-          message: e instanceof Error ? e.message : "Request timed out.",
-        }),
-      );
       socketClient.disconnect();
     } finally {
       setIsJoining(false);

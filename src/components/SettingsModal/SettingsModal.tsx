@@ -39,7 +39,6 @@ export function SettingsModal() {
       open={$isSettingsModalOpen}
       onClose={() => dispatch(closeSettingsModal())}
       title="Settings"
-      subtitle="Preferences"
       maxWidth={560}
       footer={
         <AccentButton onClick={() => dispatch(closeSettingsModal())}>

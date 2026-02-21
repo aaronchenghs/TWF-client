@@ -37,8 +37,11 @@
   justify-content: space-between;
   gap: $default-gap;
   padding: $default-padding;
-
   flex: 0 0 auto;
+
+  @media (max-width: $mobile-width) {
+    padding-bottom: 0px;
+  }
 }
 
 .headerText {
@@ -92,6 +95,10 @@
   gap: $default-gap;
   padding: $default-padding;
   flex: 0 0 auto;
+
+  @media (max-width: $mobile-width) {
+    padding-top: 0px;
+  }
 }
 
 @media (max-height: 560px) {

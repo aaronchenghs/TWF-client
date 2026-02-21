@@ -54,7 +54,7 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 
       .roomMeta {
         padding: $default-padding calc($default-padding * 3);
-        margin: $default-gap;
+        margin: $default-gap calc($default-gap * 2);
         border: 2px solid $accent;
         border-radius: $radius-lg;
 

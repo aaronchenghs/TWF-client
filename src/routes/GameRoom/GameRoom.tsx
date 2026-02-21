@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./GameRoom.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
@@ -34,6 +34,7 @@ import {
 } from "@/lib/roomClientState";
 
 type RoomPublicState = Contracts.RoomPublicState;
+type TierItemId = Contracts.TierItemId;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 export default function GameRoom() {
@@ -69,6 +70,29 @@ export default function GameRoom() {
         imageSrc: state.itemMetaById?.[state.currentItem]?.imageSrc,
       }
     : null;
+
+  const currentItemProgress = useMemo(() => {
+    if (!state?.currentItem) return { index: null, total: null };
+
+    const total = state.itemMetaById
+      ? Object.keys(state.itemMetaById).length
+      : null;
+    if (!total) return { index: null, total: null };
+
+    const placed = new Set<TierItemId>();
+    Object.values(state.tiers ?? {}).forEach((items) => {
+      items?.forEach((id) => placed.add(id));
+    });
+
+    const index = placed.size + (placed.has(state.currentItem) ? 0 : 1);
+
+    return { index: Math.min(index, total), total };
+  }, [state]);
+
+  const currentItemLabel =
+    currentItemProgress.index && currentItemProgress.total
+      ? `CURRENT ITEM (${currentItemProgress.index}/${currentItemProgress.total}):`
+      : "CURRENT ITEM:";
 
   const currentTurnPlayer = state?.currentTurnPlayerId
     ? (state.players.find(
@@ -234,7 +258,7 @@ export default function GameRoom() {
             </div>
           </GameStatusCard>
 
-          <GameStatusCard label="CURRENT ITEM:">
+          <GameStatusCard label={currentItemLabel}>
             <CurrentItemDisplay
               item={currentItem}
               isVisible={SHOW_CURRENT_ITEM_PHASES.has(state.phase)}

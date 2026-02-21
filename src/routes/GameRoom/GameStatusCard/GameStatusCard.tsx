@@ -22,7 +22,7 @@ export function GameStatusCard({
     <section className={clsx(styles.card, className)}>
       <div className={styles.header}>
         {label ? (
-          <MainTextTypography variant="label" muted letterSpacing="wide">
+          <MainTextTypography variant="caption" muted letterSpacing="wide">
             {label}
           </MainTextTypography>
         ) : null}

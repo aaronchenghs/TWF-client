@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./GameRoom.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
@@ -21,13 +21,13 @@ import { PlayerTurnReveal } from "./Overlays/PlayerTurnReveal/PlayerTurnReveal";
 import { VoteResultsReveal } from "./Overlays/VoteResultsReveal/VoteResultsReveal";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
+import { clearHostSession, getClientId, saveRoomSession } from "@/lib/session";
 import {
-  clearHostSession,
-  clearRoomSession,
-  getClientId,
-  markHostStartedRoomCode,
-  saveRoomSession,
-} from "@/lib/session";
+  LOCAL_STORAGE_KEYS,
+  getLocalStorageValue,
+  removeLocalStorageValue,
+  setLocalStorageValue,
+} from "@/lib/localStorage";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { PhaseCountdown } from "./PhaseCountdown/PhaseCountdown";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
@@ -39,22 +39,23 @@ const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 export default function GameRoom() {
   const navigate = useNavigate();
-  const { code } = useParams<{ code: string }>();
   const $isStreamerMode = useAppSelector(
     (state: AppState) => state.userSettings.isStreamerMode,
+  );
+  const roomCode = normalizeCode(
+    getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION)?.code ?? "",
   );
 
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
   const [isRematchSubmitting, setIsRematchSubmitting] = useState(false);
   const [state, setState] = useState<RoomPublicState | null>(() =>
-    roomSocket.getLastRoomState(normalizeCode(code ?? "")),
+    roomSocket.getLastRoomState(roomCode),
   );
   const [isIntro, setIsIntro] = useState(true);
 
   const suppressRejoinNoticeRef = useRef(false);
   const turnNameRef = useRef<HTMLSpanElement | null>(null);
 
-  const roomCode = normalizeCode(code ?? "");
   const displayRoomCode = $isStreamerMode
     ? roomCode
       ? "****"
@@ -88,7 +89,8 @@ export default function GameRoom() {
   const handleExit = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
     clearHostSession();
-    if (roomCode) clearRoomSession(roomCode);
+    if (roomCode)
+      removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
     roomSocket.closeRoom();
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
@@ -97,7 +99,8 @@ export default function GameRoom() {
   const handleRoomClosed = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
     clearHostSession();
-    if (roomCode) clearRoomSession(roomCode);
+    if (roomCode)
+      removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
@@ -123,7 +126,7 @@ export default function GameRoom() {
   });
 
   useRoomSubscriptions({
-    roomCode: roomCode || null,
+    roomCode: isRoomCodeValid ? roomCode : null,
     onState: handleRoomState,
     onClosed: handleRoomClosed,
   });
@@ -142,7 +145,7 @@ export default function GameRoom() {
       if (!state) return;
       if (!roomCode) return;
       if (state.phase === "LOBBY") return;
-      markHostStartedRoomCode(roomCode);
+      setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE, roomCode);
     },
     [state, roomCode],
   );
@@ -152,7 +155,7 @@ export default function GameRoom() {
       if (!state) return;
       if (state.phase !== "LOBBY") return;
       if (!roomCode) return;
-      navigate(`${ROUTES.HOST_LOBBY}/${roomCode}`, { replace: true });
+      navigate(ROUTES.HOST_LOBBY, { replace: true });
     },
     [navigate, roomCode, state],
   );
@@ -172,7 +175,10 @@ export default function GameRoom() {
         .then(({ state: joinedState }) => {
           if (cancelled) return;
           saveRoomSession({ code: roomCode, role: "host" });
-          markHostStartedRoomCode(roomCode);
+          setLocalStorageValue(
+            LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE,
+            roomCode,
+          );
           setState(joinedState);
         })
         .catch(() => {

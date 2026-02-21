@@ -17,16 +17,17 @@ import {
   getStartedHostSession,
   saveRoomSession,
 } from "../../lib/session";
+import {
+  SESSION_STORAGE_KEYS,
+  setSessionStorageValue,
+} from "@/lib/sessionStorage";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_VERSION } from "@/config/env";
-import { useAppDispatch } from "@/store/store";
-import { pushSnackbar } from "@/store/slices/snackBarSlice";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 
 export default function Landing() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const isMobile = useMobileView();
   const [isCreatingLobby, setIsCreatingLobby] = useState<boolean>(false);
   const [isHowToOpen, setIsHowToOpen] = useState(false);
@@ -36,16 +37,9 @@ export default function Landing() {
     try {
       const { code } = await roomSocket.createRoom("host");
       saveRoomSession({ code, role: "host" });
-      navigate(`${ROUTES.HOST_LOBBY}/${code}`);
-    } catch (e) {
+      navigate(ROUTES.HOST_LOBBY);
+    } catch {
       socketClient.disconnect();
-      dispatch(
-        pushSnackbar({
-          severity: "error",
-          title: "Could not create lobby",
-          message: e instanceof Error ? e.message : "Request timed out.",
-        }),
-      );
     } finally {
       setIsCreatingLobby(false);
     }
@@ -142,7 +136,7 @@ export function JoinRoomPanel() {
     setIsJoining(true);
     const hostSession = getStartedHostSession();
     if (hostSession) {
-      navigate(`${ROUTES.GAME_ROOM}/${hostSession.code}`);
+      navigate(ROUTES.GAME_ROOM);
       setIsJoining(false);
       return;
     }
@@ -161,10 +155,13 @@ export function JoinRoomPanel() {
         role: "player",
         name: normalizedName,
       });
+      setSessionStorageValue(
+        SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE,
+        normalizedCode,
+      );
 
-      navigate(`${ROUTES.PLAYER_SESSION}/${normalizedCode}`);
-    } catch (e) {
-      console.error(e);
+      navigate(ROUTES.PLAYER_SESSION);
+    } catch {
       socketClient.disconnect();
     } finally {
       setIsJoining(false);

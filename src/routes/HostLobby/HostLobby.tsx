@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import styles from "./HostLobby.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
@@ -13,14 +13,13 @@ import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationMo
 import { CopyTextButton } from "@/components/CopyTextButton/CopyTextButton";
 import { ROUTES } from "@/routes/routes";
 import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
+import { clearHostSession, getClientId, saveRoomSession } from "@/lib/session";
 import {
-  clearHostSession,
-  clearRoomSession,
-  getClientId,
-  hasSeenHostLobbyPlayTip,
-  markHostStartedRoomCode,
-  saveRoomSession,
-} from "@/lib/session";
+  LOCAL_STORAGE_KEYS,
+  getLocalStorageValue,
+  removeLocalStorageValue,
+  setLocalStorageValue,
+} from "@/lib/localStorage";
 import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
@@ -42,7 +41,6 @@ type RoomPublicState = Contracts.RoomPublicState;
 export default function HostLobby() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { code } = useParams<{ code: string }>();
 
   const $isShowTips = useAppSelector(
     (state: AppState) => state.userSettings.isShowTips,
@@ -60,7 +58,9 @@ export default function HostLobby() {
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
   const suppressRejoinNoticeRef = useRef(false);
 
-  const roomCode = normalizeCode(code ?? "");
+  const roomCode = normalizeCode(
+    getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION)?.code ?? "",
+  );
   const displayRoomCode = $isStreamerMode
     ? roomCode
       ? "****"
@@ -86,7 +86,8 @@ export default function HostLobby() {
   const handleCloseLobby = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
     clearHostSession();
-    if (roomCode) clearRoomSession(roomCode);
+    if (roomCode)
+      removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
     roomSocket.closeRoom();
     navigate(ROUTES.LANDING);
   }, [navigate, roomCode]);
@@ -106,22 +107,26 @@ export default function HostLobby() {
 
   const handleCountdownComplete = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
-    markHostStartedRoomCode(roomCode);
+    setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE, roomCode);
     roomSocket.startGame(roomCode);
-    navigate(`${ROUTES.GAME_ROOM}/${roomCode}`);
+    navigate(ROUTES.GAME_ROOM);
   }, [navigate, roomCode]);
 
   const handleRoomState = useCallback((state: RoomPublicState) => {
     setRoomState(state);
     if (state.phase !== "LOBBY") {
-      markHostStartedRoomCode(state.code);
+      setLocalStorageValue(
+        LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE,
+        state.code,
+      );
     }
   }, []);
 
   const handleRoomClosed = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
     clearHostSession();
-    if (roomCode) clearRoomSession(roomCode);
+    if (roomCode)
+      removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
 
@@ -142,7 +147,11 @@ export default function HostLobby() {
     function maybeShowBestPlayTip() {
       if (!isRoomCodeValid) return;
       if (!$isShowTips) return;
-      if (hasSeenHostLobbyPlayTip()) return;
+      if (
+        getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN) ===
+        true
+      )
+        return;
 
       const tipTimer = window.setTimeout(() => {
         dispatch(showTip(TIP_KINDS.HOST_LOBBY_BEST_PLAY));
@@ -177,14 +186,17 @@ export default function HostLobby() {
       if (!roomState) return;
       if (roomState.phase === "LOBBY") return;
       suppressRejoinNoticeRef.current = true;
-      navigate(`${ROUTES.GAME_ROOM}/${roomState.code}`, { replace: true });
+      navigate(ROUTES.GAME_ROOM, { replace: true });
     },
     [navigate, roomState],
   );
 
   useEffect(
     function handleRoomConnection() {
-      if (!isRoomCodeValid) return;
+      if (!isRoomCodeValid) {
+        handleRoomClosed();
+        return;
+      }
 
       const clientId = getClientId();
 

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ROUTES } from "@/routes/routes";
 import { normalizeCode, normalizeName } from "@/lib/codeUtils";
 import { socketClient } from "@/services/sockets/socketClient";
@@ -8,15 +8,22 @@ import * as Contracts from "@twf/contracts";
 import PlayerLobby from "./PlayerLobby/PlayerLobby";
 import PlayerGameController from "./PlayerGameController/PlayerGameController";
 import {
-  clearPlayerId,
-  clearRoomSession,
+  getActivePlayerSession,
   getStartedHostSession,
   getClientId,
-  getPlayerId,
-  getRoomSession,
-  savePlayerId,
   saveRoomSession,
 } from "@/lib/session";
+import {
+  LOCAL_STORAGE_KEYS,
+  getLocalStorageValue,
+  removeLocalStorageValue,
+  setLocalStorageValue,
+} from "@/lib/localStorage";
+import {
+  SESSION_STORAGE_KEYS,
+  removeSessionStorageValue,
+  setSessionStorageValue,
+} from "@/lib/sessionStorage";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
@@ -29,17 +36,18 @@ const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 export default function PlayerSession() {
   const navigate = useNavigate();
-  const { code } = useParams<{ code: string }>();
   const [searchParams] = useSearchParams();
   const dispatch = useAppDispatch();
   const [state, setState] = useState<RoomPublicState | null>(null);
+  const activePlayerSession = getActivePlayerSession();
 
-  const roomCode = normalizeCode(code ?? "");
+  const roomCode = normalizeCode(activePlayerSession?.code ?? "");
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
   const isPlayerUnexpectedExitEligible =
     !!state && state.phase !== "LOBBY" && state.phase !== "FINISHED";
 
   const returnToLanding = useCallback(() => {
+    removeSessionStorageValue(SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE);
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);
@@ -63,8 +71,8 @@ export default function PlayerSession() {
         message: "The host removed you from the lobby.",
       }),
     );
-    clearRoomSession(roomCode);
-    clearPlayerId(roomCode);
+    removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
+    removeLocalStorageValue(LOCAL_STORAGE_KEYS.PLAYER_ID(roomCode));
     returnToLanding();
   }, [dispatch, roomCode, returnToLanding]);
 
@@ -97,7 +105,7 @@ export default function PlayerSession() {
     function handleStateAndConnection() {
       const hostSession = getStartedHostSession();
       if (hostSession) {
-        navigate(`${ROUTES.GAME_ROOM}/${hostSession.code}`, { replace: true });
+        navigate(ROUTES.GAME_ROOM, { replace: true });
         return;
       }
 
@@ -107,8 +115,7 @@ export default function PlayerSession() {
       }
       const nameFromUrl = normalizeName(searchParams.get("name"));
       const clientId = getClientId();
-      const session = getRoomSession(roomCode);
-      const effectiveName = nameFromUrl || session?.name || "";
+      const effectiveName = nameFromUrl || activePlayerSession?.name || "";
 
       if (!effectiveName) {
         returnToLanding();
@@ -128,8 +135,15 @@ export default function PlayerSession() {
 
           const { state: initialState, playerId } = result;
 
-          const existingPlayerId = getPlayerId(roomCode);
-          if (playerId) savePlayerId(roomCode, playerId);
+          const existingPlayerId = getLocalStorageValue(
+            LOCAL_STORAGE_KEYS.PLAYER_ID(roomCode),
+          );
+
+          if (playerId)
+            setLocalStorageValue(
+              LOCAL_STORAGE_KEYS.PLAYER_ID(roomCode),
+              playerId,
+            );
 
           const finalPlayerId = playerId ?? existingPlayerId ?? null;
           const canonicalName =
@@ -144,11 +158,15 @@ export default function PlayerSession() {
             role: "player",
             name: canonicalName,
           });
+          setSessionStorageValue(
+            SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE,
+            roomCode,
+          );
 
           if (!cancelled) setState(initialState);
         } catch {
-          clearRoomSession(roomCode);
-          clearPlayerId(roomCode);
+          removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(roomCode));
+          removeLocalStorageValue(LOCAL_STORAGE_KEYS.PLAYER_ID(roomCode));
           if (!cancelled) returnToLanding();
         }
       }
@@ -159,7 +177,14 @@ export default function PlayerSession() {
         cancelled = true;
       };
     },
-    [navigate, roomCode, isRoomCodeValid, searchParams, returnToLanding],
+    [
+      navigate,
+      roomCode,
+      isRoomCodeValid,
+      searchParams,
+      returnToLanding,
+      activePlayerSession?.name,
+    ],
   );
 
   if (!state)

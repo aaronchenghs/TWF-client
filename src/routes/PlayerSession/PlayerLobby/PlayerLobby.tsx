@@ -9,7 +9,11 @@ import { HowToPlayModal } from "@/components/HowToPlayModal/HowToPlayModal";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { socketClient } from "@/services/sockets/socketClient";
 import { ROUTES } from "@/routes/routes";
-import { getPlayerId } from "@/lib/session";
+import { LOCAL_STORAGE_KEYS, getLocalStorageValue } from "@/lib/localStorage";
+import {
+  SESSION_STORAGE_KEYS,
+  removeSessionStorageValue,
+} from "@/lib/sessionStorage";
 import { getPlayerNameById } from "@/lib/players";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
@@ -25,7 +29,9 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const [isHowToOpen, setIsHowToOpen] = useState(false);
   const identityNameRef = useRef<HTMLSpanElement | null>(null);
 
-  const myPlayerId = getPlayerId(state.code);
+  const myPlayerId = getLocalStorageValue(
+    LOCAL_STORAGE_KEYS.PLAYER_ID(state.code),
+  );
   const myPlayer = myPlayerId
     ? (state.players.find((player) => player.id === myPlayerId) ?? null)
     : null;
@@ -40,6 +46,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const handleConfirmQuit = () => {
     setIsConfirmQuitOpen(false);
     window.requestAnimationFrame(() => {
+      removeSessionStorageValue(SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE);
       socketClient.disconnect();
       navigate(ROUTES.LANDING, { replace: true });
     });

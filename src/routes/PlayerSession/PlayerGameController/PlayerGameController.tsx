@@ -14,7 +14,11 @@ import { roomSocket } from "@/services/sockets/roomSocket";
 import { socketClient } from "@/services/sockets/socketClient";
 import { GameStatusCard } from "@/routes/GameRoom/GameStatusCard/GameStatusCard";
 import { ROUTES } from "@/routes/routes";
-import { getPlayerId } from "@/lib/session";
+import { LOCAL_STORAGE_KEYS, getLocalStorageValue } from "@/lib/localStorage";
+import {
+  SESSION_STORAGE_KEYS,
+  removeSessionStorageValue,
+} from "@/lib/sessionStorage";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
 import { Pill } from "@/components/Pill/Pill";
@@ -53,7 +57,10 @@ export default function PlayerGameController({
   const [now, setNow] = useState<number>(() => Date.now());
   const lastVoteWindowKeyRef = useRef<string | null>(null);
 
-  const myPlayerId = getPlayerId(state.code);
+  const myPlayerId = getLocalStorageValue(
+    LOCAL_STORAGE_KEYS.PLAYER_ID(state.code),
+  );
+
   const myPlayer = useMemo(
     () => state.players.find((player) => player.id === myPlayerId) ?? null,
     [state.players, myPlayerId],
@@ -130,6 +137,7 @@ export default function PlayerGameController({
   };
 
   const handleExit = useCallback(() => {
+    removeSessionStorageValue(SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE);
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate]);

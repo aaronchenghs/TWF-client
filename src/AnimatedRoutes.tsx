@@ -51,20 +51,20 @@ export function AnimatedRoutes() {
               </Suspense>
             }
           />
-          <Route path={`${ROUTES.HOST_LOBBY}/:code`} element={<HostLobby />} />
+          <Route path={ROUTES.HOST_LOBBY} element={<HostLobby />} />
           <Route
-            path={`${ROUTES.PLAYER_SESSION}/:code`}
+            path={ROUTES.GAME_ROOM}
             element={
               <Suspense fallback={<RouteLoadingFallback />}>
-                <PlayerSession />
+                <GameRoom />
               </Suspense>
             }
           />
           <Route
-            path={`${ROUTES.GAME_ROOM}/:code`}
+            path={ROUTES.PLAYER_SESSION}
             element={
               <Suspense fallback={<RouteLoadingFallback />}>
-                <GameRoom />
+                <PlayerSession />
               </Suspense>
             }
           />

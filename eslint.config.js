@@ -25,6 +25,16 @@ export default defineConfig([
       "jsx-a11y": jsxA11y,
     },
     rules: {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          varsIgnorePattern: "^_$",
+          argsIgnorePattern: "^_$",
+          caughtErrorsIgnorePattern: "^_$",
+          destructuredArrayIgnorePattern: "^_$",
+        },
+      ],
       "react-hooks/set-state-in-effect": "warn",
       "jsx-a11y/alt-text": "error",
       "jsx-a11y/anchor-is-valid": "error",

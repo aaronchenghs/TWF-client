@@ -1,12 +1,9 @@
 import { useEffect } from "react";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
-import { markHostLobbyPlayTipSeen } from "@/lib/session";
+import { LOCAL_STORAGE_KEYS, setLocalStorageValue } from "@/lib/localStorage";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
-import {
-  hideTip,
-  TIP_KINDS,
-} from "@/store/slices/tipsPopupSlice";
+import { hideTip, TIP_KINDS } from "@/store/slices/tipsPopupSlice";
 import styles from "./TipsPopupHost.module.scss";
 
 export function TipsPopupHost() {
@@ -37,15 +34,18 @@ export function TipsPopupHost() {
         </MainTextTypography>
 
         <MainTextTypography variant="body" muted>
-          Host on a big screen or screen-share, and have everyone join with
-          this room's code on their own phone or device. You can still play by
+          Host on a big screen or screen-share, and have everyone join with this
+          room's code on their own phone or device. You can still play by
           joining from your phone or a second tab!
         </MainTextTypography>
 
         <AccentButton
           size="small"
           onClick={() => {
-            markHostLobbyPlayTipSeen();
+            setLocalStorageValue(
+              LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN,
+              true,
+            );
             dispatch(hideTip());
           }}
         >

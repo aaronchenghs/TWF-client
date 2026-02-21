@@ -53,44 +53,12 @@ export function getClientId(): string {
 
 export type RoomSession = RoomSessionStorage;
 
-export function getPlayerId(code: string): string | null {
-  return getLocalStorageValue(LOCAL_STORAGE_KEYS.PLAYER_ID(code));
-}
-
-export function savePlayerId(code: string, playerId: string) {
-  setLocalStorageValue(LOCAL_STORAGE_KEYS.PLAYER_ID(code), playerId);
-}
-
-export function clearPlayerId(code: string) {
-  removeLocalStorageValue(LOCAL_STORAGE_KEYS.PLAYER_ID(code));
-}
-
-export function getHostSession(): RoomSession | null {
-  return getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION);
-}
-
-export function getHostStartedRoomCode(): string | null {
-  return getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE);
-}
-
-export function markHostStartedRoomCode(code: string) {
-  setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE, code);
-}
-
-export function hasSeenHostLobbyPlayTip(): boolean {
-  return (
-    getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN) === true
-  );
-}
-
-export function markHostLobbyPlayTipSeen() {
-  setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN, true);
-}
-
 export function getStartedHostSession(): RoomSession | null {
-  const hostSession = getHostSession();
+  const hostSession = getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION);
   if (!hostSession) return null;
-  const startedRoomCode = getHostStartedRoomCode();
+  const startedRoomCode = getLocalStorageValue(
+    LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE,
+  );
   if (startedRoomCode !== hostSession.code) return null;
   return hostSession;
 }
@@ -100,11 +68,14 @@ export function clearHostSession() {
   removeLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE);
 }
 
-/**
- * Returns a saved room session for the given code, if any.
- */
-export function getRoomSession(code: string): RoomSession | null {
-  return getLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(code));
+export function getActivePlayerSession(): RoomSession | null {
+  const code = getSessionStorageValue(
+    SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE,
+  );
+  if (!code) return null;
+  const session = getLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(code));
+  if (!session || session.role !== "player") return null;
+  return session;
 }
 
 /**
@@ -112,16 +83,8 @@ export function getRoomSession(code: string): RoomSession | null {
  */
 export function saveRoomSession(session: RoomSession) {
   setLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(session.code), session);
-  if (session.role === "host") {
+  if (session.role === "host")
     setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION, session);
-  }
-}
-
-/**
- * Clears a saved session for a room.
- */
-export function clearRoomSession(code: string) {
-  removeLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(code));
 }
 
 export type RejoinNotice = {

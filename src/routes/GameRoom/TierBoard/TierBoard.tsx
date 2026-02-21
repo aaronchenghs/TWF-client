@@ -33,23 +33,10 @@ export const TierBoard = memo(function TierBoard({
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const availableHeight = container.clientHeight;
-        const availableWidth = container.clientWidth;
         const contentHeight = content.scrollHeight;
-        const contentWidth = content.scrollWidth;
-        if (
-          !availableHeight ||
-          !availableWidth ||
-          !contentHeight ||
-          !contentWidth
-        ) {
-          return;
-        }
+        if (!availableHeight || !contentHeight) return;
 
-        const nextScale = Math.min(
-          1,
-          availableHeight / contentHeight,
-          availableWidth / contentWidth,
-        );
+        const nextScale = Math.min(1, availableHeight / contentHeight);
 
         setScale((prev) =>
           Math.abs(prev - nextScale) > 0.01 ? nextScale : prev,

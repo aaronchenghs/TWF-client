@@ -37,7 +37,7 @@ export function AnimatedRoutes() {
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "100vh",
+        minHeight: "100svh",
         overflow: "hidden",
       }}
     >

@@ -115,6 +115,7 @@ export const LOCAL_STORAGE_KEYS = {
   USER_REDUCE_MOTION: "twf:userReduceMotion",
   USER_SHOW_TIPS: "twf:userShowTips",
   USER_HIGH_CONTRAST: "twf:userHighContrast",
+  USER_STREAMER_MODE: "twf:userStreamerMode",
   PLAYER_ID_PREFIX: "twf:playerId:",
   ROOM_SESSION_PREFIX: "twf:session:",
   PLAYER_ID: (code: string): `twf:playerId:${string}` => `twf:playerId:${code}`,
@@ -165,6 +166,12 @@ const LOCAL_STORAGE_VARIABLES = [
     name: "userHighContrast",
     keyPattern: LOCAL_STORAGE_KEYS.USER_HIGH_CONTRAST,
     isKey: exactKey(LOCAL_STORAGE_KEYS.USER_HIGH_CONTRAST),
+    codec: booleanCodec,
+  }),
+  defineStorageVariable({
+    name: "userStreamerMode",
+    keyPattern: LOCAL_STORAGE_KEYS.USER_STREAMER_MODE,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.USER_STREAMER_MODE),
     codec: booleanCodec,
   }),
   defineStorageVariable({

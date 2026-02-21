@@ -8,6 +8,7 @@ import {
   setHighContrast,
   setReduceMotion,
   setShowTips,
+  setStreamerMode,
 } from "@/store/slices/userSettingsSlice";
 import styles from "./SettingsModal.module.scss";
 import { APP_ICONS, ICON_PROPS } from "@/lib/icons";
@@ -16,6 +17,7 @@ const {
   reduceMotion: ReduceMotionIcon,
   highContrast: HighContrastIcon,
   showTips: ShowTipsIcon,
+  streamerMode: StreamerModeIcon,
 } = APP_ICONS;
 
 export function SettingsModal() {
@@ -32,6 +34,9 @@ export function SettingsModal() {
   );
   const $isHighContrast = useAppSelector(
     (state: AppState) => state.userSettings.isHighContrast,
+  );
+  const $isStreamerMode = useAppSelector(
+    (state: AppState) => state.userSettings.isStreamerMode,
   );
 
   return (
@@ -82,6 +87,19 @@ export function SettingsModal() {
               checked={$isShowTips}
               onChange={(nextValue) => dispatch(setShowTips(nextValue))}
               ariaLabel="Toggle show tips"
+            />
+          }
+        />
+
+        <SettingsOptionRow
+          icon={<StreamerModeIcon {...iconProps} />}
+          title="Streamer Mode"
+          description="Hides room codes across the app by replacing them with ****."
+          control={
+            <AccentToggle
+              checked={$isStreamerMode}
+              onChange={(nextValue) => dispatch(setStreamerMode(nextValue))}
+              ariaLabel="Toggle streamer mode"
             />
           }
         />

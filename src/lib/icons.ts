@@ -6,6 +6,7 @@ import {
   CircleHelp,
   Contrast,
   Copy,
+  EyeOff,
   Minus,
   Settings,
   VibrateOff,
@@ -19,6 +20,7 @@ export const APP_ICONS = {
   reduceMotion: VibrateOff,
   highContrast: Contrast,
   showTips: CircleHelp,
+  streamerMode: EyeOff,
   vote: {
     up: ArrowBigUpDash,
     agree: Minus,

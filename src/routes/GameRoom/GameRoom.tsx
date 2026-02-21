@@ -32,6 +32,7 @@ import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejo
 import { PhaseCountdown } from "./PhaseCountdown/PhaseCountdown";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
+import { useAppSelector, type AppState } from "@/store/store";
 
 type RoomPublicState = Contracts.RoomPublicState;
 const CODE_LENGTH = Contracts.CODE_LENGTH;
@@ -39,6 +40,9 @@ const CODE_LENGTH = Contracts.CODE_LENGTH;
 export default function GameRoom() {
   const navigate = useNavigate();
   const { code } = useParams<{ code: string }>();
+  const $isStreamerMode = useAppSelector(
+    (state: AppState) => state.userSettings.isStreamerMode,
+  );
 
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
   const [isRematchSubmitting, setIsRematchSubmitting] = useState(false);
@@ -51,6 +55,11 @@ export default function GameRoom() {
   const turnNameRef = useRef<HTMLSpanElement | null>(null);
 
   const roomCode = normalizeCode(code ?? "");
+  const displayRoomCode = $isStreamerMode
+    ? roomCode
+      ? "****"
+      : "--"
+    : roomCode || "--";
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
   const isHostUnexpectedExitEligible = !!state && state.phase !== "FINISHED";
   const hasState = state != null;
@@ -184,7 +193,7 @@ export default function GameRoom() {
         <header className={styles.header}>
           <MainTextTypography variant="h2">Game</MainTextTypography>
           <MainTextTypography variant="h5" muted>
-            ROOM {roomCode || "--"}
+            ROOM {displayRoomCode}
           </MainTextTypography>
         </header>
 

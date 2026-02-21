@@ -12,6 +12,9 @@ export function useUserSettingsSync() {
   const $isShowTips = useAppSelector(
     (state: AppState) => state.userSettings.isShowTips,
   );
+  const $isStreamerMode = useAppSelector(
+    (state: AppState) => state.userSettings.isStreamerMode,
+  );
 
   useEffect(
     function syncReduceMotionDataset() {
@@ -56,5 +59,15 @@ export function useUserSettingsSync() {
       setLocalStorageValue(LOCAL_STORAGE_KEYS.USER_SHOW_TIPS, $isShowTips);
     },
     [$isShowTips],
+  );
+
+  useEffect(
+    function persistStreamerModeSetting() {
+      setLocalStorageValue(
+        LOCAL_STORAGE_KEYS.USER_STREAMER_MODE,
+        $isStreamerMode,
+      );
+    },
+    [$isStreamerMode],
   );
 }

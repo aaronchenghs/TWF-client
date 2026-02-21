@@ -1,23 +1,21 @@
 import { useEffect } from "react";
-import {
-  consumePendingRejoinNotice,
-  type RejoinNotice,
-} from "@/lib/session";
+import { consumePendingRejoinNotice, type RejoinNotice } from "@/lib/session";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 
 const NOTICE_CONSUME_RETRY_MS = 50;
 const MAX_NOTICE_CONSUME_ATTEMPTS = 8;
 
-function getRejoinSnackbarCopy(notice: RejoinNotice) {
+function getRejoinSnackbarCopy(notice: RejoinNotice, isStreamerMode: boolean) {
   const title =
     notice.kind === "host_lobby" ? "Rejoin Your Lobby" : "Rejoin Your Game";
+  const roomCode = isStreamerMode ? "****" : notice.roomCode;
   const message =
     notice.kind === "player"
       ? "Enter the room code again with any name to rejoin."
       : notice.kind === "host_lobby"
-        ? `Reconnect as host in lobby ${notice.roomCode}.`
-        : `Reconnect as host in game ${notice.roomCode}.`;
+        ? `Reconnect as host in lobby ${roomCode}.`
+        : `Reconnect as host in game ${roomCode}.`;
 
   return { title, message };
 }
@@ -28,6 +26,9 @@ function getRejoinSnackbarCopy(notice: RejoinNotice) {
  */
 export function usePendingRejoinSnackbar(routeKey: string) {
   const dispatch = useAppDispatch();
+  const $isStreamerMode = useAppSelector(
+    (state: AppState) => state.userSettings.isStreamerMode,
+  );
 
   useEffect(
     function showPendingRejoinNotice() {
@@ -41,7 +42,10 @@ export function usePendingRejoinSnackbar(routeKey: string) {
         if (!notice) return;
 
         handled = true;
-        const { title, message } = getRejoinSnackbarCopy(notice);
+        const { title, message } = getRejoinSnackbarCopy(
+          notice,
+          $isStreamerMode,
+        );
 
         dispatch(
           pushSnackbar({
@@ -67,6 +71,6 @@ export function usePendingRejoinSnackbar(routeKey: string) {
         window.clearInterval(timer);
       };
     },
-    [dispatch, routeKey],
+    [dispatch, routeKey, $isStreamerMode],
   );
 }

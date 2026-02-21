@@ -47,6 +47,9 @@ export default function HostLobby() {
   const $isShowTips = useAppSelector(
     (state: AppState) => state.userSettings.isShowTips,
   );
+  const $isStreamerMode = useAppSelector(
+    (state: AppState) => state.userSettings.isStreamerMode,
+  );
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
@@ -58,6 +61,11 @@ export default function HostLobby() {
   const suppressRejoinNoticeRef = useRef(false);
 
   const roomCode = normalizeCode(code ?? "");
+  const displayRoomCode = $isStreamerMode
+    ? roomCode
+      ? "****"
+      : "----"
+    : roomCode || "----";
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
 
   const players = useMemo(
@@ -240,7 +248,7 @@ export default function HostLobby() {
                 title="Copy room code"
               />
               <MainTextTypography className={styles.roomCode} variant="h2">
-                {roomCode || "----"}
+                {displayRoomCode}
               </MainTextTypography>
             </div>
           </div>

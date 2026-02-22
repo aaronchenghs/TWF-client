@@ -1,22 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import clsx from "clsx";
 import styles from "./HostLobby.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
-import { AccentButton } from "@/components/AccentButton/AccentButton";
-import { SubtextDivider } from "@/components/SubtextDivider/SubtextDivider";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
 import { normalizeCode } from "@/lib/stringNormalizers";
-import { TierSetGridEntry } from "./TierSetGridEntry/TierSetGridEntry";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
-import { CopyTextButton } from "@/components/CopyTextButton/CopyTextButton";
 import { ROUTES } from "@/routes/routes";
-import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
 import { getClientId, saveRoomSession } from "@/lib/session";
 import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
-import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import {
@@ -24,16 +17,16 @@ import {
   showTip,
   TIP_KINDS,
 } from "@/store/slices/tipsPopupSlice";
-import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import {
   clearHostRoomState,
   markHostRoomStarted,
   readHostRoomCode,
 } from "@/lib/roomClientState";
 import { getLocalStorageValue, LOCAL_STORAGE_KEYS } from "@/lib/localStorage";
+import { TierSetSelection } from "./TierSetSelection/TierSetSelection";
+import { HostSidePanel } from "./HostSidePanel/HostSidePanel";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
-const LOBBY_CAPACITY = Contracts.LOBBY_CAPACITY;
 const BEST_PLAY_TIP_DELAY_MS = 500;
 type TierSetSummary = Contracts.TierSetSummary;
 type RoomPublicState = Contracts.RoomPublicState;
@@ -45,67 +38,30 @@ export default function HostLobby() {
   const $isShowTips = useAppSelector(
     (state: AppState) => state.userSettings.isShowTips,
   );
-  const $isStreamerMode = useAppSelector(
-    (state: AppState) => state.userSettings.isStreamerMode,
-  );
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
-  const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
-  const [tierSetWithDetailsOpen, setTierSetWithDetailsOpen] =
-    useState<Guid | null>(null);
-
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
   const suppressRejoinNoticeRef = useRef(false);
 
   const roomCode = normalizeCode(readHostRoomCode());
-  const displayRoomCode = $isStreamerMode
-    ? roomCode
-      ? "****"
-      : "----"
-    : roomCode || "----";
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
 
   const players = useMemo(
     () => (roomState?.players ?? []).filter((p) => p.connected !== false),
     [roomState],
   );
-  const playerCount = players.length;
-  const selectedTierSetId = roomState?.tierSetId ?? null;
-  const isStartEnabled = !!selectedTierSetId && playerCount >= 2;
 
-  const selectedTierSetName = useMemo(() => {
-    if (!selectedTierSetId) return null;
-    return (
-      tierSets.find((tier) => tier.id === selectedTierSetId)?.title ?? null
-    );
-  }, [tierSets, selectedTierSetId]);
+  const selectedTierSetId = (roomState?.tierSetId ?? null) as Guid | null;
+
+  const selectedTierSetName =
+    tierSets.find((tier) => tier.id === selectedTierSetId)?.title ?? null;
 
   const handleCloseLobby = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
     clearHostRoomState(roomCode);
     roomSocket.closeRoom();
     navigate(ROUTES.LANDING);
-  }, [navigate, roomCode]);
-
-  const handleSelectTierSet = useCallback((ts: TierSetSummary) => {
-    roomSocket.setTierSet(ts.id);
-  }, []);
-
-  const handleStartClick = useCallback(() => {
-    if (!isStartEnabled) return;
-    setIsStartCountdownOpen(true);
-  }, [isStartEnabled]);
-
-  const handleCancelCountdown = useCallback(() => {
-    setIsStartCountdownOpen(false);
-  }, []);
-
-  const handleCountdownComplete = useCallback(() => {
-    suppressRejoinNoticeRef.current = true;
-    markHostRoomStarted(roomCode);
-    roomSocket.startGame(roomCode);
-    navigate(ROUTES.GAME_ROOM);
   }, [navigate, roomCode]);
 
   const handleRoomState = useCallback((state: RoomPublicState) => {
@@ -213,132 +169,20 @@ export default function HostLobby() {
       </header>
 
       <div className={styles.layout}>
-        <section className={styles.left}>
-          <SubtextDivider text="Choose a Tier List" noMargin />
+        <TierSetSelection
+          tierSets={tierSets}
+          selectedTierSetId={selectedTierSetId}
+        />
 
-          <div className={styles.presetGrid}>
-            {tierSets.length === 0 ? (
-              <MainTextTypography variant="body" muted>
-                Loading tier lists
-                <AnimatedDots />
-              </MainTextTypography>
-            ) : (
-              tierSets.map((set) => (
-                <TierSetGridEntry
-                  key={set.id}
-                  tierSet={set}
-                  selected={set.id === selectedTierSetId}
-                  onSelect={handleSelectTierSet}
-                  setOpenDetailsTierSet={setTierSetWithDetailsOpen}
-                  openDetailsTierSetId={tierSetWithDetailsOpen}
-                />
-              ))
-            )}
-          </div>
-        </section>
-
-        <aside className={styles.sidePanel}>
-          <div className={styles.roomMeta}>
-            <MainTextTypography className={styles.roomLabel} muted variant="h4">
-              Room Code:
-            </MainTextTypography>
-            <div className={styles.roomCodeContainer}>
-              <CopyTextButton
-                value={roomCode}
-                disabled={!isRoomCodeValid}
-                title="Copy room code"
-              />
-              <MainTextTypography className={styles.roomCode} variant="h2">
-                {displayRoomCode}
-              </MainTextTypography>
-            </div>
-          </div>
-
-          <div className={styles.panel}>
-            <MainTextTypography variant="h3">
-              Players ({playerCount}/{LOBBY_CAPACITY})
-            </MainTextTypography>
-
-            <ul className={styles.playerList}>
-              {players.length === 0 ? (
-                <MainTextTypography
-                  className={styles.player}
-                  variant="body"
-                  muted
-                >
-                  Waiting
-                  <AnimatedDots />
-                </MainTextTypography>
-              ) : (
-                players.map((player) => (
-                  <li className={styles.playerEntry} key={player.id}>
-                    <div className={styles.playerIdentity}>
-                      <PlayerAvatar avatar={player.avatar} size={45} sway />
-                      <MainTextTypography
-                        className={styles.player}
-                        variant="h5"
-                        tone="player"
-                      >
-                        {player.name}
-                      </MainTextTypography>
-                    </div>
-                    <AccentButton
-                      variant="destructive"
-                      size="small"
-                      onClick={() => roomSocket.bootPlayerFromLobby(player.id)}
-                    >
-                      Kick
-                    </AccentButton>
-                  </li>
-                ))
-              )}
-            </ul>
-          </div>
-
-          <div className={clsx(styles.panel, styles.controls)}>
-            <div
-              className={clsx(
-                styles.selectedTierSetCard,
-                !selectedTierSetName && styles.selectedTierSetCardEmpty,
-              )}
-            >
-              <div className={styles.selectedTierSetHeader}>
-                <MainTextTypography
-                  variant="caption"
-                  letterSpacing="wide"
-                  className={styles.selectedTierSetLabel}
-                >
-                  Selected Tier Set
-                </MainTextTypography>
-              </div>
-
-              <MainTextTypography
-                variant={selectedTierSetName ? "h4" : "body"}
-                textAlign="center"
-                muted={!selectedTierSetName}
-                className={styles.selectedTierSetName}
-              >
-                {selectedTierSetName ?? "No tier set selected"}
-              </MainTextTypography>
-            </div>
-
-            <AccentButton
-              variant="primary"
-              disabled={!isStartEnabled || isStartCountdownOpen}
-              onClick={handleStartClick}
-            >
-              Start Game
-            </AccentButton>
-
-            <AccentButton
-              variant="secondary"
-              onClick={() => setIsConfirmCloseOpen(true)}
-              disabled={isStartCountdownOpen}
-            >
-              Close Lobby
-            </AccentButton>
-          </div>
-        </aside>
+        <HostSidePanel
+          roomCode={roomCode}
+          isRoomCodeValid={isRoomCodeValid}
+          players={players}
+          selectedTierSetId={selectedTierSetId}
+          selectedTierSetName={selectedTierSetName}
+          onCloseLobby={() => setIsConfirmCloseOpen(true)}
+          suppressRejoinNoticeRef={suppressRejoinNoticeRef}
+        />
       </div>
 
       <ConfirmationModal
@@ -352,12 +196,6 @@ export default function HostLobby() {
           setIsConfirmCloseOpen(false);
           window.requestAnimationFrame(handleCloseLobby);
         }}
-      />
-
-      <CountdownOverlay
-        open={isStartCountdownOpen}
-        onCancel={handleCancelCountdown}
-        onComplete={handleCountdownComplete}
       />
     </div>
   );

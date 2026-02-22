@@ -1,0 +1,19 @@
+@use "../../../styles/export.scss" as *;
+
+$header-height: 10vh;
+$bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
+
+.left {
+  gap: $default-gap;
+}
+
+.presetGrid {
+  display: flex;
+  flex-direction: column;
+  max-height: $bottom-part-height;
+  overflow-y: auto;
+  gap: $default-gap;
+  @include scrollFade(24px, y);
+  padding-block: calc($default-padding * 1.5);
+  padding: calc($default-gap * 2) $default-gap;
+}

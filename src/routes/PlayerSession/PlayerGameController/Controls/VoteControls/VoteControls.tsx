@@ -197,3 +197,5 @@ export function VoteControls(props: {
     </div>
   );
 }
+
+export default VoteControls;

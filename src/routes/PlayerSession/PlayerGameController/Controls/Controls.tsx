@@ -1,7 +1,7 @@
 import * as Contracts from "@twf/contracts";
 import { AwaitingControls } from "./AwaitingControls/AwaitingControls";
-import { PlaceControls } from "./PlaceControls/PlaceControls";
-import { VoteControls } from "./VoteControls/VoteControls";
+import PlaceControls from "./PlaceControls/PlaceControls";
+import VoteControls from "./VoteControls/VoteControls";
 import { FinishedControls } from "./FinishedControls/FinishedControls";
 import styles from "../PlayerGameController.module.scss";
 

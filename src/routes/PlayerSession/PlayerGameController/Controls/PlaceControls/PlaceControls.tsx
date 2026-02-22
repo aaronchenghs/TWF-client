@@ -154,3 +154,5 @@ export function PlaceControls(props: {
     </div>
   );
 }
+
+export default PlaceControls;

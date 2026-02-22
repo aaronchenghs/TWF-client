@@ -95,11 +95,6 @@ export default function GameRoom() {
 
   const currentTurnPlayerId = state?.currentTurnPlayerId ?? null;
 
-  const activePlayers = useMemo(
-    () => (state?.players ?? []).filter((player) => player.connected !== false),
-    [state?.players],
-  );
-
   const handleExit = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
     clearHostRoomState(roomCode);
@@ -268,8 +263,8 @@ export default function GameRoom() {
           >
             <div className={styles.activePlayersList} role="list">
               <AnimatePresence initial={false}>
-                {activePlayers.length > 0 ? (
-                  activePlayers.map((player) => {
+                {state?.players.length > 0 ? (
+                  state?.players.map((player) => {
                     const isCurrentTurnPlayer =
                       player.id === currentTurnPlayerId;
 

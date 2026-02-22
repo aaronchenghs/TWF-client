@@ -102,6 +102,45 @@ $side-delay: 0.25s;
     min-width: 0;
   }
 
+  .phaseCard {
+    position: relative;
+    isolation: isolate;
+    border-color: transparent;
+    overflow: hidden;
+  }
+
+  .phaseProgressRing {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .phaseProgressTrack,
+  .phaseProgressActive {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: butt;
+    stroke-linejoin: round;
+  }
+
+  .phaseProgressTrack {
+    stroke: rgba(255, 255, 255, 0.26);
+    stroke-width: 8;
+  }
+
+  .phaseProgressActive {
+    stroke: $accent;
+    stroke-width: 8;
+  }
+
+  .phaseCardContent {
+    position: relative;
+    z-index: 1;
+  }
+
   .playersCard {
     display: flex;
     flex-direction: column;

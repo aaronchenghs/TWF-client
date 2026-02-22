@@ -6,7 +6,7 @@ type PhaseClock = {
   endsAt: number | null;
   msLeft: number | null;
   secondsLeft: number | null;
-  progress01: number | null; // 0..1, best-effort
+  progress01: number | null; // 0..1
 };
 
 // Server timestamps are absolute epoch ms.
@@ -16,6 +16,9 @@ export function usePhaseClock(
   tickMs = 1000,
 ): PhaseClock {
   const [now, setNow] = useState(() => Date.now());
+  const [phaseInitialDurationMs, setPhaseInitialDurationMs] = useState<
+    number | null
+  >(null);
 
   const endsAt = useMemo(() => {
     if (!state) return null;
@@ -36,18 +39,59 @@ export function usePhaseClock(
     }
   }, [state]);
 
-  useEffect(function syncPhaseClock() {
-    if (endsAt == null) return;
-    const id = window.setInterval(() => setNow(Date.now()), tickMs);
-    return () => window.clearInterval(id);
-  }, [endsAt, tickMs]);
+  useEffect(
+    function capturePhaseInitialDuration() {
+      let rafId = 0;
+
+      if (!state || endsAt == null) {
+        rafId = window.requestAnimationFrame(() => {
+          setPhaseInitialDurationMs(null);
+        });
+        return () => window.cancelAnimationFrame(rafId);
+      }
+
+      const initialDurationMs = Math.max(0, endsAt - Date.now());
+      rafId = window.requestAnimationFrame(() => {
+        setPhaseInitialDurationMs(initialDurationMs);
+      });
+
+      return () => window.cancelAnimationFrame(rafId);
+    },
+    [state?.phase, endsAt, state],
+  );
+
+  useEffect(
+    function syncPhaseClock() {
+      if (endsAt == null) return;
+
+      // Use RAF for high-frequency updates so sweep visuals remain smooth.
+      if (tickMs <= 200) {
+        let rafId = 0;
+        const update = () => {
+          setNow(Date.now());
+          rafId = window.requestAnimationFrame(update);
+        };
+
+        rafId = window.requestAnimationFrame(update);
+        return () => window.cancelAnimationFrame(rafId);
+      }
+
+      const id = window.setInterval(() => setNow(Date.now()), tickMs);
+      return () => window.clearInterval(id);
+    },
+    [endsAt, tickMs],
+  );
 
   const msLeft = endsAt == null ? null : Math.max(0, endsAt - now);
   const secondsLeft = msLeft == null ? null : Math.ceil(msLeft / 1000);
-
-  // If later include durations in contracts (e.g., buildMs/revealMs...),
-  // replace this with deterministic progress = 1 - msLeft/duration.
-  const progress01 = endsAt == null ? null : null;
+  const phaseDurationForProgress =
+    phaseInitialDurationMs == null ? msLeft : phaseInitialDurationMs;
+  const progress01 =
+    msLeft == null ||
+    phaseDurationForProgress == null ||
+    phaseDurationForProgress <= 0
+      ? null
+      : Math.min(1, Math.max(0, msLeft / phaseDurationForProgress));
 
   return { endsAt, msLeft, secondsLeft, progress01 };
 }

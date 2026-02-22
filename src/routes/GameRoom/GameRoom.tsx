@@ -27,6 +27,7 @@ import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejo
 import { PhaseCountdown } from "./PhaseCountdown/PhaseCountdown";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { useAppSelector, type AppState } from "@/store/store";
+import { usePhaseClock } from "@/lib/hooks/usePhaseClock";
 import {
   clearHostRoomState,
   markHostRoomStarted,
@@ -50,8 +51,10 @@ export default function GameRoom() {
     roomSocket.getLastRoomState(roomCode),
   );
   const [isIntro, setIsIntro] = useState(true);
+  const [phaseRingSize, setPhaseRingSize] = useState({ width: 0, height: 0 });
 
   const suppressRejoinNoticeRef = useRef(false);
+  const phaseCardRef = useRef<HTMLElement | null>(null);
 
   const displayRoomCode = $isStreamerMode
     ? roomCode
@@ -94,6 +97,57 @@ export default function GameRoom() {
       : "CURRENT ITEM:";
 
   const currentTurnPlayerId = state?.currentTurnPlayerId ?? null;
+  const phaseClock = usePhaseClock(state, 50);
+
+  const phaseRing = useMemo(() => {
+    const inset = 4;
+    const outerWidth = Math.max(0, phaseRingSize.width);
+    const outerHeight = Math.max(0, phaseRingSize.height);
+    const width = Math.max(0, outerWidth - inset * 2);
+    const height = Math.max(0, outerHeight - inset * 2);
+    const radius = Math.max(0, Math.min(14, width / 2, height / 2));
+
+    const perimeter =
+      width > 0 && height > 0
+        ? 2 * (width + height - 4 * radius) + 2 * Math.PI * radius
+        : 0;
+    const dash = (phaseClock.progress01 ?? 0) * perimeter;
+    const gap = perimeter * 2;
+
+    const left = inset;
+    const top = inset;
+    const right = inset + width;
+    const bottom = inset + height;
+    const topCenterX = inset + width / 2;
+    const topRightX = right - radius;
+    const topLeftX = left + radius;
+    const bottomRightY = bottom - radius;
+    const topRightY = top + radius;
+    const bottomLeftY = bottom - radius;
+    const topLeftY = top + radius;
+    const bottomLeftX = left + radius;
+    const bottomRightX = right - radius;
+
+    const d =
+      width > 0 && height > 0
+        ? `M ${topCenterX} ${top} ` +
+          `H ${topRightX} ` +
+          `A ${radius} ${radius} 0 0 1 ${right} ${topRightY} ` +
+          `V ${bottomRightY} ` +
+          `A ${radius} ${radius} 0 0 1 ${bottomRightX} ${bottom} ` +
+          `H ${bottomLeftX} ` +
+          `A ${radius} ${radius} 0 0 1 ${left} ${bottomLeftY} ` +
+          `V ${topLeftY} ` +
+          `A ${radius} ${radius} 0 0 1 ${topLeftX} ${top} ` +
+          `H ${topCenterX}`
+        : "";
+
+    return {
+      viewBox: `0 0 ${Math.max(outerWidth, 1)} ${Math.max(outerHeight, 1)}`,
+      d,
+      dashArray: `${dash} ${gap}`,
+    };
+  }, [phaseClock.progress01, phaseRingSize.height, phaseRingSize.width]);
 
   const handleExit = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
@@ -133,6 +187,30 @@ export default function GameRoom() {
     onState: handleRoomState,
     onClosed: handleRoomClosed,
   });
+
+  useEffect(function trackPhaseCardSize() {
+    const element = phaseCardRef.current;
+    if (!element) return;
+
+    const readSize = () => {
+      const rect = element.getBoundingClientRect();
+      setPhaseRingSize((prev) => {
+        const width = Math.round(rect.width);
+        const height = Math.round(rect.height);
+        if (prev.width === width && prev.height === height) return prev;
+        return { width, height };
+      });
+    };
+
+    readSize();
+
+    const observer = new ResizeObserver(() => {
+      readSize();
+    });
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(
     function endIntroAfterFirstFrame() {
@@ -236,13 +314,29 @@ export default function GameRoom() {
             </div>
           </header>
 
-          <GameStatusCard label="PHASE">
-            <div className={styles.itemRow}>
+          <GameStatusCard className={styles.phaseCard} cardRef={phaseCardRef}>
+            <svg
+              className={styles.phaseProgressRing}
+              viewBox={phaseRing.viewBox}
+              aria-hidden="true"
+            >
+              <path className={styles.phaseProgressTrack} d={phaseRing.d} />
+              <path
+                className={styles.phaseProgressActive}
+                d={phaseRing.d}
+                strokeDasharray={phaseRing.dashArray}
+                strokeDashoffset={0}
+              />
+            </svg>
+            <div className={clsx(styles.itemRow, styles.phaseCardContent)}>
               <MainTextTypography variant="h2" className={styles.bigText}>
                 {state.phase}
               </MainTextTypography>
 
-              <PhaseCountdown state={state} className={styles.bigText} />
+              <PhaseCountdown
+                secondsLeft={phaseClock.secondsLeft}
+                className={styles.bigText}
+              />
             </div>
           </GameStatusCard>
 

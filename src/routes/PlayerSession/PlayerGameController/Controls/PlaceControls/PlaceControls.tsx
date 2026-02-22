@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import clsx from "clsx";
 import baseStyles from "../Controls.module.scss";
 import styles from "./PlaceControls.module.scss";
-import { AwaitingControls } from "../AwaitingControls";
+import { AwaitingControls } from "../AwaitingControls/AwaitingControls";
 import * as Contracts from "@twf/contracts";
 import { AccentButton } from "../../../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../../../../components/MainTextTypography/MainTextTypography";
@@ -52,8 +52,7 @@ export function PlaceControls(props: {
     return base.filter((id) => tierById.has(id));
   }, [tierOrder, tiers, tierById]);
 
-  if (phase !== "PLACE" || !isMyTurn || isPlacing)
-    return <AwaitingControls />;
+  if (phase !== "PLACE" || !isMyTurn || isPlacing) return <AwaitingControls />;
 
   const isConfirmDisabled = !selectedTierId;
 

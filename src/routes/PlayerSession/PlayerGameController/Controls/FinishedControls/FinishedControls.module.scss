@@ -1,0 +1,22 @@
+@use "../../../../../styles/export.scss" as *;
+
+.finishedActions {
+  width: 100%;
+  border-radius: $radius-lg;
+  padding: $default-padding;
+  background: $box-shadow-color;
+  border: 1px solid $light-transparency;
+
+  max-width: $page-width-cutoff;
+  margin-left: auto;
+  margin-right: auto;
+
+  display: grid;
+  gap: $default-gap;
+  margin-top: auto;
+}
+
+.finishedMessage {
+  max-width: 32ch;
+  margin: 0 auto;
+}

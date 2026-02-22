@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import styles from "../PlayerGameController.module.scss";
+import styles from "./FinishedControls.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { roomSocket } from "@/services/sockets/roomSocket";

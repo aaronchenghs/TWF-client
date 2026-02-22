@@ -1,8 +1,8 @@
 import * as Contracts from "@twf/contracts";
-import { AwaitingControls } from "./AwaitingControls";
+import { AwaitingControls } from "./AwaitingControls/AwaitingControls";
 import { PlaceControls } from "./PlaceControls/PlaceControls";
 import { VoteControls } from "./VoteControls/VoteControls";
-import { FinishedControls } from "./FinishedControls";
+import { FinishedControls } from "./FinishedControls/FinishedControls";
 import styles from "../PlayerGameController.module.scss";
 
 type RoomPublicState = Contracts.RoomPublicState;
@@ -18,7 +18,7 @@ type PhaseControlsProps = {
   hasVoted: boolean;
 };
 
-export function PhaseControls({
+export function Controls({
   state,
   tierSet,
   currentItem,

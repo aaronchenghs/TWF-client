@@ -12,7 +12,7 @@ import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemD
 import { useTurnTabAttention } from "@/lib/hooks/useTurnTabAttention";
 import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
 import { clearPlayerRoomState, readPlayerRuntime } from "@/lib/roomClientState";
-import { PhaseControls } from "./Controls/PhaseControls";
+import { Controls } from "./Controls/Controls";
 import { PlayerTopBar } from "./TopBar/PlayerTopBar";
 
 type RoomPublicState = Contracts.RoomPublicState;
@@ -108,7 +108,7 @@ export default function PlayerGameController({
         </GameStatusCard>
       </main>
 
-      <PhaseControls
+      <Controls
         state={state}
         tierSet={tierSet}
         currentItem={currentItem}

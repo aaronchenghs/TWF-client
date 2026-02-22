@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import baseStyles from "../Controls.module.scss";
 import styles from "./VoteControls.module.scss";
-import { AwaitingControls } from "../AwaitingControls";
+import { AwaitingControls } from "../AwaitingControls/AwaitingControls";
 import * as Contracts from "@twf/contracts";
 import { AccentButton } from "../../../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
@@ -30,8 +30,15 @@ export function VoteControls(props: {
   currentItemId: string | null;
   voteEndsAt: number | null | undefined;
 }) {
-  const { phase, canVote, hasVoted, isPlacer, turnIndex, currentItemId, voteEndsAt } =
-    props;
+  const {
+    phase,
+    canVote,
+    hasVoted,
+    isPlacer,
+    turnIndex,
+    currentItemId,
+    voteEndsAt,
+  } = props;
 
   const [voteUnlockAt, setVoteUnlockAt] = useState<number | null>(null);
   const [now, setNow] = useState<number>(() => Date.now());
@@ -93,8 +100,7 @@ export function VoteControls(props: {
       ? Math.max(0, voteUnlockAt - now)
       : 0;
   const discussionSecondsLeft = Math.ceil(discussionMsLeft / 1000);
-  const isDiscussionLocked =
-    canVote && !hasVoted && discussionSecondsLeft > 0;
+  const isDiscussionLocked = canVote && !hasVoted && discussionSecondsLeft > 0;
   const voteButtonIconProps = ICON_PROPS.vote.controls;
 
   const handleVote = (vote: VoteValue) => {

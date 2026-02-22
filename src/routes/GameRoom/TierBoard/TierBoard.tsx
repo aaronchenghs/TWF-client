@@ -30,10 +30,6 @@ export const TierBoard = memo(function TierBoard({
   const tierOrder = state.tierOrder ?? [];
   const tiers = state.tiers ?? ({} as Record<TierId, TierItemId[]>);
 
-  useLayoutEffect(() => {
-    scaleRef.current = scale;
-  }, [scale]);
-
   const measureBestScale = useCallback(() => {
     const container = containerRef.current;
     const content = contentRef.current;
@@ -94,6 +90,10 @@ export const TierBoard = memo(function TierBoard({
       );
     });
   }, [measureBestScale]);
+
+  useLayoutEffect(() => {
+    scaleRef.current = scale;
+  }, [scale]);
 
   useLayoutEffect(() => {
     scheduleScaleMeasure();

@@ -98,6 +98,11 @@ export default function GameRoom() {
 
   const currentTurnPlayerId = state?.currentTurnPlayerId ?? null;
   const phaseClock = usePhaseClock(state, 50);
+  const isPhaseCritical =
+    phaseClock.endsAt != null &&
+    phaseClock.secondsLeft != null &&
+    phaseClock.secondsLeft > 0 &&
+    phaseClock.secondsLeft <= 5;
 
   const phaseRing = useMemo(() => {
     const inset = 4;
@@ -314,7 +319,13 @@ export default function GameRoom() {
             </div>
           </header>
 
-          <GameStatusCard className={styles.phaseCard} cardRef={phaseCardRef}>
+          <GameStatusCard
+            className={clsx(
+              styles.phaseCard,
+              isPhaseCritical && styles.phaseCardCritical,
+            )}
+            cardRef={phaseCardRef}
+          >
             <svg
               className={styles.phaseProgressRing}
               viewBox={phaseRing.viewBox}

@@ -136,6 +136,12 @@ $side-delay: 0.25s;
     stroke-width: 8;
   }
 
+  .phaseCardCritical {
+    .phaseProgressActive {
+      @include urgencyBlinkAnimation(0.5s);
+    }
+  }
+
   .phaseCardContent {
     position: relative;
     z-index: 1;

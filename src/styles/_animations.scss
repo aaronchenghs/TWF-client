@@ -179,3 +179,17 @@
     transform: translateX(180%);
   }
 }
+
+@keyframes urgencyBlink {
+  0% {
+    stroke: $accent;
+  }
+
+  100% {
+    stroke: $error;
+  }
+}
+
+@mixin urgencyBlinkAnimation($duration: 0.8s) {
+  animation: urgencyBlink $duration ease-in-out infinite alternate;
+}

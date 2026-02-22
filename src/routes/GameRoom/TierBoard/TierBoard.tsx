@@ -14,6 +14,8 @@ const MIN_BOARD_SCALE = 0.2;
 const SCALE_SEARCH_STEPS = 14;
 const FIT_BUFFER_PX = 10;
 const SCALE_HEADROOM = 0.985;
+const BOARD_SCALE_CSS_VAR = "--boardScale" as string;
+const TIER_LABEL_COLOR_CSS_VAR = "--tierColor" as string;
 
 export const TierBoard = memo(function TierBoard({
   state,
@@ -41,7 +43,7 @@ export const TierBoard = memo(function TierBoard({
     const renderedScale = scaleRef.current;
 
     const fitsAtScale = (candidateScale: number) => {
-      content.style.setProperty("--boardScale", String(candidateScale));
+      content.style.setProperty(BOARD_SCALE_CSS_VAR, String(candidateScale));
       const unscaledHeight = content.scrollHeight;
       const visualHeight = unscaledHeight * candidateScale;
       return visualHeight <= targetHeight;
@@ -69,7 +71,7 @@ export const TierBoard = memo(function TierBoard({
       }
     } finally {
       // Restore the currently rendered scale; React owns the persistent style value.
-      content.style.setProperty("--boardScale", String(renderedScale));
+      content.style.setProperty(BOARD_SCALE_CSS_VAR, String(renderedScale));
       isProbingRef.current = false;
     }
 
@@ -124,7 +126,7 @@ export const TierBoard = memo(function TierBoard({
       <div
         className={styles.scale}
         ref={contentRef}
-        style={{ ["--boardScale" as string]: scale }}
+        style={{ [BOARD_SCALE_CSS_VAR]: scale }}
       >
         {tierOrder.map((tierId) => {
           const items = tiers[tierId] ?? [];
@@ -136,7 +138,7 @@ export const TierBoard = memo(function TierBoard({
             <div
               key={tierId}
               className={clsx(styles.row, isPending && styles.pending)}
-              style={{ ["--tierColor" as string]: tierColor }}
+              style={{ [TIER_LABEL_COLOR_CSS_VAR]: tierColor }}
             >
               <div className={styles.tierLabel}>
                 <TierLabelText label={tierMeta?.name ?? tierId} />

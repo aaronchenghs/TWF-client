@@ -15,9 +15,9 @@ $defaultTierColor: $light-transparency;
   flex-direction: column;
   gap: $default-gap;
 
-  // Counteract the visual width shrink that happens when we scale down to fit
-  width: calc(100% / var(--boardScale));
-  max-width: calc(100% / var(--boardScale));
+  // Keep layout width stable so row wrapping does not feed back into scale measurement.
+  width: 100%;
+  max-width: 100%;
 
   transform: scale(var(--boardScale));
   transform-origin: top left;

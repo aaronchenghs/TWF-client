@@ -9,6 +9,7 @@ type RoomPublicState = Contracts.RoomPublicState;
 type TierId = Contracts.TierId;
 type TierItemId = Contracts.TierItemId;
 const MIN_TIER_LABEL_FONT_SIZE_PX = 26;
+const SCALE_EPSILON = 0.005;
 
 export const TierBoard = memo(function TierBoard({
   state,
@@ -36,10 +37,12 @@ export const TierBoard = memo(function TierBoard({
         const contentHeight = content.scrollHeight;
         if (!availableHeight || !contentHeight) return;
 
-        const nextScale = Math.min(1, availableHeight / contentHeight);
+        const nextScale = Number(
+          Math.min(1, availableHeight / contentHeight).toFixed(4),
+        );
 
         setScale((prev) =>
-          Math.abs(prev - nextScale) > 0.01 ? nextScale : prev,
+          Math.abs(prev - nextScale) > SCALE_EPSILON ? nextScale : prev,
         );
       });
     };

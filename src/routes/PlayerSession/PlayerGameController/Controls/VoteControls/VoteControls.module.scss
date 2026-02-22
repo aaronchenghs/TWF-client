@@ -1,0 +1,45 @@
+@use "../../../../../styles/export" as *;
+
+$image-preview-height: 56px;
+
+.voteControls {
+  margin-top: auto;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $default-gap;
+}
+
+.bigButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: $image-preview-height;
+  border-radius: $radius-lg;
+}
+
+.voteButtonContent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $default-gap;
+}
+
+.voteButtonIcon {
+  display: block;
+}
+
+.discussionNotice {
+  display: grid;
+  gap: $default-gap;
+  padding: $default-padding;
+  border-radius: $radius-md;
+  background: $light-transparency;
+  border: 1px dashed $comic-outline;
+}
+
+.discussionTitle {
+  text-transform: uppercase;
+}

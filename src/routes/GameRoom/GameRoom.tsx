@@ -322,11 +322,8 @@ export default function GameRoom() {
       {/** --- #region OVERLAYS and MODALS --- */}
 
       <PlayerTurnReveal state={state} />
-
       <ItemPlacementReveal state={state} />
-
       <VoteResultsReveal state={state} />
-
       <ConfirmationModal
         open={isConfirmExitOpen}
         title="Close Game?"

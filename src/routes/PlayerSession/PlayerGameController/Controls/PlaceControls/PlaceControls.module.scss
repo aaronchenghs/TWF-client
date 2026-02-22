@@ -1,0 +1,150 @@
+@use "../../../../../styles/export" as *;
+
+$image-preview-height: 56px;
+
+.placeControls {
+  @include flexFill();
+}
+
+.tierPickList {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+
+  @include flexFill();
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  @include scrollFade($default-padding, y);
+
+  padding-block: $default-gap;
+  padding-right: calc($default-padding / 2);
+}
+
+.tierPickRow {
+  --tierColor: $light-transparency;
+
+  appearance: none;
+  border: 0;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+
+  display: grid;
+  grid-template-columns: 0.35fr 1fr;
+  align-items: stretch;
+  gap: $default-gap;
+
+  border-radius: $radius-sm;
+  padding: $default-gap;
+  min-height: 84px;
+
+  background: $light-transparency;
+  position: relative;
+  overflow: hidden;
+
+  transition:
+    transform $dur-fast ease,
+    box-shadow $dur-fast ease,
+    filter $dur-fast ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--tierColor);
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:active {
+    transform: none;
+    filter: brightness(1.06);
+    box-shadow: inset 0 0 0 2px $box-shadow-color;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $light-transparency;
+    outline-offset: 2px;
+  }
+}
+
+.tierPickRowSelected {
+  outline: 2px solid $light-transparency;
+  box-shadow: 0 0 0 2px $box-shadow-color;
+}
+
+.tierPickLabel {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+
+  background: var(--tierColor);
+  border-radius: $radius-sm;
+  padding: $default-padding;
+  box-shadow: 0 4px 0 $box-shadow-color;
+  text-align: center;
+}
+
+.tierPickLabelText {
+  display: block;
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.tierPickPreview {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.previewPlaceholder {
+  width: 100%;
+  height: $image-preview-height;
+  border-radius: $radius-sm;
+  background: $light-transparency;
+  border: 1px dashed $light-transparency;
+}
+
+.previewImg {
+  width: 100%;
+  height: $image-preview-height;
+  object-fit: contain;
+  border-radius: $radius-sm;
+  background: $light-transparency;
+  border: 1px solid $light-transparency;
+  display: block;
+}
+
+.previewFallback {
+  width: 100%;
+  height: $image-preview-height;
+  border-radius: $radius-sm;
+  background: $light-transparency;
+  border: 1px solid $light-transparency;
+  display: grid;
+  place-items: center;
+}
+
+.confirmRow {
+  margin-top: auto;
+  padding-top: $default-gap;
+  @include flexFixed();
+}
+
+.confirmButton {
+  width: 100%;
+  height: $image-preview-height;
+  border-radius: $radius-lg;
+}
+
+@media (max-height: $mobile-width) {
+  .placeControls {
+    min-height: 0;
+  }
+}

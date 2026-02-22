@@ -1,23 +1,42 @@
 import { useMemo, useState } from "react";
 import clsx from "clsx";
-import styles from "./Controls.module.scss";
-import { AwaitingControls } from "./AwaitingControls";
+import baseStyles from "../Controls.module.scss";
+import styles from "./PlaceControls.module.scss";
+import { AwaitingControls } from "../AwaitingControls";
 import * as Contracts from "@twf/contracts";
-import { AccentButton } from "../../../../components/AccentButton/AccentButton";
-import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
+import { AccentButton } from "../../../../../components/AccentButton/AccentButton";
+import { MainTextTypography } from "../../../../../components/MainTextTypography/MainTextTypography";
+import { useActionLocks } from "@/lib/hooks/useActionLocks";
+import { socketClient } from "@/services/sockets/socketClient";
+
 type Tier = Contracts.Tier;
 type TierItem = Contracts.TierItem;
+type ActionLockKey = "place";
+
+const ACTION_LOCK_TIMEOUT_MS = 6000;
 
 export function PlaceControls(props: {
   tiers: Tier[];
   tierOrder: string[];
-  disabled: boolean;
-  onConfirmPlacement: (tierId: string) => void;
+  phase: Contracts.RoomPublicState["phase"];
+  isMyTurn: boolean;
   currentItem: TierItem | null;
 }) {
-  const { tiers, tierOrder, disabled, onConfirmPlacement, currentItem } = props;
+  const { tiers, tierOrder, phase, isMyTurn, currentItem } = props;
 
   const [selectedTierId, setSelectedTierId] = useState<string | null>(null);
+  const shouldRemainLockedByKey = useMemo<Record<ActionLockKey, boolean>>(
+    () => ({
+      place: phase === "PLACE" && isMyTurn,
+    }),
+    [phase, isMyTurn],
+  );
+
+  const actionLocks = useActionLocks(shouldRemainLockedByKey, {
+    timeoutMs: ACTION_LOCK_TIMEOUT_MS,
+  });
+
+  const isPlacing = actionLocks.isLocked("place");
 
   const itemName = currentItem?.name ?? "";
   const itemImageSrc = currentItem?.imageSrc ?? null;
@@ -33,12 +52,26 @@ export function PlaceControls(props: {
     return base.filter((id) => tierById.has(id));
   }, [tierOrder, tiers, tierById]);
 
-  if (disabled) return <AwaitingControls />;
+  if (phase !== "PLACE" || !isMyTurn || isPlacing)
+    return <AwaitingControls />;
 
   const isConfirmDisabled = !selectedTierId;
 
+  const handlePlaceIntoTier = (tierId: string) => {
+    if (phase !== "PLACE" || !isMyTurn) return;
+    if (isPlacing) return;
+    if (!socketClient.isConnected()) return;
+
+    actionLocks.lock("place");
+    try {
+      socketClient.emit("game:place", { tierId });
+    } catch {
+      actionLocks.unlock("place");
+    }
+  };
+
   return (
-    <div className={clsx(styles.controls, styles.placeControls)}>
+    <div className={clsx(baseStyles.controls, styles.placeControls)}>
       <div
         className={styles.tierPickList}
         role="group"
@@ -113,7 +146,7 @@ export function PlaceControls(props: {
           disabled={isConfirmDisabled || !currentItem}
           onClick={() => {
             if (!selectedTierId || !currentItem) return;
-            onConfirmPlacement(selectedTierId);
+            handlePlaceIntoTier(selectedTierId);
           }}
         >
           CONFIRM

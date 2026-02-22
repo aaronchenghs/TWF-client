@@ -5,8 +5,8 @@ import { ROUTES } from "../routes";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../services/sockets/roomSocket";
-import { useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { normalizeCode } from "../../lib/stringNormalizers";
+import { useRef, useState, type KeyboardEvent } from "react";
+import { normalizeCode, normalizeName } from "../../lib/stringNormalizers";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
 import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
@@ -106,11 +106,10 @@ export function JoinRoomPanel() {
   const [name, setName] = useState<string>("");
   const [isJoining, setIsJoining] = useState<boolean>(false);
 
-  const normalizedCode = useMemo(() => normalizeCode(code), [code]);
+  const normalizedCode = normalizeCode(code);
+  const normalizedName = normalizeName(name);
 
-  const normalizedName = useMemo(() => name.trim(), [name]);
-
-  const canJoin =
+  const isJoinEnabled =
     normalizedCode.length === CODE_LENGTH &&
     normalizedName.length >= 1 &&
     normalizedName.length <= MAX_NAME_LENGTH &&
@@ -129,7 +128,7 @@ export function JoinRoomPanel() {
   };
 
   const handleJoinRoom = async () => {
-    if (!canJoin) return;
+    if (!isJoinEnabled) return;
     setIsJoining(true);
     const hostSession = getStartedHostSession();
     if (hostSession) {
@@ -187,7 +186,7 @@ export function JoinRoomPanel() {
           maxLength={MAX_NAME_LENGTH}
           fullWidth
         />
-        <AccentButton disabled={!canJoin} onClick={handleJoinRoom}>
+        <AccentButton disabled={!isJoinEnabled} onClick={handleJoinRoom}>
           Play
         </AccentButton>
       </div>

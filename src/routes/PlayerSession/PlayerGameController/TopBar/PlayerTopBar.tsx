@@ -40,17 +40,6 @@ export function PlayerTopBar({
     }
   }, [phase, isMyTurn, hasVoted]);
 
-  const pillClassName = useMemo(
-    () =>
-      clsx(
-        styles.statusPill,
-        statusLabel === "Place" && styles.statusPlace,
-        statusLabel === "Vote" && styles.statusVote,
-        statusLabel === "Waiting" && styles.statusWait,
-      ),
-    [statusLabel],
-  );
-
   return (
     <div className={styles.topBar}>
       <div className={styles.identity}>
@@ -63,7 +52,15 @@ export function PlayerTopBar({
       </div>
 
       <div className={styles.statusBar}>
-        <Pill size="lg" className={pillClassName}>
+        <Pill
+          size="lg"
+          className={clsx(
+            styles.statusPill,
+            statusLabel === "Place" && styles.statusPlace,
+            statusLabel === "Vote" && styles.statusVote,
+            statusLabel === "Waiting" && styles.statusWait,
+          )}
+        >
           <MainTextTypography variant="label" className={styles.statusText}>
             {statusLabel}
             {statusLabel === "Waiting" ? (

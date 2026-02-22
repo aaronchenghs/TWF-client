@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 import styles from "./LoadableImage.module.scss";
 
@@ -25,18 +25,15 @@ export function LoadableImage({
   ...imgProps
 }: LoadableImageProps) {
   const [readySrc, setReadySrc] = useState<string | null>(null);
-
   const normalizedSrc = src ?? null;
   const isReady = !!normalizedSrc && readySrc === normalizedSrc;
-
-  const key = useMemo(() => normalizedSrc ?? "no-src", [normalizedSrc]);
 
   if (!normalizedSrc) return fallback ? <>{fallback}</> : null;
 
   return (
     <div className={clsx(styles.root, className)}>
       <img
-        key={key}
+        key={normalizedSrc ?? "no-src"}
         className={clsx(styles.image, !isReady && styles.imageHidden)}
         src={normalizedSrc}
         alt={alt}

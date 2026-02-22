@@ -299,6 +299,7 @@ export default function GameRoom() {
                         <MainTextTypography
                           variant={isCurrentTurnPlayer ? "h2" : "h3"}
                           tone={isCurrentTurnPlayer ? "player" : "default"}
+                          muted
                           className={styles.activePlayerName}
                         >
                           {player.name}

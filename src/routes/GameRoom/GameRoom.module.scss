@@ -102,33 +102,50 @@ $side-delay: 0.25s;
     min-width: 0;
   }
 
-  .turnRow {
+  .playersCard {
+    display: flex;
+    flex-direction: column;
+    @include flexFill(auto);
+    min-height: 0;
+  }
+
+  .playersBody {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .activePlayersList {
+    display: flex;
+    flex-direction: column;
+    gap: calc($default-gap / 1.5);
+    margin-top: calc($default-padding / 2);
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .activePlayerRow {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: $default-gap;
+    gap: calc($default-gap / 1.5);
     min-width: 0;
     max-width: 100%;
     width: 100%;
+    padding: calc($default-padding / 4) 0;
   }
 
-  .turnAvatar {
+  .activePlayerRowCurrent {
+    border-left: 6px solid $accent;
+    padding-left: $default-padding;
+  }
+
+  .activePlayerAvatar {
     @include flexFixed();
   }
 
-  .turnPhrase {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  .activePlayerName {
     min-width: 0;
-    max-width: 100%;
     white-space: nowrap;
-  }
-
-  .turnName {
-    min-width: 0;
-    max-width: min(100%, 188px);
-    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .itemImage,

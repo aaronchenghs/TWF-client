@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import styles from "./GameRoom.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
@@ -25,7 +26,6 @@ import { getClientId, saveRoomSession } from "@/lib/session";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { PhaseCountdown } from "./PhaseCountdown/PhaseCountdown";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
-import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 import { useAppSelector, type AppState } from "@/store/store";
 import {
   clearHostRoomState,
@@ -52,7 +52,6 @@ export default function GameRoom() {
   const [isIntro, setIsIntro] = useState(true);
 
   const suppressRejoinNoticeRef = useRef(false);
-  const turnNameRef = useRef<HTMLSpanElement | null>(null);
 
   const displayRoomCode = $isStreamerMode
     ? roomCode
@@ -94,18 +93,12 @@ export default function GameRoom() {
       ? `CURRENT ITEM (${currentItemProgress.index}/${currentItemProgress.total}):`
       : "CURRENT ITEM:";
 
-  const currentTurnPlayer = state?.currentTurnPlayerId
-    ? (state.players.find(
-        (player) => player.id === state.currentTurnPlayerId,
-      ) ?? null)
-    : null;
-  const currentTurnName = currentTurnPlayer?.name ?? "";
+  const currentTurnPlayerId = state?.currentTurnPlayerId ?? null;
 
-  useAutoFitText(turnNameRef, {
-    minFontSizePx: 22,
-    watch: currentTurnName,
-    enabled: !!currentTurnName,
-  });
+  const activePlayers = useMemo(
+    () => (state?.players ?? []).filter((player) => player.connected !== false),
+    [state?.players],
+  );
 
   const handleExit = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
@@ -269,35 +262,56 @@ export default function GameRoom() {
             />
           </GameStatusCard>
 
-          <GameStatusCard label="TURN:">
-            <div className={styles.itemRow}>
-              {currentTurnName ? (
-                <div className={styles.turnRow}>
-                  <PlayerAvatar
-                    avatar={currentTurnPlayer?.avatar}
-                    size={45}
-                    className={styles.turnAvatar}
-                    sway
-                  />
-                  <div className={styles.turnPhrase}>
-                    <MainTextTypography
-                      variant="h2"
-                      tone="player"
-                      className={styles.turnName}
-                      ref={turnNameRef}
-                    >
-                      {currentTurnName}
-                    </MainTextTypography>
-                    <MainTextTypography variant="h2" muted>
-                      {"'s turn"}
-                    </MainTextTypography>
-                  </div>
-                </div>
-              ) : (
-                <MainTextTypography variant="h2" muted>
-                  —
-                </MainTextTypography>
-              )}
+          <GameStatusCard
+            className={styles.playersCard}
+            bodyClassName={styles.playersBody}
+          >
+            <div className={styles.activePlayersList} role="list">
+              <AnimatePresence initial={false}>
+                {activePlayers.length > 0 ? (
+                  activePlayers.map((player) => {
+                    const isCurrentTurnPlayer =
+                      player.id === currentTurnPlayerId;
+
+                    return (
+                      <motion.div
+                        key={player.id}
+                        layout
+                        role="listitem"
+                        className={clsx(
+                          styles.activePlayerRow,
+                          isCurrentTurnPlayer && styles.activePlayerRowCurrent,
+                        )}
+                        initial={{ opacity: 0, x: "50%" }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: "50%" }}
+                        transition={{
+                          duration: 0.28,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                      >
+                        <PlayerAvatar
+                          avatar={player.avatar}
+                          size={40}
+                          className={styles.activePlayerAvatar}
+                          sway
+                        />
+                        <MainTextTypography
+                          variant={isCurrentTurnPlayer ? "h2" : "h3"}
+                          tone={isCurrentTurnPlayer ? "player" : "default"}
+                          className={styles.activePlayerName}
+                        >
+                          {player.name}
+                        </MainTextTypography>
+                      </motion.div>
+                    );
+                  })
+                ) : (
+                  <MainTextTypography variant="body" muted>
+                    No active players
+                  </MainTextTypography>
+                )}
+              </AnimatePresence>
             </div>
           </GameStatusCard>
 

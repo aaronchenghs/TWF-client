@@ -1,4 +1,4 @@
-import { memo, useLayoutEffect, useRef, useState } from "react";
+import { memo, useCallback, useLayoutEffect, useRef, useState } from "react";
 import styles from "./TierBoard.module.scss";
 import clsx from "clsx";
 import * as Contracts from "@twf/contracts";
@@ -9,7 +9,11 @@ type RoomPublicState = Contracts.RoomPublicState;
 type TierId = Contracts.TierId;
 type TierItemId = Contracts.TierItemId;
 const MIN_TIER_LABEL_FONT_SIZE_PX = 26;
-const SCALE_EPSILON = 0.005;
+const SCALE_EPSILON = 0.001;
+const MIN_BOARD_SCALE = 0.2;
+const SCALE_SEARCH_STEPS = 14;
+const FIT_BUFFER_PX = 10;
+const SCALE_HEADROOM = 0.985;
 
 export const TierBoard = memo(function TierBoard({
   state,
@@ -19,45 +23,101 @@ export const TierBoard = memo(function TierBoard({
   const [scale, setScale] = useState(1);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const frameRef = useRef(0);
+  const scaleRef = useRef(1);
+  const isProbingRef = useRef(false);
 
   const tierOrder = state.tierOrder ?? [];
   const tiers = state.tiers ?? ({} as Record<TierId, TierItemId[]>);
 
-  useLayoutEffect(function measureBoardScale() {
+  useLayoutEffect(() => {
+    scaleRef.current = scale;
+  }, [scale]);
+
+  const measureBestScale = useCallback(() => {
+    const container = containerRef.current;
+    const content = contentRef.current;
+    if (!container || !content) return 1;
+
+    const availableHeight = container.clientHeight;
+    if (!availableHeight) return 1;
+    const targetHeight = Math.max(0, availableHeight - FIT_BUFFER_PX);
+    const renderedScale = scaleRef.current;
+
+    const fitsAtScale = (candidateScale: number) => {
+      content.style.setProperty("--boardScale", String(candidateScale));
+      const unscaledHeight = content.scrollHeight;
+      const visualHeight = unscaledHeight * candidateScale;
+      return visualHeight <= targetHeight;
+    };
+
+    let bestScale = MIN_BOARD_SCALE;
+
+    isProbingRef.current = true;
+    try {
+      if (fitsAtScale(1)) {
+        bestScale = 1;
+      } else {
+        let low = MIN_BOARD_SCALE;
+        let high = 1;
+
+        for (let i = 0; i < SCALE_SEARCH_STEPS; i += 1) {
+          const mid = (low + high) / 2;
+          if (fitsAtScale(mid)) {
+            bestScale = mid;
+            low = mid;
+          } else {
+            high = mid;
+          }
+        }
+      }
+    } finally {
+      // Restore the currently rendered scale; React owns the persistent style value.
+      content.style.setProperty("--boardScale", String(renderedScale));
+      isProbingRef.current = false;
+    }
+
+    const adjustedScale =
+      bestScale >= 1
+        ? 1
+        : Math.max(MIN_BOARD_SCALE, bestScale * SCALE_HEADROOM);
+
+    return Number(adjustedScale.toFixed(4));
+  }, []);
+
+  const scheduleScaleMeasure = useCallback(() => {
+    cancelAnimationFrame(frameRef.current);
+    frameRef.current = requestAnimationFrame(() => {
+      const nextScale = measureBestScale();
+      setScale((prev) =>
+        Math.abs(prev - nextScale) > SCALE_EPSILON ? nextScale : prev,
+      );
+    });
+  }, [measureBestScale]);
+
+  useLayoutEffect(() => {
+    scheduleScaleMeasure();
+  }, [state, scheduleScaleMeasure]);
+
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const content = contentRef.current;
     if (!container || !content) return;
 
-    let frame = 0;
-
-    const updateScale = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const availableHeight = container.clientHeight;
-        const contentHeight = content.scrollHeight;
-        if (!availableHeight || !contentHeight) return;
-
-        const nextScale = Number(
-          Math.min(1, availableHeight / contentHeight).toFixed(4),
-        );
-
-        setScale((prev) =>
-          Math.abs(prev - nextScale) > SCALE_EPSILON ? nextScale : prev,
-        );
-      });
+    const onResize = () => {
+      if (isProbingRef.current) return;
+      scheduleScaleMeasure();
     };
 
-    updateScale();
-
-    const ro = new ResizeObserver(updateScale);
+    const ro = new ResizeObserver(onResize);
     ro.observe(container);
     ro.observe(content);
 
     return () => {
-      cancelAnimationFrame(frame);
+      cancelAnimationFrame(frameRef.current);
       ro.disconnect();
     };
-  }, []);
+  }, [scheduleScaleMeasure]);
 
   return (
     <div className={styles.root} ref={containerRef}>

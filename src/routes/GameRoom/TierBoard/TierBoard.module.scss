@@ -15,9 +15,9 @@ $defaultTierColor: $light-transparency;
   flex-direction: column;
   gap: $default-gap;
 
-  // Keep layout width stable so row wrapping does not feed back into scale measurement.
-  width: 100%;
-  max-width: 100%;
+  // Counteract visual width loss when scaling so rows continue to use the full board width.
+  width: calc(100% / var(--boardScale));
+  max-width: calc(100% / var(--boardScale));
 
   transform: scale(var(--boardScale));
   transform-origin: top left;

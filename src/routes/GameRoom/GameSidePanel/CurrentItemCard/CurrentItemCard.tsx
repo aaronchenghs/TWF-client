@@ -48,9 +48,7 @@ export function CurrentItemCard({ state }: CurrentItemCardProps) {
       <CurrentItemDisplay
         item={currentItem}
         isVisible={SHOW_CURRENT_ITEM_PHASES.has(state.phase)}
-        rowClassName={styles.itemRow}
-        imageClassName={styles.itemImage}
-        fallbackClassName={styles.itemImageFallback}
+        containerClassName={styles.itemRow}
         textAlign="center"
       />
     </GameStatusCard>

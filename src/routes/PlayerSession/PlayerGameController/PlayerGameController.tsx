@@ -99,10 +99,7 @@ export default function PlayerGameController({
           <CurrentItemDisplay
             item={currentItem}
             isVisible={SHOW_CURRENT_ITEM_PHASES.has(state.phase) || isMyTurn}
-            rowClassName={styles.itemRow}
-            imageClassName={styles.itemImage}
-            fallbackClassName={styles.itemImageFallback}
-            nameClassName={styles.itemName}
+            containerClassName={styles.itemRow}
             textAlign="center"
           />
         </GameStatusCard>

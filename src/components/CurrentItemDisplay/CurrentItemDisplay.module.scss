@@ -1,0 +1,53 @@
+@use "../../styles/export.scss" as *;
+
+$current-item-float-duration: 3s;
+
+.container {
+  --current-item-image-size: 56px;
+  --current-item-name-max-width: min(68vw, 320px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  gap: $default-gap;
+}
+
+.image {
+  @include float(4px, $current-item-float-duration);
+  width: var(--current-item-image-size);
+  height: var(--current-item-image-size);
+  @include flexFixed();
+  display: grid;
+  place-items: center;
+  border-radius: $default-gap;
+  border: 1px solid $light-transparency;
+  background: $light-transparency;
+  box-shadow: $shadow-elevated-sm;
+  overflow: hidden;
+
+  :global(img) {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+  }
+}
+
+.imageFallback {
+  @extend .image;
+  text-shadow: 0 2px 10px $box-shadow-color;
+  user-select: none;
+}
+
+.name {
+  @include float(4px, $current-item-float-duration);
+  display: block;
+  @include flexShrink();
+  max-width: var(--current-item-name-max-width);
+  min-width: 0;
+}

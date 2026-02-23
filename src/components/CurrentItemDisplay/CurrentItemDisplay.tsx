@@ -1,5 +1,7 @@
+import clsx from "clsx";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
+import styles from "./CurrentItemDisplay.module.scss";
 
 type CurrentItem = {
   name: string;
@@ -9,10 +11,7 @@ type CurrentItem = {
 type CurrentItemDisplayProps = {
   item: CurrentItem | null;
   isVisible: boolean;
-  rowClassName?: string;
-  imageClassName?: string;
-  fallbackClassName?: string;
-  nameClassName?: string;
+  containerClassName?: string;
   textAlign?: "left" | "center" | "right";
   emptyText?: string;
   hiddenText?: string;
@@ -23,10 +22,7 @@ type CurrentItemDisplayProps = {
 export function CurrentItemDisplay({
   item,
   isVisible,
-  rowClassName,
-  imageClassName,
-  fallbackClassName,
-  nameClassName,
+  containerClassName,
   textAlign = "center",
   emptyText = "--",
   hiddenText = "???",
@@ -50,27 +46,23 @@ export function CurrentItemDisplay({
   }
 
   return (
-    <div className={rowClassName}>
+    <div className={clsx(styles.container, containerClassName)}>
       <LoadableImage
-        className={imageClassName}
+        className={styles.image}
         src={item.imageSrc}
         alt={item.name}
         loading={loading}
         fetchPriority={fetchPriority}
         draggable={false}
         fallback={
-          <div className={fallbackClassName} aria-hidden="true">
+          <div className={styles.imageFallback} aria-hidden="true">
             <MainTextTypography textAlign={textAlign} variant="h2">
               {item.name}
             </MainTextTypography>
           </div>
         }
       />
-      <MainTextTypography
-        textAlign={textAlign}
-        variant="h2"
-        className={nameClassName}
-      >
+      <MainTextTypography textAlign={textAlign} variant="h2" className={styles.name}>
         {item.name}
       </MainTextTypography>
     </div>

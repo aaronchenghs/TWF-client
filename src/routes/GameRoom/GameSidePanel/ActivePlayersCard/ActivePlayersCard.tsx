@@ -46,7 +46,7 @@ function ActivePlayerRow({
     >
       <PlayerAvatar
         avatar={player.avatar}
-        size={40}
+        size={50}
         className={styles.activePlayerAvatar}
         sway
       />

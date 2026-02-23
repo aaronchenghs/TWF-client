@@ -4,7 +4,6 @@ import styles from "./GameRoom.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { socketClient } from "@/services/sockets/socketClient";
 import { roomSocket } from "@/services/sockets/roomSocket";
-import { normalizeCode } from "@/lib/stringNormalizers";
 import { ROUTES } from "@/routes/routes";
 import * as Contracts from "@twf/contracts";
 import { TierBoard } from "./TierBoard/TierBoard";
@@ -17,23 +16,20 @@ import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { getClientId, saveRoomSession } from "@/lib/session";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
-import { useAppSelector, type AppState } from "@/store/store";
 import {
   clearHostRoomState,
   markHostRoomStarted,
   readHostRoomCode,
 } from "@/lib/roomClientState";
+import { useRoomCodeDisplayValue } from "@/lib/roomCode";
 import { GameSidePanel } from "./GameSidePanel/GameSidePanel";
 
 type RoomPublicState = Contracts.RoomPublicState;
-const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 export default function GameRoom() {
   const navigate = useNavigate();
-  const $isStreamerMode = useAppSelector(
-    (state: AppState) => state.userSettings.isStreamerMode,
-  );
-  const roomCode = normalizeCode(readHostRoomCode());
+  const { roomCode, isRoomCodeValid, displayRoomCode } =
+    useRoomCodeDisplayValue(readHostRoomCode());
 
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
   const [isRematchSubmitting, setIsRematchSubmitting] = useState(false);
@@ -42,13 +38,6 @@ export default function GameRoom() {
   );
   const [isIntro, setIsIntro] = useState(true);
   const suppressRejoinNoticeRef = useRef(false);
-
-  const displayRoomCode = $isStreamerMode
-    ? roomCode
-      ? "****"
-      : "--"
-    : roomCode || "--";
-  const isRoomCodeValid = roomCode.length === CODE_LENGTH;
   const isHostUnexpectedExitEligible = !!state && state.phase !== "FINISHED";
   const hasState = state != null;
 
@@ -159,6 +148,7 @@ export default function GameRoom() {
         <GameSidePanel
           state={state}
           isIntro={isIntro}
+          roomCode={roomCode}
           onExitClick={() => setIsConfirmExitOpen(true)}
           onPlayAgain={handlePlayAgain}
           isRematchSubmitting={isRematchSubmitting}

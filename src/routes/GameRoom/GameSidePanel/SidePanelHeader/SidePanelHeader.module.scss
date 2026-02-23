@@ -1,37 +1,23 @@
 @use "../../../../styles/export.scss" as *;
 
 .header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: $default-gap;
   overflow: hidden;
 }
 
-.headerLeft,
-.headerRight {
-  display: flex;
-  flex-direction: column;
-  gap: calc($default-gap / 2);
-}
-
-.headerRight {
-  align-items: flex-end;
-}
-
 .logo {
+  justify-self: start;
   width: auto;
   height: 56px;
   max-width: 100%;
-  @include flexShrink();
   object-fit: contain;
+  @include flexShrink();
   @include float(6px, 4s);
 }
 
-@media (max-width: $tablet-width) {
-  .headerRight {
-    flex-direction: row;
-    align-items: center;
-    gap: $default-gap;
-  }
+.exitButton {
+  justify-self: end;
 }

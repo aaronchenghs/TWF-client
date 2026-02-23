@@ -176,7 +176,6 @@ export default function HostLobby() {
 
         <HostSidePanel
           roomCode={roomCode}
-          isRoomCodeValid={isRoomCodeValid}
           players={players}
           selectedTierSetId={selectedTierSetId}
           selectedTierSetName={selectedTierSetName}

@@ -1,9 +1,9 @@
 import clsx from "clsx";
-import { CopyTextButton } from "@/components/CopyTextButton/CopyTextButton";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { RoomCodeDisplay } from "@/components/RoomCodeDisplay/RoomCodeDisplay";
 import * as Contracts from "@twf/contracts";
 import { useState, useCallback } from "react";
 import { CountdownOverlay } from "../CountdownOverlay/CountdownOverlay";
@@ -12,14 +12,12 @@ import { roomSocket } from "@/services/sockets/roomSocket";
 import { ROUTES } from "@/routes/routes";
 import { useNavigate } from "react-router-dom";
 import type { Guid } from "@/lib/guid";
-import { useAppSelector, type AppState } from "@/store/store";
 import styles from "./HostSidePanel.module.scss";
 
 type Player = Contracts.RoomPublicState["players"][number];
 
 type HostSidePanelProps = {
   roomCode: string;
-  isRoomCodeValid: boolean;
   players: Player[];
   selectedTierSetId: Guid | null;
   selectedTierSetName: string | null;
@@ -29,7 +27,6 @@ type HostSidePanelProps = {
 
 export function HostSidePanel({
   roomCode,
-  isRoomCodeValid,
   players,
   selectedTierSetId,
   selectedTierSetName,
@@ -37,16 +34,7 @@ export function HostSidePanel({
   suppressRejoinNoticeRef,
 }: HostSidePanelProps) {
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
-  const $isStreamerMode = useAppSelector(
-    (state: AppState) => state.userSettings.isStreamerMode,
-  );
   const navigate = useNavigate();
-
-  const displayRoomCode = $isStreamerMode
-    ? roomCode
-      ? "****"
-      : "----"
-    : roomCode || "----";
 
   const isStartEnabled = !!selectedTierSetId && players.length >= 2;
 
@@ -72,16 +60,11 @@ export function HostSidePanel({
         <MainTextTypography className={styles.roomLabel} muted variant="h4">
           Room Code:
         </MainTextTypography>
-        <div className={styles.roomCodeContainer}>
-          <CopyTextButton
-            value={roomCode}
-            disabled={!isRoomCodeValid}
-            title="Copy room code"
-          />
-          <MainTextTypography className={styles.roomCode} variant="h2">
-            {displayRoomCode}
-          </MainTextTypography>
-        </div>
+        <RoomCodeDisplay
+          roomCode={roomCode}
+          className={styles.roomCodeContainer}
+          variant="h2"
+        />
       </div>
 
       <div className={styles.panel}>

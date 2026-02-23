@@ -1,0 +1,22 @@
+@use "../../styles/export.scss" as *;
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: calc($default-gap / 1.5);
+  min-width: 0;
+
+  .roomCodeContainer {
+    justify-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: calc($default-gap / 1.5);
+    min-width: 0;
+  }
+
+  .code {
+    letter-spacing: 0.15em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+}

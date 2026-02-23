@@ -1,10 +1,5 @@
 @use "../../styles/export.scss" as *;
 
-$current-item-float-duration: 3s;
-$intro-duration: 2s;
-$board-delay: 0s;
-$side-delay: 0.25s;
-
 .root {
   padding: calc($default-padding * 2);
   display: flex;
@@ -22,26 +17,6 @@ $side-delay: 0.25s;
     overflow: hidden;
   }
 
-  .headerLeft,
-  .headerRight {
-    display: flex;
-    flex-direction: column;
-    gap: calc($default-gap / 2);
-  }
-
-  .headerRight {
-    align-items: flex-end;
-  }
-
-  .logo {
-    width: auto;
-    height: 56px;
-    max-width: 100%;
-    flex: 0 1 auto;
-    object-fit: contain;
-    @include float(6px, 4s);
-  }
-
   .main {
     display: grid;
     grid-template-columns: 1fr 480px;
@@ -52,196 +27,10 @@ $side-delay: 0.25s;
     height: 100%;
   }
 
-  // --- Intro slide-in support ---
-  .boardSection,
-  .sideSection {
-    opacity: 1;
-    transform: translateX(0);
-    will-change: transform;
-
-    transition-property: transform;
-    transition-duration: $intro-duration;
-    transition-timing-function: ease-in-out;
-  }
-
-  .boardSection {
-    transition-delay: $board-delay;
-    min-width: 0;
-    min-height: 0;
-    height: 100%;
-  }
-
-  .sideSection {
-    transition-delay: $side-delay;
-
-    display: flex;
-    flex-direction: column;
-    gap: $default-gap;
-    min-height: 0;
-    overflow: visible;
-  }
-
-  &.intro {
-    .boardSection {
-      transform: translateX(-100vw);
-    }
-
-    .sideSection {
-      transform: translateX(100vw);
-    }
-  }
-  // ---------------------------------------------------------
-
-  .itemRow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    gap: $default-gap;
-    margin-top: calc($default-padding / 2);
-    min-width: 0;
-  }
-
-  .phaseCard {
-    position: relative;
-    isolation: isolate;
-    border-color: transparent;
-    overflow: hidden;
-  }
-
-  .phaseProgressRing {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  .phaseProgressTrack,
-  .phaseProgressActive {
-    fill: none;
-    vector-effect: non-scaling-stroke;
-    stroke-linecap: butt;
-    stroke-linejoin: round;
-  }
-
-  .phaseProgressTrack {
-    stroke: rgba(255, 255, 255, 0.26);
-    stroke-width: 8;
-  }
-
-  .phaseProgressActive {
-    stroke: $accent;
-    stroke-width: 8;
-  }
-
-  .phaseCardCritical {
-    .phaseProgressActive {
-      @include urgencyBlinkAnimation(0.5s);
-    }
-  }
-
-  .phaseCardContent {
-    position: relative;
-    z-index: 1;
-  }
-
-  .playersCard {
-    display: flex;
-    flex-direction: column;
-    @include flexFill(auto);
-    min-height: 0;
-  }
-
-  .playersBody {
-    flex: 1;
-    min-height: 0;
-  }
-
-  .activePlayersList {
-    display: flex;
-    flex-direction: column;
-    gap: calc($default-gap / 1.5);
-    margin-top: calc($default-padding / 2);
-    min-height: 0;
-    overflow-y: auto;
-  }
-
-  .activePlayerRow {
-    display: flex;
-    align-items: center;
-    gap: calc($default-gap / 1.5);
-    min-width: 0;
-    max-width: 100%;
-    width: 100%;
-    padding: calc($default-padding / 4) 0;
-  }
-
-  .activePlayerRowCurrent {
-    border-left: 6px solid $accent;
-    padding-left: $default-padding;
-  }
-
-  .activePlayerAvatar {
-    @include flexFixed();
-  }
-
-  .activePlayerName {
-    min-width: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .itemImage,
-  .itemImageFallback {
-    width: 56px;
-    height: 56px;
-    @include flexFixed();
-    border-radius: $default-gap;
-  }
-
-  .itemImage {
-    @include float(4px, $current-item-float-duration);
-    border: 1px solid $light-transparency;
-    background: $light-transparency;
-    box-shadow: $shadow-elevated-sm;
-    overflow: hidden;
-
-    :global(img) {
-      width: auto;
-      height: auto;
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      display: block;
-      margin: auto;
-    }
-  }
-
-  .itemImageFallback {
-    @extend .itemImage;
-    display: grid;
-    place-items: center;
-    text-shadow: 0 2px 10px $box-shadow-color;
-    user-select: none;
-  }
-
-  .bigText {
-    display: block;
-    margin-top: 0.25rem;
-  }
-
   .center {
     flex: 1;
     display: grid;
     place-items: center;
-  }
-
-  .rematchCard {
-    display: grid;
-    gap: $default-gap;
-    margin-top: calc($default-padding / 2);
   }
 
   .devControls {
@@ -262,30 +51,19 @@ $side-delay: 0.25s;
     background: $box-shadow-color;
     backdrop-filter: $backdrop-blur;
 
-    .prevnextButtonsGroup {
+    .prevNextButtonsGroup {
       display: flex;
       gap: $default-gap;
     }
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: $tablet-width) {
     height: auto;
     overflow: visible;
 
     .main {
       grid-template-columns: 1fr;
       height: auto;
-    }
-
-    .sideSection {
-      max-height: none;
-      overflow: visible;
-    }
-
-    .headerRight {
-      flex-direction: row;
-      align-items: center;
-      gap: $default-gap;
     }
   }
 }

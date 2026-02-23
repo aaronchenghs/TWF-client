@@ -95,7 +95,7 @@
   @include flexFixed();
 }
 
-@media (max-height: 560px) {
+@media (max-height: $short-viewport-height) {
   .overlay {
     padding: $default-padding;
   }

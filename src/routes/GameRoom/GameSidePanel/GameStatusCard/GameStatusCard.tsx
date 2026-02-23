@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode, Ref } from "react";
 import clsx from "clsx";
 import styles from "./GameStatusCard.module.scss";
-import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 
 type GameStatusCardProps = {
   label?: string;
@@ -23,7 +23,11 @@ export function GameStatusCard({
   cardRef,
 }: GameStatusCardProps) {
   return (
-    <section ref={cardRef} className={clsx(styles.card, className)} style={style}>
+    <section
+      ref={cardRef}
+      className={clsx(styles.card, className)}
+      style={style}
+    >
       <div className={styles.header}>
         {label ? (
           <MainTextTypography variant="caption" muted letterSpacing="wide">

@@ -8,6 +8,7 @@ import { useAutoFitText } from "../../../lib/hooks/useAutoFitText";
 type RoomPublicState = Contracts.RoomPublicState;
 type TierId = Contracts.TierId;
 type TierItemId = Contracts.TierItemId;
+
 const MIN_TIER_LABEL_FONT_SIZE_PX = 26;
 const SCALE_EPSILON = 0.001;
 const MIN_BOARD_SCALE = 0.2;
@@ -17,11 +18,15 @@ const SCALE_HEADROOM = 0.985;
 const BOARD_SCALE_CSS_VAR = "--boardScale" as string;
 const TIER_LABEL_COLOR_CSS_VAR = "--tierColor" as string;
 
+type TierBoardProps = {
+  state: RoomPublicState;
+  isIntro: boolean;
+};
+
 export const TierBoard = memo(function TierBoard({
   state,
-}: {
-  state: RoomPublicState;
-}) {
+  isIntro,
+}: TierBoardProps) {
   const [scale, setScale] = useState(1);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -122,46 +127,48 @@ export const TierBoard = memo(function TierBoard({
   }, [scheduleScaleMeasure]);
 
   return (
-    <div className={styles.root} ref={containerRef}>
-      <div
-        className={styles.scale}
-        ref={contentRef}
-        style={{ [BOARD_SCALE_CSS_VAR]: scale }}
-      >
-        {tierOrder.map((tierId) => {
-          const items = tiers[tierId] ?? [];
-          const isPending = state.pendingTierId === tierId;
-          const tierMeta = state.tierMetaById?.[tierId];
-          const tierColor = tierMeta?.color;
+    <section className={clsx(styles.boardSection, isIntro && styles.intro)}>
+      <div className={styles.root} ref={containerRef}>
+        <div
+          className={styles.scale}
+          ref={contentRef}
+          style={{ [BOARD_SCALE_CSS_VAR]: scale }}
+        >
+          {tierOrder.map((tierId) => {
+            const items = tiers[tierId] ?? [];
+            const isPending = state.pendingTierId === tierId;
+            const tierMeta = state.tierMetaById?.[tierId];
+            const tierColor = tierMeta?.color;
 
-          return (
-            <div
-              key={tierId}
-              className={clsx(styles.row, isPending && styles.pending)}
-              style={{ [TIER_LABEL_COLOR_CSS_VAR]: tierColor }}
-            >
-              <div className={styles.tierLabel}>
-                <TierLabelText label={tierMeta?.name ?? tierId} />
+            return (
+              <div
+                key={tierId}
+                className={clsx(styles.row, isPending && styles.pending)}
+                style={{ [TIER_LABEL_COLOR_CSS_VAR]: tierColor }}
+              >
+                <div className={styles.tierLabel}>
+                  <TierLabelText label={tierMeta?.name ?? tierId} />
+                </div>
+
+                <div className={styles.items}>
+                  {items.map((id) => (
+                    <TierItemTile key={id} state={state} itemId={id} />
+                  ))}
+
+                  {isPending && state.currentItem ? (
+                    <TierItemTile
+                      state={state}
+                      itemId={state.currentItem}
+                      ghost
+                    />
+                  ) : null}
+                </div>
               </div>
-
-              <div className={styles.items}>
-                {items.map((id) => (
-                  <TierItemTile key={id} state={state} itemId={id} />
-                ))}
-
-                {isPending && state.currentItem ? (
-                  <TierItemTile
-                    state={state}
-                    itemId={state.currentItem}
-                    ghost
-                  />
-                ) : null}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </section>
   );
 });
 

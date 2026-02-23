@@ -1,0 +1,37 @@
+@use "../../../../styles/export.scss" as *;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $default-gap;
+  overflow: hidden;
+}
+
+.headerLeft,
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  gap: calc($default-gap / 2);
+}
+
+.headerRight {
+  align-items: flex-end;
+}
+
+.logo {
+  width: auto;
+  height: 56px;
+  max-width: 100%;
+  @include flexShrink();
+  object-fit: contain;
+  @include float(6px, 4s);
+}
+
+@media (max-width: $tablet-width) {
+  .headerRight {
+    flex-direction: row;
+    align-items: center;
+    gap: $default-gap;
+  }
+}

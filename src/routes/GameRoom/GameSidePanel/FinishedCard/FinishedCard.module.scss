@@ -1,0 +1,7 @@
+@use "../../../../styles/export.scss" as *;
+
+.rematchCard {
+  display: grid;
+  gap: $default-gap;
+  margin-top: calc($default-padding / 2);
+}

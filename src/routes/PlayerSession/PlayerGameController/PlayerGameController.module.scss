@@ -68,7 +68,7 @@ $current-item-float-duration: 3s;
 .itemName {
   @include float(4px, $current-item-float-duration);
   display: block;
-  flex: 0 1 auto;
+  @include flexShrink();
   max-width: min(68vw, 320px);
   min-width: 0;
 }

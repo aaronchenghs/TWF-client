@@ -90,6 +90,10 @@
   flex: 0 0 $basis;
 }
 
+@mixin flexShrink($basis: auto) {
+  flex: 0 1 $basis;
+}
+
 @mixin flexFill($basis: auto) {
   flex: 1 1 $basis;
 }

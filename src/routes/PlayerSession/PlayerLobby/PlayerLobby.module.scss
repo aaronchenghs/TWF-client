@@ -53,7 +53,7 @@ $logo-max-height: 160px;
 .identityName {
   text-align: left;
   min-width: 0;
-  flex: 0 1 auto;
+  @include flexShrink();
   max-width: calc(100% - ($default-gap * 2));
   white-space: nowrap;
 }

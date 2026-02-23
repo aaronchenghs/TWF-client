@@ -5,7 +5,6 @@ import * as Contracts from "@twf/contracts";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { socketClient } from "@/services/sockets/socketClient";
-import { GameStatusCard } from "@/routes/GameRoom/GameStatusCard/GameStatusCard";
 import { ROUTES } from "@/routes/routes";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
@@ -14,6 +13,7 @@ import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
 import { clearPlayerRoomState, readPlayerRuntime } from "@/lib/roomClientState";
 import { Controls } from "./Controls/Controls";
 import { PlayerTopBar } from "./TopBar/PlayerTopBar";
+import { GameStatusCard } from "@/routes/GameRoom/GameSidePanel/GameStatusCard/GameStatusCard";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;

@@ -4,6 +4,7 @@ import {
   type Avatar,
   type AvatarParts,
 } from "@twf/contracts";
+import { normalizeCircularIndex } from "@/lib/array";
 
 /**
  * Player avatar:
@@ -107,7 +108,7 @@ function safeAssetAt(assets: readonly string[], index: number): string | null {
   if (assets.length === 0) return null;
   if (!Number.isInteger(index)) return assets[0] ?? null;
 
-  const wrapped = ((index % assets.length) + assets.length) % assets.length;
+  const wrapped = normalizeCircularIndex(index, assets.length);
   return assets[wrapped] ?? null;
 }
 

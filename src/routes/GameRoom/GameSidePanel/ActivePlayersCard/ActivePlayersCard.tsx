@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import * as Contracts from "@twf/contracts";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
+import { getPlayersInTurnDisplayOrder } from "@/lib/players";
 import { GameStatusCard } from "../GameStatusCard/GameStatusCard";
 import styles from "./ActivePlayersCard.module.scss";
 
@@ -14,6 +15,7 @@ type ActivePlayersCardProps = {
 
 export function ActivePlayersCard({ state }: ActivePlayersCardProps) {
   const currentTurnPlayerId = state.currentTurnPlayerId ?? null;
+  const playersInDisplayOrder = getPlayersInTurnDisplayOrder(state);
 
   return (
     <GameStatusCard
@@ -22,8 +24,8 @@ export function ActivePlayersCard({ state }: ActivePlayersCardProps) {
     >
       <div className={styles.activePlayersList} role="list">
         <AnimatePresence initial={false}>
-          {state.players.length > 0 ? (
-            state.players.map((player) => {
+          {playersInDisplayOrder.length > 0 ? (
+            playersInDisplayOrder.map((player) => {
               const isCurrentTurnPlayer = player.id === currentTurnPlayerId;
 
               return (

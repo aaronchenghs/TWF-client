@@ -53,11 +53,7 @@
 }
 
 .phaseCardContent {
+  padding: $default-padding;
   position: relative;
   z-index: 1;
-}
-
-.bigText {
-  display: block;
-  margin-top: 0.25rem;
 }

@@ -123,11 +123,11 @@ export function PhaseStatusCard({ state }: PhaseStatusCardProps) {
           {state.phase}
         </MainTextTypography>
 
-        <PhaseCountdown
-          secondsLeft={phaseClock.secondsLeft}
-          hidden={shouldHideCountdown}
-          className={styles.bigText}
-        />
+        {!shouldHideCountdown ? (
+          <MainTextTypography variant="h2">
+            {phaseClock.secondsLeft ?? "--"}
+          </MainTextTypography>
+        ) : null}
       </div>
     </GameStatusCard>
   );
@@ -158,23 +158,5 @@ const PhaseProgressRing = memo(function PhaseProgressRing({
         strokeDashoffset={0}
       />
     </svg>
-  );
-});
-
-const PhaseCountdown = memo(function PhaseCountdown({
-  secondsLeft,
-  hidden = false,
-  className,
-}: {
-  secondsLeft?: number | null;
-  hidden?: boolean;
-  className?: string;
-}) {
-  if (hidden) return null;
-
-  return (
-    <MainTextTypography variant="h2" className={className}>
-      {secondsLeft ?? "--"}
-    </MainTextTypography>
   );
 });

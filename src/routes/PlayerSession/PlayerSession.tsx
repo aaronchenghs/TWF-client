@@ -79,6 +79,15 @@ export default function PlayerSession() {
     onKicked: handleKicked,
   });
 
+  useEffect(function disconnectSocketOnTabClose() {
+    const handleBeforeUnload = () => {
+      socketClient.disconnect();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
   useEffect(
     function syncPlayerSessionTitle() {
       const nextTitle =

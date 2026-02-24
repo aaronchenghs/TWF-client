@@ -16,13 +16,9 @@
 }
 
 .logo {
-  width: 100px;
+  width: 250px;
   height: auto;
   margin: 0 auto;
-}
-
-.title {
-  letter-spacing: $ls-display;
 }
 
 .row {
@@ -35,20 +31,5 @@
 .subtitle {
   display: inline-flex;
   align-items: center;
-  gap: calc($default-gap * 0.5);
-}
-
-.bar {
-  height: 5px;
-  border-radius: $round;
-  background: $comic-dot-color;
-  overflow: hidden;
-}
-
-.barFill {
-  height: 100%;
-  width: 45%;
-  border-radius: $round;
-  background: $accent;
-  animation: sweep 1.4s ease-in-out infinite;
+  padding-left: $default-gap;
 }

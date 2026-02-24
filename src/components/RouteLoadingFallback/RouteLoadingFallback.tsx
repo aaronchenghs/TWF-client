@@ -9,23 +9,11 @@ export function RouteLoadingFallback() {
       <div className={styles.panel}>
         <TWFLogo className={styles.logo} aria-hidden="true" />
 
-        <MainTextTypography variant="h4" className={styles.title}>
-          Loading
-        </MainTextTypography>
-
         <div className={styles.row}>
-          <MainTextTypography
-            variant="caption"
-            className={styles.subtitle}
-            muted
-          >
+          <MainTextTypography variant="body" className={styles.subtitle} muted>
             Setting up your session
             <AnimatedDots />
           </MainTextTypography>
-        </div>
-
-        <div className={styles.bar} aria-hidden="true">
-          <div className={styles.barFill} />
         </div>
       </div>
     </div>

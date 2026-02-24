@@ -79,6 +79,11 @@ $intro-duration: 2s;
     box-shadow: 0 0 0 2px $defaultTierColor;
   }
 
+  &.ghostTarget {
+    outline: 2px dashed $light-transparency;
+    box-shadow: 0 0 0 2px $defaultTierColor;
+  }
+
   .tierLabel {
     align-self: stretch;
     display: flex;

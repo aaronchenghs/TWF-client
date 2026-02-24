@@ -1,0 +1,19 @@
+@use "sass:color";
+@use "sass:map";
+@use "./_variables" as *;
+
+$vote-tone-colors: (
+  up2: $severityError,
+  up1: color.mix($severityError, $text-primary, $weight: 50%),
+  agree: $severitySuccess,
+  down1: color.mix($severityInfo, $text-primary, $weight: 50%),
+  down2: $severityInfo,
+);
+
+@function vote-tone-color($tone) {
+  @if map.has-key($vote-tone-colors, $tone) {
+    @return map.get($vote-tone-colors, $tone);
+  }
+
+  @error "Unknown vote tone `#{$tone}`. Expected one of: #{map.keys($vote-tone-colors)}";
+}

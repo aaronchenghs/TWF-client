@@ -19,11 +19,6 @@ type RoomPublicState = Contracts.RoomPublicState;
 type VoteValue = Contracts.VoteValue;
 
 type VoteBucket = "up" | "agree" | "down";
-const {
-  up: VoteUpIcon,
-  agree: VoteAgreeIcon,
-  down: VoteDownIcon,
-} = APP_ICONS.vote;
 
 const REVEAL_TOTAL_MS = 6000;
 const ENTER_MS = 700;
@@ -36,9 +31,9 @@ const voteConfig: Array<{
   icon: typeof APP_ICONS.vote.up;
   value: VoteValue;
 }> = [
-  { key: "up", icon: VoteUpIcon, value: -1 },
-  { key: "agree", icon: VoteAgreeIcon, value: 0 },
-  { key: "down", icon: VoteDownIcon, value: 1 },
+  { key: "up", icon: APP_ICONS.vote.up, value: -1 },
+  { key: "agree", icon: APP_ICONS.vote.agree, value: 0 },
+  { key: "down", icon: APP_ICONS.vote.down, value: 1 },
 ];
 
 export function VoteResultsReveal({
@@ -84,8 +79,8 @@ export function VoteResultsReveal({
 
     const voteCounts = orderedVotes.reduce(
       (acc, value) => {
-        if (value === -1) acc.up += 1;
-        else if (value === 1) acc.down += 1;
+        if (value <= -1) acc.up += 1;
+        else if (value >= 1) acc.down += 1;
         else acc.agree += 1;
 
         return acc;

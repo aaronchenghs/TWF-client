@@ -19,6 +19,7 @@ export function usePhaseClock(
   const [phaseInitialDurationMs, setPhaseInitialDurationMs] = useState<
     number | null
   >(null);
+  const phase = state?.phase ?? null;
 
   const endsAt = useMemo(() => {
     if (!state) return null;
@@ -43,7 +44,7 @@ export function usePhaseClock(
     function capturePhaseInitialDuration() {
       let rafId = 0;
 
-      if (!state || endsAt == null) {
+      if (!phase || endsAt == null) {
         rafId = window.requestAnimationFrame(() => {
           setPhaseInitialDurationMs(null);
         });
@@ -57,7 +58,7 @@ export function usePhaseClock(
 
       return () => window.cancelAnimationFrame(rafId);
     },
-    [state?.phase, endsAt, state],
+    [phase, endsAt],
   );
 
   useEffect(

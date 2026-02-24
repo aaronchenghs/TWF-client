@@ -5,6 +5,7 @@ import * as Contracts from "@twf/contracts";
 import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
 import { TierItemTile } from "./TierItemTile/TierItemTile";
 import { useAutoFitText } from "../../../lib/hooks/useAutoFitText";
+import { computeVoteResolution } from "@/lib/voting";
 type RoomPublicState = Contracts.RoomPublicState;
 type TierId = Contracts.TierId;
 type TierItemId = Contracts.TierItemId;
@@ -36,6 +37,31 @@ export const TierBoard = memo(function TierBoard({
 
   const tierOrder = state.tierOrder ?? [];
   const tiers = state.tiers ?? ({} as Record<TierId, TierItemId[]>);
+
+  const voteGhostResolution =
+    state.currentItem && state.pendingTierId
+      ? state.phase === "VOTE"
+        ? computeVoteResolution({
+            votes: state.votes ?? {},
+            eligibleVoterIds: state.players
+              .filter(
+                (p) =>
+                  p.connected !== false && p.id !== state.currentTurnPlayerId,
+              )
+              .map((p) => p.id),
+            fromTierId: state.pendingTierId,
+            tierOrder,
+            tiers,
+            currentItemId: state.currentItem,
+          })
+        : (state.phase === "RESULTS" || state.phase === "DRIFT") &&
+            state.lastResolution
+          ? state.lastResolution
+          : null
+      : null;
+
+  const ghostTierId = voteGhostResolution?.toTierId ?? null;
+  const ghostInsertIndex = voteGhostResolution?.insertIndex ?? null;
 
   const measureBestScale = useCallback(() => {
     const container = containerRef.current;
@@ -137,13 +163,25 @@ export const TierBoard = memo(function TierBoard({
           {tierOrder.map((tierId) => {
             const items = tiers[tierId] ?? [];
             const isPending = state.pendingTierId === tierId;
+            const isGhostTier = ghostTierId === tierId;
             const tierMeta = state.tierMetaById?.[tierId];
             const tierColor = tierMeta?.color;
+            const safeItems = state.currentItem
+              ? items.filter((id) => id !== state.currentItem)
+              : items;
+            const safeGhostIndex =
+              isGhostTier && typeof ghostInsertIndex === "number"
+                ? Math.min(Math.max(0, ghostInsertIndex), safeItems.length)
+                : null;
 
             return (
               <div
                 key={tierId}
-                className={clsx(styles.row, isPending && styles.pending)}
+                className={clsx(
+                  styles.row,
+                  isPending && styles.pending,
+                  isGhostTier && !isPending && styles.ghostTarget,
+                )}
                 style={{ [TIER_LABEL_COLOR_CSS_VAR]: tierColor }}
               >
                 <div className={styles.tierLabel}>
@@ -151,17 +189,27 @@ export const TierBoard = memo(function TierBoard({
                 </div>
 
                 <div className={styles.items}>
-                  {items.map((id) => (
+                  {(safeGhostIndex === null
+                    ? safeItems
+                    : safeItems.slice(0, safeGhostIndex)
+                  ).map((id) => (
                     <TierItemTile key={id} state={state} itemId={id} />
                   ))}
 
-                  {isPending && state.currentItem ? (
+                  {isGhostTier && state.currentItem ? (
                     <TierItemTile
                       state={state}
                       itemId={state.currentItem}
                       ghost
                     />
                   ) : null}
+
+                  {safeGhostIndex !== null &&
+                    safeItems
+                      .slice(safeGhostIndex)
+                      .map((id) => (
+                        <TierItemTile key={id} state={state} itemId={id} />
+                      ))}
                 </div>
               </div>
             );

@@ -8,6 +8,7 @@ import styles from "../PlayerGameController.module.scss";
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
 type TierItem = Contracts.TierItem;
+type VoteValue = Contracts.VoteValue;
 
 type PhaseControlsProps = {
   state: RoomPublicState;
@@ -15,7 +16,8 @@ type PhaseControlsProps = {
   currentItem: TierItem | null;
   isMyTurn: boolean;
   canVote: boolean;
-  hasVoted: boolean;
+  myVote: VoteValue | null;
+  hasConfirmedVote: boolean;
 };
 
 export function Controls({
@@ -24,7 +26,8 @@ export function Controls({
   currentItem,
   isMyTurn,
   canVote,
-  hasVoted,
+  myVote,
+  hasConfirmedVote,
 }: PhaseControlsProps) {
   const content = (() => {
     switch (state.phase) {
@@ -42,13 +45,11 @@ export function Controls({
       case "VOTE":
         return (
           <VoteControls
-            phase={state.phase}
+            state={state}
             canVote={canVote}
-            hasVoted={hasVoted}
+            myVote={myVote}
+            hasConfirmedVote={hasConfirmedVote}
             isPlacer={isMyTurn}
-            turnIndex={state.turnIndex}
-            currentItemId={state.currentItem ?? null}
-            voteEndsAt={state.timers.voteEndsAt}
           />
         );
 

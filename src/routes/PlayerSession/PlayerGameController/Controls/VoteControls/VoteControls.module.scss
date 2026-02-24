@@ -3,7 +3,22 @@
 $image-preview-height: 56px;
 
 .voteControls {
-  margin-top: auto;
+  @include flexFill();
+}
+
+.voteBody {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+
+  @include flexFill();
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  @include scrollFade($default-padding, y);
+
+  padding-block: $default-gap;
+  padding-right: calc($default-padding / 2);
 }
 
 .grid3 {
@@ -27,6 +42,26 @@ $image-preview-height: 56px;
   gap: $default-gap;
 }
 
+.toneUp2 {
+  color: vote-tone-color(up2);
+}
+
+.toneUp1 {
+  color: vote-tone-color(up1);
+}
+
+.toneAgree {
+  color: vote-tone-color(agree);
+}
+
+.toneDown1 {
+  color: vote-tone-color(down1);
+}
+
+.toneDown2 {
+  color: vote-tone-color(down2);
+}
+
 .voteButtonIcon {
   display: block;
 }
@@ -42,4 +77,22 @@ $image-preview-height: 56px;
 
 .discussionTitle {
   text-transform: uppercase;
+}
+
+.confirmRow {
+  margin-top: auto;
+  padding-top: $default-gap;
+  @include flexFixed();
+}
+
+.confirmButton {
+  width: 100%;
+  height: $image-preview-height;
+  border-radius: $radius-lg;
+}
+
+@media (max-height: $mobile-width) {
+  .voteControls {
+    min-height: 0;
+  }
 }

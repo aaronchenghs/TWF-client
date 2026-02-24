@@ -13,7 +13,7 @@ type RoomPlayer = Contracts.RoomPublicState["players"][number];
 type PlayerTopBarProps = {
   phase: Contracts.RoomPublicState["phase"];
   isMyTurn: boolean;
-  hasVoted: boolean;
+  hasConfirmedVote: boolean;
   player: RoomPlayer | null;
   onExit: () => void;
 };
@@ -21,16 +21,16 @@ type PlayerTopBarProps = {
 export function PlayerTopBar({
   phase,
   isMyTurn,
-  hasVoted,
+  hasConfirmedVote,
   player,
   onExit,
 }: PlayerTopBarProps) {
   const statusLabel = useMemo(() => {
     switch (phase) {
       case "PLACE":
-        return isMyTurn ? "Place" : "Waiting";
+        return isMyTurn ? "Your Turn" : "Waiting";
       case "VOTE":
-        return !isMyTurn && !hasVoted ? "Vote" : "Waiting";
+        return !isMyTurn && !hasConfirmedVote ? "Vote" : "Waiting";
       case "RESULTS":
         return "Results!";
       case "FINISHED":
@@ -38,7 +38,7 @@ export function PlayerTopBar({
       default:
         return "Waiting";
     }
-  }, [phase, isMyTurn, hasVoted]);
+  }, [phase, isMyTurn, hasConfirmedVote]);
 
   return (
     <div className={styles.topBar}>
@@ -56,7 +56,7 @@ export function PlayerTopBar({
           size="lg"
           className={clsx(
             styles.statusPill,
-            statusLabel === "Place" && styles.statusPlace,
+            statusLabel === "Your Turn" && styles.statusPlace,
             statusLabel === "Vote" && styles.statusVote,
             statusLabel === "Waiting" && styles.statusWait,
           )}

@@ -14,7 +14,7 @@ type CurrentItemDisplayProps = {
   containerClassName?: string;
   textAlign?: "left" | "center" | "right";
   emptyText?: string;
-  hiddenText?: string;
+  hiddenText?: React.ReactNode;
   loading?: "eager" | "lazy";
   fetchPriority?: "high" | "low" | "auto";
 };
@@ -30,6 +30,11 @@ export function CurrentItemDisplay({
   fetchPriority,
 }: CurrentItemDisplayProps) {
   if (!isVisible) {
+    const isSimpleHiddenText =
+      typeof hiddenText === "string" || typeof hiddenText === "number";
+
+    if (!isSimpleHiddenText) return hiddenText;
+
     return (
       <MainTextTypography textAlign={textAlign} variant="h2" muted>
         {hiddenText}

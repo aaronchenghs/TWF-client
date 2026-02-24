@@ -15,15 +15,21 @@ type ActionLockKey = "place";
 
 const ACTION_LOCK_TIMEOUT_MS = 6000;
 
-export function PlaceControls(props: {
+type PlaceControlsProps = {
   tiers: Tier[];
   tierOrder: string[];
   phase: Contracts.RoomPublicState["phase"];
   isMyTurn: boolean;
   currentItem: TierItem | null;
-}) {
-  const { tiers, tierOrder, phase, isMyTurn, currentItem } = props;
+};
 
+export function PlaceControls({
+  tiers,
+  tierOrder,
+  phase,
+  isMyTurn,
+  currentItem,
+}: PlaceControlsProps) {
   const [selectedTierId, setSelectedTierId] = useState<string | null>(null);
   const shouldRemainLockedByKey = useMemo<Record<ActionLockKey, boolean>>(
     () => ({

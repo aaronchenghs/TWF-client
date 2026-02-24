@@ -8,6 +8,7 @@ import { socketClient } from "@/services/sockets/socketClient";
 import { ROUTES } from "@/routes/routes";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { useTurnTabAttention } from "@/lib/hooks/useTurnTabAttention";
 import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
 import { clearPlayerRoomState, readPlayerRuntime } from "@/lib/roomClientState";
@@ -39,7 +40,31 @@ export default function PlayerGameController({
 
   const isMyTurn = !!myPlayerId && state.currentTurnPlayerId === myPlayerId;
   const canVote = !!myPlayerId && state.phase === "VOTE" && !isMyTurn;
-  const hasVoted = !!myPlayerId && state.votes?.[myPlayerId] !== undefined;
+  const myVote = myPlayerId ? (state.votes?.[myPlayerId] ?? null) : null;
+  const hasConfirmedVote =
+    !!myPlayerId && !!state.voteConfirmedByPlayerId?.[myPlayerId];
+
+  const currentTurnPlayer = useMemo(
+    () =>
+      state.currentTurnPlayerId
+        ? (state.players.find(
+            (player) => player.id === state.currentTurnPlayerId,
+          ) ?? null)
+        : null,
+    [state.players, state.currentTurnPlayerId],
+  );
+
+  const hiddenItemText =
+    state.phase === "PLACE" && !isMyTurn ? (
+      <span className={styles.hiddenPlacementText}>
+        <MainTextTypography variant="h2" tone="player">
+          {currentTurnPlayer?.name ?? "Someone"}
+        </MainTextTypography>
+        <MainTextTypography variant="h2" muted>
+          is placing
+        </MainTextTypography>
+      </span>
+    ) : undefined;
 
   useTurnTabAttention({ isMyTurn });
 
@@ -90,7 +115,7 @@ export default function PlayerGameController({
         <PlayerTopBar
           phase={state.phase}
           isMyTurn={isMyTurn}
-          hasVoted={hasVoted}
+          hasConfirmedVote={hasConfirmedVote}
           player={myPlayer}
           onExit={() => setIsConfirmExitOpen(true)}
         />
@@ -101,6 +126,7 @@ export default function PlayerGameController({
             isVisible={SHOW_CURRENT_ITEM_PHASES.has(state.phase) || isMyTurn}
             containerClassName={styles.itemRow}
             textAlign="center"
+            hiddenText={hiddenItemText}
           />
         </GameStatusCard>
       </main>
@@ -111,7 +137,8 @@ export default function PlayerGameController({
         currentItem={currentItem}
         isMyTurn={isMyTurn}
         canVote={canVote}
-        hasVoted={hasVoted}
+        myVote={myVote}
+        hasConfirmedVote={hasConfirmedVote}
       />
 
       <ConfirmationModal

@@ -29,6 +29,15 @@
   background: $light-transparency;
 }
 
+.hiddenPlacementText {
+  width: 100%;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: calc($default-gap / 2);
+}
+
 .actionBar {
   @include flexFill();
   min-height: 0;

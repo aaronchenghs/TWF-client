@@ -18,7 +18,7 @@
   gap: calc($default-gap / 1.5);
   min-height: 0;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
 .activePlayerRow {
@@ -46,4 +46,63 @@
   flex: 1;
   min-width: 0;
   white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.voteIndicator {
+  @include flexFixed();
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  margin-left: calc($default-gap / 2);
+  gap: calc($default-gap / 2);
+
+  color: var(--vote-color, $text-secondary);
+
+  transition:
+    color $dur-fast $ease-out,
+    opacity $dur-fast $ease-out;
+}
+
+.voteIndicatorPending {
+  opacity: $op-muted;
+}
+
+.voteIndicatorLocked {
+  opacity: 1;
+}
+
+.voteIndicatorIcon {
+  display: block;
+}
+
+.voteIndicatorMagnitude {
+  display: inline-block;
+  text-align: center;
+  font-family: $font-body;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 800;
+  min-width: 10px;
+}
+
+.voteToneUp2 {
+  --vote-color: #{vote-tone-color(up2)};
+}
+
+.voteToneUp1 {
+  --vote-color: #{vote-tone-color(up1)};
+}
+
+.voteToneAgree {
+  --vote-color: #{vote-tone-color(agree)};
+}
+
+.voteToneDown1 {
+  --vote-color: #{vote-tone-color(down1)};
+}
+
+.voteToneDown2 {
+  --vote-color: #{vote-tone-color(down2)};
 }

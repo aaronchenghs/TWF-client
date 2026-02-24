@@ -5,7 +5,6 @@ type TierId = Contracts.TierId;
 
 export const SHOW_CURRENT_ITEM_PHASES = new Set<RoomPublicState["phase"]>([
   "VOTE",
-  "DRIFT",
   "FINISHED",
   "RESOLVE",
   "RESULTS",

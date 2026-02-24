@@ -54,8 +54,7 @@ export const TierBoard = memo(function TierBoard({
             tiers,
             currentItemId: state.currentItem,
           })
-        : (state.phase === "RESULTS" || state.phase === "DRIFT") &&
-            state.lastResolution
+        : state.phase === "RESULTS" && state.lastResolution
           ? state.lastResolution
           : null
       : null;

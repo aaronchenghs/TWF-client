@@ -16,7 +16,6 @@ type PhaseStatusCardProps = {
 const PHASES_WITHOUT_COUNTDOWN = new Set<Phase>([
   "STARTING",
   "RESULTS",
-  "DRIFT",
   "FINISHED",
 ]);
 

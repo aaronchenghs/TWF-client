@@ -33,8 +33,6 @@ export function usePhaseClock(
         return t.voteEndsAt ?? null;
       case "RESULTS":
         return t.resultsEndsAt ?? null;
-      case "DRIFT":
-        return t.driftEndsAt ?? null;
       default:
         return null;
     }

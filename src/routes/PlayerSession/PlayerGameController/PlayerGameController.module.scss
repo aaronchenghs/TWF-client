@@ -35,7 +35,7 @@
   align-items: baseline;
   justify-content: center;
   flex-wrap: wrap;
-  gap: calc($default-gap / 2);
+  gap: $default-gap;
 }
 
 .actionBar {

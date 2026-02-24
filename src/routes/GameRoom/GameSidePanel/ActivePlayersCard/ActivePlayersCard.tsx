@@ -31,6 +31,53 @@ function getVoteIndicatorMeta(vote: VoteValue): VoteIndicatorMeta {
   return voteIndicatorMetaByValue.get(0)!;
 }
 
+export function ActivePlayersCard({ state }: ActivePlayersCardProps) {
+  const currentTurnPlayerId = state.currentTurnPlayerId ?? null;
+  const playersInDisplayOrder = getPlayersInTurnDisplayOrder(state);
+  const shouldShowVoteStatus =
+    state.phase === "VOTE" || state.phase === "RESULTS";
+
+  return (
+    <GameStatusCard
+      className={styles.playersCard}
+      bodyClassName={styles.playersBody}
+    >
+      <div className={styles.activePlayersList} role="list">
+        <AnimatePresence initial={false}>
+          {playersInDisplayOrder.length > 0 ? (
+            playersInDisplayOrder.map((player) => {
+              const isCurrentTurnPlayer = player.id === currentTurnPlayerId;
+              const vote =
+                shouldShowVoteStatus && !isCurrentTurnPlayer
+                  ? (state.votes?.[player.id] ?? null)
+                  : null;
+              const isVoteConfirmed =
+                shouldShowVoteStatus &&
+                !isCurrentTurnPlayer &&
+                !!state.voteConfirmedByPlayerId?.[player.id];
+
+              return (
+                <ActivePlayerRow
+                  key={player.id}
+                  player={player}
+                  isCurrentTurnPlayer={isCurrentTurnPlayer}
+                  vote={vote}
+                  isVoteConfirmed={isVoteConfirmed}
+                  showVoteStatus={shouldShowVoteStatus}
+                />
+              );
+            })
+          ) : (
+            <MainTextTypography variant="body" muted>
+              No active players
+            </MainTextTypography>
+          )}
+        </AnimatePresence>
+      </div>
+    </GameStatusCard>
+  );
+}
+
 type ActivePlayersCardProps = {
   state: RoomPublicState;
 };
@@ -117,51 +164,5 @@ function ActivePlayerRow({
         </span>
       ) : null}
     </motion.div>
-  );
-}
-
-export function ActivePlayersCard({ state }: ActivePlayersCardProps) {
-  const currentTurnPlayerId = state.currentTurnPlayerId ?? null;
-  const playersInDisplayOrder = getPlayersInTurnDisplayOrder(state);
-  const shouldShowVoteStatus = state.phase === "VOTE";
-
-  return (
-    <GameStatusCard
-      className={styles.playersCard}
-      bodyClassName={styles.playersBody}
-    >
-      <div className={styles.activePlayersList} role="list">
-        <AnimatePresence initial={false}>
-          {playersInDisplayOrder.length > 0 ? (
-            playersInDisplayOrder.map((player) => {
-              const isCurrentTurnPlayer = player.id === currentTurnPlayerId;
-              const vote =
-                shouldShowVoteStatus && !isCurrentTurnPlayer
-                  ? (state.votes?.[player.id] ?? null)
-                  : null;
-              const isVoteConfirmed =
-                shouldShowVoteStatus &&
-                !isCurrentTurnPlayer &&
-                !!state.voteConfirmedByPlayerId?.[player.id];
-
-              return (
-                <ActivePlayerRow
-                  key={player.id}
-                  player={player}
-                  isCurrentTurnPlayer={isCurrentTurnPlayer}
-                  vote={vote}
-                  isVoteConfirmed={isVoteConfirmed}
-                  showVoteStatus={shouldShowVoteStatus}
-                />
-              );
-            })
-          ) : (
-            <MainTextTypography variant="body" muted>
-              No active players
-            </MainTextTypography>
-          )}
-        </AnimatePresence>
-      </div>
-    </GameStatusCard>
   );
 }

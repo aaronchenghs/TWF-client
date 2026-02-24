@@ -13,6 +13,7 @@ type Props = {
   state: RoomPublicState;
   itemId: TierItemId;
   ghost?: boolean;
+  isGhostSolidifying?: boolean;
   className?: string;
 };
 
@@ -20,6 +21,7 @@ export const TierItemTile = memo(function TierItemTile({
   state,
   itemId,
   ghost,
+  isGhostSolidifying,
   className,
 }: Props) {
   const { name, imageSrc } = getItemMeta(state, itemId);
@@ -32,7 +34,13 @@ export const TierItemTile = memo(function TierItemTile({
 
   return (
     <div
-      className={clsx(styles.itemTile, ghost && styles.ghost, className)}
+      className={clsx(
+        styles.itemTile,
+        ghost && styles.ghost,
+        ghost && !isGhostSolidifying && styles.ghostPreview,
+        ghost && isGhostSolidifying && styles.ghostSolidifying,
+        className,
+      )}
       title={name}
     >
       <div className={styles.thumb}>

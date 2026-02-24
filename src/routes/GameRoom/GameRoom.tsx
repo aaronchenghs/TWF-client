@@ -11,7 +11,6 @@ import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationMo
 import { IS_DEBUG_ENABLED } from "@/config/env";
 import { ItemPlacementReveal } from "./Overlays/ItemPlacementReveal/ItemPlacementReveal";
 import { PlayerTurnReveal } from "./Overlays/PlayerTurnReveal/PlayerTurnReveal";
-import { VoteResultsReveal } from "./Overlays/VoteResultsReveal/VoteResultsReveal";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { getClientId, saveRoomSession } from "@/lib/session";
@@ -158,7 +157,6 @@ export default function GameRoom() {
       {/** --- #region OVERLAYS and MODALS --- */}
       <PlayerTurnReveal state={state} />
       <ItemPlacementReveal state={state} />
-      <VoteResultsReveal state={state} />
       <ConfirmationModal
         open={isConfirmExitOpen}
         title="Close Game?"

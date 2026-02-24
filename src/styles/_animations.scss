@@ -193,3 +193,28 @@
 @mixin urgencyBlinkAnimation($duration: 0.8s) {
   animation: urgencyBlink $duration ease-in-out infinite alternate;
 }
+
+@keyframes ghostTileSettle {
+  0% {
+    opacity: 0.72;
+    background: rgba(0, 0, 0, 0.2);
+    outline-color: rgba(255, 255, 255, 0.3);
+    filter: drop-shadow(0 0 10px rgba($accent, 0.45));
+  }
+
+  45% {
+    opacity: 0.94;
+    outline-color: rgba(255, 255, 255, 0.2);
+  }
+
+  100% {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.5);
+    outline-color: rgba(255, 255, 255, 0);
+    filter: none;
+  }
+}
+
+@mixin ghostTileSolidifyAnimation($duration: 0.6s) {
+  animation: ghostTileSettle $duration ease-out both;
+}

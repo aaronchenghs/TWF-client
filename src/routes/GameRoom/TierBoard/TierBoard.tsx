@@ -37,10 +37,12 @@ export const TierBoard = memo(function TierBoard({
 
   const tierOrder = state.tierOrder ?? [];
   const tiers = state.tiers ?? ({} as Record<TierId, TierItemId[]>);
+  const isVotePhase = state.phase === "VOTE";
+  const isResultsPhase = state.phase === "RESULTS";
 
   const voteGhostResolution =
     state.currentItem && state.pendingTierId
-      ? state.phase === "VOTE"
+      ? isVotePhase
         ? computeVoteResolution({
             votes: state.votes ?? {},
             eligibleVoterIds: state.players
@@ -54,7 +56,7 @@ export const TierBoard = memo(function TierBoard({
             tiers,
             currentItemId: state.currentItem,
           })
-        : state.phase === "RESULTS" && state.lastResolution
+        : isResultsPhase && state.lastResolution
           ? state.lastResolution
           : null
       : null;
@@ -161,7 +163,9 @@ export const TierBoard = memo(function TierBoard({
         >
           {tierOrder.map((tierId) => {
             const items = tiers[tierId] ?? [];
-            const isPending = state.pendingTierId === tierId;
+            const isPending =
+              (isVotePhase || state.phase === "PLACE") &&
+              state.pendingTierId === tierId;
             const isGhostTier = ghostTierId === tierId;
             const tierMeta = state.tierMetaById?.[tierId];
             const tierColor = tierMeta?.color;
@@ -179,7 +183,10 @@ export const TierBoard = memo(function TierBoard({
                 className={clsx(
                   styles.row,
                   isPending && styles.pending,
-                  isGhostTier && !isPending && styles.ghostTarget,
+                  isVotePhase &&
+                    isGhostTier &&
+                    !isPending &&
+                    styles.ghostTarget,
                 )}
                 style={{ [TIER_LABEL_COLOR_CSS_VAR]: tierColor }}
               >
@@ -200,6 +207,7 @@ export const TierBoard = memo(function TierBoard({
                       state={state}
                       itemId={state.currentItem}
                       ghost
+                      isGhostSolidifying={isResultsPhase}
                     />
                   ) : null}
 

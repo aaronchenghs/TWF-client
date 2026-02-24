@@ -25,6 +25,7 @@ $image-preview-height: 56px;
   display: grid;
   grid-template-columns: 1fr;
   gap: $default-gap;
+  margin-top: auto;
 }
 
 .bigButton {

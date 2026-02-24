@@ -8,13 +8,20 @@ import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypo
 import pluralize from "pluralize";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { useActionLocks } from "@/lib/hooks/useActionLocks";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { resolvePlacedTierId } from "@/lib/tierItems";
 import { socketClient } from "@/services/sockets/socketClient";
 
 type VoteValue = Contracts.VoteValue;
 
-type ActionLockKey = "vote" | "confirm";
+type ActionLockKey = "confirm";
 
 const ACTION_LOCK_TIMEOUT_MS = 6000;
 const DISCUSSION_LOCK_MS = 10000;
@@ -74,6 +81,7 @@ export function VoteControls({
   >(null);
 
   const lastVoteWindowKeyRef = useRef<string | null>(null);
+  const selectedVoteRef = useRef<VoteValue | null>(myVote);
   const pendingVoteRequestRef = useRef<{
     windowKey: string | null;
     vote: VoteValue;
@@ -108,6 +116,8 @@ export function VoteControls({
       ? lastSentVote
       : null;
 
+  const selectedVote = lastSentVoteForActiveWindow ?? myVote;
+
   const discussionMsLeft =
     phase === "VOTE" && voteUnlockAt !== null
       ? Math.max(0, voteUnlockAt - now)
@@ -122,15 +132,9 @@ export function VoteControls({
 
   const shouldRemainLockedByKey = useMemo<Record<ActionLockKey, boolean>>(
     () => ({
-      vote:
-        phase === "VOTE" &&
-        canVote &&
-        !hasConfirmedVote &&
-        lastSentVoteForActiveWindow !== null &&
-        myVote !== lastSentVoteForActiveWindow,
       confirm: phase === "VOTE" && canVote && !hasConfirmedVote,
     }),
-    [phase, canVote, hasConfirmedVote, myVote, lastSentVoteForActiveWindow],
+    [phase, canVote, hasConfirmedVote],
   );
 
   const voteOptions = useMemo(
@@ -144,55 +148,73 @@ export function VoteControls({
   );
 
   const hasSelectableVote =
-    myVote !== null && voteOptions.some((opt) => opt.value === myVote);
+    selectedVote !== null &&
+    voteOptions.some((opt) => opt.value === selectedVote);
 
   const actionLocks = useActionLocks(shouldRemainLockedByKey, {
     timeoutMs: ACTION_LOCK_TIMEOUT_MS,
   });
 
-  const isVoting = actionLocks.isLocked("vote");
-
   const isConfirming = actionLocks.isLocked("confirm");
 
-  const disabledVote = !canVote || hasConfirmedVote || isVoting || isConfirming;
+  const disabledVote = !canVote || hasConfirmedVote || isConfirming;
 
   const disabledConfirm =
     !canVote ||
     hasConfirmedVote ||
     isConfirming ||
-    isVoting ||
     isDiscussionLocked ||
     !hasSelectableVote;
 
-  const handleVote = (vote: VoteValue) => {
-    if (isDiscussionLocked) return;
-    if (!canVote || hasConfirmedVote || isVoting || isConfirming) return;
-    if (!socketClient.isConnected()) return;
-    if (myVote === vote) return;
+  const handleVote = useCallback(
+    (vote: VoteValue) => {
+      if (selectedVoteRef.current === vote) return;
+      if (isDiscussionLocked) return;
+      if (!canVote || hasConfirmedVote || isConfirming) return;
+      if (!socketClient.isConnected()) return;
 
-    const pendingVoteRequest = pendingVoteRequestRef.current;
-    if (
-      pendingVoteRequest !== null &&
-      pendingVoteRequest.windowKey === activeVoteWindowKey &&
-      pendingVoteRequest.vote === vote
-    ) {
-      return;
-    }
+      const pendingVoteRequest = pendingVoteRequestRef.current;
+      if (
+        pendingVoteRequest !== null &&
+        pendingVoteRequest.windowKey === activeVoteWindowKey &&
+        pendingVoteRequest.vote === vote
+      ) {
+        return;
+      }
 
-    pendingVoteRequestRef.current = {
-      windowKey: activeVoteWindowKey,
-      vote,
-    };
-    setLastSentVoteWindowKey(activeVoteWindowKey);
-    setLastSentVote(vote);
-    actionLocks.lock("vote");
-    try {
-      socketClient.emit("game:vote", { vote });
-    } catch {
-      pendingVoteRequestRef.current = null;
-      actionLocks.unlock("vote");
-    }
-  };
+      selectedVoteRef.current = vote;
+      pendingVoteRequestRef.current = {
+        windowKey: activeVoteWindowKey,
+        vote,
+      };
+      setLastSentVoteWindowKey(activeVoteWindowKey);
+      setLastSentVote(vote);
+      try {
+        socketClient.emit("game:vote", { vote });
+      } catch {
+        pendingVoteRequestRef.current = null;
+      }
+    },
+    [
+      activeVoteWindowKey,
+      canVote,
+      hasConfirmedVote,
+      isConfirming,
+      isDiscussionLocked,
+    ],
+  );
+
+  const handleVoteButtonClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>, vote: VoteValue) => {
+      if (selectedVoteRef.current === vote) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      handleVote(vote);
+    },
+    [handleVote],
+  );
 
   const handleConfirm = useCallback(() => {
     if (!socketClient.isConnected()) return;
@@ -204,6 +226,13 @@ export function VoteControls({
       actionLocks.unlock("confirm");
     }
   }, [actionLocks]);
+
+  useEffect(
+    function syncSelectedVoteRef() {
+      selectedVoteRef.current = selectedVote;
+    },
+    [selectedVote],
+  );
 
   useEffect(
     function initializeVoteDiscussionLockWindow() {
@@ -299,14 +328,14 @@ export function VoteControls({
           aria-label="Vote placement adjustment"
         >
           {voteOptions.map((opt) => {
-            const isSelected = myVote === opt.value;
+            const isSelected = selectedVote === opt.value;
             return (
               <AccentButton
                 key={opt.label}
                 variant={isSelected ? "primary" : "secondary"}
                 className={styles.bigButton}
                 disabled={disabledVote || isDiscussionLocked}
-                onClick={() => handleVote(opt.value)}
+                onClick={(event) => handleVoteButtonClick(event, opt.value)}
                 aria-label={opt.ariaLabel}
                 aria-pressed={isSelected}
               >

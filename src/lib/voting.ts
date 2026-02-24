@@ -9,10 +9,9 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-function getParticipationCap(participation: number): 0 | 1 | 2 {
+function getParticipationCap(participation: number): 0 | 1 {
   if (participation < 1 / 3) return 0;
-  if (participation < 2 / 3) return 1;
-  return 2;
+  return 1;
 }
 
 export function computeVoteResolution(args: {
@@ -40,23 +39,21 @@ export function computeVoteResolution(args: {
 
   const voters = actualVoterIds.length;
 
-  let up2 = 0;
   let up1 = 0;
   let agree = 0;
   let down1 = 0;
-  let down2 = 0;
 
   let sum = 0;
   for (const playerId of actualVoterIds) {
-    const vote = votes[playerId];
-    if (vote === undefined) continue;
+    const voteRaw = votes[playerId];
+    if (voteRaw === undefined) continue;
+
+    const vote = voteRaw < 0 ? -1 : voteRaw > 0 ? 1 : 0;
 
     sum += vote;
-    if (vote === -2) up2 += 1;
-    else if (vote === -1) up1 += 1;
-    else if (vote === 0) agree += 1;
-    else if (vote === 1) down1 += 1;
-    else if (vote === 2) down2 += 1;
+    if (vote < 0) up1 += 1;
+    else if (vote > 0) down1 += 1;
+    else agree += 1;
   }
 
   const safeTierOrder = tierOrder.length > 0 ? tierOrder : [fromTierId];
@@ -66,8 +63,8 @@ export function computeVoteResolution(args: {
   const participation = eligible === 0 ? 0 : voters / eligible;
   const participationCap = getParticipationCap(participation);
 
-  const wantUp = up2 + up1;
-  const wantDown = down2 + down1;
+  const wantUp = up1;
+  const wantDown = down1;
 
   let direction: -1 | 0 | 1 = 0;
   if (voters > 0) {
@@ -75,11 +72,9 @@ export function computeVoteResolution(args: {
     else if (wantUp > voters / 2) direction = -1;
   }
 
-  let baseMagnitude: 0 | 1 | 2 = 0;
-  if (direction === 1) baseMagnitude = down2 > voters / 2 ? 2 : 1;
-  else if (direction === -1) baseMagnitude = up2 > voters / 2 ? 2 : 1;
+  const baseMagnitude: 0 | 1 = direction === 0 ? 0 : 1;
 
-  const magnitude = Math.min(baseMagnitude, participationCap) as 0 | 1 | 2;
+  const magnitude = Math.min(baseMagnitude, participationCap) as 0 | 1;
   const driftDeltaRequested = direction * magnitude;
 
   const toIdx = clamp(
@@ -113,7 +108,7 @@ export function computeVoteResolution(args: {
   }
 
   return {
-    counts: { up2, up1, agree, down1, down2 },
+    counts: { up2: 0, up1, agree, down1, down2: 0 },
     voters,
     eligible,
     score,

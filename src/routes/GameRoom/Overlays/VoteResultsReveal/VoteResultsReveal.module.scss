@@ -91,7 +91,7 @@
 }
 
 .column {
-  --accent: #{$severityInfo};
+  --accent: #{vote-tone-color(agree)};
   --tilt: #{$comic-skew-base};
   min-height: 200px;
   display: grid;
@@ -103,17 +103,17 @@
 }
 
 .col_up {
-  --accent: #{$severitySuccess};
+  --accent: #{vote-tone-color(up)};
   --tilt: #{$comic-skew-strong};
 }
 
 .col_agree {
-  --accent: #{$severityInfo};
+  --accent: #{vote-tone-color(agree)};
   --tilt: 0.65deg;
 }
 
 .col_down {
-  --accent: #{$severityError};
+  --accent: #{vote-tone-color(down)};
   --tilt: #{$comic-skew-soft};
 }
 

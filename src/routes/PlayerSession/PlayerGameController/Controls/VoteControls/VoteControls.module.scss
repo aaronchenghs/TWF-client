@@ -42,24 +42,16 @@ $image-preview-height: 56px;
   gap: $default-gap;
 }
 
-.toneUp2 {
-  color: vote-tone-color(up2);
-}
-
-.toneUp1 {
-  color: vote-tone-color(up1);
+.toneUp {
+  color: vote-tone-color(up);
 }
 
 .toneAgree {
   color: vote-tone-color(agree);
 }
 
-.toneDown1 {
-  color: vote-tone-color(down1);
-}
-
-.toneDown2 {
-  color: vote-tone-color(down2);
+.toneDown {
+  color: vote-tone-color(down);
 }
 
 .voteButtonIcon {

@@ -21,16 +21,10 @@ const DISCUSSION_LOCK_MS = 10000;
 
 const VOTE_OPTIONS = [
   {
-    label: "Up 2",
-    value: -2 as const,
-    Icon: APP_ICONS.vote.up,
-    ariaLabel: "Vote drift up 2 tiers",
-  },
-  {
-    label: "Up 1",
+    label: "Bump Up",
     value: -1 as const,
     Icon: APP_ICONS.vote.up,
-    ariaLabel: "Vote drift up 1 tier",
+    ariaLabel: "Vote bump up one tier",
   },
   {
     label: "Agree",
@@ -39,16 +33,10 @@ const VOTE_OPTIONS = [
     ariaLabel: "Vote agree",
   },
   {
-    label: "Down 1",
+    label: "Bump Down",
     value: 1 as const,
     Icon: APP_ICONS.vote.down,
-    ariaLabel: "Vote drift down 1 tier",
-  },
-  {
-    label: "Down 2",
-    value: 2 as const,
-    Icon: APP_ICONS.vote.down,
-    ariaLabel: "Vote drift down 2 tiers",
+    ariaLabel: "Vote bump down one tier",
   },
 ] satisfies Array<{
   label: string;
@@ -58,11 +46,9 @@ const VOTE_OPTIONS = [
 }>;
 
 function getVoteToneClassName(vote: VoteValue): string {
-  if (vote === -2) return styles.toneUp2;
-  if (vote === -1) return styles.toneUp1;
-  if (vote === 0) return styles.toneAgree;
-  if (vote === 1) return styles.toneDown1;
-  return styles.toneDown2;
+  if (vote < 0) return styles.toneUp;
+  if (vote > 0) return styles.toneDown;
+  return styles.toneAgree;
 }
 
 type VoteControlsProps = {
@@ -88,6 +74,10 @@ export function VoteControls({
   >(null);
 
   const lastVoteWindowKeyRef = useRef<string | null>(null);
+  const pendingVoteRequestRef = useRef<{
+    windowKey: string | null;
+    vote: VoteValue;
+  } | null>(null);
 
   const phase = state.phase;
   const turnIndex = state.turnIndex;
@@ -104,13 +94,10 @@ export function VoteControls({
   const placedTierIndex =
     placedTierId !== null ? orderedTierIds.indexOf(placedTierId) : -1;
 
-  const maxDriftUpSteps =
-    placedTierIndex >= 0 ? Math.min(2, Math.max(0, placedTierIndex)) : 2;
+  const canBumpUp = placedTierIndex > 0;
 
-  const maxDriftDownSteps =
-    placedTierIndex >= 0
-      ? Math.min(2, Math.max(0, orderedTierIds.length - 1 - placedTierIndex))
-      : 2;
+  const canBumpDown =
+    placedTierIndex >= 0 ? placedTierIndex < orderedTierIds.length - 1 : true;
 
   const activeVoteWindowKey =
     phase === "VOTE" ? `${turnIndex}:${currentItemId ?? "none"}` : null;
@@ -149,11 +136,11 @@ export function VoteControls({
   const voteOptions = useMemo(
     () =>
       VOTE_OPTIONS.filter((opt) => {
-        if (opt.value < 0) return Math.abs(opt.value) <= maxDriftUpSteps;
-        if (opt.value > 0) return opt.value <= maxDriftDownSteps;
+        if (opt.value < 0) return canBumpUp;
+        if (opt.value > 0) return canBumpDown;
         return true;
       }),
-    [maxDriftUpSteps, maxDriftDownSteps],
+    [canBumpUp, canBumpDown],
   );
 
   const hasSelectableVote =
@@ -181,13 +168,28 @@ export function VoteControls({
     if (isDiscussionLocked) return;
     if (!canVote || hasConfirmedVote || isVoting || isConfirming) return;
     if (!socketClient.isConnected()) return;
+    if (myVote === vote) return;
 
+    const pendingVoteRequest = pendingVoteRequestRef.current;
+    if (
+      pendingVoteRequest !== null &&
+      pendingVoteRequest.windowKey === activeVoteWindowKey &&
+      pendingVoteRequest.vote === vote
+    ) {
+      return;
+    }
+
+    pendingVoteRequestRef.current = {
+      windowKey: activeVoteWindowKey,
+      vote,
+    };
     setLastSentVoteWindowKey(activeVoteWindowKey);
     setLastSentVote(vote);
     actionLocks.lock("vote");
     try {
       socketClient.emit("game:vote", { vote });
     } catch {
+      pendingVoteRequestRef.current = null;
       actionLocks.unlock("vote");
     }
   };
@@ -207,6 +209,7 @@ export function VoteControls({
     function initializeVoteDiscussionLockWindow() {
       if (phase !== "VOTE") {
         lastVoteWindowKeyRef.current = null;
+        pendingVoteRequestRef.current = null;
         setVoteUnlockAt(null);
         return;
       }
@@ -224,6 +227,28 @@ export function VoteControls({
       setNow(Date.now());
     },
     [phase, activeVoteWindowKey, voteEndsAt],
+  );
+
+  useEffect(
+    function clearPendingVoteRequestWhenVoteWindowChangesOrSyncs() {
+      if (activeVoteWindowKey === null) {
+        pendingVoteRequestRef.current = null;
+        return;
+      }
+
+      const pendingVoteRequest = pendingVoteRequestRef.current;
+      if (!pendingVoteRequest) return;
+
+      if (pendingVoteRequest.windowKey !== activeVoteWindowKey) {
+        pendingVoteRequestRef.current = null;
+        return;
+      }
+
+      if (myVote !== null && pendingVoteRequest.vote === myVote) {
+        pendingVoteRequestRef.current = null;
+      }
+    },
+    [activeVoteWindowKey, myVote],
   );
 
   useEffect(
@@ -262,7 +287,7 @@ export function VoteControls({
               Discuss first
             </MainTextTypography>
             <MainTextTypography variant="body" textAlign="center">
-              Voting unlocks in{" "}
+              {`Voting unlocks in `}
               {pluralize("second", discussionSecondsLeft, true)}.
             </MainTextTypography>
           </div>
@@ -271,7 +296,7 @@ export function VoteControls({
         <div
           className={styles.grid3}
           role="group"
-          aria-label="Vote drift amount"
+          aria-label="Vote placement adjustment"
         >
           {voteOptions.map((opt) => {
             const isSelected = myVote === opt.value;

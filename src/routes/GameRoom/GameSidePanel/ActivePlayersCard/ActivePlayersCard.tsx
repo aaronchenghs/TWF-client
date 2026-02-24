@@ -16,20 +16,19 @@ type VoteValue = Contracts.VoteValue;
 
 type VoteIndicatorMeta = {
   Icon: typeof APP_ICONS.vote.up;
-  magnitudeText: string;
   label: string;
 };
 
 const voteIndicatorMetaByValue = new Map<VoteValue, VoteIndicatorMeta>([
-  [-2, { Icon: APP_ICONS.vote.up, magnitudeText: "2", label: "drift up 2" }],
-  [-1, { Icon: APP_ICONS.vote.up, magnitudeText: "1", label: "drift up 1" }],
-  [0, { Icon: APP_ICONS.vote.agree, magnitudeText: "-", label: "agree" }],
-  [1, { Icon: APP_ICONS.vote.down, magnitudeText: "1", label: "drift down 1" }],
-  [2, { Icon: APP_ICONS.vote.down, magnitudeText: "2", label: "drift down 2" }],
+  [-1, { Icon: APP_ICONS.vote.up, label: "bump up" }],
+  [0, { Icon: APP_ICONS.vote.agree, label: "agree" }],
+  [1, { Icon: APP_ICONS.vote.down, label: "bump down" }],
 ]);
 
 function getVoteIndicatorMeta(vote: VoteValue): VoteIndicatorMeta {
-  return voteIndicatorMetaByValue.get(vote) ?? voteIndicatorMetaByValue.get(0)!;
+  if (vote < 0) return voteIndicatorMetaByValue.get(-1)!;
+  if (vote > 0) return voteIndicatorMetaByValue.get(1)!;
+  return voteIndicatorMetaByValue.get(0)!;
 }
 
 type ActivePlayersCardProps = {
@@ -98,11 +97,9 @@ function ActivePlayerRow({
         <span
           className={clsx(
             styles.voteIndicator,
-            vote === -2 && styles.voteToneUp2,
-            vote === -1 && styles.voteToneUp1,
+            vote !== null && vote < 0 && styles.voteToneUp,
             vote === 0 && styles.voteToneAgree,
-            vote === 1 && styles.voteToneDown1,
-            vote === 2 && styles.voteToneDown2,
+            vote !== null && vote > 0 && styles.voteToneDown,
             isVoteConfirmed
               ? styles.voteIndicatorLocked
               : styles.voteIndicatorPending,
@@ -113,13 +110,10 @@ function ActivePlayerRow({
           <voteMeta.Icon
             className={styles.voteIndicatorIcon}
             {...voteIconProps}
-            size={20}
+            size={22}
             strokeWidth={2.6}
             aria-hidden
           />
-          <span className={styles.voteIndicatorMagnitude} aria-hidden>
-            {voteMeta.magnitudeText}
-          </span>
         </span>
       ) : null}
     </motion.div>

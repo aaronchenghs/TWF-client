@@ -9,6 +9,7 @@ import {
   EyeOff,
   Minus,
   Settings,
+  Volume2,
   VibrateOff,
 } from "lucide-react";
 
@@ -21,6 +22,7 @@ export const APP_ICONS = {
   highContrast: Contrast,
   showTips: CircleHelp,
   streamerMode: EyeOff,
+  soundEffects: Volume2,
   vote: {
     up: ArrowBigUpDash,
     agree: Minus,

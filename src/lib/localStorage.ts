@@ -116,6 +116,7 @@ export const LOCAL_STORAGE_KEYS = {
   USER_SHOW_TIPS: "twf:userShowTips",
   USER_HIGH_CONTRAST: "twf:userHighContrast",
   USER_STREAMER_MODE: "twf:userStreamerMode",
+  USER_SOUND_EFFECTS: "twf:userSoundEffects",
   PLAYER_ID_PREFIX: "twf:playerId:",
   ROOM_SESSION_PREFIX: "twf:session:",
   PLAYER_ID: (code: string): `twf:playerId:${string}` => `twf:playerId:${code}`,
@@ -172,6 +173,12 @@ const LOCAL_STORAGE_VARIABLES = [
     name: "userStreamerMode",
     keyPattern: LOCAL_STORAGE_KEYS.USER_STREAMER_MODE,
     isKey: exactKey(LOCAL_STORAGE_KEYS.USER_STREAMER_MODE),
+    codec: booleanCodec,
+  }),
+  defineStorageVariable({
+    name: "userSoundEffects",
+    keyPattern: LOCAL_STORAGE_KEYS.USER_SOUND_EFFECTS,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.USER_SOUND_EFFECTS),
     codec: booleanCodec,
   }),
   defineStorageVariable({

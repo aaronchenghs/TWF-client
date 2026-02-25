@@ -7,6 +7,7 @@ type UserSettingsState = {
   isShowTips: boolean;
   isHighContrast: boolean;
   isStreamerMode: boolean;
+  isSoundEnabled: boolean;
 };
 
 const initialState: UserSettingsState = {
@@ -18,6 +19,8 @@ const initialState: UserSettingsState = {
     getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_HIGH_CONTRAST) === true,
   isStreamerMode:
     getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_STREAMER_MODE) === true,
+  isSoundEnabled:
+    getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_SOUND_EFFECTS) !== false,
 };
 
 const userSettingsSlice = createSlice({
@@ -42,6 +45,9 @@ const userSettingsSlice = createSlice({
     setStreamerMode: (state, action: PayloadAction<boolean>) => {
       state.isStreamerMode = action.payload;
     },
+    setSoundEnabled: (state, action: PayloadAction<boolean>) => {
+      state.isSoundEnabled = action.payload;
+    },
   },
 });
 
@@ -52,6 +58,7 @@ export const {
   setShowTips,
   setHighContrast,
   setStreamerMode,
+  setSoundEnabled,
 } = userSettingsSlice.actions;
 
 export default userSettingsSlice.reducer;

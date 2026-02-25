@@ -22,6 +22,7 @@ import {
 } from "@/lib/roomClientState";
 import { useRoomCodeDisplayValue } from "@/lib/roomCode";
 import { GameSidePanel } from "./GameSidePanel/GameSidePanel";
+import { useGameRoomSoundEffects } from "@/lib/hooks/useRoomSoundEffects";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -78,6 +79,8 @@ export default function GameRoom() {
     onState: handleRoomState,
     onClosed: handleRoomClosed,
   });
+
+  useGameRoomSoundEffects(state);
 
   useEffect(
     function endIntroAfterFirstFrame() {

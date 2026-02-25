@@ -15,6 +15,9 @@ export function useUserSettingsSync() {
   const $isStreamerMode = useAppSelector(
     (state: AppState) => state.userSettings.isStreamerMode,
   );
+  const $isSoundEnabled = useAppSelector(
+    (state: AppState) => state.userSettings.isSoundEnabled,
+  );
 
   useEffect(
     function syncReduceMotionDataset() {
@@ -69,5 +72,15 @@ export function useUserSettingsSync() {
       );
     },
     [$isStreamerMode],
+  );
+
+  useEffect(
+    function persistSoundEffectsSetting() {
+      setLocalStorageValue(
+        LOCAL_STORAGE_KEYS.USER_SOUND_EFFECTS,
+        $isSoundEnabled,
+      );
+    },
+    [$isSoundEnabled],
   );
 }

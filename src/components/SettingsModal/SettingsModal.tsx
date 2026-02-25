@@ -7,6 +7,7 @@ import {
   closeSettingsModal,
   setHighContrast,
   setReduceMotion,
+  setSoundEnabled,
   setShowTips,
   setStreamerMode,
 } from "@/store/slices/userSettingsSlice";
@@ -18,6 +19,7 @@ const {
   highContrast: HighContrastIcon,
   showTips: ShowTipsIcon,
   streamerMode: StreamerModeIcon,
+  soundEffects: SoundEffectsIcon,
 } = APP_ICONS;
 
 export function SettingsModal() {
@@ -38,6 +40,9 @@ export function SettingsModal() {
   const $isStreamerMode = useAppSelector(
     (state: AppState) => state.userSettings.isStreamerMode,
   );
+  const $isSoundEnabled = useAppSelector(
+    (state: AppState) => state.userSettings.isSoundEnabled,
+  );
 
   return (
     <PrimaryModal
@@ -51,6 +56,18 @@ export function SettingsModal() {
         </AccentButton>
       }
     >
+      <SettingsOptionRow
+        icon={<SoundEffectsIcon {...iconProps} />}
+        title="Sound Effects"
+        description="Enables event sound cues in Host Lobby and Game Room."
+        control={
+          <AccentToggle
+            checked={$isSoundEnabled}
+            onChange={(nextValue) => dispatch(setSoundEnabled(nextValue))}
+            ariaLabel="Toggle sound effects"
+          />
+        }
+      />
       <div className={styles.rows}>
         <SettingsOptionRow
           icon={<ReduceMotionIcon {...iconProps} />}

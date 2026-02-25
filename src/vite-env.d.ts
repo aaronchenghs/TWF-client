@@ -11,6 +11,7 @@ interface ImportMeta {
 }
 
 declare const __APP_VERSION__: string;
+declare const __HELLO_JOIN_SOUND_URLS__: readonly string[];
 
 declare module "*.svg?react" {
   import * as React from "react";

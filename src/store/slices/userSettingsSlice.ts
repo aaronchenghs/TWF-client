@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { LOCAL_STORAGE_KEYS, getLocalStorageValue } from "@/lib/localStorage";
+import { clamp100 } from "@/lib/sounds/soundEffects";
 
 type UserSettingsState = {
   isSettingsModalOpen: boolean;
@@ -7,7 +8,7 @@ type UserSettingsState = {
   isShowTips: boolean;
   isHighContrast: boolean;
   isStreamerMode: boolean;
-  isSoundEnabled: boolean;
+  sfxVolume: number;
 };
 
 const initialState: UserSettingsState = {
@@ -19,8 +20,12 @@ const initialState: UserSettingsState = {
     getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_HIGH_CONTRAST) === true,
   isStreamerMode:
     getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_STREAMER_MODE) === true,
-  isSoundEnabled:
-    getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_SOUND_EFFECTS) !== false,
+  sfxVolume: (() => {
+    const storedVolume = getLocalStorageValue(
+      LOCAL_STORAGE_KEYS.USER_SFX_VOLUME,
+    );
+    return typeof storedVolume === "number" ? clamp100(storedVolume) : 1;
+  })(),
 };
 
 const userSettingsSlice = createSlice({
@@ -45,8 +50,8 @@ const userSettingsSlice = createSlice({
     setStreamerMode: (state, action: PayloadAction<boolean>) => {
       state.isStreamerMode = action.payload;
     },
-    setSoundEnabled: (state, action: PayloadAction<boolean>) => {
-      state.isSoundEnabled = action.payload;
+    setSfxVolume: (state, action: PayloadAction<number>) => {
+      state.sfxVolume = clamp100(action.payload);
     },
   },
 });
@@ -58,7 +63,7 @@ export const {
   setShowTips,
   setHighContrast,
   setStreamerMode,
-  setSoundEnabled,
+  setSfxVolume,
 } = userSettingsSlice.actions;
 
 export default userSettingsSlice.reducer;

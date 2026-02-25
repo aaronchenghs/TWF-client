@@ -301,7 +301,7 @@ export function VoteControls({
   return (
     <div className={clsx(baseStyles.controls, styles.voteControls)}>
       <div className={styles.voteBody}>
-        {isDiscussionLocked ? (
+        {isDiscussionLocked && (
           <div
             className={styles.discussionNotice}
             role="status"
@@ -320,7 +320,7 @@ export function VoteControls({
               {pluralize("second", discussionSecondsLeft, true)}.
             </MainTextTypography>
           </div>
-        ) : null}
+        )}
 
         <div
           className={styles.grid3}

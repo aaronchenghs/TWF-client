@@ -66,12 +66,6 @@ function getActiveTimerEndsAt(state: RoomPublicState): number | null {
   }
 }
 
-function useSoundEffectsEnabled() {
-  return useAppSelector(
-    (appState: AppState) => appState.userSettings.isSoundEnabled,
-  );
-}
-
 function useInitializeSoundEffects() {
   useEffect(function setupSoundEffects() {
     initializeSoundEffects();
@@ -88,7 +82,9 @@ function playPlayerPresenceDeltas(
 }
 
 export function useHostLobbySoundEffects(state: RoomPublicState | null) {
-  const isSoundEnabled = useSoundEffectsEnabled();
+  const $sfxVolume = useAppSelector(
+    (appState: AppState) => appState.userSettings.sfxVolume,
+  );
   const previousStateRef = useRef<RoomPublicState | null>(null);
 
   useInitializeSoundEffects();
@@ -100,19 +96,21 @@ export function useHostLobbySoundEffects(state: RoomPublicState | null) {
       const prevState = previousStateRef.current;
       previousStateRef.current = state;
 
-      if (!isSoundEnabled) return;
+      if ($sfxVolume <= 0) return;
       if (!prevState) return;
 
       const playerDelta = getPlayerDelta(prevState, state);
       if (playerDelta.joinedCount > 0) playRandomHelloJoinSound();
       if (playerDelta.leftCount > 0) playSoundEffect("playerLeft");
     },
-    [state, isSoundEnabled],
+    [state, $sfxVolume],
   );
 }
 
 export function useGameRoomSoundEffects(state: RoomPublicState | null) {
-  const isSoundEnabled = useSoundEffectsEnabled();
+  const $sfxVolume = useAppSelector(
+    (appState: AppState) => appState.userSettings.sfxVolume,
+  );
   const previousStateRef = useRef<RoomPublicState | null>(null);
   const warnedTimerWindowKeyRef = useRef<string | null>(null);
 
@@ -125,25 +123,11 @@ export function useGameRoomSoundEffects(state: RoomPublicState | null) {
       const prevState = previousStateRef.current;
       previousStateRef.current = state;
 
-      if (!isSoundEnabled) return;
+      if ($sfxVolume <= 0) return;
 
-      if (prevState) {
-        playPlayerPresenceDeltas(prevState, state);
-      }
+      if (!prevState) return;
 
-      if (!prevState) {
-        if (
-          state.phase !== "LOBBY" &&
-          state.phase !== "FINISHED" &&
-          state.turnIndex === 0
-        )
-          playSoundEffect("gameStart");
-
-        return;
-      }
-
-      if (prevState.phase === "LOBBY" && state.phase !== "LOBBY")
-        playSoundEffect("gameStart");
+      playPlayerPresenceDeltas(prevState, state);
       if (prevState.phase === "PLACE" && state.phase === "VOTE")
         playSoundEffect("placementLocked");
       if (prevState.phase !== "FINISHED" && state.phase === "FINISHED")
@@ -153,12 +137,12 @@ export function useGameRoomSoundEffects(state: RoomPublicState | null) {
       if (voteDelta.upCount > 0) playSoundEffect("voteUp");
       if (voteDelta.downCount > 0) playSoundEffect("voteDown");
     },
-    [state, isSoundEnabled],
+    [state, $sfxVolume],
   );
 
   useEffect(
     function handleGameRoomRunningOutOfTimeCue() {
-      if (!isSoundEnabled) return;
+      if ($sfxVolume <= 0) return;
       if (!state) return;
 
       const endsAt = getActiveTimerEndsAt(state);
@@ -197,7 +181,7 @@ export function useGameRoomSoundEffects(state: RoomPublicState | null) {
       state?.timers.placeEndsAt,
       state?.timers.voteEndsAt,
       state?.timers.resultsEndsAt,
-      isSoundEnabled,
+      $sfxVolume,
     ],
   );
 }

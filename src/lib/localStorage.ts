@@ -52,6 +52,16 @@ const booleanCodec: StorageCodec<boolean> = {
   },
 };
 
+const numberCodec: StorageCodec<number> = {
+  parse(raw) {
+    const value = Number.parseFloat(raw);
+    return Number.isFinite(value) ? value : null;
+  },
+  stringify(value) {
+    return String(value);
+  },
+};
+
 function defineStorageVariable<K extends string>(
   variable: StorageVariableDefinition<K>,
 ): StorageVariable<K, string>;
@@ -116,7 +126,7 @@ export const LOCAL_STORAGE_KEYS = {
   USER_SHOW_TIPS: "twf:userShowTips",
   USER_HIGH_CONTRAST: "twf:userHighContrast",
   USER_STREAMER_MODE: "twf:userStreamerMode",
-  USER_SOUND_EFFECTS: "twf:userSoundEffects",
+  USER_SFX_VOLUME: "twf:userSfxVolume",
   PLAYER_ID_PREFIX: "twf:playerId:",
   ROOM_SESSION_PREFIX: "twf:session:",
   PLAYER_ID: (code: string): `twf:playerId:${string}` => `twf:playerId:${code}`,
@@ -176,10 +186,10 @@ const LOCAL_STORAGE_VARIABLES = [
     codec: booleanCodec,
   }),
   defineStorageVariable({
-    name: "userSoundEffects",
-    keyPattern: LOCAL_STORAGE_KEYS.USER_SOUND_EFFECTS,
-    isKey: exactKey(LOCAL_STORAGE_KEYS.USER_SOUND_EFFECTS),
-    codec: booleanCodec,
+    name: "userSfxVolume",
+    keyPattern: LOCAL_STORAGE_KEYS.USER_SFX_VOLUME,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.USER_SFX_VOLUME),
+    codec: numberCodec,
   }),
   defineStorageVariable({
     name: "playerIdByRoomCode",

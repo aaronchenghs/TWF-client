@@ -63,9 +63,9 @@ export function PlayerTopBar({
         >
           <MainTextTypography variant="label" className={styles.statusText}>
             {statusLabel}
-            {statusLabel === "Waiting" ? (
+            {statusLabel === "Waiting" && (
               <AnimatedDots className={styles.statusDots} />
-            ) : null}
+            )}
           </MainTextTypography>
         </Pill>
       </div>

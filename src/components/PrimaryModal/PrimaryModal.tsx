@@ -87,16 +87,15 @@ export function PrimaryModal(props: {
         {(title || subtitle || showCloseButton) && (
           <header className={styles.header}>
             <div className={styles.headerText}>
-              {title ? (
-                typeof title === "string" ? (
+              {title &&
+                (typeof title === "string" ? (
                   <MainTextTypography variant="h3">{title}</MainTextTypography>
                 ) : (
                   title
-                )
-              ) : null}
+                ))}
 
-              {subtitle ? (
-                typeof subtitle === "string" ? (
+              {subtitle &&
+                (typeof subtitle === "string" ? (
                   <MainTextTypography
                     variant="caption"
                     muted
@@ -106,8 +105,7 @@ export function PrimaryModal(props: {
                   </MainTextTypography>
                 ) : (
                   subtitle
-                )
-              ) : null}
+                ))}
             </div>
 
             {showCloseButton && (
@@ -125,7 +123,7 @@ export function PrimaryModal(props: {
 
         <div className={clsx(styles.content, contentClassName)}>{children}</div>
 
-        {footer ? <footer className={styles.footer}>{footer}</footer> : null}
+        {footer && <footer className={styles.footer}>{footer}</footer>}
       </div>
     </div>
   );

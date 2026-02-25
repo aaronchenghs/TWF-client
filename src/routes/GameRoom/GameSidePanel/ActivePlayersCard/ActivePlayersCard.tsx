@@ -140,7 +140,7 @@ function ActivePlayerRow({
       >
         {player.name}
       </MainTextTypography>
-      {showVoteStatus && voteMeta ? (
+      {showVoteStatus && voteMeta && (
         <span
           className={clsx(
             styles.voteIndicator,
@@ -162,7 +162,7 @@ function ActivePlayerRow({
             aria-hidden
           />
         </span>
-      ) : null}
+      )}
     </motion.div>
   );
 }

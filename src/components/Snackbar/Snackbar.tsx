@@ -119,9 +119,9 @@ function SnackbarCard(props: {
       onBlurCapture={() => setPaused(false)}
     >
       <div className={styles.content}>
-        {item.title ? (
+        {item.title && (
           <MainTextTypography variant="h4">{item.title}</MainTextTypography>
-        ) : null}
+        )}
         <div className={styles.message}>{item.message}</div>
       </div>
 

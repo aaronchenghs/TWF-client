@@ -122,11 +122,11 @@ export function PhaseStatusCard({ state }: PhaseStatusCardProps) {
           {state.phase}
         </MainTextTypography>
 
-        {!shouldHideCountdown ? (
+        {!shouldHideCountdown && (
           <MainTextTypography variant="h2">
             {phaseClock.secondsLeft ?? "--"}
           </MainTextTypography>
-        ) : null}
+        )}
       </div>
     </GameStatusCard>
   );

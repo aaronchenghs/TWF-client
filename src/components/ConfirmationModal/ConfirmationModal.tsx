@@ -76,11 +76,11 @@ export function ConfirmationModal({
         </>
       }
     >
-      {message ? (
+      {message && (
         <MainTextTypography variant="body" muted>
           {message}
         </MainTextTypography>
-      ) : null}
+      )}
     </PrimaryModal>
   );
 }

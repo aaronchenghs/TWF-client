@@ -21,6 +21,37 @@ const MASTER_GAIN = 0.14;
 const DEFAULT_TONE_GAIN = 0.62;
 const MIN_FREQUENCY = 40;
 
+const STOCK_SOUND_BASE_VOLUME = 1;
+
+let userSfxVolume01 = 1;
+
+export function clamp100(value: number): number {
+  if (!Number.isFinite(value)) return 1;
+  return Math.min(1, Math.max(0, value));
+}
+
+function resolveStockSoundVolume(effect: SoundEffectId): number {
+  const volumeMultiplier = STOCK_SOUND_VOLUME_MULTIPLIER_BY_EFFECT[effect] ?? 1;
+  return Math.min(
+    1,
+    STOCK_SOUND_BASE_VOLUME * volumeMultiplier * userSfxVolume01,
+  );
+}
+
+function resolveCustomSoundVolume(): number {
+  return Math.min(1, STOCK_SOUND_BASE_VOLUME * userSfxVolume01);
+}
+
+const STOCK_SOUND_VOLUME_MULTIPLIER_BY_EFFECT: Partial<
+  Record<SoundEffectId, number>
+> = {
+  playerLeft: 1.25,
+};
+
+const TONE_GAIN_MULTIPLIER_BY_EFFECT: Partial<Record<SoundEffectId, number>> = {
+  playerLeft: 1.25,
+};
+
 const STOCK_SOUND_URL_BY_EFFECT: Record<SoundEffectId, string> = {
   runningOutOfTime: "/sounds/running-out-of-time.mp3",
   placementLocked: "/sounds/placement-locked.mp3",
@@ -219,7 +250,10 @@ function ensureAudioGraph() {
   if (!audioContext) {
     audioContext = new AudioContext();
     masterGainNode = audioContext.createGain();
-    masterGainNode.gain.setValueAtTime(MASTER_GAIN, audioContext.currentTime);
+    masterGainNode.gain.setValueAtTime(
+      MASTER_GAIN * userSfxVolume01,
+      audioContext.currentTime,
+    );
     masterGainNode.connect(audioContext.destination);
   }
 
@@ -232,11 +266,16 @@ function scheduleTone(
   output: GainNode,
   startAt: number,
   tone: ToneEvent,
+  gainMultiplier: number,
 ) {
   const durationSec = Math.max(0.02, tone.durationMs / 1000);
   const stopAt = startAt + durationSec;
   const attackSec = Math.min(0.02, durationSec * 0.4);
-  const peakGain = Math.max(0.0001, tone.gain ?? DEFAULT_TONE_GAIN);
+  const baseGain = tone.gain ?? DEFAULT_TONE_GAIN;
+  const peakGain = Math.max(
+    0.0001,
+    Math.min(1, baseGain * Math.max(0.01, gainMultiplier)),
+  );
 
   const oscillator = ctx.createOscillator();
   oscillator.type = tone.type ?? "triangle";
@@ -276,21 +315,10 @@ function playToneEffect(effect: SoundEffectId) {
 
   const startAt = ctx.currentTime + 0.01;
   const tones = TONE_EVENTS_BY_EFFECT[effect];
+  const gainMultiplier = TONE_GAIN_MULTIPLIER_BY_EFFECT[effect] ?? 1;
   for (const tone of tones) {
-    scheduleTone(ctx, output, startAt + tone.atMs / 1000, tone);
+    scheduleTone(ctx, output, startAt + tone.atMs / 1000, tone, gainMultiplier);
   }
-}
-
-function speakGameStartCue() {
-  if (typeof window === "undefined") return;
-  const synth = window.speechSynthesis;
-  if (!synth) return;
-
-  const utterance = new SpeechSynthesisUtterance("Tiers!");
-  utterance.rate = 0.98;
-  utterance.pitch = 1.05;
-  utterance.volume = 0.95;
-  synth.speak(utterance);
 }
 
 function getStockAudioElement(effect: SoundEffectId): HTMLAudioElement | null {
@@ -302,7 +330,7 @@ function getStockAudioElement(effect: SoundEffectId): HTMLAudioElement | null {
 
   const audio = new Audio(STOCK_SOUND_URL_BY_EFFECT[effect]);
   audio.preload = "auto";
-  audio.volume = 0.9;
+  audio.volume = resolveStockSoundVolume(effect);
   audio.addEventListener("error", () => {
     unavailableStockEffects.add(effect);
     stockAudioByEffect.delete(effect);
@@ -321,7 +349,7 @@ function getCustomAudioElement(url: string): HTMLAudioElement | null {
 
   const audio = new Audio(url);
   audio.preload = "auto";
-  audio.volume = 0.9;
+  audio.volume = resolveCustomSoundVolume();
   audio.addEventListener("error", () => {
     unavailableCustomUrls.add(url);
     customAudioByUrl.delete(url);
@@ -419,8 +447,29 @@ export function initializeSoundEffects() {
   window.addEventListener("keydown", unlock, { once: true });
 }
 
+export function setSoundEffectsVolume(volume01: number) {
+  userSfxVolume01 = clamp100(volume01);
+
+  if (audioContext && masterGainNode) {
+    masterGainNode.gain.setValueAtTime(
+      MASTER_GAIN * userSfxVolume01,
+      audioContext.currentTime,
+    );
+  }
+
+  for (const [effect, audio] of stockAudioByEffect.entries()) {
+    audio.volume = resolveStockSoundVolume(effect);
+  }
+
+  const customVolume = resolveCustomSoundVolume();
+  for (const audio of customAudioByUrl.values()) {
+    audio.volume = customVolume;
+  }
+}
+
 export function playRandomHelloJoinSound() {
   initializeSoundEffects();
+  if (userSfxVolume01 <= 0) return;
   if (shouldSkipKeyRateLimit("helloJoin", 250)) return;
 
   const urls = __HELLO_JOIN_SOUND_URLS__;
@@ -438,9 +487,8 @@ export function playRandomHelloJoinSound() {
 
 export function playSoundEffect(effect: SoundEffectId) {
   initializeSoundEffects();
+  if (userSfxVolume01 <= 0) return;
   if (shouldSkipDueToRateLimit(effect)) return;
-
-  if (effect === "gameStart") speakGameStartCue();
 
   const playedStockSound = playStockSound(effect);
   if (!playedStockSound) playToneEffect(effect);

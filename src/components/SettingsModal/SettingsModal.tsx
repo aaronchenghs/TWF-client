@@ -1,18 +1,24 @@
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
 import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
-import { SettingsOptionRow } from "@/components/SettingsOptionRow/SettingsOptionRow";
+import { SettingsOptionRow } from "./SettingsOptionRow/SettingsOptionRow";
+import { SliderControl } from "./SliderControl/SliderControl";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import {
   closeSettingsModal,
   setHighContrast,
   setReduceMotion,
-  setSoundEnabled,
+  setSfxVolume,
   setShowTips,
   setStreamerMode,
 } from "@/store/slices/userSettingsSlice";
 import styles from "./SettingsModal.module.scss";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
+import {
+  playSoundEffect,
+  setSoundEffectsVolume,
+} from "@/lib/sounds/soundEffects";
+import { useMobileView } from "@/lib/hooks/useMobileView";
 
 const {
   reduceMotion: ReduceMotionIcon,
@@ -24,6 +30,8 @@ const {
 
 export function SettingsModal() {
   const dispatch = useAppDispatch();
+  const isMobile = useMobileView();
+
   const iconProps = ICON_PROPS.settingsRow;
   const $isSettingsModalOpen = useAppSelector(
     (state: AppState) => state.userSettings.isSettingsModalOpen,
@@ -40,8 +48,8 @@ export function SettingsModal() {
   const $isStreamerMode = useAppSelector(
     (state: AppState) => state.userSettings.isStreamerMode,
   );
-  const $isSoundEnabled = useAppSelector(
-    (state: AppState) => state.userSettings.isSoundEnabled,
+  const $sfxVolume = useAppSelector(
+    (state: AppState) => state.userSettings.sfxVolume,
   );
 
   return (
@@ -56,19 +64,30 @@ export function SettingsModal() {
         </AccentButton>
       }
     >
-      <SettingsOptionRow
-        icon={<SoundEffectsIcon {...iconProps} />}
-        title="Sound Effects"
-        description="Enables event sound cues in Host Lobby and Game Room."
-        control={
-          <AccentToggle
-            checked={$isSoundEnabled}
-            onChange={(nextValue) => dispatch(setSoundEnabled(nextValue))}
-            ariaLabel="Toggle sound effects"
-          />
-        }
-      />
       <div className={styles.rows}>
+        {!isMobile && (
+          <SettingsOptionRow
+            icon={<SoundEffectsIcon {...iconProps} />}
+            title="Sound Effects"
+            description="Controls volume for Host Lobby and Game Room sound cues."
+            layout="stacked"
+            control={
+              <SliderControl
+                ariaLabel="Sound effects volume"
+                valuePercent={Math.round($sfxVolume * 100)}
+                onChangePercent={(nextPercent) => {
+                  const nextVolume = nextPercent / 100;
+                  setSoundEffectsVolume(nextVolume);
+                  dispatch(setSfxVolume(nextVolume));
+                }}
+                onCommit={() => {
+                  playSoundEffect("voteUp");
+                }}
+              />
+            }
+          />
+        )}
+
         <SettingsOptionRow
           icon={<ReduceMotionIcon {...iconProps} />}
           title="Reduce Motion"

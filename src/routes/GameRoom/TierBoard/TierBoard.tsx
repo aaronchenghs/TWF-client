@@ -202,14 +202,14 @@ export const TierBoard = memo(function TierBoard({
                     <TierItemTile key={id} state={state} itemId={id} />
                   ))}
 
-                  {isGhostTier && state.currentItem ? (
+                  {isGhostTier && state.currentItem && (
                     <TierItemTile
                       state={state}
                       itemId={state.currentItem}
                       ghost
                       isGhostSolidifying={isResultsPhase}
                     />
-                  ) : null}
+                  )}
 
                   {safeGhostIndex !== null &&
                     safeItems

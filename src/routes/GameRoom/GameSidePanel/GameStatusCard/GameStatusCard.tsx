@@ -29,15 +29,13 @@ export function GameStatusCard({
       style={style}
     >
       <div className={styles.header}>
-        {label ? (
+        {label && (
           <MainTextTypography variant="caption" muted letterSpacing="wide">
             {label}
           </MainTextTypography>
-        ) : null}
+        )}
 
-        {headerRight ? (
-          <div className={styles.headerRight}>{headerRight}</div>
-        ) : null}
+        {headerRight && <div className={styles.headerRight}>{headerRight}</div>}
       </div>
 
       <div className={clsx(styles.body, bodyClassName)}>{children}</div>

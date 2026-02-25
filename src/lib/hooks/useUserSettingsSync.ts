@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { LOCAL_STORAGE_KEYS, setLocalStorageValue } from "@/lib/localStorage";
 import { useAppSelector, type AppState } from "@/store/store";
+import { setSoundEffectsVolume } from "@/lib/sounds/soundEffects";
 
 export function useUserSettingsSync() {
   const $isReduceMotion = useAppSelector(
@@ -15,8 +16,8 @@ export function useUserSettingsSync() {
   const $isStreamerMode = useAppSelector(
     (state: AppState) => state.userSettings.isStreamerMode,
   );
-  const $isSoundEnabled = useAppSelector(
-    (state: AppState) => state.userSettings.isSoundEnabled,
+  const $sfxVolume = useAppSelector(
+    (state: AppState) => state.userSettings.sfxVolume,
   );
 
   useEffect(
@@ -75,12 +76,10 @@ export function useUserSettingsSync() {
   );
 
   useEffect(
-    function persistSoundEffectsSetting() {
-      setLocalStorageValue(
-        LOCAL_STORAGE_KEYS.USER_SOUND_EFFECTS,
-        $isSoundEnabled,
-      );
+    function syncAndPersistSfxVolume() {
+      setSoundEffectsVolume($sfxVolume);
+      setLocalStorageValue(LOCAL_STORAGE_KEYS.USER_SFX_VOLUME, $sfxVolume);
     },
-    [$isSoundEnabled],
+    [$sfxVolume],
   );
 }

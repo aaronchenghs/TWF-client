@@ -1,11 +1,11 @@
 import type { TargetAndTransition, Transition } from "framer-motion";
-import { easeInOut } from "framer-motion";
+import { easeInOut, easeIn, easeOut } from "framer-motion";
 
 type Ease = Transition["ease"];
 
 export const MOTION_EASE = {
-  enter: [0.16, 1, 0.3, 1] as const,
-  exit: [0.2, 0.9, 0.2, 1] as const,
+  enter: easeOut,
+  exit: easeIn,
   route: easeInOut,
 };
 

@@ -1,54 +1,45 @@
 import type { PropsWithChildren } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { TransitionDirection } from "../lib/routeTransitionRules";
-import { buildSlideAnimation } from "@/lib/motionPresets";
+import type { TransitionKind } from "../lib/routeTransitionRules";
 import { useAppSelector, type AppState } from "@/store/store";
-
-const INITIAL_OFFSET = 2000;
+import {
+  buildFadeSlideAnimation,
+  buildIrisAnimation,
+} from "@/lib/routeTransitionPresets";
 
 export function RouteTransition({
   children,
   routeKey,
-  direction = "left",
-  durationMs = 450,
+  kind = "fade",
+  durationMs = 650,
 }: PropsWithChildren<{
   routeKey: string;
-  direction?: TransitionDirection;
+  kind?: TransitionKind;
   durationMs?: number;
 }>) {
   const $isReduceMotion = useAppSelector(
     (state: AppState) => state.userSettings.isReduceMotion,
   );
-  const enterX = $isReduceMotion
-    ? 0
-    : direction === "left"
-      ? -INITIAL_OFFSET
-      : INITIAL_OFFSET;
-  const exitX = $isReduceMotion
-    ? 0
-    : direction === "left"
-      ? INITIAL_OFFSET
-      : -INITIAL_OFFSET;
 
-  const slideAnimation = buildSlideAnimation({
-    axis: "x",
-    enterFrom: enterX,
-    exitTo: exitX,
-    durationMs,
-    reduceMotion: $isReduceMotion,
-    opacity: { from: 0.25, to: 1, exit: 0.25 },
-  });
+  const animationByKind = {
+    iris: buildIrisAnimation($isReduceMotion, durationMs),
+    fade: buildFadeSlideAnimation($isReduceMotion),
+  } as const;
+
+  const routeAnimation = animationByKind[kind] ?? animationByKind.fade;
+  const presenceMode = kind === "iris" ? "wait" : "sync";
 
   return (
-    <AnimatePresence mode="sync" initial={false}>
+    <AnimatePresence mode={presenceMode} initial={false}>
       <motion.div
-        {...slideAnimation}
+        {...routeAnimation}
         key={routeKey}
         style={{
           position: "absolute",
           inset: 0,
           width: "100%",
           height: "100%",
+          overflow: "hidden",
         }}
       >
         {children}

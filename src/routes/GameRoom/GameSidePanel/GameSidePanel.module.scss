@@ -1,27 +1,14 @@
 @use "../../../styles/export.scss" as *;
 
-$intro-duration: 2s;
-$side-delay: 0.25s;
-
 .sideSection {
   opacity: 1;
   transform: translateX(0);
-  will-change: transform;
-
-  transition-property: transform;
-  transition-duration: $intro-duration;
-  transition-timing-function: ease-in-out;
-  transition-delay: $side-delay;
 
   display: flex;
   flex-direction: column;
   gap: $default-gap;
   min-height: 0;
   overflow: visible;
-
-  &.intro {
-    transform: translateX(100vw);
-  }
 
   @media (max-width: $tablet-width) {
     max-height: none;

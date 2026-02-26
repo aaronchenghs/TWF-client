@@ -21,13 +21,9 @@ const TIER_LABEL_COLOR_CSS_VAR = "--tierColor" as string;
 
 type TierBoardProps = {
   state: RoomPublicState;
-  isIntro: boolean;
 };
 
-export const TierBoard = memo(function TierBoard({
-  state,
-  isIntro,
-}: TierBoardProps) {
+export const TierBoard = memo(function TierBoard({ state }: TierBoardProps) {
   const [scale, setScale] = useState(1);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -154,7 +150,7 @@ export const TierBoard = memo(function TierBoard({
   }, [scheduleScaleMeasure]);
 
   return (
-    <section className={clsx(styles.boardSection, isIntro && styles.intro)}>
+    <section className={styles.boardSection}>
       <div className={styles.root} ref={containerRef}>
         <div
           className={styles.scale}

@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import * as Contracts from "@twf/contracts";
 import { SidePanelHeader } from "./SidePanelHeader/SidePanelHeader";
 import { PhaseStatusCard } from "./PhaseStatusCard/PhaseStatusCard";
@@ -12,7 +11,6 @@ type RoomPublicState = Contracts.RoomPublicState;
 
 type GameSidePanelProps = {
   state: RoomPublicState;
-  isIntro: boolean;
   roomCode: string;
   onExitClick: () => void;
   onPlayAgain: () => void;
@@ -21,14 +19,13 @@ type GameSidePanelProps = {
 
 export function GameSidePanel({
   state,
-  isIntro,
   roomCode,
   onExitClick,
   onPlayAgain,
   isRematchSubmitting,
 }: GameSidePanelProps) {
   return (
-    <aside className={clsx(styles.sideSection, isIntro && styles.intro)}>
+    <aside className={styles.sideSection}>
       <SidePanelHeader roomCode={roomCode} onExitClick={onExitClick} />
 
       <SubtextDivider />

@@ -1,20 +1,13 @@
 @use "../../../styles/export.scss" as *;
 
 $defaultTierColor: $light-transparency;
-$intro-duration: 2s;
 
 .boardSection {
   opacity: 1;
   transform: translateX(0);
-  will-change: transform;
-  transition: transform $intro-duration ease-in-out;
   height: 100%;
   min-width: 0;
   min-height: 0;
-
-  &.intro {
-    transform: translateX(-100vw);
-  }
 
   @media (max-width: $tablet-width) {
     height: auto;

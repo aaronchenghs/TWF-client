@@ -35,10 +35,8 @@ export default function GameRoom() {
   const [state, setState] = useState<RoomPublicState | null>(() =>
     roomSocket.getLastRoomState(roomCode),
   );
-  const [isIntro, setIsIntro] = useState(true);
   const suppressRejoinNoticeRef = useRef(false);
   const isHostUnexpectedExitEligible = state?.phase !== "FINISHED";
-  const hasState = state != null;
 
   const handleExit = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
@@ -78,15 +76,6 @@ export default function GameRoom() {
     onState: handleRoomState,
     onClosed: handleRoomClosed,
   });
-
-  useEffect(
-    function endIntroAfterFirstFrame() {
-      if (!hasState) return;
-      const raf = requestAnimationFrame(() => setIsIntro(false));
-      return () => cancelAnimationFrame(raf);
-    },
-    [hasState],
-  );
 
   useEffect(
     function persistStartedHostEvidence() {
@@ -143,10 +132,9 @@ export default function GameRoom() {
   return (
     <div className={styles.root}>
       <main className={styles.main}>
-        <TierBoard state={state} isIntro={isIntro} />
+        <TierBoard state={state} />
         <GameSidePanel
           state={state}
-          isIntro={isIntro}
           roomCode={roomCode}
           onExitClick={() => setIsConfirmExitOpen(true)}
           onPlayAgain={handlePlayAgain}

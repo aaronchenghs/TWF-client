@@ -1,11 +1,11 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useLayoutEffect, useState } from "react";
 import { useLocation, Routes, Route, Navigate } from "react-router-dom";
 import HostLobby from "@/routes/HostLobby/HostLobby";
 import { RouteTransition } from "@/components/RouteTransition";
 import { ROUTES } from "@/routes/routes";
 import {
-  getRouteTransitionDirection,
-  type TransitionDirection,
+  getRouteTransitionKind,
+  type TransitionKind,
 } from "@/lib/routeTransitionRules";
 import { RouteLoadingFallback } from "@/components/RouteLoadingFallback/RouteLoadingFallback";
 import { usePendingRejoinSnackbar } from "@/lib/hooks/usePendingRejoinSnackbar";
@@ -19,17 +19,33 @@ export function AnimatedRoutes() {
   const location = useLocation();
   usePendingRejoinSnackbar(location.pathname);
 
-  const [direction, setDirection] = useState<TransitionDirection>("left");
-  const prevPathRef = useRef(location.pathname);
+  const [displayLocation, setDisplayLocation] = useState(location);
+  const [pendingLocation, setPendingLocation] = useState(location);
+  const [kind, setKind] = useState<TransitionKind>("fade");
 
-  useEffect(
-    function determineTransitionDirection() {
-      const from = prevPathRef.current;
-      const to = location.pathname;
-      setDirection(getRouteTransitionDirection(from, to));
-      prevPathRef.current = location.pathname;
+  useLayoutEffect(
+    function determineTransitionKind() {
+      if (location.pathname === displayLocation.pathname) return;
+
+      setKind(
+        getRouteTransitionKind(displayLocation.pathname, location.pathname),
+      );
+      setPendingLocation(location);
     },
-    [location.pathname],
+    [displayLocation.pathname, location],
+  );
+
+  useLayoutEffect(
+    function commitPendingLocationOnNextFrame() {
+      if (pendingLocation.pathname === displayLocation.pathname) return;
+
+      const rafId = window.requestAnimationFrame(() => {
+        setDisplayLocation(pendingLocation);
+      });
+
+      return () => window.cancelAnimationFrame(rafId);
+    },
+    [displayLocation.pathname, pendingLocation],
   );
 
   return (
@@ -41,8 +57,8 @@ export function AnimatedRoutes() {
         overflow: "hidden",
       }}
     >
-      <RouteTransition routeKey={location.pathname} direction={direction}>
-        <Routes location={location}>
+      <RouteTransition routeKey={displayLocation.pathname} kind={kind}>
+        <Routes location={displayLocation}>
           <Route
             path={ROUTES.LANDING}
             element={

@@ -47,6 +47,10 @@ class SocketClient {
       tryAllTransports: true,
       withCredentials: true,
       autoConnect: false,
+      /** iOS Safari backgrounding can look like an "unload" and cause Socket.IO to
+       * intentionally disconnect, which the server treats as an explicit leave.
+       * Keep disconnects resumable unless the user explicitly quits via UI.*/
+      closeOnBeforeunload: false,
       timeout: 12_000,
     });
   }

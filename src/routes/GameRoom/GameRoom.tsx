@@ -15,7 +15,6 @@ import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { getClientId, saveRoomSession } from "@/lib/session";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
-import { useGameRoomSoundEffects } from "@/lib/hooks/useRoomSoundEffects";
 import {
   clearHostRoomState,
   markHostRoomStarted,
@@ -79,8 +78,6 @@ export default function GameRoom() {
     onState: handleRoomState,
     onClosed: handleRoomClosed,
   });
-
-  useGameRoomSoundEffects(state);
 
   useEffect(
     function endIntroAfterFirstFrame() {

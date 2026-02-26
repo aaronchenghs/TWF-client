@@ -34,6 +34,8 @@ export default function PlayerSession() {
 
   const roomCode = normalizeCode(activePlayerSession?.code ?? "");
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
+  const nameFromUrl = normalizeName(searchParams.get("name"));
+  const effectiveName = nameFromUrl || activePlayerSession?.name || "";
   const isPlayerUnexpectedExitEligible =
     !!state && state.phase !== "LOBBY" && state.phase !== "FINISHED";
 
@@ -79,15 +81,6 @@ export default function PlayerSession() {
     onKicked: handleKicked,
   });
 
-  useEffect(function disconnectSocketOnTabClose() {
-    const handleBeforeUnload = () => {
-      socketClient.disconnect();
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
-
   useEffect(
     function syncPlayerSessionTitle() {
       const nextTitle =
@@ -112,9 +105,7 @@ export default function PlayerSession() {
         returnToLanding();
         return;
       }
-      const nameFromUrl = normalizeName(searchParams.get("name"));
       const clientId = getClientId();
-      const effectiveName = nameFromUrl || activePlayerSession?.name || "";
 
       if (!effectiveName) {
         returnToLanding();
@@ -162,14 +153,7 @@ export default function PlayerSession() {
         cancelled = true;
       };
     },
-    [
-      navigate,
-      roomCode,
-      isRoomCodeValid,
-      searchParams,
-      returnToLanding,
-      activePlayerSession?.name,
-    ],
+    [navigate, roomCode, isRoomCodeValid, returnToLanding, effectiveName],
   );
 
   if (!state)

@@ -3,6 +3,7 @@ import clsx from "clsx";
 import * as Contracts from "@twf/contracts";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { usePhaseClock } from "@/lib/hooks/usePhaseClock";
+import { useGameRoomSoundEffects } from "@/lib/hooks/useSoundEffects";
 import { GameStatusCard } from "../GameStatusCard/GameStatusCard";
 import styles from "./PhaseStatusCard.module.scss";
 
@@ -32,6 +33,8 @@ export function PhaseStatusCard({ state }: PhaseStatusCardProps) {
     phaseClock.secondsLeft != null &&
     phaseClock.secondsLeft > 0 &&
     phaseClock.secondsLeft <= 5;
+
+  useGameRoomSoundEffects({ isPhaseCritical });
 
   const phaseRing = useMemo(() => {
     const inset = 4;

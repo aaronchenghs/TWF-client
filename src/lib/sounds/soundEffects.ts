@@ -14,6 +14,7 @@ type SfxDefinition =
 export type SfxId =
   | "hostLobby.playerJoined.hello"
   | "hostLobby.playerLeft.whoosh"
+  | "gameRoom.timer.criticalTick"
   | "ui.preview";
 
 const SFX_DEFS: Record<SfxId, SfxDefinition> = {
@@ -27,6 +28,11 @@ const SFX_DEFS: Record<SfxId, SfxDefinition> = {
     kind: "single",
     url: "/sounds/downward-whoosh.mp3",
     minRepeatMs: 120,
+  },
+  "gameRoom.timer.criticalTick": {
+    kind: "single",
+    url: "/sounds/clock-ticking.mp3",
+    minRepeatMs: 4500,
   },
   "ui.preview": {
     kind: "single",

@@ -37,7 +37,7 @@ export default function GameRoom() {
   );
   const [isIntro, setIsIntro] = useState(true);
   const suppressRejoinNoticeRef = useRef(false);
-  const isHostUnexpectedExitEligible = !!state && state.phase !== "FINISHED";
+  const isHostUnexpectedExitEligible = state?.phase !== "FINISHED";
   const hasState = state != null;
 
   const handleExit = useCallback(() => {

@@ -25,7 +25,7 @@ import {
 import { getLocalStorageValue, LOCAL_STORAGE_KEYS } from "@/lib/localStorage";
 import { TierSetSelection } from "./TierSetSelection/TierSetSelection";
 import { HostSidePanel } from "./HostSidePanel/HostSidePanel";
-import { useHostLobbySoundEffects } from "@/lib/hooks/useRoomSoundEffects";
+import { useHostLobbySoundEffects } from "@/lib/hooks/useSoundEffects";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const BEST_PLAY_TIP_DELAY_MS = 500;

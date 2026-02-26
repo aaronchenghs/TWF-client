@@ -2,27 +2,9 @@ import { useEffect, useRef } from "react";
 import type * as Contracts from "@twf/contracts";
 import { useAppSelector, type AppState } from "@/store/store";
 import { initializeSoundEffects, playSfx } from "@/lib/sounds/soundEffects";
+import { getPlayerDelta } from "../players";
 
 type RoomPublicState = Contracts.RoomPublicState;
-
-function getConnectedPlayerIdSet(state: RoomPublicState): Set<string> {
-  const ids = new Set<string>();
-  for (const player of state.players)
-    if (player.connected !== false) ids.add(player.id);
-  return ids;
-}
-
-function getPlayerDelta(prev: RoomPublicState, next: RoomPublicState) {
-  const prevIds = getConnectedPlayerIdSet(prev);
-  const nextIds = getConnectedPlayerIdSet(next);
-
-  let joinedCount = 0;
-  let leftCount = 0;
-  for (const id of nextIds) if (!prevIds.has(id)) joinedCount += 1;
-  for (const id of prevIds) if (!nextIds.has(id)) leftCount += 1;
-
-  return { joinedCount, leftCount };
-}
 
 export function useHostLobbySoundEffects(state: RoomPublicState | null) {
   const $sfxVolume = useAppSelector(
@@ -49,5 +31,34 @@ export function useHostLobbySoundEffects(state: RoomPublicState | null) {
       if (playerDelta.leftCount > 0) playSfx("hostLobby.playerLeft.whoosh");
     },
     [state, $sfxVolume],
+  );
+}
+
+export function useGameRoomSoundEffects({
+  isPhaseCritical,
+}: {
+  isPhaseCritical: boolean;
+}) {
+  const $sfxVolume = useAppSelector(
+    (appState: AppState) => appState.userSettings.sfxVolume,
+  );
+  const wasCriticalRef = useRef(false);
+
+  useEffect(function setupSoundEffects() {
+    initializeSoundEffects();
+  }, []);
+
+  useEffect(
+    function playCriticalTimerTicking() {
+      const wasCritical = wasCriticalRef.current;
+      wasCriticalRef.current = isPhaseCritical;
+
+      if ($sfxVolume <= 0) return;
+      if (!isPhaseCritical) return;
+      if (wasCritical) return;
+
+      playSfx("gameRoom.timer.criticalTick");
+    },
+    [isPhaseCritical, $sfxVolume],
   );
 }

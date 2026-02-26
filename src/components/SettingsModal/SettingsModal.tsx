@@ -14,10 +14,7 @@ import {
 } from "@/store/slices/userSettingsSlice";
 import styles from "./SettingsModal.module.scss";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
-import {
-  playSoundEffect,
-  setSoundEffectsVolume,
-} from "@/lib/sounds/soundEffects";
+import { playSfx, setSoundEffectsVolume } from "@/lib/sounds/soundEffects";
 import { useMobileView } from "@/lib/hooks/useMobileView";
 
 const {
@@ -69,7 +66,7 @@ export function SettingsModal() {
           <SettingsOptionRow
             icon={<SoundEffectsIcon {...iconProps} />}
             title="Sound Effects"
-            description="Controls volume for Host Lobby and Game Room sound cues."
+            description="Controls volume for lobby sound cues."
             layout="stacked"
             control={
               <SliderControl
@@ -81,7 +78,7 @@ export function SettingsModal() {
                   dispatch(setSfxVolume(nextVolume));
                 }}
                 onCommit={() => {
-                  playSoundEffect("voteUp");
+                  playSfx("ui.preview");
                 }}
               />
             }

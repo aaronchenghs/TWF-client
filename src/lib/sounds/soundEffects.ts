@@ -1,387 +1,102 @@
-export type SoundEffectId =
-  | "runningOutOfTime"
-  | "placementLocked"
-  | "playerJoined"
-  | "playerLeft"
-  | "voteUp"
-  | "voteDown"
-  | "gameStart"
-  | "finish";
+type SfxDefinition =
+  | {
+      kind: "single";
+      url: string;
+      minRepeatMs: number;
+    }
+  | {
+      kind: "random";
+      urls: readonly string[];
+      minRepeatMs: number;
+      noRepeat?: boolean;
+    };
 
-type ToneEvent = {
-  atMs: number;
-  durationMs: number;
-  frequency: number;
-  toFrequency?: number;
-  gain?: number;
-  type?: OscillatorType;
+export type SfxId =
+  | "hostLobby.playerJoined.hello"
+  | "hostLobby.playerLeft.whoosh"
+  | "ui.preview";
+
+const SFX_DEFS: Record<SfxId, SfxDefinition> = {
+  "hostLobby.playerJoined.hello": {
+    kind: "random",
+    urls: __HELLO_JOIN_SOUND_URLS__,
+    minRepeatMs: 250,
+    noRepeat: true,
+  },
+  "hostLobby.playerLeft.whoosh": {
+    kind: "single",
+    url: "/sounds/downward-whoosh.mp3",
+    minRepeatMs: 120,
+  },
+  "ui.preview": {
+    kind: "single",
+    url: "/sounds/downward-whoosh.mp3",
+    minRepeatMs: 120,
+  },
 };
 
-const MASTER_GAIN = 0.14;
-const DEFAULT_TONE_GAIN = 0.62;
-const MIN_FREQUENCY = 40;
-
-const STOCK_SOUND_BASE_VOLUME = 1;
-
 let userSfxVolume01 = 1;
+let unlockListenersInstalled = false;
 
-export function clamp100(value: number): number {
+const audioByUrl = new Map<string, HTMLAudioElement>();
+const unavailableUrls = new Set<string>();
+const lastPlayedAtById = new Map<SfxId, number>();
+const lastRandomIndexById = new Map<SfxId, number>();
+
+export function clamp01(value: number): number {
   if (!Number.isFinite(value)) return 1;
   return Math.min(1, Math.max(0, value));
 }
 
-function resolveStockSoundVolume(effect: SoundEffectId): number {
-  const volumeMultiplier = STOCK_SOUND_VOLUME_MULTIPLIER_BY_EFFECT[effect] ?? 1;
-  return Math.min(
-    1,
-    STOCK_SOUND_BASE_VOLUME * volumeMultiplier * userSfxVolume01,
-  );
+function resolveVolume(): number {
+  return clamp01(userSfxVolume01);
 }
 
-function resolveCustomSoundVolume(): number {
-  return Math.min(1, STOCK_SOUND_BASE_VOLUME * userSfxVolume01);
+function shouldSkipRateLimit(id: SfxId, minGapMs: number): boolean {
+  const now = Date.now();
+  const lastPlayedAt = lastPlayedAtById.get(id) ?? 0;
+  if (now - lastPlayedAt < minGapMs) return true;
+  lastPlayedAtById.set(id, now);
+  return false;
 }
 
-const STOCK_SOUND_VOLUME_MULTIPLIER_BY_EFFECT: Partial<
-  Record<SoundEffectId, number>
-> = {
-  playerLeft: 1.25,
-};
-
-const TONE_GAIN_MULTIPLIER_BY_EFFECT: Partial<Record<SoundEffectId, number>> = {
-  playerLeft: 1.25,
-};
-
-const STOCK_SOUND_URL_BY_EFFECT: Record<SoundEffectId, string> = {
-  runningOutOfTime: "/sounds/running-out-of-time.mp3",
-  placementLocked: "/sounds/placement-locked.mp3",
-  playerJoined: "/sounds/player-joined.mp3",
-  playerLeft: "/sounds/player-left.mp3",
-  voteUp: "/sounds/vote-up.mp3",
-  voteDown: "/sounds/vote-down.mp3",
-  gameStart: "/sounds/game-start.mp3",
-  finish: "/sounds/finish.mp3",
-};
-
-const TONE_EVENTS_BY_EFFECT: Record<SoundEffectId, readonly ToneEvent[]> = {
-  runningOutOfTime: [
-    { atMs: 0, durationMs: 75, frequency: 940, gain: 0.7, type: "square" },
-    { atMs: 165, durationMs: 75, frequency: 940, gain: 0.7, type: "square" },
-    { atMs: 330, durationMs: 95, frequency: 730, gain: 0.75, type: "square" },
-  ],
-  placementLocked: [
-    {
-      atMs: 0,
-      durationMs: 95,
-      frequency: 700,
-      toFrequency: 560,
-      gain: 0.65,
-      type: "triangle",
-    },
-    {
-      atMs: 120,
-      durationMs: 130,
-      frequency: 500,
-      toFrequency: 330,
-      gain: 0.65,
-      type: "triangle",
-    },
-  ],
-  playerJoined: [
-    {
-      atMs: 0,
-      durationMs: 95,
-      frequency: 520,
-      toFrequency: 690,
-      gain: 0.6,
-      type: "sine",
-    },
-    {
-      atMs: 95,
-      durationMs: 120,
-      frequency: 700,
-      toFrequency: 920,
-      gain: 0.64,
-      type: "triangle",
-    },
-  ],
-  playerLeft: [
-    {
-      atMs: 0,
-      durationMs: 110,
-      frequency: 700,
-      toFrequency: 520,
-      gain: 0.58,
-      type: "sine",
-    },
-    {
-      atMs: 110,
-      durationMs: 150,
-      frequency: 500,
-      toFrequency: 280,
-      gain: 0.6,
-      type: "triangle",
-    },
-  ],
-  voteUp: [
-    {
-      atMs: 0,
-      durationMs: 70,
-      frequency: 430,
-      toFrequency: 560,
-      gain: 0.6,
-      type: "square",
-    },
-    {
-      atMs: 60,
-      durationMs: 85,
-      frequency: 590,
-      toFrequency: 760,
-      gain: 0.62,
-      type: "square",
-    },
-  ],
-  voteDown: [
-    {
-      atMs: 0,
-      durationMs: 70,
-      frequency: 760,
-      toFrequency: 580,
-      gain: 0.6,
-      type: "square",
-    },
-    {
-      atMs: 60,
-      durationMs: 85,
-      frequency: 560,
-      toFrequency: 390,
-      gain: 0.62,
-      type: "square",
-    },
-  ],
-  gameStart: [
-    {
-      atMs: 0,
-      durationMs: 125,
-      frequency: 520,
-      toFrequency: 640,
-      gain: 0.62,
-      type: "triangle",
-    },
-    {
-      atMs: 115,
-      durationMs: 135,
-      frequency: 660,
-      toFrequency: 820,
-      gain: 0.62,
-      type: "triangle",
-    },
-    {
-      atMs: 230,
-      durationMs: 180,
-      frequency: 780,
-      toFrequency: 1050,
-      gain: 0.68,
-      type: "triangle",
-    },
-  ],
-  finish: [
-    {
-      atMs: 0,
-      durationMs: 130,
-      frequency: 420,
-      toFrequency: 560,
-      gain: 0.62,
-      type: "triangle",
-    },
-    {
-      atMs: 140,
-      durationMs: 140,
-      frequency: 560,
-      toFrequency: 700,
-      gain: 0.62,
-      type: "triangle",
-    },
-    {
-      atMs: 280,
-      durationMs: 160,
-      frequency: 700,
-      toFrequency: 930,
-      gain: 0.66,
-      type: "triangle",
-    },
-    {
-      atMs: 460,
-      durationMs: 230,
-      frequency: 930,
-      toFrequency: 1170,
-      gain: 0.7,
-      type: "sawtooth",
-    },
-  ],
-};
-
-const MIN_REPEAT_INTERVAL_MS: Partial<Record<SoundEffectId, number>> = {
-  runningOutOfTime: 800,
-  placementLocked: 200,
-  playerJoined: 120,
-  playerLeft: 120,
-  voteUp: 60,
-  voteDown: 60,
-  gameStart: 1000,
-  finish: 1000,
-};
-
-let audioContext: AudioContext | null = null;
-let masterGainNode: GainNode | null = null;
-let unlockListenersInstalled = false;
-const lastPlayedAtByEffect = new Map<SoundEffectId, number>();
-const stockAudioByEffect = new Map<SoundEffectId, HTMLAudioElement>();
-const unavailableStockEffects = new Set<SoundEffectId>();
-const customAudioByUrl = new Map<string, HTMLAudioElement>();
-const unavailableCustomUrls = new Set<string>();
-const lastPlayedAtByKey = new Map<string, number>();
-let lastHelloJoinIndex: number | null = null;
-
-function ensureAudioGraph() {
-  if (typeof window === "undefined") return null;
-  if (typeof AudioContext === "undefined") return null;
-
-  if (!audioContext) {
-    audioContext = new AudioContext();
-    masterGainNode = audioContext.createGain();
-    masterGainNode.gain.setValueAtTime(
-      MASTER_GAIN * userSfxVolume01,
-      audioContext.currentTime,
-    );
-    masterGainNode.connect(audioContext.destination);
-  }
-
-  if (!masterGainNode) return null;
-  return { audioContext, masterGainNode };
-}
-
-function scheduleTone(
-  ctx: AudioContext,
-  output: GainNode,
-  startAt: number,
-  tone: ToneEvent,
-  gainMultiplier: number,
-) {
-  const durationSec = Math.max(0.02, tone.durationMs / 1000);
-  const stopAt = startAt + durationSec;
-  const attackSec = Math.min(0.02, durationSec * 0.4);
-  const baseGain = tone.gain ?? DEFAULT_TONE_GAIN;
-  const peakGain = Math.max(
-    0.0001,
-    Math.min(1, baseGain * Math.max(0.01, gainMultiplier)),
-  );
-
-  const oscillator = ctx.createOscillator();
-  oscillator.type = tone.type ?? "triangle";
-  oscillator.frequency.setValueAtTime(
-    Math.max(MIN_FREQUENCY, tone.frequency),
-    startAt,
-  );
-
-  if (tone.toFrequency != null) {
-    oscillator.frequency.exponentialRampToValueAtTime(
-      Math.max(MIN_FREQUENCY, tone.toFrequency),
-      stopAt,
-    );
-  }
-
-  const gainNode = ctx.createGain();
-  gainNode.gain.setValueAtTime(0.0001, startAt);
-  gainNode.gain.exponentialRampToValueAtTime(peakGain, startAt + attackSec);
-  gainNode.gain.exponentialRampToValueAtTime(0.0001, stopAt);
-
-  oscillator.connect(gainNode);
-  gainNode.connect(output);
-
-  oscillator.start(startAt);
-  oscillator.stop(stopAt + 0.02);
-}
-
-function playToneEffect(effect: SoundEffectId) {
-  const graph = ensureAudioGraph();
-  if (!graph) return;
-
-  const { audioContext: ctx, masterGainNode: output } = graph;
-
-  if (ctx.state === "suspended") {
-    void ctx.resume().catch(() => undefined);
-  }
-
-  const startAt = ctx.currentTime + 0.01;
-  const tones = TONE_EVENTS_BY_EFFECT[effect];
-  const gainMultiplier = TONE_GAIN_MULTIPLIER_BY_EFFECT[effect] ?? 1;
-  for (const tone of tones) {
-    scheduleTone(ctx, output, startAt + tone.atMs / 1000, tone, gainMultiplier);
-  }
-}
-
-function getStockAudioElement(effect: SoundEffectId): HTMLAudioElement | null {
+function getAudioElement(url: string): HTMLAudioElement | null {
   if (typeof window === "undefined") return null;
   if (typeof Audio === "undefined") return null;
 
-  const cached = stockAudioByEffect.get(effect);
-  if (cached) return cached;
-
-  const audio = new Audio(STOCK_SOUND_URL_BY_EFFECT[effect]);
-  audio.preload = "auto";
-  audio.volume = resolveStockSoundVolume(effect);
-  audio.addEventListener("error", () => {
-    unavailableStockEffects.add(effect);
-    stockAudioByEffect.delete(effect);
-  });
-
-  stockAudioByEffect.set(effect, audio);
-  return audio;
-}
-
-function getCustomAudioElement(url: string): HTMLAudioElement | null {
-  if (typeof window === "undefined") return null;
-  if (typeof Audio === "undefined") return null;
-
-  const cached = customAudioByUrl.get(url);
+  const cached = audioByUrl.get(url);
   if (cached) return cached;
 
   const audio = new Audio(url);
   audio.preload = "auto";
-  audio.volume = resolveCustomSoundVolume();
+  audio.volume = resolveVolume();
   audio.addEventListener("error", () => {
-    unavailableCustomUrls.add(url);
-    customAudioByUrl.delete(url);
+    unavailableUrls.add(url);
+    audioByUrl.delete(url);
   });
 
-  customAudioByUrl.set(url, audio);
+  audioByUrl.set(url, audio);
   return audio;
 }
 
-function shouldSkipKeyRateLimit(key: string, minGapMs: number): boolean {
-  const now = Date.now();
-  const lastPlayedAt = lastPlayedAtByKey.get(key) ?? 0;
-  if (now - lastPlayedAt < minGapMs) return true;
-  lastPlayedAtByKey.set(key, now);
-  return false;
-}
+function playUrl(url: string): boolean {
+  if (!url) return false;
+  if (unavailableUrls.has(url)) return false;
 
-function playCustomSoundUrl(url: string): boolean {
-  if (unavailableCustomUrls.has(url)) return false;
-
-  const audio = getCustomAudioElement(url);
+  const audio = getAudioElement(url);
   if (!audio) return false;
 
   try {
+    // Always apply latest volume before playing.
+    audio.volume = resolveVolume();
     audio.currentTime = 0;
     const playPromise = audio.play();
 
     if (playPromise) {
       void playPromise.catch(() => {
         if (audio.error) {
-          unavailableCustomUrls.add(url);
-          customAudioByUrl.delete(url);
+          unavailableUrls.add(url);
+          audioByUrl.delete(url);
         }
       });
     }
@@ -392,40 +107,24 @@ function playCustomSoundUrl(url: string): boolean {
   }
 }
 
-function playStockSound(effect: SoundEffectId): boolean {
-  if (unavailableStockEffects.has(effect)) return false;
+function resolveUrlForSfx(id: SfxId, def: SfxDefinition): string {
+  if (def.kind === "single") return def.url;
 
-  const audio = getStockAudioElement(effect);
-  if (!audio) return false;
+  const urls = def.urls;
+  if (urls.length === 0) return "";
 
-  try {
-    audio.currentTime = 0;
-    const playPromise = audio.play();
-
-    if (playPromise) {
-      void playPromise.catch(() => {
-        if (audio.error) {
-          unavailableStockEffects.add(effect);
-          stockAudioByEffect.delete(effect);
-        }
-        // Fallback for missing files, blocked autoplay, or failed decode.
-        playToneEffect(effect);
-      });
+  let index = Math.floor(Math.random() * urls.length);
+  if (def.noRepeat && urls.length > 1) {
+    const lastIndex = lastRandomIndexById.get(id);
+    if (typeof lastIndex === "number" && lastIndex === index) {
+      index =
+        (index + 1 + Math.floor(Math.random() * (urls.length - 1))) %
+        urls.length;
     }
-
-    return true;
-  } catch {
-    return false;
   }
-}
 
-function shouldSkipDueToRateLimit(effect: SoundEffectId): boolean {
-  const now = Date.now();
-  const minGapMs = MIN_REPEAT_INTERVAL_MS[effect] ?? 0;
-  const lastPlayedAt = lastPlayedAtByEffect.get(effect) ?? 0;
-  if (now - lastPlayedAt < minGapMs) return true;
-  lastPlayedAtByEffect.set(effect, now);
-  return false;
+  lastRandomIndexById.set(id, index);
+  return urls[index] ?? "";
 }
 
 export function initializeSoundEffects() {
@@ -434,11 +133,9 @@ export function initializeSoundEffects() {
 
   unlockListenersInstalled = true;
 
-  const unlock = () => {
-    const graph = ensureAudioGraph();
-    if (!graph) return;
-    void graph.audioContext.resume().catch(() => undefined);
-  };
+  // We don't "unlock" anything explicitly here; we just ensure the first user
+  // gesture happens before any attempt to play audio, which browsers require.
+  const unlock = () => undefined;
 
   window.addEventListener("pointerdown", unlock, {
     once: true,
@@ -448,48 +145,23 @@ export function initializeSoundEffects() {
 }
 
 export function setSoundEffectsVolume(volume01: number) {
-  userSfxVolume01 = clamp100(volume01);
+  userSfxVolume01 = clamp01(volume01);
 
-  if (audioContext && masterGainNode) {
-    masterGainNode.gain.setValueAtTime(
-      MASTER_GAIN * userSfxVolume01,
-      audioContext.currentTime,
-    );
-  }
-
-  for (const [effect, audio] of stockAudioByEffect.entries()) {
-    audio.volume = resolveStockSoundVolume(effect);
-  }
-
-  const customVolume = resolveCustomSoundVolume();
-  for (const audio of customAudioByUrl.values()) {
-    audio.volume = customVolume;
+  // Apply best-effort volume updates to already-cached audio.
+  const volume = resolveVolume();
+  for (const audio of audioByUrl.values()) {
+    audio.volume = volume;
   }
 }
 
-export function playRandomHelloJoinSound() {
+export function playSfx(id: SfxId): boolean {
   initializeSoundEffects();
-  if (userSfxVolume01 <= 0) return;
-  if (shouldSkipKeyRateLimit("helloJoin", 250)) return;
+  if (userSfxVolume01 <= 0) return false;
 
-  const urls = __HELLO_JOIN_SOUND_URLS__;
-  if (urls.length === 0) return;
+  const def = SFX_DEFS[id];
+  if (!def) return false;
+  if (shouldSkipRateLimit(id, def.minRepeatMs)) return false;
 
-  let index = Math.floor(Math.random() * urls.length);
-  if (urls.length > 1 && lastHelloJoinIndex === index) {
-    index =
-      (index + 1 + Math.floor(Math.random() * (urls.length - 1))) % urls.length;
-  }
-  lastHelloJoinIndex = index;
-
-  void playCustomSoundUrl(urls[index] ?? "");
-}
-
-export function playSoundEffect(effect: SoundEffectId) {
-  initializeSoundEffects();
-  if (userSfxVolume01 <= 0) return;
-  if (shouldSkipDueToRateLimit(effect)) return;
-
-  const playedStockSound = playStockSound(effect);
-  if (!playedStockSound) playToneEffect(effect);
+  const url = resolveUrlForSfx(id, def);
+  return playUrl(url);
 }

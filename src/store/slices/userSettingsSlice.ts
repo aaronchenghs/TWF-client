@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { LOCAL_STORAGE_KEYS, getLocalStorageValue } from "@/lib/localStorage";
-import { clamp100 } from "@/lib/sounds/soundEffects";
+import { clamp01 } from "@/lib/sounds/soundEffects";
 
 type UserSettingsState = {
   isSettingsModalOpen: boolean;
@@ -24,7 +24,7 @@ const initialState: UserSettingsState = {
     const storedVolume = getLocalStorageValue(
       LOCAL_STORAGE_KEYS.USER_SFX_VOLUME,
     );
-    return typeof storedVolume === "number" ? clamp100(storedVolume) : 1;
+    return typeof storedVolume === "number" ? clamp01(storedVolume) : 1;
   })(),
 };
 
@@ -51,7 +51,7 @@ const userSettingsSlice = createSlice({
       state.isStreamerMode = action.payload;
     },
     setSfxVolume: (state, action: PayloadAction<number>) => {
-      state.sfxVolume = clamp100(action.payload);
+      state.sfxVolume = clamp01(action.payload);
     },
   },
 });

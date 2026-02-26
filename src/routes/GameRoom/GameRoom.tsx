@@ -15,6 +15,7 @@ import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { getClientId, saveRoomSession } from "@/lib/session";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
+import { useGameRoomSoundEffects } from "@/lib/hooks/useRoomSoundEffects";
 import {
   clearHostRoomState,
   markHostRoomStarted,
@@ -22,7 +23,6 @@ import {
 } from "@/lib/roomClientState";
 import { useRoomCodeDisplayValue } from "@/lib/roomCode";
 import { GameSidePanel } from "./GameSidePanel/GameSidePanel";
-import { useGameRoomSoundEffects } from "@/lib/hooks/useRoomSoundEffects";
 
 type RoomPublicState = Contracts.RoomPublicState;
 

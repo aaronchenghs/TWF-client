@@ -1,6 +1,10 @@
-import { clamp100 } from "@/lib/sounds/soundEffects";
 import styles from "./SliderControl.module.scss";
 import { isSliderCommitKey } from "@/lib/accessibility";
+
+function clampPercent(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.min(100, Math.max(0, value));
+}
 
 type SliderControlProps = {
   valuePercent: number;
@@ -17,7 +21,7 @@ export function SliderControl({
   onCommit,
   disabled,
 }: SliderControlProps) {
-  const clamped = clamp100(Math.round(valuePercent));
+  const clamped = clampPercent(Math.round(valuePercent));
 
   return (
     <div className={styles.root}>
@@ -30,7 +34,7 @@ export function SliderControl({
         value={clamped}
         aria-label={ariaLabel}
         disabled={disabled}
-        onChange={(e) => onChangePercent(clamp100(Number(e.target.value)))}
+        onChange={(e) => onChangePercent(clampPercent(Number(e.target.value)))}
         onPointerUp={() => onCommit?.()}
         onKeyUp={(e) => {
           if (!isSliderCommitKey(e.key)) return;

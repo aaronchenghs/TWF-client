@@ -15,6 +15,10 @@ export type SfxId =
   | "hostLobby.playerJoined.hello"
   | "hostLobby.playerLeft.whoosh"
   | "gameRoom.timer.criticalTick"
+  | "gameRoom.timer.bell"
+  | "gameRoom.turn.doorbell"
+  | "gameRoom.item.movedDown"
+  | "gameRoom.vote.movedUp"
   | "ui.preview";
 
 const SFX_DEFS: Record<SfxId, SfxDefinition> = {
@@ -33,6 +37,26 @@ const SFX_DEFS: Record<SfxId, SfxDefinition> = {
     kind: "single",
     url: "/sounds/clock-ticking.mp3",
     minRepeatMs: 4500,
+  },
+  "gameRoom.timer.bell": {
+    kind: "single",
+    url: "/sounds/bell-ding.mp3",
+    minRepeatMs: 900,
+  },
+  "gameRoom.turn.doorbell": {
+    kind: "single",
+    url: "/sounds/doorbell-chime.mp3",
+    minRepeatMs: 1500,
+  },
+  "gameRoom.item.movedDown": {
+    kind: "single",
+    url: "/sounds/droop.mp3",
+    minRepeatMs: 300,
+  },
+  "gameRoom.vote.movedUp": {
+    kind: "single",
+    url: "/sounds/victory-chime.mp3",
+    minRepeatMs: 500,
   },
   "ui.preview": {
     kind: "single",
@@ -113,6 +137,19 @@ function playUrl(url: string): boolean {
   }
 }
 
+function stopUrl(url: string): boolean {
+  if (!url) return false;
+  const audio = audioByUrl.get(url);
+  if (!audio) return false;
+  try {
+    audio.pause();
+    audio.currentTime = 0;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function resolveUrlForSfx(id: SfxId, def: SfxDefinition): string {
   if (def.kind === "single") return def.url;
 
@@ -170,4 +207,16 @@ export function playSfx(id: SfxId): boolean {
 
   const url = resolveUrlForSfx(id, def);
   return playUrl(url);
+}
+
+export function stopSfx(id: SfxId): boolean {
+  const def = SFX_DEFS[id];
+  if (!def) return false;
+  if (def.kind === "single") return stopUrl(def.url);
+
+  let stopped = false;
+  for (const url of def.urls) {
+    stopped = stopUrl(url) || stopped;
+  }
+  return stopped;
 }

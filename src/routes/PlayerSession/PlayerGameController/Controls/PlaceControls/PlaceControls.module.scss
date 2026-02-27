@@ -75,7 +75,6 @@ $image-preview-height: 56px;
 }
 
 .tierPickRowSelected {
-  outline: 2px solid $light-transparency;
   box-shadow: 0 0 0 2px $box-shadow-color;
 }
 
@@ -103,30 +102,16 @@ $image-preview-height: 56px;
   justify-content: flex-start;
 }
 
-.previewPlaceholder {
-  width: 100%;
-  height: $image-preview-height;
-  border-radius: $radius-sm;
-  background: $light-transparency;
-  border: 1px dashed $light-transparency;
-}
-
 .previewImg {
   width: 100%;
-  height: $image-preview-height;
+  height: $image-preview-height + 10px;
   object-fit: contain;
-  border-radius: $radius-sm;
-  background: $light-transparency;
-  border: 1px solid $light-transparency;
   display: block;
 }
 
 .previewFallback {
   width: 100%;
-  height: $image-preview-height;
-  border-radius: $radius-sm;
-  background: $light-transparency;
-  border: 1px solid $light-transparency;
+  height: $image-preview-height + 10px;
   display: grid;
   place-items: center;
 }

@@ -34,7 +34,11 @@ export function PhaseStatusCard({ state }: PhaseStatusCardProps) {
     phaseClock.secondsLeft > 0 &&
     phaseClock.secondsLeft <= 5;
 
-  useGameRoomSoundEffects({ isPhaseCritical });
+  useGameRoomSoundEffects({
+    isPhaseCritical,
+    state,
+    msLeft: phaseClock.msLeft,
+  });
 
   const phaseRing = useMemo(() => {
     const inset = 4;

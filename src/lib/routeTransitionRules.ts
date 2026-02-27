@@ -1,6 +1,8 @@
 import { ROUTES, type RoutePath } from "../routes/routes";
 
-export type TransitionKind = "fade" | "iris";
+export type TransitionKind = "crossfade" | "iris";
+
+const DEFAULT_TRANSITION_KIND: TransitionKind = "crossfade";
 
 type TransitionRule = {
   from: RoutePath;
@@ -28,5 +30,5 @@ export function getRouteTransitionKind(
       routeMatches(toPathname, rule.to),
   );
 
-  return matchedRule?.kind ?? "fade";
+  return matchedRule?.kind ?? DEFAULT_TRANSITION_KIND;
 }

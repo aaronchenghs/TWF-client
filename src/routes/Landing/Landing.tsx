@@ -64,6 +64,7 @@ export default function Landing() {
               <AccentButton
                 disabled={isCreatingLobby}
                 onClick={handleCreateRoom}
+                className={styles.createButton}
               >
                 {isCreatingLobby ? (
                   <>

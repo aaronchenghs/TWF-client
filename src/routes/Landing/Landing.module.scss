@@ -40,6 +40,10 @@
         flex-direction: column;
         gap: $default-gap;
       }
+
+      .createButton {
+        width: 240px;
+      }
     }
 
     .logo {

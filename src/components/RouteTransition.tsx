@@ -3,14 +3,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { TransitionKind } from "../lib/routeTransitionRules";
 import { useAppSelector, type AppState } from "@/store/store";
 import {
-  buildFadeSlideAnimation,
   buildIrisAnimation,
+  buildCrossfadeAnimation,
+  TRANSITION_PRESENCE_MODE_BY_KIND,
 } from "@/lib/routeTransitionPresets";
 
 export function RouteTransition({
   children,
   routeKey,
-  kind = "fade",
+  kind = "crossfade",
   durationMs = 650,
 }: PropsWithChildren<{
   routeKey: string;
@@ -23,11 +24,11 @@ export function RouteTransition({
 
   const animationByKind = {
     iris: buildIrisAnimation($isReduceMotion, durationMs),
-    fade: buildFadeSlideAnimation($isReduceMotion),
+    crossfade: buildCrossfadeAnimation($isReduceMotion),
   } as const;
 
-  const routeAnimation = animationByKind[kind] ?? animationByKind.fade;
-  const presenceMode = kind === "iris" ? "wait" : "sync";
+  const routeAnimation = animationByKind[kind] ?? animationByKind.crossfade;
+  const presenceMode = TRANSITION_PRESENCE_MODE_BY_KIND[kind] ?? "sync";
 
   return (
     <AnimatePresence mode={presenceMode} initial={false}>

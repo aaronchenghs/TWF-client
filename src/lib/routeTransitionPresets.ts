@@ -12,10 +12,16 @@ const IRIS_OPEN_CLIP_PATH = "circle(150vmax at 50% 50%)";
 const IRIS_CLOSED_CLIP_PATH = "circle(0px at 50% 50%)";
 
 const IRIS_EXIT_DURATION_MS = 980;
-const IRIS_ENTER_DURATION_MULTIPLIER = 2.4;
+const IRIS_ENTER_DURATION_MULTIPLIER = 2;
 
-const FADE_SLIDE_OFFSET = 40;
-const FADE_SLIDE_DURATION_MS = 400;
+const CROSSFADE_DURATION_MS = 300;
+const CROSSFADE_EXIT_SCALE = 0.9;
+const CROSSFADE_ENTER_SCALE = 1.1;
+
+export const TRANSITION_PRESENCE_MODE_BY_KIND = {
+  iris: "wait",
+  crossfade: "wait",
+} as const;
 
 export function buildIrisAnimation(
   reduceMotion: boolean,
@@ -69,32 +75,32 @@ export function buildIrisAnimation(
   } as RouteAnimationPreset;
 }
 
-export function buildFadeSlideAnimation(
+export function buildCrossfadeAnimation(
   reduceMotion: boolean,
 ): RouteAnimationPreset {
   if (reduceMotion) {
     return {
-      initial: { opacity: 0, x: 0 },
-      animate: { opacity: 1, x: 0, transition: { duration: 0.01 } },
-      exit: { opacity: 0, x: 0, transition: { duration: 0.01 } },
+      initial: { opacity: 0 },
+      animate: { opacity: 1, transition: { duration: 0.01 } },
+      exit: { opacity: 0, transition: { duration: 0.01 } },
     } as RouteAnimationPreset;
   }
 
   return {
-    initial: { opacity: 0, x: FADE_SLIDE_OFFSET },
+    initial: { opacity: 0, scale: CROSSFADE_ENTER_SCALE },
     animate: {
       opacity: 1,
-      x: 0,
+      scale: 1,
       transition: {
-        duration: FADE_SLIDE_DURATION_MS / 1000,
+        duration: CROSSFADE_DURATION_MS / 1000,
         ease: easeOut,
       },
     },
     exit: {
       opacity: 0,
-      x: -FADE_SLIDE_OFFSET,
+      scale: CROSSFADE_EXIT_SCALE,
       transition: {
-        duration: FADE_SLIDE_DURATION_MS / 1000,
+        duration: CROSSFADE_DURATION_MS / 1000,
         ease: easeIn,
       },
     },

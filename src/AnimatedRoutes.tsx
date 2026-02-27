@@ -12,7 +12,6 @@ import { usePendingRejoinSnackbar } from "@/lib/hooks/usePendingRejoinSnackbar";
 import PlayerSession from "./routes/PlayerSession/PlayerSession";
 
 const Landing = lazy(() => import("@/routes/Landing/Landing"));
-
 const GameRoom = lazy(() => import("@/routes/GameRoom/GameRoom"));
 
 export function AnimatedRoutes() {
@@ -21,15 +20,17 @@ export function AnimatedRoutes() {
 
   const [displayLocation, setDisplayLocation] = useState(location);
   const [pendingLocation, setPendingLocation] = useState(location);
-  const [kind, setKind] = useState<TransitionKind>("fade");
+  const [kind, setKind] = useState<TransitionKind>("crossfade");
 
   useLayoutEffect(
     function determineTransitionKind() {
       if (location.pathname === displayLocation.pathname) return;
-
-      setKind(
-        getRouteTransitionKind(displayLocation.pathname, location.pathname),
+      const transitionKind = getRouteTransitionKind(
+        displayLocation.pathname,
+        location.pathname,
       );
+
+      setKind(transitionKind);
       setPendingLocation(location);
     },
     [displayLocation.pathname, location],

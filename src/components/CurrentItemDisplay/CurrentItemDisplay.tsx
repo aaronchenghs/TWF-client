@@ -15,8 +15,6 @@ type CurrentItemDisplayProps = {
   textAlign?: "left" | "center" | "right";
   emptyText?: string;
   hiddenText?: React.ReactNode;
-  loading?: "eager" | "lazy";
-  fetchPriority?: "high" | "low" | "auto";
 };
 
 export function CurrentItemDisplay({
@@ -26,8 +24,6 @@ export function CurrentItemDisplay({
   textAlign = "center",
   emptyText = "--",
   hiddenText = "???",
-  loading = "lazy",
-  fetchPriority,
 }: CurrentItemDisplayProps) {
   if (!isVisible) {
     const isSimpleHiddenText =
@@ -56,8 +52,8 @@ export function CurrentItemDisplay({
         className={styles.image}
         src={item.imageSrc}
         alt={item.name}
-        loading={loading}
-        fetchPriority={fetchPriority}
+        loading={"lazy"}
+        fetchPriority={"high"}
         draggable={false}
         fallback={
           <div className={styles.imageFallback} aria-hidden="true">
@@ -67,7 +63,11 @@ export function CurrentItemDisplay({
           </div>
         }
       />
-      <MainTextTypography textAlign={textAlign} variant="h2" className={styles.name}>
+      <MainTextTypography
+        textAlign={textAlign}
+        variant="h2"
+        className={styles.name}
+      >
         {item.name}
       </MainTextTypography>
     </div>

@@ -4,14 +4,13 @@ import styles from "./LoadableImage.module.scss";
 
 type LoadableImageProps = Omit<
   React.ImgHTMLAttributes<HTMLImageElement>,
-  "src" | "alt" | "onLoad" | "onError" | "fetchPriority"
+  "src" | "alt" | "onLoad" | "onError"
 > & {
   src?: string | null;
   alt: string;
   fallback?: React.ReactNode;
   onLoad?: () => void;
   onError?: () => void;
-  fetchPriority?: "high" | "low" | "auto";
 };
 
 export function LoadableImage({

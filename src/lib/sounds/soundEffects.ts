@@ -19,6 +19,7 @@ export type SfxId =
   | "gameRoom.turn.doorbell"
   | "gameRoom.item.movedDown"
   | "gameRoom.vote.movedUp"
+  | "gameRoom.phase.finished"
   | "ui.preview";
 
 const SFX_DEFS: Record<SfxId, SfxDefinition> = {
@@ -57,6 +58,11 @@ const SFX_DEFS: Record<SfxId, SfxDefinition> = {
     kind: "single",
     url: "/sounds/victory-chime.mp3",
     minRepeatMs: 500,
+  },
+  "gameRoom.phase.finished": {
+    kind: "single",
+    url: "/sounds/tada-trumpet.mp3",
+    minRepeatMs: 1000,
   },
   "ui.preview": {
     kind: "single",

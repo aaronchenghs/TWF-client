@@ -68,6 +68,7 @@ export function useGameRoomSoundEffects({
   }>({ phase: null, msLeft: null });
   const skipDoorbellNextRevealRef = useRef(false);
   const lastTurnKeyRef = useRef<string | null>(null);
+  const previousPhaseRef = useRef<RoomPublicState["phase"] | null>(null);
 
   useEffect(function setupSoundEffects() {
     initializeSoundEffects();
@@ -191,6 +192,21 @@ export function useGameRoomSoundEffects({
       }
     },
     [state?.phase, state?.turnIndex, state?.currentTurnPlayerId, $sfxVolume],
+  );
+
+  useEffect(
+    function playFinishedPhaseSound() {
+      const phase = state?.phase ?? null;
+      const previousPhase = previousPhaseRef.current;
+      previousPhaseRef.current = phase;
+
+      if ($sfxVolume <= 0) return;
+      if (phase !== "FINISHED") return;
+      if (previousPhase === null || previousPhase === "FINISHED") return;
+
+      playSfx("gameRoom.phase.finished");
+    },
+    [state?.phase, $sfxVolume],
   );
 }
 

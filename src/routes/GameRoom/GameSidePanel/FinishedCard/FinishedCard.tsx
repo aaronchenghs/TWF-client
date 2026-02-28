@@ -23,7 +23,7 @@ export function FinishedCard({
     <GameStatusCard label="NEXT ROUND">
       <div className={styles.rematchCard}>
         <MainTextTypography variant="body" muted textAlign="center">
-          Return to lobby with the same players and a new tier set.
+          Return to lobby with the same players?
         </MainTextTypography>
         <AccentButton onClick={onPlayAgain} disabled={isRematchSubmitting}>
           {isRematchSubmitting ? "Starting..." : "Play Again"}

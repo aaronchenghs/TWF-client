@@ -1,7 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./HostLobby.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
 import { normalizeCode } from "@/lib/stringNormalizers";
@@ -42,6 +49,7 @@ export default function HostLobby() {
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
+  const [isTierSetsLoading, setIsTierSetsLoading] = useState(true);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
   const suppressRejoinNoticeRef = useRef(false);
 
@@ -147,6 +155,7 @@ export default function HostLobby() {
       }
 
       const clientId = getClientId();
+      let cancelled = false;
 
       roomSocket
         .joinRoomOrThrow({ code: roomCode, role: "host", clientId })
@@ -157,8 +166,24 @@ export default function HostLobby() {
 
       roomSocket
         .listTierSets()
-        .then(setTierSets)
-        .catch(() => setTierSets([]));
+        .then((listed) => {
+          if (cancelled) return;
+          startTransition(() => {
+            setTierSets(listed);
+            setIsTierSetsLoading(false);
+          });
+        })
+        .catch(() => {
+          if (cancelled) return;
+          startTransition(() => {
+            setTierSets([]);
+            setIsTierSetsLoading(false);
+          });
+        });
+
+      return () => {
+        cancelled = true;
+      };
     },
     [roomCode, isRoomCodeValid, handleRoomClosed],
   );
@@ -175,6 +200,7 @@ export default function HostLobby() {
         <TierSetSelection
           tierSets={tierSets}
           selectedTierSetId={selectedTierSetId}
+          isLoading={isTierSetsLoading}
         />
 
         <HostSidePanel

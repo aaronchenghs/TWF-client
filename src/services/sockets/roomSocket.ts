@@ -138,14 +138,38 @@ export const roomSocket = {
     id: TierSetId,
     timeoutMs = 5000,
   ): Promise<TierSetDefinition> {
-    const gotP = waitForEventOrError(
-      "tierSets:got",
-      (payload) => payload.tierSet,
-      timeoutMs,
-    );
+    return new Promise<TierSetDefinition>((resolve, reject) => {
+      let settled = false;
+      let timer: number | null = null;
 
-    socketClient.emit("tierSets:get", { id });
-    return gotP;
+      const cleanup = () => {
+        if (timer !== null) window.clearTimeout(timer);
+        offGot();
+        offError();
+      };
+
+      const settle = (fn: () => void) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        fn();
+      };
+
+      const offGot = socketClient.on("tierSets:got", (payload) => {
+        if (payload.tierSet.id !== id) return;
+        settle(() => resolve(payload.tierSet));
+      });
+
+      const offError = socketClient.on("room:error", (err) => {
+        settle(() => reject(toError(err)));
+      });
+
+      timer = window.setTimeout(() => {
+        settle(() => reject(new Error(`Timed out waiting for tierSet ${id}`)));
+      }, timeoutMs);
+
+      socketClient.emit("tierSets:get", { id });
+    });
   },
 
   setTierSet(tierSetId: TierSetId): void {

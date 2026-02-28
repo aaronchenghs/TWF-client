@@ -1,6 +1,6 @@
 import styles from "./TierSetGridEntry.module.scss";
 import clsx from "clsx";
-import { useCallback, useId, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../../services/sockets/roomSocket";
 import { TierSetDetails } from "./TierSetDetails/TierSetDetails";
@@ -8,7 +8,7 @@ import * as Contracts from "@twf/contracts";
 import type { Guid } from "../../../lib/guid";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { handleKeyDown } from "@/lib/accessibility";
-import { Pill } from "@/components/Pill/Pill";
+import { LoadableImage } from "../../../components/LoadableImage/LoadableImage";
 
 type TierSetSummary = Contracts.TierSetSummary;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -29,8 +29,34 @@ export function TierSetGridEntry({
   onSelect,
 }: TierSetGridEntryProps) {
   const [details, setDetails] = useState<TierSetDefinition | null>(null);
+  const detailsRequestRef = useRef<Promise<TierSetDefinition> | null>(null);
   const isDetailsOpen = openDetailsTierSetId === tierSet.id;
   const detailsRegionId = useId();
+
+  const previewItem = details?.items[0];
+  const previewName =
+    previewItem?.name ?? tierSet.firstItemName ?? tierSet.title;
+  const previewImageSrc =
+    previewItem?.imageSrc ??
+    tierSet.firstItemImageSrc ??
+    tierSet.coverImageSrc ??
+    undefined;
+
+  const loadDetails = useCallback(async () => {
+    if (details) return details;
+    if (detailsRequestRef.current) return detailsRequestRef.current;
+
+    const request = roomSocket.getTierSet(tierSet.id);
+    detailsRequestRef.current = request;
+
+    try {
+      const fullDetails = await request;
+      setDetails(fullDetails);
+      return fullDetails;
+    } finally {
+      detailsRequestRef.current = null;
+    }
+  }, [details, tierSet.id]);
 
   const toggleDetails = useCallback(
     async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -43,12 +69,9 @@ export function TierSetGridEntry({
 
       setOpenDetailsTierSet(tierSet.id as Guid);
 
-      if (!details) {
-        const fullDetails = await roomSocket.getTierSet(tierSet.id);
-        setDetails(fullDetails);
-      }
+      await loadDetails().catch(() => {});
     },
-    [details, isDetailsOpen, setOpenDetailsTierSet, tierSet.id],
+    [isDetailsOpen, loadDetails, setOpenDetailsTierSet, tierSet.id],
   );
 
   return (
@@ -64,60 +87,70 @@ export function TierSetGridEntry({
       }
       aria-pressed={selected}
     >
-      <div className={styles.headerRow}>
-        <MainTextTypography variant="h4" className={styles.presetTitle}>
-          {tierSet.title}
-        </MainTextTypography>
-
-        <AccentButton
-          type="button"
-          size="small"
-          onClick={toggleDetails}
-          aria-expanded={isDetailsOpen}
-          aria-controls={detailsRegionId}
-        >
-          {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
-        </AccentButton>
-      </div>
-
-      <div className={styles.content}>
-        <div
-          id={detailsRegionId}
-          className={clsx(styles.collapse, isDetailsOpen && styles.open)}
-        >
-          <TierSetDetails isLoading={!details} details={details} />
-        </div>
-
-        <div className={clsx(styles.collapse, !isDetailsOpen && styles.open)}>
-          <MainTextTypography
-            variant="body"
-            muted
-            className={styles.presetDescription}
-          >
-            {tierSet.description ?? "—"}
-          </MainTextTypography>
-        </div>
-      </div>
-
-      <div className={styles.footerRow}>
-        {selected ? (
-          <Pill size="md" shape="soft" className={styles.selectedPill}>
-            <MainTextTypography variant="caption">SELECTED</MainTextTypography>
-          </Pill>
-        ) : (
-          <button
-            type="button"
-            className={styles.selectButton}
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect(tierSet);
-            }}
-          >
-            <MainTextTypography variant="caption" muted>
-              SELECT
-            </MainTextTypography>
-          </button>
+      <div className={styles.topRow}>
+        {!isDetailsOpen && (
+          <div className={styles.previewThumb}>
+            <LoadableImage
+              className={styles.previewImage}
+              src={previewImageSrc}
+              alt={previewName}
+              width={88}
+              height={88}
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
+              draggable={false}
+              fallback={
+                <div className={styles.previewPlaceholder} aria-hidden="true">
+                  {previewName.slice(0, 1).toUpperCase()}
+                </div>
+              }
+            />
+          </div>
         )}
+
+        <div className={styles.mainColumn}>
+          <div className={styles.headerRow}>
+            <MainTextTypography
+              variant="h4"
+              tone={selected ? "player" : undefined}
+              className={styles.presetTitle}
+            >
+              {tierSet.title}
+            </MainTextTypography>
+
+            <AccentButton
+              type="button"
+              size="small"
+              onClick={toggleDetails}
+              aria-expanded={isDetailsOpen}
+              aria-controls={detailsRegionId}
+            >
+              {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
+            </AccentButton>
+          </div>
+
+          <div className={styles.content}>
+            <div
+              id={detailsRegionId}
+              className={clsx(styles.collapse, isDetailsOpen && styles.open)}
+            >
+              <TierSetDetails isLoading={!details} details={details} />
+            </div>
+
+            <div
+              className={clsx(styles.collapse, !isDetailsOpen && styles.open)}
+            >
+              <MainTextTypography
+                variant="body"
+                muted
+                className={styles.presetDescription}
+              >
+                {tierSet.description ?? "-"}
+              </MainTextTypography>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

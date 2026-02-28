@@ -9,15 +9,16 @@ import { useState } from "react";
 import styles from "./TierSetSelection.module.scss";
 
 type TierSetSummary = Contracts.TierSetSummary;
-
 type TierSetSelectionProps = {
   tierSets: TierSetSummary[];
   selectedTierSetId: Guid | null;
+  isLoading: boolean;
 };
 
 export function TierSetSelection({
   tierSets,
   selectedTierSetId,
+  isLoading,
 }: TierSetSelectionProps) {
   const [tierSetWithDetailsOpen, setTierSetWithDetailsOpen] =
     useState<Guid | null>(null);
@@ -31,7 +32,7 @@ export function TierSetSelection({
       <SubtextDivider text="Choose a Tier List" noMargin />
 
       <div className={styles.presetGrid}>
-        {tierSets.length === 0 ? (
+        {isLoading || tierSets.length === 0 ? (
           <MainTextTypography variant="body" muted>
             Loading tier lists
             <AnimatedDots />

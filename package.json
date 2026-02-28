@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
-    "@twf/contracts": "github:aaronchenghs/TWF-contracts#fbb1a8b123dbacf3f8f3d64037f76506fe9f876c",
+    "@twf/contracts": "github:aaronchenghs/TWF-contracts#6cc2edeeab7dfdda27b303066f3d50be2c1f9ac0",
     "@types/pluralize": "^0.0.33",
     "clsx": "^2.1.1",
     "framer-motion": "^12.29.2",

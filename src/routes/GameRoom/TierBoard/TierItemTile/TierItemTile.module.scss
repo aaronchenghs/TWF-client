@@ -50,7 +50,11 @@
   }
 
   .itemName {
+    display: block;
+    box-sizing: border-box;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
 
     padding: $default-padding;
     border-radius: $radius-sm;
@@ -59,6 +63,7 @@
 
     overflow: hidden;
     white-space: nowrap;
+    text-overflow: ellipsis;
 
     text-transform: uppercase;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);

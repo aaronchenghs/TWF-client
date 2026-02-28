@@ -111,10 +111,34 @@
   gap: $default-gap;
 }
 
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
+  min-width: 0;
+  flex: 1;
+}
+
 .presetTitle {
   margin: 0;
   min-width: 0;
   flex: 1;
+}
+
+.metaBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: $round;
+  border: 1px solid var(--meta-accent);
+  background: var(--meta-surface);
+  color: var(--meta-accent);
+}
+
+.metaText {
+  white-space: nowrap;
 }
 
 .content {

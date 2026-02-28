@@ -14,6 +14,17 @@ function fallbackNameFromId(id: string) {
   return id.replace(/[-_]/g, " ").trim();
 }
 
+const ITEM_COUNT_HEAT_FLOOR = 4;
+const ITEM_COUNT_HEAT_RANGE = 18;
+export function getTierSetItemCountAccentColor(itemCount: number): string {
+  const heat = Math.min(
+    1,
+    Math.max(0, (itemCount - ITEM_COUNT_HEAT_FLOOR) / ITEM_COUNT_HEAT_RANGE),
+  );
+  const hue = Math.round(130 - heat * 130);
+  return `hsl(${hue} 72% 52%)`;
+}
+
 export function getItemMeta(
   state: RoomPublicState,
   id: TierItemId,

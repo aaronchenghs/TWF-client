@@ -9,6 +9,8 @@ import type { Guid } from "../../../lib/guid";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { handleKeyDown } from "@/lib/accessibility";
 import { LoadableImage } from "../../../components/LoadableImage/LoadableImage";
+import { getTierSetItemCountAccentColor } from "@/lib/tierItems";
+import pluralize from "pluralize";
 
 type TierSetSummary = Contracts.TierSetSummary;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -41,6 +43,13 @@ export function TierSetGridEntry({
     tierSet.firstItemImageSrc ??
     tierSet.coverImageSrc ??
     undefined;
+  const itemCount = tierSet.itemCount ?? 0;
+  const itemCountLabel = `${itemCount} ${pluralize("item", itemCount)}`;
+  const itemCountAccentColor = getTierSetItemCountAccentColor(itemCount);
+  const itemCountBadgeStyle = {
+    "--meta-accent": itemCountAccentColor,
+    "--meta-surface": itemCountAccentColor.replace(")", " / 0.14)"),
+  } as React.CSSProperties;
 
   const loadDetails = useCallback(async () => {
     if (details) return details;
@@ -111,13 +120,25 @@ export function TierSetGridEntry({
 
         <div className={styles.mainColumn}>
           <div className={styles.headerRow}>
-            <MainTextTypography
-              variant="h4"
-              tone={selected ? "player" : undefined}
-              className={styles.presetTitle}
-            >
-              {tierSet.title}
-            </MainTextTypography>
+            <div className={styles.titleGroup}>
+              <MainTextTypography
+                variant="h4"
+                tone={selected ? "player" : undefined}
+                className={styles.presetTitle}
+              >
+                {tierSet.title}
+              </MainTextTypography>
+
+              <span className={styles.metaBadge} style={itemCountBadgeStyle}>
+                <MainTextTypography
+                  variant="caption"
+                  weight="bold"
+                  className={styles.metaText}
+                >
+                  {itemCountLabel}
+                </MainTextTypography>
+              </span>
+            </div>
 
             <AccentButton
               type="button"

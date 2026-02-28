@@ -25,13 +25,13 @@ export function GlobalQuickActions() {
         icon={<SettingsIcon {...iconProps} aria-hidden="true" />}
         label="Settings"
         onClick={() => dispatch(openSettingsModal())}
-        expandDirection="right"
+        expandDirection="left"
       />
       <ExpandingIconButton
         icon={<ReportIssueIcon {...iconProps} aria-hidden="true" />}
         label="Report Issue"
         onClick={openIssueReportForm}
-        expandDirection="right"
+        expandDirection="left"
       />
     </div>
   );

@@ -22,7 +22,6 @@ $collapsed-icon-offset: calc(
   width: var(--expanded-width);
   max-width: $button-size;
   padding: 0;
-  padding-right: $default-padding;
   border: $border-width solid $bg-elevated;
   border-radius: $radius-md;
   background: $bg-surface;
@@ -67,11 +66,13 @@ $collapsed-icon-offset: calc(
 
 .expandRight {
   justify-content: flex-start;
+  padding-right: $default-padding;
 }
 
 .expandLeft {
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-direction: row-reverse;
+  padding-left: $default-padding;
 }
 
 .iconWrap {
@@ -139,7 +140,7 @@ $collapsed-icon-offset: calc(
     width: $button-size-mobile;
     max-width: $button-size-mobile;
     height: $button-size-mobile;
-    padding-right: 0;
+    padding: 0;
   }
 
   .expandRight,

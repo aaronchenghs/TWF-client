@@ -120,8 +120,8 @@
 
 .versionTag {
   position: fixed;
-  right: $default-gap;
-  bottom: $default-gap;
+  left: calc(env(safe-area-inset-left, 0px) + $default-gap);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + $default-gap);
   pointer-events: none;
   user-select: none;
 }

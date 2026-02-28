@@ -2,11 +2,12 @@
 
 .quickActions {
   position: fixed;
-  left: calc(env(safe-area-inset-left, 0px) + $default-gap);
+  right: calc(env(safe-area-inset-right, 0px) + $default-gap);
   bottom: calc(env(safe-area-inset-bottom, 0px) + $default-gap);
   z-index: 60;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: $default-gap;
 }
 

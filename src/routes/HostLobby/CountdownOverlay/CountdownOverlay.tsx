@@ -16,6 +16,7 @@ type Props = {
   open: boolean;
   onCancel: () => void;
   onComplete: () => void;
+  onDisplayCountChange?: (count: 3 | 2 | 1 | null) => void;
   seconds?: 3 | 2 | 1;
 };
 
@@ -23,6 +24,7 @@ export function CountdownOverlay({
   open,
   onCancel,
   onComplete,
+  onDisplayCountChange,
   seconds = 3,
 }: Props) {
   const [displayCount, setDisplayCount] = useState<number>(seconds);
@@ -58,6 +60,7 @@ export function CountdownOverlay({
     function runCountdownSequence() {
       if (!open) {
         clearAllTimers();
+        onDisplayCountChange?.(null);
         return;
       }
 
@@ -69,6 +72,7 @@ export function CountdownOverlay({
         setPhase("in");
         setDisplayCount(startCount);
         setColor((prev) => pickRandomColor(prev));
+        onDisplayCountChange?.(startCount);
       }, 0);
 
       const counts = Array.from(
@@ -85,9 +89,11 @@ export function CountdownOverlay({
 
         if (n > 1) {
           schedule(() => {
-            setDisplayCount(n - 1);
+            const nextCount = (n - 1) as 2 | 1;
+            setDisplayCount(nextCount);
             setPhase("in");
             setColor((prev) => pickRandomColor(prev));
+            onDisplayCountChange?.(nextCount);
           }, base + COUNTDOWN_PACE);
         } else {
           schedule(() => {
@@ -100,7 +106,7 @@ export function CountdownOverlay({
         clearAllTimers();
       };
     },
-    [open, seconds, onComplete, clearAllTimers, schedule],
+    [open, seconds, onComplete, onDisplayCountChange, clearAllTimers, schedule],
   );
 
   return (

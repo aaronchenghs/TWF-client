@@ -19,6 +19,7 @@ export type SoundRule<Snapshot, Runtime> = {
 
 export type HostLobbySoundSnapshot = {
   state: RoomPublicState | null;
+  countdownNumber: 3 | 2 | 1 | null;
 };
 
 export type HostLobbySoundRuntime = Record<never, never>;
@@ -65,6 +66,21 @@ export const HOST_LOBBY_SOUND_RULES: readonly SoundRule<
 
       const playerDelta = getPlayerDelta(prev.state, curr.state);
       if (playerDelta.leftCount > 0) play("hostLobby.playerLeft.whoosh");
+    },
+  },
+  {
+    id: "countdownNumber",
+    evaluate({ prev, curr, play }) {
+      if (curr.countdownNumber === null) return;
+      if (prev?.countdownNumber === curr.countdownNumber) return;
+
+      if (curr.countdownNumber === 3) {
+        play("hostLobby.countdown.three");
+      } else if (curr.countdownNumber === 2) {
+        play("hostLobby.countdown.two");
+      } else {
+        play("hostLobby.countdown.one");
+      }
     },
   },
 ];

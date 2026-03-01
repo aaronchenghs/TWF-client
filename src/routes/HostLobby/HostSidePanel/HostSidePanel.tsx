@@ -22,6 +22,7 @@ type HostSidePanelProps = {
   selectedTierSetId: Guid | null;
   selectedTierSetName: string | null;
   onCloseLobby: () => void;
+  onCountdownDisplayCountChange: (count: 3 | 2 | 1 | null) => void;
   suppressRejoinNoticeRef: React.MutableRefObject<boolean>;
 };
 
@@ -31,6 +32,7 @@ export function HostSidePanel({
   selectedTierSetId,
   selectedTierSetName,
   onCloseLobby,
+  onCountdownDisplayCountChange,
   suppressRejoinNoticeRef,
 }: HostSidePanelProps) {
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
@@ -152,6 +154,7 @@ export function HostSidePanel({
         open={isStartCountdownOpen}
         onCancel={handleCancelCountdown}
         onComplete={handleCountdownComplete}
+        onDisplayCountChange={onCountdownDisplayCountChange}
       />
     </aside>
   );

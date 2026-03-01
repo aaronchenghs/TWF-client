@@ -16,6 +16,9 @@ type SfxDefinition =
 export type SfxId =
   | "hostLobby.playerJoined.hello"
   | "hostLobby.playerLeft.whoosh"
+  | "hostLobby.countdown.three"
+  | "hostLobby.countdown.two"
+  | "hostLobby.countdown.one"
   | "gameRoom.timer.criticalTick"
   | "gameRoom.timer.bell"
   | "gameRoom.turn.doorbell"
@@ -38,6 +41,21 @@ const SFX_DEFS: Record<SfxId, SfxDefinition> = {
     kind: "single",
     url: "/sounds/downward-whoosh.mp3",
     minRepeatMs: 120,
+  },
+  "hostLobby.countdown.three": {
+    kind: "single",
+    url: "/sounds/numbers/three.mp3",
+    minRepeatMs: 250,
+  },
+  "hostLobby.countdown.two": {
+    kind: "single",
+    url: "/sounds/numbers/two.mp3",
+    minRepeatMs: 250,
+  },
+  "hostLobby.countdown.one": {
+    kind: "single",
+    url: "/sounds/numbers/one.mp3",
+    minRepeatMs: 250,
   },
   "gameRoom.timer.criticalTick": {
     kind: "single",

@@ -38,7 +38,10 @@ type SoundCommand = {
   sfxId: SfxId;
 };
 
-export function useHostLobbySoundEffects(state: RoomPublicState | null) {
+export function useHostLobbySoundEffects(
+  state: RoomPublicState | null,
+  countdownNumber: 3 | 2 | 1 | null = null,
+) {
   const $sfxVolume = useAppSelector(
     (appState: AppState) => appState.userSettings.sfxVolume,
   );
@@ -54,7 +57,7 @@ export function useHostLobbySoundEffects(state: RoomPublicState | null) {
     function syncHostLobbySoundEffects() {
       initializeSoundEffects();
 
-      const currentSnapshot = createHostLobbySoundSnapshot(state);
+      const currentSnapshot = createHostLobbySoundSnapshot(state, countdownNumber);
       const commands = evaluateSoundRules({
         rules: HOST_LOBBY_SOUND_RULES,
         prev: engineRef.current.prev,
@@ -65,7 +68,7 @@ export function useHostLobbySoundEffects(state: RoomPublicState | null) {
       engineRef.current.prev = currentSnapshot;
       dispatchSoundCommands(commands, $sfxVolume > 0);
     },
-    [state, $sfxVolume],
+    [state, countdownNumber, $sfxVolume],
   );
 }
 
@@ -125,8 +128,9 @@ export function useGameRoomSoundEffects({
 
 function createHostLobbySoundSnapshot(
   state: RoomPublicState | null,
+  countdownNumber: 3 | 2 | 1 | null,
 ): HostLobbySoundSnapshot {
-  return { state };
+  return { state, countdownNumber };
 }
 
 function createGameRoomSoundSnapshot({

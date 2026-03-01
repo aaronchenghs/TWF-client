@@ -51,6 +51,9 @@ export default function HostLobby() {
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [isTierSetsLoading, setIsTierSetsLoading] = useState(true);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
+  const [countdownNumber, setCountdownNumber] = useState<3 | 2 | 1 | null>(
+    null,
+  );
   const suppressRejoinNoticeRef = useRef(false);
 
   const roomCode = normalizeCode(readHostRoomCode());
@@ -97,7 +100,7 @@ export default function HostLobby() {
     onClosed: handleRoomClosed,
   });
 
-  useHostLobbySoundEffects(roomState);
+  useHostLobbySoundEffects(roomState, countdownNumber);
 
   useEffect(
     function maybeShowBestPlayTip() {
@@ -209,6 +212,7 @@ export default function HostLobby() {
           selectedTierSetId={selectedTierSetId}
           selectedTierSetName={selectedTierSetName}
           onCloseLobby={() => setIsConfirmCloseOpen(true)}
+          onCountdownDisplayCountChange={setCountdownNumber}
           suppressRejoinNoticeRef={suppressRejoinNoticeRef}
         />
       </div>

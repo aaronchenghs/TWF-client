@@ -165,6 +165,17 @@ export const GAME_ROOM_SOUND_RULES: readonly SoundRule<
     },
   },
   {
+    id: "placementRevealDrumRoll",
+    evaluate({ prev, curr, play }) {
+      if (!prev) return;
+      if (curr.phase !== "VOTE") return;
+      if (prev.phase === "VOTE") return;
+      if (!curr.state?.currentItem) return;
+
+      play("gameRoom.reveal.drumRoll");
+    },
+  },
+  {
     id: "resultsPlacementSnap",
     evaluate({ prev, curr, play }) {
       if (!curr.resultsPlacementKey) return;

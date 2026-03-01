@@ -19,6 +19,7 @@ export type SfxId =
   | "gameRoom.timer.criticalTick"
   | "gameRoom.timer.bell"
   | "gameRoom.turn.doorbell"
+  | "gameRoom.reveal.drumRoll"
   | "gameRoom.item.movedDown"
   | "gameRoom.vote.movedUp"
   | "gameRoom.results.snap"
@@ -52,6 +53,11 @@ const SFX_DEFS: Record<SfxId, SfxDefinition> = {
     kind: "single",
     url: "/sounds/doorbell-chime.mp3",
     minRepeatMs: 1500,
+  },
+  "gameRoom.reveal.drumRoll": {
+    kind: "single",
+    url: "/sounds/bongo-drum-roll.mp3",
+    minRepeatMs: 1000,
   },
   "gameRoom.item.movedDown": {
     kind: "single",

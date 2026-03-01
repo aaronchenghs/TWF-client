@@ -68,6 +68,9 @@ export function useGameRoomSoundEffects({
   }>({ phase: null, msLeft: null });
   const skipDoorbellNextRevealRef = useRef(false);
   const lastTurnKeyRef = useRef<string | null>(null);
+  const lastResultsPlacementKeyRef = useRef<string | null | undefined>(
+    undefined,
+  );
   const previousPhaseRef = useRef<RoomPublicState["phase"] | null>(null);
 
   useEffect(function setupSoundEffects() {
@@ -195,6 +198,22 @@ export function useGameRoomSoundEffects({
   );
 
   useEffect(
+    function playResultsPlacementSnap() {
+      const placementKey = resolveResultsPlacementSoundKey(state);
+      const previousPlacementKey = lastResultsPlacementKeyRef.current;
+      lastResultsPlacementKeyRef.current = placementKey;
+
+      if ($sfxVolume <= 0) return;
+      if (!placementKey) return;
+      if (previousPlacementKey === undefined) return;
+      if (previousPlacementKey === placementKey) return;
+
+      playSfx("gameRoom.results.snap");
+    },
+    [state, $sfxVolume],
+  );
+
+  useEffect(
     function playFinishedPhaseSound() {
       const phase = state?.phase ?? null;
       const previousPhase = previousPhaseRef.current;
@@ -208,6 +227,25 @@ export function useGameRoomSoundEffects({
     },
     [state?.phase, $sfxVolume],
   );
+}
+
+function resolveResultsPlacementSoundKey(
+  state: RoomPublicState | null,
+): string | null {
+  if (!state) return null;
+  if (state.phase !== "RESULTS") return null;
+
+  const currentItemId = state.currentItem ?? null;
+  const resolution = state.lastResolution;
+  if (!currentItemId || !resolution) return null;
+
+  return [
+    state.turnIndex,
+    currentItemId,
+    resolution.fromTierId,
+    resolution.toTierId,
+    resolution.insertIndex,
+  ].join(":");
 }
 
 function resolveVotePreviewPlacement(state: RoomPublicState): {

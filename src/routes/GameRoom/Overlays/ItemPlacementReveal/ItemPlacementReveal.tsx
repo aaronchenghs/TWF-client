@@ -19,8 +19,9 @@ type Props = {
   state: RoomPublicState | null;
 };
 
-const REVEAL_TOTAL_MS = 5000;
+const REVEAL_TOTAL_MS = 6000;
 const ENTER_MS = 700;
+const TIER_REVEAL_DELAY_MS = 2000;
 
 export function ItemPlacementReveal({ state }: Props) {
   const { isOpen, token } = usePhaseStartOverlay(state, {
@@ -65,6 +66,7 @@ export function ItemPlacementReveal({ state }: Props) {
     enterScale: 0.98,
     exitScale: 0.985,
     durationMs: 180,
+    delay: TIER_REVEAL_DELAY_MS / 1000,
     ease: MOTION_EASE.exit,
     reduceMotion: false,
     includeExit: true,
@@ -115,7 +117,7 @@ export function ItemPlacementReveal({ state }: Props) {
                     className={styles.tierBadge}
                     style={{ backgroundColor: tierColor }}
                   >
-                    <MainTextTypography variant="h5" weight="bold">
+                    <MainTextTypography variant="h4" weight="bold">
                       {tierName}
                     </MainTextTypography>
                   </div>

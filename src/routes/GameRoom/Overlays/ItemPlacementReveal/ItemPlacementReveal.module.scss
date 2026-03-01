@@ -31,7 +31,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 64px;
+  min-height: 88px;
   margin-top: $default-gap;
 }
 
@@ -49,8 +49,8 @@
 }
 
 .badgePlaceholder {
-  min-width: 150px;
-  min-height: 75px;
+  min-width: 220px;
+  min-height: 96px;
   border-radius: $radius-sm;
 }
 
@@ -59,11 +59,11 @@
   align-items: center;
   justify-content: center;
 
-  padding: $default-padding;
+  padding: calc($default-padding * 1.5);
   border-radius: $radius-sm;
 
-  min-height: 75px;
-  min-width: 150px;
+  min-height: 96px;
+  min-width: 220px;
 
   @include glow($duration: 2.6s, $spread: 8px, $strength: 18%);
 }

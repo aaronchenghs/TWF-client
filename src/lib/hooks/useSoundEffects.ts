@@ -5,38 +5,65 @@ import {
   initializeSoundEffects,
   playSfx,
   stopSfx,
+  type SfxId,
 } from "@/lib/sounds/soundEffects";
+import {
+  GAME_ROOM_SOUND_RULES,
+  HOST_LOBBY_SOUND_RULES,
+  type GameRoomSoundRuntime,
+  type GameRoomSoundSnapshot,
+  type HostLobbySoundRuntime,
+  type HostLobbySoundSnapshot,
+  type PlacementSnapshot,
+  type SoundRule,
+} from "@/lib/constants/soundEffectRules";
 import { computeVoteResolution } from "@/lib/voting";
 import { resolvePlacedTierId } from "@/lib/tierItems";
-import { getPlayerDelta } from "../players";
 
 type RoomPublicState = Contracts.RoomPublicState;
-type TierId = Contracts.TierId;
-type TierItemId = Contracts.TierItemId;
+
+/**
+ * Sound effects are driven by a small rule engine. Each exported hook builds
+ * a domain-specific snapshot of the current UI/game state, compares it to the
+ * previous snapshot kept in`engineRef`, and runs an ordered list of sound rules against that diff.
+ *
+ * Rules do not play audio directly; they emit explicit `play` / `stop`
+ * commands, which are dispatched after evaluation. This keeps trigger logic
+ * centralized, makes rule ordering easy to audit, and reduces accidental sound
+ * playback caused by scattered reactive effects.
+ */
+
+type SoundCommand = {
+  type: "play" | "stop";
+  sfxId: SfxId;
+};
 
 export function useHostLobbySoundEffects(state: RoomPublicState | null) {
   const $sfxVolume = useAppSelector(
     (appState: AppState) => appState.userSettings.sfxVolume,
   );
-  const previousStateRef = useRef<RoomPublicState | null>(null);
-
-  useEffect(function setupSoundEffects() {
-    initializeSoundEffects();
-  }, []);
+  const engineRef = useRef<{
+    prev: HostLobbySoundSnapshot | null;
+    runtime: HostLobbySoundRuntime;
+  }>({
+    prev: null,
+    runtime: {},
+  });
 
   useEffect(
-    function handleHostLobbySoundEffects() {
-      if (!state) return;
+    function syncHostLobbySoundEffects() {
+      initializeSoundEffects();
 
-      const prevState = previousStateRef.current;
-      previousStateRef.current = state;
+      const currentSnapshot = createHostLobbySoundSnapshot(state);
+      const commands = evaluateSoundRules({
+        rules: HOST_LOBBY_SOUND_RULES,
+        prev: engineRef.current.prev,
+        curr: currentSnapshot,
+        runtime: engineRef.current.runtime,
+      });
 
-      if ($sfxVolume <= 0) return;
-      if (!prevState) return;
-
-      const playerDelta = getPlayerDelta(prevState, state);
-      if (playerDelta.joinedCount > 0) playSfx("hostLobby.playerJoined.hello");
-      if (playerDelta.leftCount > 0) playSfx("hostLobby.playerLeft.whoosh");
+      engineRef.current.prev = currentSnapshot;
+      dispatchSoundCommands(commands, $sfxVolume > 0);
     },
     [state, $sfxVolume],
   );
@@ -54,179 +81,115 @@ export function useGameRoomSoundEffects({
   const $sfxVolume = useAppSelector(
     (appState: AppState) => appState.userSettings.sfxVolume,
   );
-  const wasCriticalRef = useRef(false);
-  const lastCriticalPhaseRef = useRef<RoomPublicState["phase"] | null>(null);
-  const lastPlacementRef = useRef<{
-    itemId: TierItemId;
-    tierId: TierId | null;
-    tierIndex: number | null;
-    phase: RoomPublicState["phase"];
-  } | null>(null);
-  const lastPhaseTimerRef = useRef<{
-    phase: RoomPublicState["phase"] | null;
-    msLeft: number | null;
-  }>({ phase: null, msLeft: null });
-  const skipDoorbellNextRevealRef = useRef(false);
-  const lastTurnKeyRef = useRef<string | null>(null);
-  const lastResultsPlacementKeyRef = useRef<string | null | undefined>(
-    undefined,
-  );
-  const previousPhaseRef = useRef<RoomPublicState["phase"] | null>(null);
-
-  useEffect(function setupSoundEffects() {
-    initializeSoundEffects();
-  }, []);
+  const engineRef = useRef<{
+    prev: GameRoomSoundSnapshot | null;
+    runtime: GameRoomSoundRuntime;
+  }>({
+    prev: null,
+    runtime: {
+      skipDoorbellNextReveal: false,
+      wasSfxEnabled: false,
+    },
+  });
 
   useEffect(
-    function playCriticalTimerTicking() {
-      const wasCritical = wasCriticalRef.current;
-      wasCriticalRef.current = isPhaseCritical;
-      const phase = state?.phase ?? null;
+    function syncGameRoomSoundEffects() {
+      initializeSoundEffects();
 
-      if ($sfxVolume <= 0) return;
-      if (isPhaseCritical && !wasCritical) {
-        lastCriticalPhaseRef.current = phase;
-        playSfx("gameRoom.timer.criticalTick");
-        return;
-      }
+      const currentSnapshot = createGameRoomSoundSnapshot({
+        isPhaseCritical,
+        state,
+        msLeft,
+      });
+      const { runtime } = engineRef.current;
+      const commands = evaluateSoundRules({
+        rules: GAME_ROOM_SOUND_RULES,
+        prev: engineRef.current.prev,
+        curr: currentSnapshot,
+        runtime,
+      });
 
-      if (!isPhaseCritical && wasCritical) {
+      engineRef.current.prev = currentSnapshot;
+
+      const isSfxEnabled = $sfxVolume > 0;
+      if (!isSfxEnabled && runtime.wasSfxEnabled) {
         stopSfx("gameRoom.timer.criticalTick");
-        lastCriticalPhaseRef.current = null;
       }
+      runtime.wasSfxEnabled = isSfxEnabled;
 
-      // Phase changed while critical sound might be playing; stop to be safe.
-      if (phase !== lastCriticalPhaseRef.current && wasCritical) {
-        stopSfx("gameRoom.timer.criticalTick");
-        lastCriticalPhaseRef.current = phase;
-      }
+      dispatchSoundCommands(commands, isSfxEnabled);
     },
-    [isPhaseCritical, $sfxVolume, state?.phase],
+    [isPhaseCritical, state, msLeft, $sfxVolume],
   );
+}
 
-  useEffect(
-    function playItemMovementSounds() {
-      if (!state) {
-        lastPlacementRef.current = null;
-        return;
-      }
+function createHostLobbySoundSnapshot(
+  state: RoomPublicState | null,
+): HostLobbySoundSnapshot {
+  return { state };
+}
 
-      const snapshot = resolveVotePreviewPlacement(state);
-      const prev = lastPlacementRef.current;
-      lastPlacementRef.current = snapshot;
+function createGameRoomSoundSnapshot({
+  isPhaseCritical,
+  state,
+  msLeft,
+}: {
+  isPhaseCritical: boolean;
+  state: RoomPublicState | null;
+  msLeft: number | null;
+}): GameRoomSoundSnapshot {
+  return {
+    state,
+    phase: state?.phase ?? null,
+    msLeft,
+    isPhaseCritical,
+    turnKey: state
+      ? `${state.turnIndex}:${state.currentTurnPlayerId ?? "none"}`
+      : null,
+    votePreviewPlacement: state ? resolveVotePreviewPlacement(state) : null,
+    resultsPlacementKey: resolveResultsPlacementSoundKey(state),
+  };
+}
 
-      if (!snapshot) return;
-      if (!prev || prev.itemId !== snapshot.itemId) return;
-      if (prev.tierIndex === null || snapshot.tierIndex === null) return;
-      if (prev.tierIndex === snapshot.tierIndex) return;
-      if ($sfxVolume <= 0) return;
+function evaluateSoundRules<Snapshot, Runtime>(args: {
+  rules: readonly SoundRule<Snapshot, Runtime>[];
+  prev: Snapshot | null;
+  curr: Snapshot;
+  runtime: Runtime;
+}): SoundCommand[] {
+  const { rules, prev, curr, runtime } = args;
+  const commands: SoundCommand[] = [];
 
-      const delta = snapshot.tierIndex - prev.tierIndex;
-      if (delta > 0) {
-        playSfx("gameRoom.item.movedDown");
-      } else if (delta < 0 && snapshot.phase === "VOTE") {
-        playSfx("gameRoom.vote.movedUp");
-      }
-    },
-    [state, $sfxVolume],
-  );
+  for (const rule of rules) {
+    rule.evaluate({
+      prev,
+      curr,
+      runtime,
+      play: (sfxId) => {
+        commands.push({ type: "play", sfxId });
+      },
+      stop: (sfxId) => {
+        commands.push({ type: "stop", sfxId });
+      },
+    });
+  }
 
-  useEffect(
-    function playBellAtTimeout() {
-      const phase = state?.phase ?? null;
-      const prev = lastPhaseTimerRef.current;
-      lastPhaseTimerRef.current = { phase, msLeft };
+  return commands;
+}
 
-      if ($sfxVolume <= 0) return;
-      if (msLeft != null && (phase === "PLACE" || phase === "VOTE")) {
-        const prevMsLeft =
-          prev.phase === phase && typeof prev.msLeft === "number"
-            ? prev.msLeft
-            : null;
+function dispatchSoundCommands(
+  commands: readonly SoundCommand[],
+  isSfxEnabled: boolean,
+) {
+  for (const command of commands) {
+    if (command.type === "stop") {
+      stopSfx(command.sfxId);
+      continue;
+    }
 
-        if (prevMsLeft !== null && prevMsLeft > 0 && msLeft <= 0) {
-          playSfx("gameRoom.timer.bell");
-          if (phase === "PLACE") {
-            skipDoorbellNextRevealRef.current = true;
-          }
-        }
-      }
-
-      // If the phase advanced away from PLACE right as the timer hit 0, ensure we still treat it as a timeout.
-      if (
-        prev.phase === "PLACE" &&
-        prev.msLeft !== null &&
-        prev.msLeft <= 0 &&
-        phase !== "PLACE"
-      ) {
-        skipDoorbellNextRevealRef.current = true;
-        playSfx("gameRoom.timer.bell");
-      }
-    },
-    [msLeft, state?.phase, $sfxVolume],
-  );
-
-  useEffect(
-    function playDoorbellOnNewTurn() {
-      const phase = state?.phase ?? null;
-      const turnIndex = state?.turnIndex ?? null;
-      const currentTurnPlayerId = state?.currentTurnPlayerId ?? null;
-
-      if (phase === null) {
-        lastTurnKeyRef.current = null;
-        skipDoorbellNextRevealRef.current = false;
-        return;
-      }
-
-      const turnKey = `${turnIndex}:${currentTurnPlayerId ?? "none"}`;
-      const prevTurnKey = lastTurnKeyRef.current;
-      lastTurnKeyRef.current = turnKey;
-
-      if ($sfxVolume <= 0) return;
-      if (phase !== "PLACE") return;
-      if (!prevTurnKey) return;
-      if (prevTurnKey === turnKey) return;
-
-      const shouldSkip = skipDoorbellNextRevealRef.current;
-      skipDoorbellNextRevealRef.current = false;
-
-      if (!shouldSkip) {
-        playSfx("gameRoom.turn.doorbell");
-      }
-    },
-    [state?.phase, state?.turnIndex, state?.currentTurnPlayerId, $sfxVolume],
-  );
-
-  useEffect(
-    function playResultsPlacementSnap() {
-      const placementKey = resolveResultsPlacementSoundKey(state);
-      const previousPlacementKey = lastResultsPlacementKeyRef.current;
-      lastResultsPlacementKeyRef.current = placementKey;
-
-      if ($sfxVolume <= 0) return;
-      if (!placementKey) return;
-      if (previousPlacementKey === undefined) return;
-      if (previousPlacementKey === placementKey) return;
-
-      playSfx("gameRoom.results.snap");
-    },
-    [state, $sfxVolume],
-  );
-
-  useEffect(
-    function playFinishedPhaseSound() {
-      const phase = state?.phase ?? null;
-      const previousPhase = previousPhaseRef.current;
-      previousPhaseRef.current = phase;
-
-      if ($sfxVolume <= 0) return;
-      if (phase !== "FINISHED") return;
-      if (previousPhase === null || previousPhase === "FINISHED") return;
-
-      playSfx("gameRoom.phase.finished");
-    },
-    [state?.phase, $sfxVolume],
-  );
+    if (!isSfxEnabled) continue;
+    playSfx(command.sfxId);
+  }
 }
 
 function resolveResultsPlacementSoundKey(
@@ -248,12 +211,9 @@ function resolveResultsPlacementSoundKey(
   ].join(":");
 }
 
-function resolveVotePreviewPlacement(state: RoomPublicState): {
-  itemId: TierItemId;
-  tierId: TierId | null;
-  tierIndex: number | null;
-  phase: RoomPublicState["phase"];
-} | null {
+function resolveVotePreviewPlacement(
+  state: RoomPublicState,
+): PlacementSnapshot {
   const currentItemId = state.currentItem ?? null;
   const pendingTierId = state.pendingTierId ?? null;
   if (!currentItemId) return null;

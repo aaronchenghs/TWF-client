@@ -194,6 +194,33 @@
   animation: urgencyBlink $duration ease-in-out infinite alternate;
 }
 
+@keyframes colorFlood {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  38% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  52% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+@mixin colorFloodAnimation($duration: calc($dur-long * 2.5)) {
+  animation: colorFlood $duration ease both;
+  will-change: opacity, transform;
+}
+
 @mixin ghostPreviewState() {
   opacity: $ghost-preview-opacity;
   background: $ghost-preview-surface;

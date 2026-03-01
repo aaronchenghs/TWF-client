@@ -183,6 +183,7 @@ export const TierBoard = memo(function TierBoard({ state }: TierBoardProps) {
                     isGhostTier &&
                     !isPending &&
                     styles.ghostTarget,
+                  isResultsPhase && isGhostTier && styles.resultReveal,
                 )}
                 style={{ [TIER_LABEL_COLOR_CSS_VAR]: tierColor }}
               >

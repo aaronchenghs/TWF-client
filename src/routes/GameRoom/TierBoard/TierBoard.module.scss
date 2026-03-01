@@ -64,6 +64,18 @@ $defaultTierColor: $light-transparency;
     pointer-events: none;
   }
 
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--tierColor);
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+    pointer-events: none;
+  }
+
   > * {
     position: relative;
     z-index: 1;
@@ -79,6 +91,10 @@ $defaultTierColor: $light-transparency;
     box-shadow: 0 0 0 2px $defaultTierColor;
   }
 
+  &.resultReveal::after {
+    @include colorFloodAnimation(3s);
+  }
+
   .tierLabel {
     align-self: stretch;
     display: flex;
@@ -89,7 +105,6 @@ $defaultTierColor: $light-transparency;
     background: var(--tierColor);
     border-radius: $radius-sm;
     padding: $default-padding calc($default-padding * 2);
-    box-shadow: 0 4px 0 $box-shadow-color;
   }
 
   .tierLabelText {

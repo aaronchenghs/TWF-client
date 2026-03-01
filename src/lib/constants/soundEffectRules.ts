@@ -55,9 +55,7 @@ export const HOST_LOBBY_SOUND_RULES: readonly SoundRule<
       if (!prev?.state || !curr.state) return;
 
       const playerDelta = getPlayerDelta(prev.state, curr.state);
-      if (playerDelta.joinedCount > 0) {
-        play("hostLobby.playerJoined.hello");
-      }
+      if (playerDelta.joinedCount > 0) play("hostLobby.playerJoined.hello");
     },
   },
   {
@@ -66,9 +64,7 @@ export const HOST_LOBBY_SOUND_RULES: readonly SoundRule<
       if (!prev?.state || !curr.state) return;
 
       const playerDelta = getPlayerDelta(prev.state, curr.state);
-      if (playerDelta.leftCount > 0) {
-        play("hostLobby.playerLeft.whoosh");
-      }
+      if (playerDelta.leftCount > 0) play("hostLobby.playerLeft.whoosh");
     },
   },
 ];
@@ -95,9 +91,8 @@ export const GAME_ROOM_SOUND_RULES: readonly SoundRule<
         return;
       }
 
-      if (curr.isPhaseCritical && !prev?.isPhaseCritical) {
+      if (curr.isPhaseCritical && !prev?.isPhaseCritical)
         play("gameRoom.timer.criticalTick");
-      }
     },
   },
   {
@@ -139,9 +134,7 @@ export const GAME_ROOM_SOUND_RULES: readonly SoundRule<
 
         if (previousMsLeft !== null && previousMsLeft > 0 && curr.msLeft <= 0) {
           play("gameRoom.timer.bell");
-          if (curr.phase === "PLACE") {
-            runtime.skipDoorbellNextReveal = true;
-          }
+          if (curr.phase === "PLACE") runtime.skipDoorbellNextReveal = true;
         }
       }
 
@@ -168,9 +161,7 @@ export const GAME_ROOM_SOUND_RULES: readonly SoundRule<
       const shouldSkip = runtime.skipDoorbellNextReveal;
       runtime.skipDoorbellNextReveal = false;
 
-      if (!shouldSkip) {
-        play("gameRoom.turn.doorbell");
-      }
+      if (!shouldSkip) play("gameRoom.turn.doorbell");
     },
   },
   {

@@ -1,5 +1,6 @@
 import styles from "./ItemPlacementReveal.module.scss";
 import type * as Contracts from "@twf/contracts";
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { resolvePlacedTierId } from "@/lib/tierItems";
 import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
@@ -7,11 +8,8 @@ import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { getPlayerNameById } from "@/lib/players";
-import {
-  buildFadeSlideScaleAnimation,
-  buildHoldSlideAnimation,
-  MOTION_EASE,
-} from "@/lib/motionPresets";
+import { playSfx } from "@/lib/sounds/soundEffects";
+import { buildHoldSlideAnimation } from "@/lib/motionPresets";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -59,18 +57,20 @@ export function ItemPlacementReveal({ state }: Props) {
     reduceMotion: false,
   });
 
-  const tierRevealMotion = buildFadeSlideScaleAnimation({
-    axis: "y",
-    enterOffset: 10,
-    exitOffset: -6,
-    enterScale: 0.98,
-    exitScale: 0.985,
-    durationMs: 180,
-    delay: TIER_REVEAL_DELAY_MS / 1000,
-    ease: MOTION_EASE.exit,
-    reduceMotion: false,
-    includeExit: true,
-  });
+  useEffect(
+    function playTierRevealSound() {
+      if (!isOpen || !placedTierId) return;
+
+      const timeoutId = window.setTimeout(() => {
+        playSfx("gameRoom.reveal.placementPop");
+      }, TIER_REVEAL_DELAY_MS);
+
+      return () => {
+        window.clearTimeout(timeoutId);
+      };
+    },
+    [isOpen, placedTierId, token],
+  );
 
   return (
     <OverlayDialog open={isOpen} ariaLabel="Reveal item placement">
@@ -108,10 +108,9 @@ export function ItemPlacementReveal({ state }: Props) {
 
             <div className={styles.tierRevealSlot}>
               {placedTierId ? (
-                <motion.div
-                  key="tier"
+                <div
                   className={styles.placedIntoRow}
-                  {...tierRevealMotion}
+                  style={{ animationDelay: `${TIER_REVEAL_DELAY_MS}ms` }}
                 >
                   <div
                     className={styles.tierBadge}
@@ -121,7 +120,7 @@ export function ItemPlacementReveal({ state }: Props) {
                       {tierName}
                     </MainTextTypography>
                   </div>
-                </motion.div>
+                </div>
               ) : (
                 <div
                   className={styles.placedIntoRowPlaceholder}

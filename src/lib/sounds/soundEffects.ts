@@ -22,6 +22,7 @@ export type SfxId =
   | "gameRoom.item.movedDown"
   | "gameRoom.vote.movedUp"
   | "gameRoom.results.snap"
+  | "gameRoom.reveal.placementPop"
   | "gameRoom.phase.finished"
   | "ui.preview";
 
@@ -65,6 +66,11 @@ const SFX_DEFS: Record<SfxId, SfxDefinition> = {
   "gameRoom.results.snap": {
     kind: "single",
     url: "/sounds/snap.mp3",
+    minRepeatMs: 250,
+  },
+  "gameRoom.reveal.placementPop": {
+    kind: "single",
+    url: "/sounds/pop.mp3",
     minRepeatMs: 250,
   },
   "gameRoom.phase.finished": {

@@ -1,23 +1,18 @@
 import { memo, useCallback, useLayoutEffect, useRef, useState } from "react";
 import styles from "./TierBoard.module.scss";
-import clsx from "clsx";
 import * as Contracts from "@twf/contracts";
-import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
-import { TierItemTile } from "./TierItemTile/TierItemTile";
-import { useAutoFitText } from "../../../lib/hooks/useAutoFitText";
 import { computeVoteResolution } from "@/lib/voting";
+import { TierRow } from "./TierRow/TierRow";
 type RoomPublicState = Contracts.RoomPublicState;
 type TierId = Contracts.TierId;
 type TierItemId = Contracts.TierItemId;
 
-const MIN_TIER_LABEL_FONT_SIZE_PX = 26;
 const SCALE_EPSILON = 0.001;
 const MIN_BOARD_SCALE = 0.2;
 const SCALE_SEARCH_STEPS = 14;
 const FIT_BUFFER_PX = 10;
 const SCALE_HEADROOM = 0.985;
 const BOARD_SCALE_CSS_VAR = "--boardScale" as string;
-const TIER_LABEL_COLOR_CSS_VAR = "--tierColor" as string;
 
 type TierBoardProps = {
   state: RoomPublicState;
@@ -157,95 +152,17 @@ export const TierBoard = memo(function TierBoard({ state }: TierBoardProps) {
           ref={contentRef}
           style={{ [BOARD_SCALE_CSS_VAR]: scale }}
         >
-          {tierOrder.map((tierId) => {
-            const items = tiers[tierId] ?? [];
-            const isPending =
-              (isVotePhase || state.phase === "PLACE") &&
-              state.pendingTierId === tierId;
-            const isGhostTier = ghostTierId === tierId;
-            const tierMeta = state.tierMetaById?.[tierId];
-            const tierColor = tierMeta?.color;
-            const safeItems = state.currentItem
-              ? items.filter((id) => id !== state.currentItem)
-              : items;
-            const safeGhostIndex =
-              isGhostTier && typeof ghostInsertIndex === "number"
-                ? Math.min(Math.max(0, ghostInsertIndex), safeItems.length)
-                : null;
-
-            return (
-              <div
-                key={tierId}
-                className={clsx(
-                  styles.row,
-                  isPending && styles.pending,
-                  isVotePhase &&
-                    isGhostTier &&
-                    !isPending &&
-                    styles.ghostTarget,
-                  isResultsPhase && isGhostTier && styles.resultReveal,
-                )}
-                style={{ [TIER_LABEL_COLOR_CSS_VAR]: tierColor }}
-              >
-                <div className={styles.tierLabel}>
-                  <TierLabelText label={tierMeta?.name ?? tierId} />
-                </div>
-
-                <div className={styles.items}>
-                  {(safeGhostIndex === null
-                    ? safeItems
-                    : safeItems.slice(0, safeGhostIndex)
-                  ).map((id) => (
-                    <TierItemTile key={id} state={state} itemId={id} />
-                  ))}
-
-                  {isGhostTier && state.currentItem && (
-                    <TierItemTile
-                      state={state}
-                      itemId={state.currentItem}
-                      ghost
-                      isGhostSolidifying={isResultsPhase}
-                    />
-                  )}
-
-                  {safeGhostIndex !== null &&
-                    safeItems
-                      .slice(safeGhostIndex)
-                      .map((id) => (
-                        <TierItemTile key={id} state={state} itemId={id} />
-                      ))}
-                </div>
-              </div>
-            );
-          })}
+          {tierOrder.map((tierId) => (
+            <TierRow
+              key={tierId}
+              state={state}
+              tierId={tierId}
+              ghostTierId={ghostTierId}
+              ghostInsertIndex={ghostInsertIndex}
+            />
+          ))}
         </div>
       </div>
     </section>
-  );
-});
-
-const TierLabelText = memo(function TierLabelText({
-  label,
-}: {
-  label: string;
-}) {
-  const labelRef = useRef<HTMLSpanElement | null>(null);
-
-  useAutoFitText(labelRef, {
-    minFontSizePx: MIN_TIER_LABEL_FONT_SIZE_PX,
-    watch: label,
-    enabled: label.length > 0,
-  });
-
-  return (
-    <MainTextTypography
-      variant="h2"
-      weight="bold"
-      textAlign="center"
-      className={styles.tierLabelText}
-      ref={labelRef}
-    >
-      {label}
-    </MainTextTypography>
   );
 });

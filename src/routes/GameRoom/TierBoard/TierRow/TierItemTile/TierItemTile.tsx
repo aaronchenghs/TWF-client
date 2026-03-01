@@ -1,12 +1,13 @@
 import { memo, useRef } from "react";
 import clsx from "clsx";
 import styles from "./TierItemTile.module.scss";
-import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
-import { getItemMeta } from "../../../../lib/tierItems";
 import * as Contracts from "@twf/contracts";
-import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
-import { useAutoFitText } from "../../../../lib/hooks/useAutoFitText";
-import { ToolTipWrapper } from "../../../../components/ToolTip/ToolTip";
+import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
+import { ToolTipWrapper } from "@/components/ToolTip/ToolTip";
+import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
+import { getItemMeta } from "@/lib/tierItems";
+
 type RoomPublicState = Contracts.RoomPublicState;
 type TierItemId = Contracts.TierItemId;
 

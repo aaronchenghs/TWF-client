@@ -1,7 +1,5 @@
 @use "../../../styles/export.scss" as *;
 
-$defaultTierColor: $light-transparency;
-
 .boardSection {
   opacity: 1;
   transform: translateX(0);
@@ -36,89 +34,4 @@ $defaultTierColor: $light-transparency;
   transform-origin: top left;
   will-change: transform;
   transition: transform $dur-easy ease;
-}
-
-.row {
-  --tierColor: $defaultTierColor;
-
-  display: grid;
-  grid-template-columns: minmax(132px, 0.12fr) 1fr;
-  gap: $default-gap;
-  min-height: 232px;
-
-  padding: $default-gap;
-  border-radius: $radius-sm;
-
-  background: $defaultTierColor;
-
-  position: relative;
-  overflow: visible;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: var(--tierColor);
-    opacity: 0.25;
-    pointer-events: none;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: var(--tierColor);
-    opacity: 0;
-    transform: scaleX(0);
-    transform-origin: left center;
-    pointer-events: none;
-  }
-
-  > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  &.pending {
-    outline: 2px solid $light-transparency;
-    box-shadow: 0 0 0 2px $defaultTierColor;
-  }
-
-  &.ghostTarget {
-    outline: 2px dashed $light-transparency;
-    box-shadow: 0 0 0 2px $defaultTierColor;
-  }
-
-  &.resultReveal::after {
-    @include colorFloodAnimation(3s);
-  }
-
-  .tierLabel {
-    align-self: stretch;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 132px;
-
-    background: var(--tierColor);
-    border-radius: $radius-sm;
-    padding: $default-padding calc($default-padding * 2);
-  }
-
-  .tierLabelText {
-    display: block;
-    width: 100%;
-    min-width: 0;
-    white-space: nowrap;
-  }
-
-  .items {
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: $default-gap;
-    overflow: visible;
-  }
 }

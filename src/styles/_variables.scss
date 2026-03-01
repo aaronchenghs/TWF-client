@@ -10,6 +10,7 @@ $error: rgba(255, 60, 60, 0.65);
 $black: #000000;
 $box-shadow-color: rgba(0, 0, 0, 0.45);
 $light-transparency: rgba(255, 255, 255, 0.08);
+$surface-shadow-strong: rgba($black, 0.5);
 $backdrop-blur: blur(6px);
 
 $severityError: #e53935;
@@ -57,6 +58,16 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
 $default-gap: 8px;
 $default-padding: 10px;
+
+$ghost-preview-lift: $default-gap * -1;
+$ghost-preview-opacity: 0.9;
+$ghost-preview-surface: rgba($bg-surface, 0.2);
+$ghost-preview-outline: rgba($accent, 0.5);
+$ghost-preview-depth-shadow: rgba($black, 0.3);
+$ghost-preview-drop-shadow: rgba($black, 0.4);
+$ghost-preview-glow: rgba($accent, 0.2);
+$ghost-preview-overlay: rgba($bg-surface, 0.2);
+
 $page-width-cutoff: 1400px;
 $tablet-width: 900px;
 $short-viewport-height: 560px;

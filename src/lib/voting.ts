@@ -4,10 +4,7 @@ import type {
   TurnResolution,
   VoteValue,
 } from "@twf/contracts";
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
-}
+import { clamp } from "./clamp";
 
 function getParticipationCap(participation: number): 0 | 1 {
   if (participation < 1 / 3) return 0;

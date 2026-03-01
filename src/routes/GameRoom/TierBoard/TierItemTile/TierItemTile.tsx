@@ -6,6 +6,7 @@ import { getItemMeta } from "../../../../lib/tierItems";
 import * as Contracts from "@twf/contracts";
 import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
 import { useAutoFitText } from "../../../../lib/hooks/useAutoFitText";
+import { ToolTipWrapper } from "../../../../components/ToolTip/ToolTip";
 type RoomPublicState = Contracts.RoomPublicState;
 type TierItemId = Contracts.TierItemId;
 
@@ -33,40 +34,41 @@ export const TierItemTile = memo(function TierItemTile({
   });
 
   return (
-    <div
-      className={clsx(
-        styles.itemTile,
-        ghost && styles.ghost,
-        ghost && !isGhostSolidifying && styles.ghostPreview,
-        ghost && isGhostSolidifying && styles.ghostSolidifying,
-        className,
-      )}
-      title={name}
-    >
-      <div className={styles.thumb}>
-        <LoadableImage
-          className={styles.thumbImg}
-          src={imageSrc}
-          alt={name}
-          loading="lazy"
-          draggable={false}
-          fallback={
-            <div className={styles.thumbPlaceholder} aria-hidden="true">
-              {name.slice(0, 1).toUpperCase()}
-            </div>
-          }
-        />
-      </div>
-
-      <MainTextTypography
-        variant="body"
-        weight="bold"
-        textAlign="center"
-        className={styles.itemName}
-        ref={itemNameRef}
+    <ToolTipWrapper content={name} placement="bottom" responsive>
+      <div
+        className={clsx(
+          styles.itemTile,
+          ghost && styles.ghost,
+          ghost && !isGhostSolidifying && styles.ghostPreview,
+          ghost && isGhostSolidifying && styles.ghostSolidifying,
+          className,
+        )}
       >
-        {name}
-      </MainTextTypography>
-    </div>
+        <div className={styles.thumb}>
+          <LoadableImage
+            className={styles.thumbImg}
+            src={imageSrc}
+            alt={name}
+            loading="lazy"
+            draggable={false}
+            fallback={
+              <div className={styles.thumbPlaceholder} aria-hidden="true">
+                {name.slice(0, 1).toUpperCase()}
+              </div>
+            }
+          />
+        </div>
+
+        <MainTextTypography
+          variant="body"
+          weight="bold"
+          textAlign="center"
+          className={styles.itemName}
+          ref={itemNameRef}
+        >
+          {name}
+        </MainTextTypography>
+      </div>
+    </ToolTipWrapper>
   );
 });

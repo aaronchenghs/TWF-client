@@ -1,3 +1,5 @@
+import { clamp01 } from "../clamp";
+
 type SfxDefinition =
   | {
       kind: "single";
@@ -79,13 +81,8 @@ const unavailableUrls = new Set<string>();
 const lastPlayedAtById = new Map<SfxId, number>();
 const lastRandomIndexById = new Map<SfxId, number>();
 
-export function clamp01(value: number): number {
-  if (!Number.isFinite(value)) return 1;
-  return Math.min(1, Math.max(0, value));
-}
-
 function resolveVolume(): number {
-  return clamp01(userSfxVolume01);
+  return clamp01(userSfxVolume01, 1);
 }
 
 function shouldSkipRateLimit(id: SfxId, minGapMs: number): boolean {

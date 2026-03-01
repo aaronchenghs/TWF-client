@@ -1,0 +1,52 @@
+@use "../../styles/export.scss" as *;
+
+.root {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.block {
+  display: block;
+  width: 100%;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 1200;
+  pointer-events: none;
+
+  width: max-content;
+  max-width: min(320px, calc(100vw - ($default-gap * 2)));
+  padding: calc($default-padding / 2);
+
+  border-radius: $radius-sm;
+  border: 1px solid $light-transparency;
+  background: $bg-elevated;
+  color: $text-primary;
+  box-shadow: $shadow-comic-panel;
+  backdrop-filter: $backdrop-blur;
+}
+
+.top {
+  transform-origin: center bottom;
+}
+
+.bottom {
+  transform-origin: center top;
+}
+
+.left {
+  transform-origin: right center;
+}
+
+.right {
+  transform-origin: left center;
+}
+
+.opening {
+  @include appearPopIn();
+}
+
+.closing {
+  @include appearPopOut();
+}

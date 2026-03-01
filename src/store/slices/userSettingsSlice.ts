@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { LOCAL_STORAGE_KEYS, getLocalStorageValue } from "@/lib/localStorage";
-import { clamp01 } from "@/lib/sounds/soundEffects";
+import { clamp01 } from "@/lib/clamp";
 
 type UserSettingsState = {
   isSettingsModalOpen: boolean;

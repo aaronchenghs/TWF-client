@@ -38,6 +38,8 @@ export function CurrentItemCard({ state }: CurrentItemCardProps) {
     return { index: Math.min(index, total), total };
   }, [state.currentItem, state.itemMetaById, state.tiers]);
 
+  if (state.phase === "FINISHED") return null;
+
   const currentItemLabel =
     currentItemProgress.index && currentItemProgress.total
       ? `CURRENT ITEM (${currentItemProgress.index}/${currentItemProgress.total}):`

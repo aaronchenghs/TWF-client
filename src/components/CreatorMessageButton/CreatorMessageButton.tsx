@@ -4,6 +4,7 @@ import {
   FolderPlus,
   SlidersHorizontal,
   Trophy,
+  UserRound,
   type LucideIcon,
 } from "lucide-react";
 import { AccentButton } from "../AccentButton/AccentButton";
@@ -26,6 +27,11 @@ const CREATOR_MESSAGE_PLANS: CreatorMessagePlan[] = [
     label: "Game Modes",
     icon: SlidersHorizontal,
     body: "Don't like being timed? Want some variety to the game? Game modes and lobby customization will make each session fit your group better.",
+  },
+  {
+    label: "Custom Player Avatars",
+    icon: UserRound,
+    body: "Players will be able to personalize their identity with custom avatars so each lobby feels more expressive and recognizable.",
   },
   {
     label: "Global Stats",

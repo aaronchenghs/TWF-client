@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./FinishedControls.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
-import { CreatorMessageButton } from "@/components/CreatorMessageButton/CreatorMessageButton";
-import { ShareResultsButton } from "@/components/ShareResultsButton/ShareResultsButton";
+import { FinishedUtilityActions } from "@/components/FinishedUtilityActions/FinishedUtilityActions";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
 
@@ -73,10 +72,7 @@ export function FinishedControls({ state }: FinishedControlsProps) {
 
   return (
     <div className={styles.finishedStack}>
-      <div className={styles.utilityActionsRow}>
-        <ShareResultsButton state={state} />
-        <CreatorMessageButton />
-      </div>
+      <FinishedUtilityActions state={state} />
 
       <div className={styles.finishedActions}>
         <MainTextTypography

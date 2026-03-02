@@ -1,8 +1,7 @@
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
 import clsx from "clsx";
 import styles from "./PrimaryModal.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
+import { OverlayDialog } from "../OverlayDialog/OverlayDialog";
 
 export function PrimaryModal(props: {
   open: boolean;
@@ -40,45 +39,16 @@ export function PrimaryModal(props: {
     ariaLabel,
   } = props;
 
-  useEffect(
-    function handleLockScroll() {
-      if (!open) return;
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-      };
-    },
-    [open],
-  );
-
-  useEffect(
-    function handleKeyBoard() {
-      if (!open || !closeOnEscape) return;
-      const onKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape") onClose();
-      };
-      window.addEventListener("keydown", onKeyDown);
-      return () => window.removeEventListener("keydown", onKeyDown);
-    },
-    [open, closeOnEscape, onClose],
-  );
-
-  if (!open) return null;
-
   const maxWidthStyle =
     typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth;
 
-  const content = (
-    <div
-      className={styles.overlay}
-      role="dialog"
-      aria-modal="true"
-      aria-label={ariaLabel ?? (typeof title === "string" ? title : "Modal")}
-      onMouseDown={(e) => {
-        if (!closeOnBackdrop) return;
-        if (e.target === e.currentTarget) onClose();
-      }}
+  return (
+    <OverlayDialog
+      open={open}
+      ariaLabel={ariaLabel ?? (typeof title === "string" ? title : "Modal")}
+      onEscape={closeOnEscape ? onClose : undefined}
+      onBackdrop={closeOnBackdrop ? onClose : undefined}
+      usePortal
     >
       <div
         className={clsx(styles.modal, className)}
@@ -125,8 +95,6 @@ export function PrimaryModal(props: {
 
         {footer && <footer className={styles.footer}>{footer}</footer>}
       </div>
-    </div>
+    </OverlayDialog>
   );
-
-  return createPortal(content, document.body);
 }

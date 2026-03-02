@@ -10,3 +10,7 @@ export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
 export const QUICK_ACTIONS_HIDDEN_ROUTE_PATTERNS = [
   ROUTES.PLAYER_SESSION,
 ] as const;
+
+export function matchesRoutePath(pathname: string, route: RoutePath) {
+  return pathname === route || pathname.startsWith(`${route}/`);
+}

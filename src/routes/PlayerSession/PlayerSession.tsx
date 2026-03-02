@@ -20,6 +20,7 @@ import { pushSnackbar } from "@/store/slices/snackBarSlice";
 import { useAppDispatch } from "@/store/store";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { TAB_TITLES } from "@/lib/constants/tabTitles";
+import { setDocumentTitleIfNeeded } from "@/lib/documentTitle";
 import { getErrorMessage } from "@/lib/errors";
 
 type RoomPublicState = Contracts.RoomPublicState;
@@ -88,7 +89,7 @@ export default function PlayerSession() {
           ? TAB_TITLES.PLAYER_IN_GAME
           : TAB_TITLES.PLAYER_LOBBY;
 
-      if (document.title !== nextTitle) document.title = nextTitle;
+      setDocumentTitleIfNeeded(nextTitle);
     },
     [state?.phase],
   );

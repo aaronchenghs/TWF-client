@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { TAB_TITLES } from "@/lib/constants/tabTitles";
+import { setDocumentTitleIfNeeded } from "@/lib/documentTitle";
 
 const ALERT_TITLE = TAB_TITLES.TURN_ALERT;
 const ALERT_BLINK_MS = 1000;
@@ -22,7 +23,7 @@ export function useTurnTabAttention({ isMyTurn }: { isMyTurn: boolean }) {
           restoreTitleRef.current &&
           document.title !== restoreTitleRef.current
         )
-          document.title = restoreTitleRef.current;
+          setDocumentTitleIfNeeded(restoreTitleRef.current);
 
         restoreTitleRef.current = null;
         shouldShowAlertTitleRef.current = false;
@@ -34,14 +35,14 @@ export function useTurnTabAttention({ isMyTurn }: { isMyTurn: boolean }) {
         restoreTitleRef.current = document.title;
         shouldShowAlertTitleRef.current = true;
 
-        document.title = ALERT_TITLE;
+        setDocumentTitleIfNeeded(ALERT_TITLE);
 
         blinkIntervalRef.current = setInterval(() => {
           const fallbackTitle = restoreTitleRef.current ?? TAB_TITLES.APP_NAME;
           shouldShowAlertTitleRef.current = !shouldShowAlertTitleRef.current;
-          document.title = shouldShowAlertTitleRef.current
-            ? ALERT_TITLE
-            : fallbackTitle;
+          setDocumentTitleIfNeeded(
+            shouldShowAlertTitleRef.current ? ALERT_TITLE : fallbackTitle,
+          );
         }, ALERT_BLINK_MS);
       }
 

@@ -1,4 +1,10 @@
 import * as Contracts from "@twf/contracts";
+import {
+  deleteStorageValue,
+  getWebStorage,
+  readStorageValue,
+  writeStorageValue,
+} from "@/lib/webStorage";
 
 type Role = Contracts.Role;
 
@@ -220,15 +226,6 @@ type AppLocalStorageValue<K extends AppLocalStorageKey> = Extract<
   { key: K }
 >["value"];
 
-function getStorage(): Storage | null {
-  if (typeof window === "undefined") return null;
-  try {
-    return window.localStorage;
-  } catch {
-    return null;
-  }
-}
-
 function getVariableForKey(key: string): LocalStorageVariable | null {
   for (const variable of LOCAL_STORAGE_VARIABLES) {
     if (variable.isKey(key)) return variable;
@@ -259,16 +256,10 @@ function stringifyAppLocalStorageValue<K extends AppLocalStorageKey>(
 export function getLocalStorageValue<K extends AppLocalStorageKey>(
   key: K,
 ): AppLocalStorageValue<K> | null {
-  const storage = getStorage();
-  if (!storage) return null;
+  const raw = readStorageValue(getWebStorage("local"), key);
+  if (raw == null) return null;
 
-  try {
-    const raw = storage.getItem(key);
-    if (raw == null) return null;
-    return parseAppLocalStorageValue(key, raw);
-  } catch {
-    return null;
-  }
+  return parseAppLocalStorageValue(key, raw);
 }
 
 /** Safe typed setter for keys in the app schema. */
@@ -276,24 +267,14 @@ export function setLocalStorageValue<K extends AppLocalStorageKey>(
   key: K,
   value: AppLocalStorageValue<K>,
 ) {
-  const storage = getStorage();
-  if (!storage) return;
-
-  try {
-    storage.setItem(key, stringifyAppLocalStorageValue(key, value));
-  } catch {
-    return;
-  }
+  writeStorageValue(
+    getWebStorage("local"),
+    key,
+    stringifyAppLocalStorageValue(key, value),
+  );
 }
 
 /** Safe typed remove for keys in the app schema. */
 export function removeLocalStorageValue(key: AppLocalStorageKey) {
-  const storage = getStorage();
-  if (!storage) return;
-
-  try {
-    storage.removeItem(key);
-  } catch {
-    return;
-  }
+  deleteStorageValue(getWebStorage("local"), key);
 }

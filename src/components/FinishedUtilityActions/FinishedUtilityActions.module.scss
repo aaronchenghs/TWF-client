@@ -1,0 +1,8 @@
+@use "../../styles/export.scss" as *;
+
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $default-gap;
+  justify-content: center;
+}

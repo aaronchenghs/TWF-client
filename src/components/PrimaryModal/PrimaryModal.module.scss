@@ -1,17 +1,5 @@
 @use "../../styles/export.scss" as *;
 
-.overlay {
-  @include appearFadeIn($dur-fast);
-  position: fixed;
-  inset: 0;
-  z-index: 20000;
-  display: grid;
-  place-items: center;
-  background: $box-shadow-color;
-  backdrop-filter: $backdrop-blur;
-  padding: $default-padding;
-}
-
 .modal {
   @include appearPopIn($dur-fast);
   width: min(920px, 100%);
@@ -97,9 +85,6 @@
 }
 
 @media (max-height: $short-viewport-height) {
-  .overlay {
-    padding: $default-padding;
-  }
   .modal {
     max-height: calc(100dvh - ($default-padding * 2));
   }

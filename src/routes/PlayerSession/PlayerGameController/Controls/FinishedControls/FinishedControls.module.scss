@@ -11,13 +11,6 @@
   gap: $default-gap;
 }
 
-.utilityActionsRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $default-gap;
-  justify-content: center;
-}
-
 .finishedActions {
   width: 100%;
   border-radius: $radius-lg;

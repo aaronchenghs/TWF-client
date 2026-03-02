@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { SITE_URL } from "@/config/env";
 import { TAB_TITLES } from "@/lib/constants/tabTitles";
-import { ROUTES } from "@/routes/routes";
+import { setDocumentTitleIfNeeded } from "@/lib/documentTitle";
+import { ROUTES, matchesRoutePath } from "@/routes/routes";
 
 type MetaConfig = {
   title: string;
@@ -23,26 +24,26 @@ const PLAYER_SESSION_DESCRIPTION =
 const GAME_ROOM_DESCRIPTION =
   "Private live game room for Tiers! With Friends. Rank items and vote in real time.";
 
-function asPrivateMeta(title: string, description: string): MetaConfig {
-  return { title, description, robots: ROBOTS_PRIVATE };
-}
-
 const DEFAULT_META: MetaConfig = {
   title: TAB_TITLES.DEFAULT,
   description: DEFAULT_DESCRIPTION,
   robots: ROBOTS_PUBLIC,
 };
 
+function asPrivateMeta(title: string, description: string): MetaConfig {
+  return { title, description, robots: ROBOTS_PRIVATE };
+}
+
 function resolveMeta(pathname: string): MetaConfig {
   if (pathname === ROUTES.LANDING) return DEFAULT_META;
 
-  if (pathname.startsWith(`${ROUTES.HOST_LOBBY}/`))
+  if (matchesRoutePath(pathname, ROUTES.HOST_LOBBY))
     return asPrivateMeta(TAB_TITLES.HOST_LOBBY, HOST_LOBBY_DESCRIPTION);
 
-  if (pathname.startsWith(`${ROUTES.PLAYER_SESSION}/`))
+  if (matchesRoutePath(pathname, ROUTES.PLAYER_SESSION))
     return asPrivateMeta(TAB_TITLES.PLAYER_LOBBY, PLAYER_SESSION_DESCRIPTION);
 
-  if (pathname.startsWith(`${ROUTES.GAME_ROOM}/`))
+  if (matchesRoutePath(pathname, ROUTES.GAME_ROOM))
     return asPrivateMeta(TAB_TITLES.GAME_ROOM, GAME_ROOM_DESCRIPTION);
 
   return {
@@ -104,7 +105,7 @@ export function useRouteSeo() {
       const meta = resolveMeta(pathname);
       const canonical = new URL(pathname, SITE_URL).toString();
 
-      if (document.title !== meta.title) document.title = meta.title;
+      setDocumentTitleIfNeeded(meta.title);
 
       ensureMetaTag("description", meta.description);
       ensureMetaTag("robots", meta.robots);

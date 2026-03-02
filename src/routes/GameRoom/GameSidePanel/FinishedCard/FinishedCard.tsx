@@ -1,8 +1,7 @@
 import * as Contracts from "@twf/contracts";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
-import { CreatorMessageButton } from "@/components/CreatorMessageButton/CreatorMessageButton";
-import { ShareResultsButton } from "@/components/ShareResultsButton/ShareResultsButton";
+import { FinishedUtilityActions } from "@/components/FinishedUtilityActions/FinishedUtilityActions";
 import { GameStatusCard } from "../GameStatusCard/GameStatusCard";
 import styles from "./FinishedCard.module.scss";
 
@@ -33,10 +32,7 @@ export function FinishedCard({
           </AccentButton>
         </div>
       </GameStatusCard>
-      <div className={styles.seoActionsRow}>
-        <ShareResultsButton state={state} />
-        <CreatorMessageButton />
-      </div>
+      <FinishedUtilityActions state={state} />
     </div>
   );
 }

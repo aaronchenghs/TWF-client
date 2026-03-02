@@ -1,0 +1,13 @@
+@use "../../styles/export.scss" as *;
+
+.buttonContent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $default-gap;
+}
+
+.buttonIcon {
+  display: block;
+  flex-shrink: 0;
+}

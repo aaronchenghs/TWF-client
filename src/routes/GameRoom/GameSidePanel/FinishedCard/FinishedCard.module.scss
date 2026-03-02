@@ -5,13 +5,14 @@
   gap: $default-gap;
 }
 
-.creatorMessageRow {
+.seoActionsRow {
   display: flex;
+  flex-wrap: wrap;
+  gap: $default-gap;
   justify-content: center;
 }
 
 .rematchCard {
   display: grid;
   gap: $default-gap;
-  margin-top: calc($default-padding / 2);
 }

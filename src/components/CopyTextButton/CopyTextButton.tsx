@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./CopyTextButton.module.scss";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
+import { copyTextToClipboard } from "@/lib/clipboard";
 
 const DEFAULT_COPIED_MS = 900;
 const { copy: CopyIcon, copied: CopiedIcon } = APP_ICONS;
@@ -24,34 +25,9 @@ export function CopyTextButton({
   const timerRef = useRef<number | null>(null);
   const isDisabled = disabled || !value;
 
-  const handleCopy = useCallback(async () => {
-    if (!value) return false;
-
-    try {
-      await navigator.clipboard.writeText(value);
-      return true;
-    } catch {
-      try {
-        const el = document.createElement("textarea");
-        el.value = value;
-        el.style.position = "fixed";
-        el.style.left = "-9999px";
-        el.style.top = "0";
-        document.body.appendChild(el);
-        el.focus();
-        el.select();
-        const ok = document.execCommand("copy");
-        document.body.removeChild(el);
-        return ok;
-      } catch {
-        return false;
-      }
-    }
-  }, [value]);
-
   const onClick = useCallback(async () => {
     if (disabled) return;
-    const ok = await handleCopy();
+    const ok = await copyTextToClipboard(value);
     if (!ok) return;
 
     setIsCopied(true);
@@ -60,7 +36,7 @@ export function CopyTextButton({
       () => setIsCopied(false),
       DEFAULT_COPIED_MS,
     );
-  }, [disabled, handleCopy]);
+  }, [disabled, value]);
 
   useEffect(function cleanupCopyTimer() {
     return () => {

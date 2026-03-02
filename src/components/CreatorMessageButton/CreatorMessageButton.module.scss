@@ -8,7 +8,7 @@
 .section {
   display: grid;
   gap: $default-gap;
-  padding: calc($default-padding * 0.8);
+  padding: $default-padding;
   border-radius: $radius-md;
   border: 1px solid $light-transparency;
   background: $light-transparency;

@@ -3,14 +3,15 @@ import styles from "./FinishedControls.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { CreatorMessageButton } from "@/components/CreatorMessageButton/CreatorMessageButton";
+import { ShareResultsButton } from "@/components/ShareResultsButton/ShareResultsButton";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
 
 type FinishedControlsProps = {
-  phase: Contracts.RoomPublicState["phase"];
+  state: Contracts.RoomPublicState;
 };
 
-export function FinishedControls({ phase }: FinishedControlsProps) {
+export function FinishedControls({ state }: FinishedControlsProps) {
   const [isPlayAgainSubmitting, setIsPlayAgainSubmitting] = useState(false);
   const [isWaitingForHostRematch, setIsWaitingForHostRematch] = useState(false);
   const [hasHostStartedRematch, setHasHostStartedRematch] = useState(false);
@@ -30,7 +31,7 @@ export function FinishedControls({ phase }: FinishedControlsProps) {
   }, [hasHostStartedRematch, isWaitingForHostRematch]);
 
   const handlePlayAgain = () => {
-    if (phase !== "FINISHED") return;
+    if (state.phase !== "FINISHED") return;
     if (isPlayAgainSubmitting || isWaitingForHostRematch) return;
     setIsPlayAgainSubmitting(true);
     roomSocket.playAgain();
@@ -38,7 +39,7 @@ export function FinishedControls({ phase }: FinishedControlsProps) {
 
   useEffect(
     function subscribeToRematchSignalsWhileFinished() {
-      if (phase !== "FINISHED") return;
+      if (state.phase !== "FINISHED") return;
 
       const offQueued = roomSocket.onPlayAgainQueued(() => {
         setIsPlayAgainSubmitting(false);
@@ -57,22 +58,23 @@ export function FinishedControls({ phase }: FinishedControlsProps) {
         offStarted();
       };
     },
-    [phase],
+    [state.phase],
   );
 
   useEffect(
     function resetRematchFlagsWhenLeavingFinished() {
-      if (phase === "FINISHED") return;
+      if (state.phase === "FINISHED") return;
       setIsWaitingForHostRematch(false);
       setHasHostStartedRematch(false);
       setIsPlayAgainSubmitting(false);
     },
-    [phase],
+    [state.phase],
   );
 
   return (
     <div className={styles.finishedStack}>
-      <div className={styles.creatorMessageRow}>
+      <div className={styles.utilityActionsRow}>
+        <ShareResultsButton state={state} />
         <CreatorMessageButton />
       </div>
 

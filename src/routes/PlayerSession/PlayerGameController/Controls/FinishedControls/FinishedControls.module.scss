@@ -11,8 +11,10 @@
   gap: $default-gap;
 }
 
-.creatorMessageRow {
+.utilityActionsRow {
   display: flex;
+  flex-wrap: wrap;
+  gap: $default-gap;
   justify-content: center;
 }
 

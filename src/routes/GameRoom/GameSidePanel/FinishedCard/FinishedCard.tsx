@@ -2,27 +2,28 @@ import * as Contracts from "@twf/contracts";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { CreatorMessageButton } from "@/components/CreatorMessageButton/CreatorMessageButton";
+import { ShareResultsButton } from "@/components/ShareResultsButton/ShareResultsButton";
 import { GameStatusCard } from "../GameStatusCard/GameStatusCard";
 import styles from "./FinishedCard.module.scss";
 
-type Phase = Contracts.RoomPublicState["phase"];
+type RoomPublicState = Contracts.RoomPublicState;
 
 type FinishedCardProps = {
-  phase: Phase;
+  state: RoomPublicState;
   onPlayAgain: () => void;
   isRematchSubmitting: boolean;
 };
 
 export function FinishedCard({
-  phase,
+  state,
   onPlayAgain,
   isRematchSubmitting,
 }: FinishedCardProps) {
-  if (phase !== "FINISHED") return null;
+  if (state.phase !== "FINISHED") return null;
 
   return (
     <div className={styles.finishedStack}>
-      <GameStatusCard label="NEXT ROUND">
+      <GameStatusCard>
         <div className={styles.rematchCard}>
           <MainTextTypography variant="body" muted textAlign="center">
             Return to lobby with the same players?
@@ -32,7 +33,8 @@ export function FinishedCard({
           </AccentButton>
         </div>
       </GameStatusCard>
-      <div className={styles.creatorMessageRow}>
+      <div className={styles.seoActionsRow}>
+        <ShareResultsButton state={state} />
         <CreatorMessageButton />
       </div>
     </div>

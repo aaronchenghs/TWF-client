@@ -54,7 +54,7 @@ export function Controls({
         );
 
       case "FINISHED":
-        return <FinishedControls phase={state.phase} />;
+        return <FinishedControls state={state} />;
 
       default:
         return <AwaitingControls />;

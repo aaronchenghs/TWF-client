@@ -34,7 +34,7 @@ export function GameSidePanel({
       <CurrentItemCard state={state} />
       <ActivePlayersCard state={state} />
       <FinishedCard
-        phase={state.phase}
+        state={state}
         onPlayAgain={onPlayAgain}
         isRematchSubmitting={isRematchSubmitting}
       />

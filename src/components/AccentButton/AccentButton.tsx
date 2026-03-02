@@ -4,7 +4,7 @@ import styles from "./AccentButton.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 import { useMobileView } from "@/lib/hooks/useMobileView";
 
-type Variant = "primary" | "secondary" | "ghost" | "destructive";
+type Variant = "primary" | "secondary" | "ghost" | "destructive" | "special";
 type Size = "small";
 
 interface AccentButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

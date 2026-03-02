@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./FinishedControls.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { CreatorMessageButton } from "@/components/CreatorMessageButton/CreatorMessageButton";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import * as Contracts from "@twf/contracts";
 
@@ -70,22 +71,28 @@ export function FinishedControls({ phase }: FinishedControlsProps) {
   );
 
   return (
-    <div className={styles.finishedActions}>
-      <MainTextTypography
-        variant="body"
-        muted
-        textAlign="center"
-        className={styles.finishedMessage}
-      >
-        {finishedMessage}
-      </MainTextTypography>
+    <div className={styles.finishedStack}>
+      <div className={styles.creatorMessageRow}>
+        <CreatorMessageButton />
+      </div>
 
-      <AccentButton
-        onClick={handlePlayAgain}
-        disabled={isPlayAgainSubmitting || isWaitingForHostRematch}
-      >
-        {playAgainLabel}
-      </AccentButton>
+      <div className={styles.finishedActions}>
+        <MainTextTypography
+          variant="body"
+          muted
+          textAlign="center"
+          className={styles.finishedMessage}
+        >
+          {finishedMessage}
+        </MainTextTypography>
+
+        <AccentButton
+          onClick={handlePlayAgain}
+          disabled={isPlayAgainSubmitting || isWaitingForHostRematch}
+        >
+          {playAgainLabel}
+        </AccentButton>
+      </div>
     </div>
   );
 }

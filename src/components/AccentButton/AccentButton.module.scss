@@ -117,3 +117,34 @@
     box-shadow: 0 0 0 3px rgba($bg-elevated, 0.55);
   }
 }
+
+.special {
+  --accent-fill: #{rgba($special, 0.18)};
+  --accent-glow: #{rgba($special, 0.34)};
+
+  color: $special;
+  border-color: $special;
+  background: rgba($special, 0.08);
+  box-shadow:
+    $shadow-comic-control,
+    0 0 10px rgba($special, 0.3),
+    0 0 22px rgba($special, 0.24);
+
+  &:hover:not(:disabled) {
+    background: rgba($special, 0.18);
+    border-color: $special;
+    color: $special;
+    box-shadow:
+      $shadow-elevated-md,
+      0 0 12px rgba($special, 0.34),
+      0 0 26px rgba($special, 0.34);
+  }
+
+  &:focus-visible {
+    box-shadow:
+      0 0 0 3px var(--accent-glow),
+      $shadow-comic-control,
+      0 0 12px rgba($special, 0.34),
+      0 0 26px rgba($special, 0.34);
+  }
+}

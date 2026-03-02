@@ -1,5 +1,21 @@
 @use "../../../../../styles/export.scss" as *;
 
+.finishedStack {
+  width: 100%;
+  max-width: $page-width-cutoff;
+  margin-top: auto;
+  margin-left: auto;
+  margin-right: auto;
+
+  display: grid;
+  gap: $default-gap;
+}
+
+.creatorMessageRow {
+  display: flex;
+  justify-content: center;
+}
+
 .finishedActions {
   width: 100%;
   border-radius: $radius-lg;
@@ -7,13 +23,8 @@
   background: $box-shadow-color;
   border: 1px solid $light-transparency;
 
-  max-width: $page-width-cutoff;
-  margin-left: auto;
-  margin-right: auto;
-
   display: grid;
   gap: $default-gap;
-  margin-top: auto;
 }
 
 .finishedMessage {

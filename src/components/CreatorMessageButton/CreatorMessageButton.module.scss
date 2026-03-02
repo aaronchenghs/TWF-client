@@ -1,0 +1,20 @@
+@use "../../styles/export.scss" as *;
+
+.content {
+  display: grid;
+  gap: $default-gap;
+}
+
+.sections {
+  display: grid;
+  gap: $default-gap;
+}
+
+.section {
+  display: grid;
+  gap: calc($default-gap / 2);
+  padding: calc($default-padding * 0.8);
+  border-radius: $radius-md;
+  border: 1px solid $light-transparency;
+  background: $light-transparency;
+}

@@ -1,5 +1,15 @@
 @use "../../../../styles/export.scss" as *;
 
+.finishedStack {
+  display: grid;
+  gap: $default-gap;
+}
+
+.creatorMessageRow {
+  display: flex;
+  justify-content: center;
+}
+
 .rematchCard {
   display: grid;
   gap: $default-gap;

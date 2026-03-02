@@ -122,6 +122,7 @@ export const LOCAL_STORAGE_KEYS = {
   HOST_SESSION: "twf:hostSession",
   HOST_STARTED_ROOM_CODE: "twf:hostStartedRoomCode",
   HOST_LOBBY_PLAY_TIP_SEEN: "twf:hostLobbyPlayTipSeen",
+  CREATOR_MESSAGE_SEEN: "twf:creatorMessageSeen",
   USER_REDUCE_MOTION: "twf:userReduceMotion",
   USER_SHOW_TIPS: "twf:userShowTips",
   USER_HIGH_CONTRAST: "twf:userHighContrast",
@@ -159,6 +160,12 @@ const LOCAL_STORAGE_VARIABLES = [
     name: "hostLobbyPlayTipSeen",
     keyPattern: LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN,
     isKey: exactKey(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN),
+    codec: booleanCodec,
+  }),
+  defineStorageVariable({
+    name: "creatorMessageSeen",
+    keyPattern: LOCAL_STORAGE_KEYS.CREATOR_MESSAGE_SEEN,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.CREATOR_MESSAGE_SEEN),
     codec: booleanCodec,
   }),
   defineStorageVariable({

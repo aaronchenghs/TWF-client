@@ -94,7 +94,7 @@ export default function Landing() {
         variant="caption"
         letterSpacing="wide"
       >
-        v{APP_VERSION}
+        © 2026 ARC | v{APP_VERSION}
       </MainTextTypography>
     </div>
   );

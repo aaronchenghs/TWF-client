@@ -5,16 +5,51 @@
   gap: $default-gap;
 }
 
-.sections {
-  display: grid;
-  gap: $default-gap;
-}
-
 .section {
   display: grid;
-  gap: calc($default-gap / 2);
+  gap: $default-gap;
   padding: calc($default-padding * 0.8);
   border-radius: $radius-md;
   border: 1px solid $light-transparency;
   background: $light-transparency;
+}
+
+.bulletList {
+  display: grid;
+  gap: $default-gap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bulletItem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: $default-gap;
+  align-items: start;
+}
+
+.bulletIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: $round;
+  display: grid;
+  place-items: center;
+  color: $special;
+  background: rgba($special, 0.12);
+  box-shadow: 0 0 14px rgba($special, 0.12);
+  flex-shrink: 0;
+}
+
+.bulletText {
+  padding-top: 2px;
+}
+
+.bulletLabel {
+  color: $special;
+}
+
+.email {
+  color: $special;
+  font-style: italic;
 }

@@ -1,4 +1,11 @@
 import { useState } from "react";
+import {
+  BarChart3,
+  FolderPlus,
+  SlidersHorizontal,
+  Trophy,
+  type LucideIcon,
+} from "lucide-react";
 import { AccentButton } from "../AccentButton/AccentButton";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
@@ -9,26 +16,34 @@ import {
 } from "@/lib/localStorage";
 import styles from "./CreatorMessageButton.module.scss";
 
-type CreatorMessageSection = {
-  title: string;
-  body: string;
-};
-
-// Shared copy so every finished-state trigger stays in sync.
-const CREATOR_MESSAGE_SECTIONS: CreatorMessageSection[] = [
+const CREATOR_MESSAGE_PLANS: CreatorMessagePlan[] = [
   {
-    title: "Short term",
-    body: "I am focused on tightening the core loop with smoother transitions, clearer feedback, and better end-of-round polish.",
+    label: "User-Created Tier Sets",
+    icon: FolderPlus,
+    body: 'In this demo I have built out some pre-made game sets to play like "Anime" and "Video Games". I\'d like for these to be created, saved, and shared by users in the future. This comes with user accounts!',
   },
   {
-    title: "Next up",
-    body: "I want to keep expanding the content with more tier sets, more variety, and more reasons for each round to feel fresh.",
+    label: "Game Modes",
+    icon: SlidersHorizontal,
+    body: "Don't like being timed? Want some variety to the game? Game modes and lobby customization will make each session fit your group better.",
   },
   {
-    title: "Longer term",
-    body: "The plan is to keep improving the social side of the game, add strong quality-of-life upgrades, and keep iterating based on how people actually play.",
+    label: "Global Stats",
+    icon: BarChart3,
+    body: "See how your game set results compare to others who have played the same game set.",
+  },
+  {
+    label: "Superlatives",
+    icon: Trophy,
+    body: "Players get superlatives awarded to them at the end of the game based on their votes and placements.",
   },
 ];
+
+type CreatorMessagePlan = {
+  label: string;
+  icon: LucideIcon;
+  body: string;
+};
 
 export function CreatorMessageButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,7 +70,6 @@ export function CreatorMessageButton() {
         open={isOpen}
         onClose={() => setIsOpen(false)}
         title="Message from Creator"
-        subtitle="WHAT'S NEXT"
         maxWidth={720}
         ariaLabel="Message from creator"
         footer={
@@ -64,22 +78,48 @@ export function CreatorMessageButton() {
       >
         <div className={styles.content}>
           <MainTextTypography variant="body" muted>
-            Thanks for playing. Here is the direction I am taking the game as I
-            keep building it out.
+            Thanks for playing my demo of{" "}
+            <strong className={styles.bulletLabel}>Tiers! With Friends</strong>.
+            This was something I made as a side project to keep myself working
+            on something at home.
+            <br />
+            <br />
+            My goal with this was to create a fun experience for at least 1
+            group of people, if that has been achieved then I've accomplished my
+            goal! If you enjoyed playing and want to see more in the future,
+            please let me know. I can be reached at{" "}
+            <span className={styles.email}>aaronchenghs@gmail.com</span> or you
+            can submit a ticket using the "bug" button in the bottom-right
+            corner of your screen.
+            <br />
+            <br />I have lots of plans for the future of this game:
           </MainTextTypography>
 
-          <div className={styles.sections}>
-            {CREATOR_MESSAGE_SECTIONS.map((section) => (
-              <div className={styles.section} key={section.title}>
-                <MainTextTypography variant="label" letterSpacing="wide">
-                  {section.title}
-                </MainTextTypography>
+          <div className={styles.section}>
+            <ul className={styles.bulletList}>
+              {CREATOR_MESSAGE_PLANS.map((plan) => {
+                const Icon = plan.icon;
 
-                <MainTextTypography variant="body" muted>
-                  {section.body}
-                </MainTextTypography>
-              </div>
-            ))}
+                return (
+                  <li className={styles.bulletItem} key={plan.body}>
+                    <span className={styles.bulletIcon} aria-hidden="true">
+                      <Icon size={18} strokeWidth={2.2} />
+                    </span>
+
+                    <MainTextTypography
+                      variant="body"
+                      muted
+                      className={styles.bulletText}
+                    >
+                      <strong className={styles.bulletLabel}>
+                        {plan.label}:
+                      </strong>{" "}
+                      {plan.body}
+                    </MainTextTypography>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </div>
       </PrimaryModal>

@@ -35,6 +35,7 @@ type RawOn = (event: string, handler: RawSocketHandler) => ContractSocket;
 
 type RawOff = (event: string, handler: RawSocketHandler) => ContractSocket;
 
+type ConnectHandler = () => void;
 type ConnectErrorHandler = (errorMessage: string) => void;
 
 class SocketClient {
@@ -110,6 +111,20 @@ class SocketClient {
     once.call(this.socket, event, handler);
     return () => {
       off.call(this.socket, event, handler);
+    };
+  }
+
+  /** Subscribes to low-level socket disconnect events; returns an unsubscribe function. */
+  onConnect(handler: ConnectHandler): () => void {
+    const on = this.socket.on as unknown as RawOn;
+    const off = this.socket.off as unknown as RawOff;
+    const rawHandler: RawSocketHandler = () => {
+      handler();
+    };
+
+    on.call(this.socket, "connect", rawHandler);
+    return () => {
+      off.call(this.socket, "connect", rawHandler);
     };
   }
 

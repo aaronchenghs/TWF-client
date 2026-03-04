@@ -3,3 +3,4 @@ Allow: /
 Disallow: /host/
 Disallow: /player/
 Disallow: /game/
+Sitemap: https://www.tierswithfriends.com/sitemap.xml

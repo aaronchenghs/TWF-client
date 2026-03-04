@@ -16,7 +16,7 @@ const ROBOTS_PUBLIC = "index, follow";
 const ROBOTS_PRIVATE = "noindex, nofollow";
 
 const DEFAULT_DESCRIPTION =
-  "Play Tiers! With Friends, a real-time multiplayer party game where friends build tier lists together.";
+  "Play Tiers! With Friends, the multiplayer tier list party game for game night. Create a lobby, join from any phone, and rank wild prompts together in real time.";
 const HOST_LOBBY_DESCRIPTION =
   "Private host lobby for Tiers! With Friends. Share your room code to start a game.";
 const PLAYER_SESSION_DESCRIPTION =
@@ -112,6 +112,7 @@ export function useRouteSeo() {
       ensureMetaTag("twitter:card", "summary");
       ensureMetaTag("twitter:title", meta.title);
       ensureMetaTag("twitter:description", meta.description);
+      ensureMetaTag("twitter:url", canonical);
 
       ensureOgMetaTag("og:type", "website");
       ensureOgMetaTag("og:site_name", SITE_NAME);

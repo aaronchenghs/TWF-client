@@ -1,5 +1,4 @@
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
-import { openIssueReportForm } from "@/lib/openIssueReportForm";
 import { useAppDispatch } from "@/store/store";
 import { openSettingsModal } from "@/store/slices/userSettingsSlice";
 import styles from "./GlobalQuickActions.module.scss";
@@ -7,7 +6,7 @@ import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { matchPath, useLocation } from "react-router-dom";
 import { QUICK_ACTIONS_HIDDEN_ROUTE_PATTERNS } from "@/routes/routes";
 
-const { settings: SettingsIcon, reportIssue: ReportIssueIcon } = APP_ICONS;
+const { settings: SettingsIcon } = APP_ICONS;
 
 export function GlobalQuickActions() {
   const dispatch = useAppDispatch();
@@ -25,12 +24,6 @@ export function GlobalQuickActions() {
         icon={<SettingsIcon {...iconProps} aria-hidden="true" />}
         label="Settings"
         onClick={() => dispatch(openSettingsModal())}
-        expandDirection="left"
-      />
-      <ExpandingIconButton
-        icon={<ReportIssueIcon {...iconProps} aria-hidden="true" />}
-        label="Report Issue"
-        onClick={openIssueReportForm}
         expandDirection="left"
       />
     </div>

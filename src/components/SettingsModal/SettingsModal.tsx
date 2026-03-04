@@ -16,6 +16,7 @@ import styles from "./SettingsModal.module.scss";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { playSfx, setSoundEffectsVolume } from "@/lib/sounds/soundEffects";
 import { useMobileView } from "@/lib/hooks/useMobileView";
+import { openIssueReportForm } from "@/lib/openIssueReportForm";
 
 const {
   reduceMotion: ReduceMotionIcon,
@@ -23,6 +24,7 @@ const {
   showTips: ShowTipsIcon,
   streamerMode: StreamerModeIcon,
   soundEffects: SoundEffectsIcon,
+  reportIssue: ReportIssueIcon,
 } = APP_ICONS;
 
 export function SettingsModal() {
@@ -134,6 +136,24 @@ export function SettingsModal() {
               onChange={(nextValue) => dispatch(setStreamerMode(nextValue))}
               ariaLabel="Toggle streamer mode"
             />
+          }
+        />
+
+        <SettingsOptionRow
+          icon={<ReportIssueIcon {...iconProps} />}
+          title="Support"
+          description="Found a bug? Send a report so we can look into it."
+          layout="inline"
+          control={
+            <AccentButton
+              size="small"
+              onClick={() => {
+                dispatch(closeSettingsModal());
+                openIssueReportForm();
+              }}
+            >
+              Report a bug
+            </AccentButton>
           }
         />
       </div>

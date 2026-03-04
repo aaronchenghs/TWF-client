@@ -54,7 +54,7 @@ export default function Landing() {
           onClick={() => setIsHowToOpen(true)}
         >
           <MainTextTypography variant="caption" muted letterSpacing="wide">
-            HOW TO PLAY
+            WHAT IS THIS?
           </MainTextTypography>
         </button>
 

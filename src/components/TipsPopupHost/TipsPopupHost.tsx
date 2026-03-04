@@ -36,7 +36,7 @@ export function TipsPopupHost() {
         <MainTextTypography variant="body" muted>
           Host on a big screen or screen-share, and have everyone join with this
           room's code on their own phone or device. You can still play by
-          joining from your phone or a second tab!
+          joining from your phone!
         </MainTextTypography>
 
         <AccentButton

@@ -95,8 +95,7 @@ export function CreatorMessageButton() {
             goal! If you enjoyed playing and want to see more in the future,
             please let me know. I can be reached at{" "}
             <span className={styles.email}>aaronchenghs@gmail.com</span> or you
-            can submit a ticket using the "bug" button in the bottom-right
-            corner of your screen.
+            can submit a ticket using the "Report a bug" button in Settings.
             <br />
             <br />I have lots of plans for the future of this game:
           </MainTextTypography>

@@ -1,12 +1,20 @@
 @use "../../styles/export.scss" as *;
 
+$quick-actions-clearance: calc($default-padding * 5.5);
+
 .tip {
   position: fixed;
-  right: calc(env(safe-area-inset-right, 0px) + $default-padding);
+  right: calc(
+    env(safe-area-inset-right, 0px) + $default-padding +
+      $quick-actions-clearance
+  );
   bottom: calc(env(safe-area-inset-bottom, 0px) + $default-padding);
   z-index: 50;
 
-  width: min(390px, calc(100vw - ($default-padding * 2)));
+  width: min(
+    390px,
+    calc(100vw - ($default-padding * 2) - $quick-actions-clearance)
+  );
   display: flex;
   flex-direction: column;
   gap: $default-gap;
@@ -15,7 +23,7 @@
   @include comicPanel(
     $comic-skew-soft,
     $radius-md,
-    $accent,
+    $bg-elevated,
     $bg-surface,
     false
   );

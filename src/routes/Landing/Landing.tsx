@@ -9,7 +9,7 @@ import { useRef, useState, type KeyboardEvent } from "react";
 import { normalizeCode, normalizeName } from "../../lib/stringNormalizers";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
-import { HowToPlayModal } from "../../components/HowToPlayModal/HowToPlayModal";
+import { WhatIsThisModal } from "../../components/WhatIsThisModal/WhatIsThisModal";
 import * as Contracts from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
 import {
@@ -27,7 +27,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const isMobile = useMobileView();
   const [isCreatingLobby, setIsCreatingLobby] = useState<boolean>(false);
-  const [isHowToOpen, setIsHowToOpen] = useState(false);
+  const [isWhatIsThisOpen, setIsWhatIsThisOpen] = useState(false);
 
   const handleCreateRoom = async () => {
     setIsCreatingLobby(true);
@@ -51,7 +51,7 @@ export default function Landing() {
         <button
           type="button"
           className={styles.howToPlayLink}
-          onClick={() => setIsHowToOpen(true)}
+          onClick={() => setIsWhatIsThisOpen(true)}
         >
           <MainTextTypography variant="caption" muted letterSpacing="wide">
             WHAT IS THIS?
@@ -83,10 +83,9 @@ export default function Landing() {
         </div>
       </div>
 
-      <HowToPlayModal
-        key={isHowToOpen ? "howto-open" : "howto-closed"}
-        open={isHowToOpen}
-        onClose={() => setIsHowToOpen(false)}
+      <WhatIsThisModal
+        open={isWhatIsThisOpen}
+        onClose={() => setIsWhatIsThisOpen(false)}
       />
 
       <MainTextTypography

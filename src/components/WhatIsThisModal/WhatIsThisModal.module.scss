@@ -1,0 +1,38 @@
+@use "../../styles/export.scss" as *;
+
+.content {
+  display: grid;
+  gap: $default-gap;
+}
+
+.section {
+  display: grid;
+  gap: $default-gap;
+  text-align: left;
+  padding: $default-padding;
+  border-radius: $radius-md;
+  border: 1px solid $light-transparency;
+  background: $light-transparency;
+}
+
+.stepList,
+.bulletList {
+  margin: 0;
+  padding-left: calc($default-padding * 1.5);
+  display: grid;
+  gap: calc($default-gap * 0.8);
+}
+
+.stepList li::marker,
+.bulletList li::marker {
+  color: $accent;
+}
+
+.logo {
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+
+  display: block;
+  @include float(6px, 3.5s);
+}

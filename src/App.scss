@@ -76,33 +76,33 @@ a {
   color: inherit;
 }
 
-:global(html[data-reduce-motion="true"]) *,
-:global(html[data-reduce-motion="true"]) *::before,
-:global(html[data-reduce-motion="true"]) *::after {
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after {
   animation-duration: 1ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 1ms !important;
   scroll-behavior: auto !important;
 }
 
-:global(html[data-theme="contrast"] body) {
+html[data-theme="contrast"] body {
   background: var(--bg-app) !important;
   color: var(--text-primary);
 }
 
-:global(html[data-theme="contrast"] body::before),
-:global(html[data-theme="contrast"] body::after) {
+html[data-theme="contrast"] body::before,
+html[data-theme="contrast"] body::after {
   opacity: 0.08;
 }
 
-:global(html[data-theme="contrast"] button),
-:global(html[data-theme="contrast"] input),
-:global(html[data-theme="contrast"] textarea),
-:global(html[data-theme="contrast"] select) {
+html[data-theme="contrast"] button,
+html[data-theme="contrast"] input,
+html[data-theme="contrast"] textarea,
+html[data-theme="contrast"] select {
   border-color: var(--text-primary) !important;
 }
 
-:global(html[data-theme="contrast"] a) {
+html[data-theme="contrast"] a {
   color: #ffff00;
   text-decoration: underline;
 }

@@ -1,5 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import "./App.module.scss";
+import "./App.scss";
 import { SnackbarHost } from "@/components/Snackbar/Snackbar";
 import { AnimatedRoutes } from "@/AnimatedRoutes";
 import { SettingsModal } from "@/components/SettingsModal/SettingsModal";

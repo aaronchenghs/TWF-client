@@ -22,11 +22,13 @@ import {
 } from "@/lib/roomClientState";
 import { useRoomCodeDisplayValue } from "@/lib/roomCode";
 import { GameSidePanel } from "./GameSidePanel/GameSidePanel";
+import { useScreenWakeLock } from "@/lib/hooks/useScreenWakeLock";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
 export default function GameRoom() {
   const navigate = useNavigate();
+  useScreenWakeLock({ enabled: true });
   const { roomCode, isRoomCodeValid, displayRoomCode } =
     useRoomCodeDisplayValue(readHostRoomCode());
 

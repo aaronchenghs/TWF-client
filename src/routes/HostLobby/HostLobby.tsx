@@ -104,11 +104,10 @@ export default function HostLobby() {
 
   useEffect(
     function maybeShowBestPlayTip() {
-      if (!isRoomCodeValid) return;
-      if (!$isShowTips) return;
       if (
-        getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN) ===
-        true
+        !isRoomCodeValid ||
+        !$isShowTips ||
+        getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN)
       )
         return;
 

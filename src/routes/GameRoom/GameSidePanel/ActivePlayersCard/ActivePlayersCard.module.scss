@@ -56,20 +56,7 @@
   justify-content: flex-end;
   margin-left: calc($default-gap / 2);
   gap: 0;
-
   color: var(--vote-color, $text-secondary);
-
-  transition:
-    color $dur-fast $ease-out,
-    opacity $dur-fast $ease-out;
-}
-
-.voteIndicatorPending {
-  opacity: $op-muted;
-}
-
-.voteIndicatorLocked {
-  opacity: 1;
 }
 
 .voteIndicatorIcon {

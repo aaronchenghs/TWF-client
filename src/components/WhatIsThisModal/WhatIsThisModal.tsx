@@ -13,7 +13,7 @@ const QUICK_START_STEPS = [
 const ROUND_FLOW = [
   "Players use their phone as a controller to play the game",
   "When a player's turn starts, they place a secret item before the timer runs out",
-  "The group sees the placement, discusses it, then votes to move it up, down, or keep it",
+  "The group sees the placement, discusses it, then votes to move it up, down, or abstain",
   "After all items are placed, the final tier list is revealed",
 ] as const;
 

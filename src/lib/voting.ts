@@ -6,11 +6,6 @@ import type {
 } from "@twf/contracts";
 import { clamp } from "./clamp";
 
-function getParticipationCap(participation: number): 0 | 1 {
-  if (participation < 1 / 3) return 0;
-  return 1;
-}
-
 export function computeVoteResolution(args: {
   votes: Record<string, VoteValue | undefined>;
   eligibleVoterIds: string[];
@@ -40,39 +35,29 @@ export function computeVoteResolution(args: {
   let agree = 0;
   let down1 = 0;
 
-  let sum = 0;
+  let netTierDelta = 0;
   for (const playerId of actualVoterIds) {
     const voteRaw = votes[playerId];
     if (voteRaw === undefined) continue;
 
     const vote = voteRaw < 0 ? -1 : voteRaw > 0 ? 1 : 0;
 
-    sum += vote;
-    if (vote < 0) up1 += 1;
-    else if (vote > 0) down1 += 1;
-    else agree += 1;
+    if (vote < 0) {
+      up1 += 1;
+      netTierDelta -= 1;
+    } else if (vote > 0) {
+      down1 += 1;
+      netTierDelta += 1;
+    } else {
+      agree += 1;
+    }
   }
 
   const safeTierOrder = tierOrder.length > 0 ? tierOrder : [fromTierId];
   const fromIdxRaw = safeTierOrder.indexOf(fromTierId);
   const fromIdx = fromIdxRaw >= 0 ? fromIdxRaw : 0;
 
-  const participation = eligible === 0 ? 0 : voters / eligible;
-  const participationCap = getParticipationCap(participation);
-
-  const wantUp = up1;
-  const wantDown = down1;
-
-  let direction: -1 | 0 | 1 = 0;
-  if (voters > 0) {
-    if (wantDown > voters / 2) direction = 1;
-    else if (wantUp > voters / 2) direction = -1;
-  }
-
-  const baseMagnitude: 0 | 1 = direction === 0 ? 0 : 1;
-
-  const magnitude = Math.min(baseMagnitude, participationCap) as 0 | 1;
-  const driftDeltaRequested = direction * magnitude;
+  const driftDeltaRequested = netTierDelta;
 
   const toIdx = clamp(
     fromIdx + driftDeltaRequested,
@@ -88,13 +73,13 @@ export function computeVoteResolution(args: {
     : toTierBase;
   const toTierLength = toTier.length;
 
-  const allActualVotesAgree = voters > 0 && wantUp === 0 && wantDown === 0;
-
-  const mean = voters === 0 ? 0 : sum / voters;
+  const valuedVoters = up1 + down1;
+  const participation = eligible === 0 ? 0 : valuedVoters / eligible;
+  const mean = valuedVoters === 0 ? 0 : netTierDelta / valuedVoters;
   const score = mean * participation;
 
   let insertIndex = toTierLength;
-  if (voters === 0 || allActualVotesAgree) {
+  if (valuedVoters === 0) {
     insertIndex = toTierLength;
   } else {
     const bias = score - driftDeltaApplied;

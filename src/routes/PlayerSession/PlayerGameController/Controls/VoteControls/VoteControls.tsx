@@ -34,10 +34,10 @@ const VOTE_OPTIONS = [
     ariaLabel: "Vote bump up one tier",
   },
   {
-    label: "Agree",
+    label: "No Vote",
     value: 0 as const,
     Icon: APP_ICONS.vote.agree,
-    ariaLabel: "Vote agree",
+    ariaLabel: "Cast no vote",
   },
   {
     label: "Bump Down",

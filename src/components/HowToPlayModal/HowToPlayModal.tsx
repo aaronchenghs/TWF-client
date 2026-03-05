@@ -127,7 +127,7 @@ const HOW_TO_STEPS: HowToPlayStep[] = [
   },
   {
     title: "The placement is revealed, discussion begins",
-    body: "The placement of the item is revealed to everyone. Discuss where it should go and place a vote on if it should be promoted, demoted, or stay.",
+    body: "The placement of the item is revealed to everyone. Discuss where it should go and place a vote to promote, demote, or abstain.",
     imageSrc: Step3Img,
     alt: "Discuss",
   },

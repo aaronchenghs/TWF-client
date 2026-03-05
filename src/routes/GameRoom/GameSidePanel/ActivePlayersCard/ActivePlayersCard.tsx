@@ -21,7 +21,7 @@ type VoteIndicatorMeta = {
 
 const voteIndicatorMetaByValue = new Map<VoteValue, VoteIndicatorMeta>([
   [-1, { Icon: APP_ICONS.vote.up, label: "bump up" }],
-  [0, { Icon: APP_ICONS.vote.agree, label: "agree" }],
+  [0, { Icon: APP_ICONS.vote.agree, label: "no vote" }],
   [1, { Icon: APP_ICONS.vote.down, label: "bump down" }],
 ]);
 
@@ -147,9 +147,6 @@ function ActivePlayerRow({
             vote !== null && vote < 0 && styles.voteToneUp,
             vote === 0 && styles.voteToneAgree,
             vote !== null && vote > 0 && styles.voteToneDown,
-            isVoteConfirmed
-              ? styles.voteIndicatorLocked
-              : styles.voteIndicatorPending,
           )}
           role="img"
           aria-label={`${voteAriaPrefix}: ${voteMeta.label}`}

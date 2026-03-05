@@ -58,6 +58,12 @@ function getVoteToneClassName(vote: VoteValue): string {
   return styles.toneAgree;
 }
 
+function getVoteToneButtonClassName(vote: VoteValue): string {
+  if (vote < 0) return styles.toneButtonUp;
+  if (vote > 0) return styles.toneButtonDown;
+  return styles.toneButtonAgree;
+}
+
 type VoteControlsProps = {
   state: Contracts.RoomPublicState;
   canVote: boolean;
@@ -333,7 +339,11 @@ export function VoteControls({
               <AccentButton
                 key={opt.label}
                 variant={isSelected ? "primary" : "secondary"}
-                className={styles.bigButton}
+                selected={isSelected}
+                className={clsx(
+                  styles.bigButton,
+                  getVoteToneButtonClassName(opt.value),
+                )}
                 disabled={disabledVote || isDiscussionLocked}
                 onClick={(event) => handleVoteButtonClick(event, opt.value)}
                 aria-label={opt.ariaLabel}
@@ -342,7 +352,7 @@ export function VoteControls({
                 <span
                   className={clsx(
                     styles.voteButtonContent,
-                    getVoteToneClassName(opt.value),
+                    !isSelected && getVoteToneClassName(opt.value),
                   )}
                 >
                   <opt.Icon

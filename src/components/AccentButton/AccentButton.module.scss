@@ -148,3 +148,11 @@
       0 0 26px rgba($special, 0.34);
   }
 }
+
+.selected,
+.selected:hover:not(:disabled),
+.selected:active:not(:disabled) {
+  background: var(--accent-fill);
+  border-color: $black;
+  color: $black;
+}

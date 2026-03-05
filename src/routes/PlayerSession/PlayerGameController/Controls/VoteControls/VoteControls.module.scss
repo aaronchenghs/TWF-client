@@ -44,6 +44,18 @@ $image-preview-height: 56px;
   gap: $default-gap;
 }
 
+.toneButtonUp {
+  --accent: #{vote-tone-color(up)};
+}
+
+.toneButtonAgree {
+  --accent: #{vote-tone-color(agree)};
+}
+
+.toneButtonDown {
+  --accent: #{vote-tone-color(down)};
+}
+
 .toneUp {
   color: vote-tone-color(up);
 }

@@ -12,12 +12,15 @@ interface AccentButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   size?: Size;
   /** Overrides accent color */
   color?: string;
+  /** Applies selected/inverted visual treatment. */
+  selected?: boolean;
 }
 
 export function AccentButton({
   variant = "primary",
   size,
   color,
+  selected = false,
   className,
   type = "button",
   children,
@@ -33,6 +36,7 @@ export function AccentButton({
       className={clsx(
         styles.button,
         styles[variant],
+        selected && styles.selected,
         size && styles[size],
         className,
       )}

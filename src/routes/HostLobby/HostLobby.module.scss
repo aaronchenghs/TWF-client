@@ -15,9 +15,16 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 
   .header {
     display: flex;
-    justify-content: space-between;
     align-items: flex-end;
     height: $header-height;
+    gap: $default-gap;
+
+    .logo {
+      width: auto;
+      height: 70px;
+      max-width: 100%;
+      object-fit: contain;
+    }
 
     .title {
       @include float(6px, 3s);

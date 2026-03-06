@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./HostLobby.module.scss";
+import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import {
   startTransition,
@@ -193,6 +194,7 @@ export default function HostLobby() {
   return (
     <div className={styles.root}>
       <header className={styles.header}>
+        <TWFLogo className={styles.logo} aria-hidden="true" />
         <MainTextTypography variant="h2" className={styles.title}>
           Hosting Lobby
         </MainTextTypography>

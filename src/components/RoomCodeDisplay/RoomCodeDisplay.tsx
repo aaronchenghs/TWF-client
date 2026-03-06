@@ -11,6 +11,7 @@ type RoomCodeDisplayProps = {
   roomCode: string;
   title?: string;
   className?: string;
+  codeClassName?: string;
   variant?: TypographyProps["variant"];
   muted?: TypographyProps["muted"];
 };
@@ -19,6 +20,7 @@ export function RoomCodeDisplay({
   roomCode,
   title = "Copy room code",
   className,
+  codeClassName,
   variant = "h4",
   muted,
 }: RoomCodeDisplayProps) {
@@ -36,7 +38,7 @@ export function RoomCodeDisplay({
         title={title}
       />
       <MainTextTypography
-        className={styles.code}
+        className={clsx(styles.code, codeClassName)}
         variant={variant}
         muted={muted}
       >

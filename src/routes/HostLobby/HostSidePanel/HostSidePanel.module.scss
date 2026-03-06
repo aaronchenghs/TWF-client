@@ -51,10 +51,13 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 }
 
 .roomCode {
+  display: inline-block;
   font-weight: 800;
   letter-spacing: 0.16em;
   font-variant-numeric: tabular-nums;
   text-shadow: 0 1px 0 $box-shadow-color;
+  @include float(6px, 4s);
+  will-change: transform;
 }
 
 .panel {

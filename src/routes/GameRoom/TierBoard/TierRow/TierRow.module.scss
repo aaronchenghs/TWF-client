@@ -60,6 +60,11 @@ $tier-preview-fill-opacity: 0.8;
   @include fillInAnimation(120ms, $tier-preview-fill-opacity);
 }
 
+.finishedFill::after {
+  opacity: $tier-preview-fill-opacity;
+  @include fillInAnimation(220ms, $tier-preview-fill-opacity);
+}
+
 .resultReveal::after {
   opacity: $tier-preview-fill-opacity;
   @include drainOutAnimation(1.5s, $tier-preview-fill-opacity);

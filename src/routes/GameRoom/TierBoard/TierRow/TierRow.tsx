@@ -31,6 +31,8 @@ export const TierRow = memo(function TierRow({
   const isPending =
     (isVotePhase || state.phase === "PLACE") && state.pendingTierId === tierId;
   const isGhostTier = ghostTierId === tierId;
+  const isPreviewFilled = isVotePhase && isGhostTier;
+
   const tierMeta = state.tierMetaById?.[tierId];
   const tierColor = tierMeta?.color;
   const safeItems = state.currentItem
@@ -46,6 +48,7 @@ export const TierRow = memo(function TierRow({
       className={clsx(
         styles.row,
         isPending && styles.pending,
+        isPreviewFilled && styles.previewFill,
         isVotePhase && isGhostTier && !isPending && styles.ghostTarget,
         isResultsPhase && isGhostTier && styles.resultReveal,
       )}

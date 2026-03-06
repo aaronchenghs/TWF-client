@@ -194,31 +194,50 @@
   animation: urgencyBlink $duration ease-in-out infinite alternate;
 }
 
-@keyframes colorFlood {
-  0% {
-    opacity: 0;
-    transform: scaleX(0);
-  }
+@mixin fillInAnimation(
+  $duration: 120ms,
+  $opacity: 0.8,
+  $timing: ease-out
+) {
+  animation: tierPreviewFillIn $duration $timing both;
+  will-change: opacity;
 
-  38% {
-    opacity: 1;
-    transform: scaleX(1);
-  }
+  @keyframes tierPreviewFillIn {
+    from {
+      opacity: 0;
+    }
 
-  52% {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scaleX(1);
+    to {
+      opacity: $opacity;
+    }
   }
 }
 
-@mixin colorFloodAnimation($duration: calc($dur-long * 2.5)) {
-  animation: colorFlood $duration ease both;
-  will-change: opacity, transform;
+@mixin drainOutAnimation(
+  $duration: 0.7s,
+  $opacity: 0.8,
+  $hold-percent: 88%,
+  $timing: cubic-bezier(0.22, 1, 0.36, 1)
+) {
+  animation: tierPreviewDrainOut $duration $timing both;
+  will-change: inset, opacity;
+
+  @keyframes tierPreviewDrainOut {
+    0% {
+      opacity: $opacity;
+      inset: 0 0 0 0;
+    }
+
+    #{$hold-percent} {
+      opacity: $opacity;
+      inset: 0 100% 0 0;
+    }
+
+    100% {
+      opacity: 0;
+      inset: 0 100% 0 0;
+    }
+  }
 }
 
 @mixin ghostPreviewState() {

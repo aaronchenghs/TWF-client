@@ -1,6 +1,7 @@
 @use "../../../../styles/export.scss" as *;
 
 $defaultTierColor: $light-transparency;
+$tier-preview-fill-opacity: 0.8;
 
 .row {
   --tierColor: $defaultTierColor;
@@ -35,8 +36,6 @@ $defaultTierColor: $light-transparency;
     border-radius: inherit;
     background: var(--tierColor);
     opacity: 0;
-    transform: scaleX(0);
-    transform-origin: left center;
     pointer-events: none;
   }
 
@@ -56,8 +55,14 @@ $defaultTierColor: $light-transparency;
   box-shadow: 0 0 0 2px $defaultTierColor;
 }
 
+.previewFill::after {
+  opacity: $tier-preview-fill-opacity;
+  @include fillInAnimation(120ms, $tier-preview-fill-opacity);
+}
+
 .resultReveal::after {
-  @include colorFloodAnimation(3s);
+  opacity: $tier-preview-fill-opacity;
+  @include drainOutAnimation(1.5s, $tier-preview-fill-opacity);
 }
 
 .tierLabel {

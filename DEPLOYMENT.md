@@ -25,7 +25,13 @@ These values are injected at build time before running `npm run build`.
 
 ## Deploy A Frontend Update
 
-Run these commands from the `client` repo root:
+<b>Preferred command:</b>
+
+```powershell
+npm run deploy:frontend
+```
+
+Equivalent manual commands (do not need to run this if the above command succeeded) run these commands from the `client` repo root:
 
 ```powershell
 $env:VITE_SOCKET_URL = "https://api.tierswithfriends.com"

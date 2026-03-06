@@ -1,13 +1,14 @@
 {
   "name": "client",
   "private": true,
-  "version": "0.1.0-alpha.demo",
+  "version": "0.2.0-alpha.demo",
   "type": "module",
   "scripts": {
     "predev": "npm i",
     "dev": "vite",
     "host": "vite --host",
     "build": "tsc -b && vite build",
+    "deploy:frontend": "node ./scripts/deploy-frontend.mjs",
     "lint": "eslint .",
     "lint:a11y": "eslint . --max-warnings=0",
     "preview": "vite preview"

@@ -11,11 +11,13 @@ import { handleKeyDown } from "@/lib/accessibility";
 import { LoadableImage } from "../../../components/LoadableImage/LoadableImage";
 import { getTierSetItemCountAccentColor } from "@/lib/tierItems";
 import pluralize from "pluralize";
+import { useStaggeredLoadImages } from "@/lib/hooks/useStaggeredLoad";
 
 type TierSetSummary = Contracts.TierSetSummary;
 type TierSetDefinition = Contracts.TierSetDefinition;
 
 type TierSetGridEntryProps = {
+  index: number;
   tierSet: TierSetSummary;
   selected: boolean;
   openDetailsTierSetId: Guid | null;
@@ -24,6 +26,7 @@ type TierSetGridEntryProps = {
 };
 
 export function TierSetGridEntry({
+  index,
   tierSet,
   selected,
   openDetailsTierSetId,
@@ -31,6 +34,8 @@ export function TierSetGridEntry({
   onSelect,
 }: TierSetGridEntryProps) {
   const [details, setDetails] = useState<TierSetDefinition | null>(null);
+  const { shouldLoad: shouldLoadPreview, loading: previewLoading } =
+    useStaggeredLoadImages({ index });
   const detailsRequestRef = useRef<Promise<TierSetDefinition> | null>(null);
   const isDetailsOpen = openDetailsTierSetId === tierSet.id;
   const detailsRegionId = useId();
@@ -44,12 +49,14 @@ export function TierSetGridEntry({
     tierSet.coverImageSrc ??
     undefined;
   const itemCount = tierSet.itemCount ?? 0;
+
   const itemCountLabel = `${itemCount} ${pluralize("item", itemCount)}`;
   const itemCountAccentColor = getTierSetItemCountAccentColor(itemCount);
   const itemCountBadgeStyle = {
     "--meta-accent": itemCountAccentColor,
     "--meta-surface": itemCountAccentColor.replace(")", " / 0.14)"),
   } as React.CSSProperties;
+  const effectivePreviewSrc = shouldLoadPreview ? previewImageSrc : undefined;
 
   const loadDetails = useCallback(async () => {
     if (details) return details;
@@ -101,18 +108,16 @@ export function TierSetGridEntry({
           <div className={styles.previewThumb}>
             <LoadableImage
               className={styles.previewImage}
-              src={previewImageSrc}
+              src={effectivePreviewSrc}
               alt={previewName}
               width={88}
               height={88}
-              loading="lazy"
+              loading={previewLoading}
               decoding="async"
               fetchPriority="low"
               draggable={false}
               fallback={
-                <div className={styles.previewPlaceholder} aria-hidden="true">
-                  {previewName.slice(0, 1).toUpperCase()}
-                </div>
+                <div className={styles.previewPlaceholder} aria-hidden="true" />
               }
             />
           </div>

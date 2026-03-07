@@ -38,9 +38,10 @@ export function TierSetSelection({
             <AnimatedDots />
           </MainTextTypography>
         ) : (
-          tierSets.map((set) => (
+          tierSets.map((set, index) => (
             <TierSetGridEntry
               key={set.id}
+              index={index}
               tierSet={set}
               selected={set.id === selectedTierSetId}
               onSelect={handleSelectTierSet}

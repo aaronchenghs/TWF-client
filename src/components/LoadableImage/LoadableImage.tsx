@@ -26,31 +26,45 @@ export function LoadableImage({
   const [readySrc, setReadySrc] = useState<string | null>(null);
   const normalizedSrc = src ?? null;
   const isReady = !!normalizedSrc && readySrc === normalizedSrc;
+  const hasFallback = !!fallback;
 
-  if (!normalizedSrc) return fallback ? <>{fallback}</> : null;
+  if (!normalizedSrc && !hasFallback) return null;
 
   return (
     <div className={clsx(styles.root, className)}>
-      <img
-        key={normalizedSrc ?? "no-src"}
-        className={clsx(styles.image, !isReady && styles.imageHidden)}
-        src={normalizedSrc}
-        alt={alt}
-        {...imgProps}
-        {...(fetchPriority
-          ? ({ fetchpriority: fetchPriority } as Record<string, string>)
-          : {})}
-        onLoad={() => {
-          setReadySrc(normalizedSrc);
-          onLoad?.();
-        }}
-        onError={() => {
-          setReadySrc(null);
-          onError?.();
-        }}
-      />
+      {normalizedSrc && (
+        <img
+          key={normalizedSrc}
+          className={clsx(styles.image, !isReady && styles.imageHidden)}
+          src={normalizedSrc}
+          alt={alt}
+          {...imgProps}
+          {...(fetchPriority
+            ? ({ fetchpriority: fetchPriority } as Record<string, string>)
+            : {})}
+          onLoad={() => {
+            setReadySrc(normalizedSrc);
+            onLoad?.();
+          }}
+          onError={() => {
+            setReadySrc(null);
+            onError?.();
+          }}
+        />
+      )}
 
-      {!isReady && <div className={styles.skeleton} aria-hidden="true" />}
+      {hasFallback && (
+        <div
+          className={clsx(styles.fallback, isReady && styles.fallbackHidden)}
+          aria-hidden="true"
+        >
+          {fallback}
+        </div>
+      )}
+
+      {!hasFallback && normalizedSrc && !isReady && (
+        <div className={styles.skeleton} aria-hidden="true" />
+      )}
     </div>
   );
 }

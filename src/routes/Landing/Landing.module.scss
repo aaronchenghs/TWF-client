@@ -48,7 +48,7 @@
 
     .logo {
       @include float(10px, 3s);
-      width: min(100vw, 800px);
+      width: min(100vw, 950px);
       height: auto;
       margin-bottom: calc($default-gap * 3);
       transform-origin: center;

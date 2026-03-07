@@ -41,6 +41,7 @@ export function RoomCodeDisplay({
         className={clsx(styles.code, codeClassName)}
         variant={variant}
         muted={muted}
+        tone="player"
       >
         {displayRoomCode}
       </MainTextTypography>

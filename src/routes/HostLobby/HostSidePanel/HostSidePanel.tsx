@@ -66,7 +66,7 @@ export function HostSidePanel({
           roomCode={roomCode}
           className={styles.roomCodeContainer}
           codeClassName={styles.roomCode}
-          variant="h2"
+          variant="h1"
         />
       </div>
 

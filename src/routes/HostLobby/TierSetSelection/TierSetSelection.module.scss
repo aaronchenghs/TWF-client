@@ -1,7 +1,7 @@
 @use "../../../styles/export.scss" as *;
 
 $header-height: 10vh;
-$bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
+$bottom-part-height: calc(92vh - $header-height - 2 * $default-padding);
 
 .left {
   gap: $default-gap;

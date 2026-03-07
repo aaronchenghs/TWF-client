@@ -40,14 +40,9 @@ export function TierSetGridEntry({
   const isDetailsOpen = openDetailsTierSetId === tierSet.id;
   const detailsRegionId = useId();
 
-  const previewItem = details?.items[0];
-  const previewName =
-    previewItem?.name ?? tierSet.firstItemName ?? tierSet.title;
+  const previewName = tierSet.firstItemName ?? tierSet.title;
   const previewImageSrc =
-    previewItem?.imageSrc ??
-    tierSet.firstItemImageSrc ??
-    tierSet.coverImageSrc ??
-    undefined;
+    tierSet.firstItemImageSrc ?? tierSet.coverImageSrc ?? undefined;
   const itemCount = tierSet.itemCount ?? 0;
 
   const itemCountLabel = `${itemCount} ${pluralize("item", itemCount)}`;
@@ -104,24 +99,22 @@ export function TierSetGridEntry({
       aria-pressed={selected}
     >
       <div className={styles.topRow}>
-        {!isDetailsOpen && (
-          <div className={styles.previewThumb}>
-            <LoadableImage
-              className={styles.previewImage}
-              src={effectivePreviewSrc}
-              alt={previewName}
-              width={88}
-              height={88}
-              loading={previewLoading}
-              decoding="async"
-              fetchPriority="low"
-              draggable={false}
-              fallback={
-                <div className={styles.previewPlaceholder} aria-hidden="true" />
-              }
-            />
-          </div>
-        )}
+        <div className={styles.previewThumb}>
+          <LoadableImage
+            className={styles.previewImage}
+            src={effectivePreviewSrc}
+            alt={previewName}
+            width={88}
+            height={88}
+            loading={previewLoading}
+            decoding="async"
+            fetchPriority="low"
+            draggable={false}
+            fallback={
+              <div className={styles.previewPlaceholder} aria-hidden="true" />
+            }
+          />
+        </div>
 
         <div className={styles.mainColumn}>
           <div className={styles.headerRow}>
@@ -156,27 +149,21 @@ export function TierSetGridEntry({
             </AccentButton>
           </div>
 
-          <div className={styles.content}>
-            <div
-              id={detailsRegionId}
-              className={clsx(styles.collapse, isDetailsOpen && styles.open)}
-            >
-              <TierSetDetails isLoading={!details} details={details} />
-            </div>
-
-            <div
-              className={clsx(styles.collapse, !isDetailsOpen && styles.open)}
-            >
-              <MainTextTypography
-                variant="body"
-                muted
-                className={styles.presetDescription}
-              >
-                {tierSet.description ?? "-"}
-              </MainTextTypography>
-            </div>
-          </div>
+          <MainTextTypography
+            variant="body"
+            muted
+            className={styles.presetDescription}
+          >
+            {tierSet.description ?? "-"}
+          </MainTextTypography>
         </div>
+      </div>
+
+      <div
+        id={detailsRegionId}
+        className={clsx(styles.collapse, isDetailsOpen && styles.open)}
+      >
+        <TierSetDetails isLoading={!details} details={details} />
       </div>
     </div>
   );

@@ -14,15 +14,20 @@ function fallbackNameFromId(id: string) {
   return id.replace(/[-_]/g, " ").trim();
 }
 
-const ITEM_COUNT_HEAT_FLOOR = 4;
-const ITEM_COUNT_HEAT_RANGE = 18;
+const ITEM_COUNT_COLOR_MIN = 4;
+const ITEM_COUNT_COLOR_RANGE = 32;
+const ITEM_COUNT_HUE_GREEN = 130;
+const ITEM_COUNT_HUE_YELLOW = 56;
 export function getTierSetItemCountAccentColor(itemCount: number): string {
   const heat = Math.min(
     1,
-    Math.max(0, (itemCount - ITEM_COUNT_HEAT_FLOOR) / ITEM_COUNT_HEAT_RANGE),
+    Math.max(0, (itemCount - ITEM_COUNT_COLOR_MIN) / ITEM_COUNT_COLOR_RANGE),
   );
-  const hue = Math.round(130 - heat * 130);
-  return `hsl(${hue} 72% 52%)`;
+  const hue = Math.round(
+    ITEM_COUNT_HUE_GREEN -
+      heat * (ITEM_COUNT_HUE_GREEN - ITEM_COUNT_HUE_YELLOW),
+  );
+  return `hsl(${hue} 64% 60%)`;
 }
 
 export function getItemMeta(

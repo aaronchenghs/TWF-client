@@ -27,21 +27,20 @@ export function getPlayersInTurnDisplayOrder(
   return orderByIdsKeepingExtras(state.players, state.turnOrderPlayerIds);
 }
 
-function getConnectedPlayerIdSet(state: RoomPublicState): Set<string> {
+function getPlayerIdSet(state: RoomPublicState): Set<string> {
   const ids = new Set<string>();
-  for (const player of state.players)
-    if (player.connected !== false) ids.add(player.id);
+  for (const player of state.players) ids.add(player.id);
   return ids;
 }
 
 /**
- * Returns the number of players who joined and left between two states. Note that
- * this is not necessarily the same as the change in player count, since players may
- * join and leave in the same update, or the player count may change for other reasons.
+ * Returns roster membership changes between two states.
+ * This intentionally ignores transient connectivity flips so reconnects do not
+ * trigger lobby join/leave sounds unless membership actually changed.
  */
 export function getPlayerDelta(prev: RoomPublicState, next: RoomPublicState) {
-  const prevIds = getConnectedPlayerIdSet(prev);
-  const nextIds = getConnectedPlayerIdSet(next);
+  const prevIds = getPlayerIdSet(prev);
+  const nextIds = getPlayerIdSet(next);
 
   let joinedCount = 0;
   let leftCount = 0;

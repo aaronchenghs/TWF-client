@@ -313,6 +313,12 @@ export const roomSocket = {
     clearReconnectJoinState();
   },
 
+  leaveRoom(): void {
+    socketClient.emit("room:leave");
+    clearRoomCache();
+    clearReconnectJoinState();
+  },
+
   onRoomJoined(handler: (payload: RoomJoinedPayload) => void): () => void {
     return socketClient.on("room:joined", handler);
   },

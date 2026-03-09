@@ -8,7 +8,7 @@ import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationMo
 import { HowToPlayModal } from "@/components/HowToPlayModal/HowToPlayModal";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
-import { socketClient } from "@/services/sockets/socketClient";
+import { roomSocket } from "@/services/sockets/roomSocket";
 import { ROUTES } from "@/routes/routes";
 import { getPlayerNameById } from "@/lib/players";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
@@ -42,7 +42,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
     setIsConfirmQuitOpen(false);
     window.requestAnimationFrame(() => {
       clearPlayerRoomState(state.code);
-      socketClient.disconnect();
+      roomSocket.leaveRoom();
       navigate(ROUTES.LANDING, { replace: true });
     });
   };

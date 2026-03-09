@@ -60,10 +60,7 @@ export default function HostLobby() {
   const roomCode = normalizeCode(readHostRoomCode());
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
 
-  const players = useMemo(
-    () => (roomState?.players ?? []).filter((p) => p.connected !== false),
-    [roomState],
-  );
+  const players = useMemo(() => roomState?.players ?? [], [roomState]);
 
   const selectedTierSetId = (roomState?.tierSetId ?? null) as Guid | null;
 

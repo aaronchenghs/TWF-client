@@ -77,7 +77,7 @@ export default function PlayerGameController({
 
   const handleExit = useCallback(() => {
     clearPlayerRoomState(state.code);
-    socketClient.disconnect();
+    roomSocket.leaveRoom();
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, state.code]);
 

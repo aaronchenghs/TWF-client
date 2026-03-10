@@ -23,6 +23,7 @@ import {
 import { useRoomCodeDisplayValue } from "@/lib/roomCode";
 import { GameSidePanel } from "./GameSidePanel/GameSidePanel";
 import { useScreenWakeLock } from "@/lib/hooks/useScreenWakeLock";
+import { useFinishedPhaseConfetti } from "@/lib/hooks/useFinishedPhaseConfetti";
 
 type RoomPublicState = Contracts.RoomPublicState;
 
@@ -37,6 +38,7 @@ export default function GameRoom() {
   const [state, setState] = useState<RoomPublicState | null>(() =>
     roomSocket.getLastRoomState(roomCode),
   );
+  useFinishedPhaseConfetti(state?.phase ?? null, ROUTES.GAME_ROOM);
   const suppressRejoinNoticeRef = useRef(false);
   const isHostUnexpectedExitEligible = state?.phase !== "FINISHED";
 

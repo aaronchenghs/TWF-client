@@ -30,7 +30,7 @@ export default function PlayerGameController({
   const navigate = useNavigate();
   useAutoScroll();
   useScreenWakeLock({ enabled: true });
-  useFinishedPhaseConfetti(state.phase);
+  useFinishedPhaseConfetti(state.phase, ROUTES.PLAYER_SESSION);
 
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
 

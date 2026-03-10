@@ -101,8 +101,9 @@ const TierLabelText = memo(function TierLabelText({
 
   return (
     <MainTextTypography
-      variant="h2"
+      variant="h1"
       weight="bold"
+      letterSpacing="wide"
       textAlign="center"
       className={styles.tierLabelText}
       ref={labelRef}

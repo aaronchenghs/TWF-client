@@ -90,7 +90,7 @@ export function ItemPlacementReveal({ state }: Props) {
               className={styles.revealImage}
               fallback={
                 <div className={styles.fallback} aria-hidden="true">
-                  <MainTextTypography variant="h2">
+                  <MainTextTypography variant="h1">
                     {itemName}
                   </MainTextTypography>
                 </div>
@@ -98,8 +98,8 @@ export function ItemPlacementReveal({ state }: Props) {
             />
 
             <div className={styles.text}>
-              <MainTextTypography variant="h3" className={styles.name}>
-                <MainTextTypography variant="h3" tone="player">
+              <MainTextTypography variant="h1" className={styles.name}>
+                <MainTextTypography variant="h1" tone="player">
                   {placedByPlayerName}
                 </MainTextTypography>
                 {` Placed: ${itemName}`}
@@ -116,7 +116,7 @@ export function ItemPlacementReveal({ state }: Props) {
                     className={styles.tierBadge}
                     style={{ backgroundColor: tierColor }}
                   >
-                    <MainTextTypography variant="h4" weight="bold">
+                    <MainTextTypography variant="h2" weight="bold">
                       {tierName}
                     </MainTextTypography>
                   </div>

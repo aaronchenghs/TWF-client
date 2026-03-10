@@ -40,7 +40,7 @@ export const MainTextTypography = forwardRef<
     className,
     children,
     muted,
-    letterSpacing = "normal",
+    letterSpacing,
     weight,
     textAlign,
     tone = "default",
@@ -53,7 +53,7 @@ export const MainTextTypography = forwardRef<
       className={clsx(
         styles.text,
         styles[variant],
-        styles[`ls_${letterSpacing}`],
+        letterSpacing && styles[`ls_${letterSpacing}`],
         weight && styles[`w_${weight}`],
         muted && styles.muted,
         tone !== "default" && styles[`tone_${tone}`],

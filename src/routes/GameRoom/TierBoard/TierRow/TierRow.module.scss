@@ -1,19 +1,18 @@
 @use "../../../../styles/export.scss" as *;
 
 $defaultTierColor: $light-transparency;
-$tier-preview-fill-opacity: 0.8;
+$tierPreviewFillOpacity: 0.8;
+$tierLabelWidth: 200px;
 
 .row {
   --tierColor: $defaultTierColor;
 
   display: grid;
-  grid-template-columns: minmax(132px, 0.12fr) 1fr;
+  grid-template-columns: minmax($tierLabelWidth, 0.12fr) 1fr;
   gap: $default-gap;
   min-height: 232px;
 
-  padding: $default-gap;
   border-radius: $radius-sm;
-
   background: $defaultTierColor;
 
   position: relative;
@@ -56,18 +55,18 @@ $tier-preview-fill-opacity: 0.8;
 }
 
 .previewFill::after {
-  opacity: $tier-preview-fill-opacity;
-  @include fillInAnimation(120ms, $tier-preview-fill-opacity);
+  opacity: $tierPreviewFillOpacity;
+  @include fillInAnimation($dur-fast, $tierPreviewFillOpacity);
 }
 
 .finishedFill::after {
-  opacity: $tier-preview-fill-opacity;
-  @include fillInAnimation(220ms, $tier-preview-fill-opacity);
+  opacity: $tierPreviewFillOpacity;
+  @include fillInAnimation($dur-base, $tierPreviewFillOpacity);
 }
 
 .resultReveal::after {
-  opacity: $tier-preview-fill-opacity;
-  @include drainOutAnimation(1.5s, $tier-preview-fill-opacity);
+  opacity: $tierPreviewFillOpacity;
+  @include drainOutAnimation(1.5s, $tierPreviewFillOpacity);
 }
 
 .tierLabel {
@@ -75,10 +74,10 @@ $tier-preview-fill-opacity: 0.8;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 132px;
+  min-width: $tierLabelWidth;
 
   background: var(--tierColor);
-  border-radius: $radius-sm;
+  border-radius: $radius-sm 0 0 $radius-sm;
   padding: $default-padding calc($default-padding * 2);
 }
 
@@ -87,6 +86,11 @@ $tier-preview-fill-opacity: 0.8;
   width: 100%;
   min-width: 0;
   white-space: nowrap;
+  color: $text-primary;
+  line-height: 0.9;
+  -webkit-text-stroke: 3px $black;
+  stroke: 3px $black;
+  paint-order: stroke fill;
 }
 
 .items {
@@ -95,4 +99,5 @@ $tier-preview-fill-opacity: 0.8;
   flex-wrap: wrap;
   gap: $default-gap;
   overflow: visible;
+  padding: $default-padding 0;
 }

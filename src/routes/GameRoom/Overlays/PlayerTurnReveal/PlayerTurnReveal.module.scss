@@ -2,32 +2,32 @@
 
 .reveal {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: $default-gap;
+  gap: calc($default-gap * 3);
+}
 
-  padding: calc($default-padding * 2);
-  border-radius: $radius-lg;
-
-  background: $light-transparency;
-  border: 1px solid $light-transparency;
-
-  box-shadow: 0 12px 38px $box-shadow-color;
-  @include glow($duration: 2.4s, $spread: 10px, $strength: 22%);
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: calc($default-gap * 2);
+  min-width: 0;
 }
 
 .line {
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
 }
 
 .name {
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   @include float(8px, 1.7s);
   max-width: min(80vw, 520px);
-  text-align: center;
+  text-align: left;
   overflow-wrap: anywhere;
   word-break: break-word;
 }

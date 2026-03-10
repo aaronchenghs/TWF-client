@@ -10,19 +10,6 @@
     0 0 10px $box-shadow-color;
 }
 
-.ls_tight {
-  letter-spacing: 0;
-}
-.ls_normal {
-  letter-spacing: 0.02em;
-}
-.ls_wide {
-  letter-spacing: 0.12em;
-}
-.ls_wider {
-  letter-spacing: 0.28em;
-}
-
 .w_regular {
   font-weight: 400;
 }
@@ -124,4 +111,18 @@
 
 .ta_right {
   text-align: right;
+}
+
+// Keep these at the end so explicit letterSpacing prop always wins over variant defaults.
+.text.ls_tight {
+  letter-spacing: 0;
+}
+.text.ls_normal {
+  letter-spacing: 0.02em;
+}
+.text.ls_wide {
+  letter-spacing: 0.12em;
+}
+.text.ls_wider {
+  letter-spacing: 0.28em;
 }

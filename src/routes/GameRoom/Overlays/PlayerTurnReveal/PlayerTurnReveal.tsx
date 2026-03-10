@@ -13,7 +13,7 @@ type PlayerTurnRevealProps = {
   state: RoomPublicState | null;
 };
 
-const REVEAL_TOTAL_MS = 3000;
+const REVEAL_TOTAL_MS = 3500;
 const ENTER_MS = 700;
 
 export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
@@ -59,29 +59,31 @@ export function PlayerTurnReveal({ state }: PlayerTurnRevealProps) {
           >
             <PlayerAvatar
               avatar={currentTurnPlayer?.avatar}
-              size={100}
+              size={200}
               className={styles.avatar}
               sway
             />
 
-            <MainTextTypography
-              variant="display"
-              className={styles.name}
-              textAlign="center"
-              weight="black"
-              tone="player"
-            >
-              {playerName}
-              {"'s"}
-            </MainTextTypography>
+            <div className={styles.textBlock}>
+              <MainTextTypography
+                variant="h1"
+                className={styles.name}
+                textAlign="left"
+                weight="black"
+                tone="player"
+              >
+                {playerName}
+                {"'s"}
+              </MainTextTypography>
 
-            <MainTextTypography
-              variant="h2"
-              className={styles.line}
-              textAlign="center"
-            >
-              TURN!
-            </MainTextTypography>
+              <MainTextTypography
+                variant="h1"
+                className={styles.line}
+                textAlign="left"
+              >
+                TURN!
+              </MainTextTypography>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

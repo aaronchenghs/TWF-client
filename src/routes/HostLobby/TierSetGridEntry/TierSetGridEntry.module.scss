@@ -62,12 +62,12 @@
 }
 
 .previewThumb {
-  width: 88px;
-  height: 88px;
+  width: 100px;
+  height: 100px;
   border-radius: $radius-sm;
   overflow: hidden;
   border: 1px solid $bg-elevated;
-  background: rgba($bg-surface, 0.85);
+  background: rgba($bg-surface, 0.9);
   flex-shrink: 0;
   position: relative;
 }
@@ -130,7 +130,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 4px 8px;
+  padding: 0px 8px;
   border-radius: $round;
   border: 1px solid var(--meta-accent);
   background: var(--meta-surface);
@@ -148,8 +148,6 @@
 
 .presetDescription {
   margin: 0;
-  opacity: 0.7;
-
   display: -webkit-box;
   line-clamp: 3;
   -webkit-line-clamp: 3;

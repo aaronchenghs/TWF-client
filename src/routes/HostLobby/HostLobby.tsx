@@ -192,7 +192,7 @@ export default function HostLobby() {
     <div className={styles.root}>
       <header className={styles.header}>
         <TWFLogo className={styles.logo} aria-hidden="true" />
-        <MainTextTypography variant="h2" className={styles.title}>
+        <MainTextTypography variant="h1" className={styles.title}>
           Hosting Lobby
         </MainTextTypography>
       </header>

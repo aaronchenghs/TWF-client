@@ -120,11 +120,11 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 }
 
 .selectedTierSetName {
-  min-height: 1.5em;
   display: grid;
   place-items: center;
   overflow-wrap: anywhere;
   word-break: break-word;
+  @include float(4px, 3s);
 }
 
 .playerList {

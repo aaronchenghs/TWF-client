@@ -1,6 +1,6 @@
 @use "../../styles/export.scss" as *;
 
-$header-height: 10vh;
+$header-height: 12vh;
 $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 
 .root {
@@ -21,7 +21,7 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 
     .logo {
       width: auto;
-      height: 65px;
+      height: 75px;
       max-width: 100%;
       object-fit: contain;
     }

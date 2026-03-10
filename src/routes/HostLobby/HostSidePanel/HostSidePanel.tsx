@@ -125,7 +125,8 @@ export function HostSidePanel({
           </div>
 
           <MainTextTypography
-            variant={selectedTierSetName ? "h4" : "body"}
+            variant={selectedTierSetName ? "h3" : "body"}
+            tone="player"
             textAlign="center"
             muted={!selectedTierSetName}
             className={styles.selectedTierSetName}

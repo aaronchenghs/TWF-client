@@ -120,7 +120,7 @@ export function TierSetGridEntry({
           <div className={styles.headerRow}>
             <div className={styles.titleGroup}>
               <MainTextTypography
-                variant="h4"
+                variant="h3"
                 tone={selected ? "player" : undefined}
                 className={styles.presetTitle}
               >
@@ -129,7 +129,7 @@ export function TierSetGridEntry({
 
               <span className={styles.metaBadge} style={itemCountBadgeStyle}>
                 <MainTextTypography
-                  variant="caption"
+                  variant="body"
                   weight="bold"
                   className={styles.metaText}
                 >
@@ -145,7 +145,9 @@ export function TierSetGridEntry({
               aria-expanded={isDetailsOpen}
               aria-controls={detailsRegionId}
             >
-              {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
+              <MainTextTypography variant="label" weight="bold">
+                {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
+              </MainTextTypography>
             </AccentButton>
           </div>
 

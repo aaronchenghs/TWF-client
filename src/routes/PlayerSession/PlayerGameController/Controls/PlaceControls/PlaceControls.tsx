@@ -102,7 +102,7 @@ export function PlaceControls({
             >
               <div className={styles.tierPickLabel}>
                 <MainTextTypography
-                  variant="h5"
+                  variant="h4"
                   weight="bold"
                   textAlign="center"
                   className={styles.tierPickLabelText}

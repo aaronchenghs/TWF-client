@@ -5,7 +5,7 @@
   top: calc(env(safe-area-inset-top, 0px) + $default-padding);
   left: $default-padding;
   right: $default-padding;
-  z-index: 9999;
+  z-index: $z-snackbar;
 
   display: flex;
   flex-direction: column;

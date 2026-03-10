@@ -4,7 +4,7 @@
   position: fixed;
   right: calc(env(safe-area-inset-right, 0px) + $default-gap);
   bottom: calc(env(safe-area-inset-bottom, 0px) + $default-gap);
-  z-index: 60;
+  z-index: $z-floating-actions;
   display: flex;
   flex-direction: column;
   align-items: flex-end;

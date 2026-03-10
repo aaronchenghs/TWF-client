@@ -9,7 +9,7 @@ $quick-actions-clearance: calc($default-padding * 5.5);
       $quick-actions-clearance
   );
   bottom: calc(env(safe-area-inset-bottom, 0px) + $default-padding);
-  z-index: 50;
+  z-index: $z-floating-tip;
 
   width: min(
     390px,

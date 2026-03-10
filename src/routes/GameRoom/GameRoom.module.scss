@@ -42,7 +42,7 @@
     bottom: 14px;
     right: 14px;
     gap: $default-gap;
-    z-index: 9999999999999999;
+    z-index: $z-devtools;
 
     padding: $default-padding;
     border-radius: $radius-lg;

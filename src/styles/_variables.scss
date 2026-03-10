@@ -60,6 +60,16 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 $default-gap: 8px;
 $default-padding: 10px;
 
+$z-local-base: 0;
+$z-local-fg: 1;
+$z-local-overlay: 10;
+$z-floating-tip: 100;
+$z-floating-actions: 110;
+$z-tooltip: 300;
+$z-snackbar: 500;
+$z-overlay: 700;
+$z-devtools: 900;
+
 $ghost-preview-lift: $default-gap * -1;
 $ghost-preview-opacity: 0.9;
 $ghost-preview-surface: rgba($bg-surface, 0.2);

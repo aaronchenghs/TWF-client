@@ -88,7 +88,7 @@ $logo-max-height: 160px;
   padding: 0 $lobby-padding;
   text-align: center;
   pointer-events: none;
-  z-index: 1;
+  z-index: $z-local-fg;
 }
 
 .waitingStatus {

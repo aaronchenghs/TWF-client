@@ -59,7 +59,7 @@ $image-preview-height: 56px;
 
   > * {
     position: relative;
-    z-index: 1;
+    z-index: $z-local-fg;
   }
 
   &:active {

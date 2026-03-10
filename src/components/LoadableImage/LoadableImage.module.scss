@@ -11,7 +11,7 @@
   height: 100%;
   display: block;
   position: relative;
-  z-index: 0;
+  z-index: $z-local-base;
 
   opacity: 1;
   transform: scale(1);
@@ -28,7 +28,7 @@
 .fallback {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: $z-local-fg;
   border-radius: inherit;
   pointer-events: none;
   opacity: 1;
@@ -42,7 +42,7 @@
 .skeleton {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: $z-local-fg;
 
   border-radius: inherit;
 

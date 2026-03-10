@@ -72,7 +72,7 @@
 
 .ghost {
   position: relative;
-  z-index: 1;
+  z-index: $z-local-fg;
   outline: 1px solid transparent;
   outline-offset: -1px;
   transition:
@@ -88,7 +88,7 @@
   @include ghostPreviewState();
   @include float(6px, 2s);
   translate: 0 $ghost-preview-lift;
-  z-index: 5;
+  z-index: $z-local-overlay;
 
   .thumb {
     border-style: dashed;
@@ -114,7 +114,7 @@
 }
 
 .ghostSolidifying {
-  z-index: 5;
+  z-index: $z-local-overlay;
   translate: 0 0;
   @include ghostTileSolidifyAnimation(0.6s);
 

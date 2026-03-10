@@ -114,6 +114,7 @@ export function CountdownOverlay({
       open={open}
       ariaLabel="Starting game"
       onEscape={handleCancel}
+      usePortal
     >
       <div className={styles.content}>
         <div className={styles.stage}>

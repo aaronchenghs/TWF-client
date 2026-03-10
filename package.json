@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^2.11.2",
     "@twf/contracts": "github:aaronchenghs/TWF-contracts#e6fa16fc0562b68953e447f97fb61becc0429729",
     "@types/pluralize": "^0.0.33",
+    "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.562.0",
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^24.10.1",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",

@@ -16,6 +16,7 @@ import { Controls } from "./Controls/Controls";
 import { PlayerTopBar } from "./TopBar/PlayerTopBar";
 import { GameStatusCard } from "@/routes/GameRoom/GameSidePanel/GameStatusCard/GameStatusCard";
 import { useScreenWakeLock } from "@/lib/hooks/useScreenWakeLock";
+import { useFinishedPhaseConfetti } from "@/lib/hooks/useFinishedPhaseConfetti";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierSetDefinition = Contracts.TierSetDefinition;
@@ -29,6 +30,7 @@ export default function PlayerGameController({
   const navigate = useNavigate();
   useAutoScroll();
   useScreenWakeLock({ enabled: true });
+  useFinishedPhaseConfetti(state.phase);
 
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
 

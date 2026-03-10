@@ -55,13 +55,6 @@ export function CurrentItemDisplay({
         loading={"lazy"}
         fetchPriority={"high"}
         draggable={false}
-        fallback={
-          <div className={styles.imageFallback} aria-hidden="true">
-            <MainTextTypography textAlign={textAlign} variant="h2">
-              {item.name}
-            </MainTextTypography>
-          </div>
-        }
       />
       <MainTextTypography
         textAlign={textAlign}

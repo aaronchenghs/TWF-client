@@ -1,8 +1,5 @@
 @use "../../../styles/export.scss" as *;
 
-$header-height: 10vh;
-$bottom-part-height: calc(92vh - $header-height - 2 * $default-padding);
-
 .left {
   gap: $default-gap;
 }
@@ -10,7 +7,7 @@ $bottom-part-height: calc(92vh - $header-height - 2 * $default-padding);
 .presetGrid {
   display: flex;
   flex-direction: column;
-  max-height: $bottom-part-height;
+  max-height: var(--host-lobby-bottom-part-height);
   overflow-y: auto;
   gap: $default-gap;
   @include scrollFade(24px, y);

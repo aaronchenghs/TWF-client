@@ -70,43 +70,6 @@ export function HostSidePanel({
         />
       </div>
 
-      <div className={styles.panel}>
-        <MainTextTypography variant="h3">
-          Players ({players.length}/{Contracts.LOBBY_CAPACITY})
-        </MainTextTypography>
-
-        <ul className={styles.playerList}>
-          {players.length === 0 ? (
-            <MainTextTypography className={styles.player} variant="body" muted>
-              Waiting
-              <AnimatedDots />
-            </MainTextTypography>
-          ) : (
-            players.map((player) => (
-              <li className={styles.playerEntry} key={player.id}>
-                <div className={styles.playerIdentity}>
-                  <PlayerAvatar avatar={player.avatar} size={45} sway />
-                  <MainTextTypography
-                    className={styles.player}
-                    variant="h5"
-                    tone="player"
-                  >
-                    {player.name}
-                  </MainTextTypography>
-                </div>
-                <AccentButton
-                  variant="destructive"
-                  size="small"
-                  onClick={() => roomSocket.bootPlayerFromLobby(player.id)}
-                >
-                  Kick
-                </AccentButton>
-              </li>
-            ))
-          )}
-        </ul>
-      </div>
-
       <div className={clsx(styles.panel, styles.controls)}>
         <div
           className={clsx(
@@ -150,6 +113,43 @@ export function HostSidePanel({
         >
           Close Lobby
         </AccentButton>
+      </div>
+
+      <div className={styles.panel}>
+        <MainTextTypography variant="h3">
+          Players ({players.length}/{Contracts.LOBBY_CAPACITY})
+        </MainTextTypography>
+
+        <ul className={styles.playerList}>
+          {players.length === 0 ? (
+            <MainTextTypography className={styles.player} variant="body" muted>
+              Waiting
+              <AnimatedDots />
+            </MainTextTypography>
+          ) : (
+            players.map((player) => (
+              <li className={styles.playerEntry} key={player.id}>
+                <div className={styles.playerIdentity}>
+                  <PlayerAvatar avatar={player.avatar} size={45} sway />
+                  <MainTextTypography
+                    className={styles.player}
+                    variant="h4"
+                    tone="player"
+                  >
+                    {player.name}
+                  </MainTextTypography>
+                </div>
+                <AccentButton
+                  variant="destructive"
+                  size="small"
+                  onClick={() => roomSocket.bootPlayerFromLobby(player.id)}
+                >
+                  Kick
+                </AccentButton>
+              </li>
+            ))
+          )}
+        </ul>
       </div>
 
       <CountdownOverlay

@@ -1,15 +1,17 @@
 @use "../../../styles/export.scss" as *;
 
-$header-height: 10vh;
-$bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
-
 .sidePanel {
   display: flex;
   flex-direction: column;
   gap: $default-gap;
-  max-height: $bottom-part-height;
+  padding-right: calc($default-padding * 0.5);
+  padding-bottom: $default-padding;
+  max-height: var(--host-lobby-bottom-part-height);
   overflow-y: auto;
   overflow-x: hidden;
+
+  padding-block: $default-padding;
+  @include scrollFade(24px, y);
 }
 
 .roomMeta {
@@ -22,7 +24,7 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: $default-gap;
+  gap: calc($default-gap * 0.5);
   text-align: center;
 
   @include glow($duration: 2.5s, $spread: 8px, $strength: 18%);
@@ -62,7 +64,9 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 
 .panel {
   padding: $default-padding;
+
   @include comicPanel($comic-skew-soft, $radius-md, $bg-elevated, $bg-surface);
+
   transition:
     transform $dur-fast $ease-out,
     box-shadow $dur-fast $ease-out;
@@ -76,7 +80,7 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 .controls {
   display: flex;
   flex-direction: column;
-  gap: calc($default-gap * 1.5);
+  gap: $default-gap;
 }
 
 .selectedTierSetCard {
@@ -130,7 +134,7 @@ $bottom-part-height: calc(96vh - $header-height - 2 * $default-padding);
 .playerList {
   list-style: none;
   padding: 0;
-  margin: $default-padding 0 0;
+  margin: 0;
 }
 
 .playerEntry {

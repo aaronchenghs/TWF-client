@@ -108,13 +108,9 @@ function getLandingShareUrl() {
 }
 
 function buildResultsSharePayload(state: RoomPublicState, shareUrl: string) {
-  const playerCount = state.players.filter(
-    (player) => player.connected !== false,
-  ).length;
-  const playerDescriptor = playerCount > 0 ? `${playerCount}-player ` : "";
   const summary = buildResultsSummary(state);
 
-  const intro = `We just finished a ${playerDescriptor}round of Tiers! With Friends, a browser party game where you build hilarious tier lists together.`;
+  const intro = `We just finished a round of Tiers! With Friends, a browser party game where you build hilarious tier lists together.`;
   const boardSummary = summary ? `Final board:\n${summary}` : "";
   const callToAction = "Play your own round:";
 

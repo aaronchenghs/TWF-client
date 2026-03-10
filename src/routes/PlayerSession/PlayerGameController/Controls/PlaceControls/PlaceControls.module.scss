@@ -36,7 +36,7 @@ $image-preview-height: 56px;
   gap: $default-gap;
 
   border-radius: $radius-sm;
-  padding: $default-gap;
+  padding: 0;
   min-height: 84px;
 
   background: $light-transparency;
@@ -84,7 +84,7 @@ $image-preview-height: 56px;
   align-self: stretch;
 
   background: var(--tierColor);
-  border-radius: $radius-sm;
+  border-radius: 0 0 0 $radius-sm;
   padding: $default-padding;
   box-shadow: 0 4px 0 $box-shadow-color;
   text-align: center;
@@ -99,7 +99,8 @@ $image-preview-height: 56px;
 .tierPickPreview {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  padding: $default-gap;
 }
 
 .previewImg {

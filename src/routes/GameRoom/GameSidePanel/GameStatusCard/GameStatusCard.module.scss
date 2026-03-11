@@ -2,18 +2,22 @@
 
 .card {
   padding: $default-padding;
+  gap: $default-gap;
+
   @include comicPanel(
     $comic-skew-soft,
     $radius-lg,
     rgba(255, 255, 255, 0.1),
-    rgba($bg-surface, 0.88)
+    rgba($bg-surface, 0.9)
   );
+
   transition:
     transform $dur-fast $ease-out,
     box-shadow $dur-fast $ease-out;
+
   max-width: $page-width-cutoff;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+
   width: 100%;
 
   &:hover {

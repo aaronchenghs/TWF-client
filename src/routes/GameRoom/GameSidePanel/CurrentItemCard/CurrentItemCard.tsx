@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import * as Contracts from "@twf/contracts";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
+import { ProgressBar } from "@/components/ProgressBar/ProgressBar";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { GameStatusCard } from "../GameStatusCard/GameStatusCard";
-import styles from "./CurrentItemCard.module.scss";
 
 type RoomPublicState = Contracts.RoomPublicState;
 type TierItemId = Contracts.TierItemId;
@@ -40,19 +40,25 @@ export function CurrentItemCard({ state }: CurrentItemCardProps) {
 
   if (state.phase === "FINISHED") return null;
 
-  const currentItemLabel =
-    currentItemProgress.index && currentItemProgress.total
-      ? `CURRENT ITEM (${currentItemProgress.index}/${currentItemProgress.total}):`
-      : "CURRENT ITEM:";
+  const hasCurrentItemProgress =
+    currentItemProgress.index != null && currentItemProgress.total != null;
 
   return (
-    <GameStatusCard label={currentItemLabel}>
+    <GameStatusCard label="CURRENT ITEM:">
       <CurrentItemDisplay
         item={currentItem}
         isVisible={SHOW_CURRENT_ITEM_PHASES.has(state.phase)}
-        containerClassName={styles.itemRow}
         textAlign="center"
       />
+      {hasCurrentItemProgress && (
+        <ProgressBar
+          value={currentItemProgress.index}
+          max={currentItemProgress.total}
+          min={1}
+          ariaLabel="Current item progress"
+          ariaValueText={`Item ${currentItemProgress.index} of ${currentItemProgress.total}`}
+        />
+      )}
     </GameStatusCard>
   );
 }

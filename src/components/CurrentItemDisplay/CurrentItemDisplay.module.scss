@@ -14,11 +14,30 @@ $current-item-float-duration: 3s;
   gap: $default-gap;
 }
 
-.image {
+.placeholderContainer {
+  --current-item-image-size: 100px;
+  --current-item-name-max-width: min(68vw, 320px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  gap: $default-gap;
+  min-height: var(--current-item-image-size);
+}
+
+.placeholderText {
+  display: block;
+  max-width: var(--current-item-name-max-width);
+  text-overflow: ellipsis;
+  white-space: nowrap;
   @include float(4px, $current-item-float-duration);
+}
+
+.image {
   width: var(--current-item-image-size);
   height: var(--current-item-image-size);
-  @include flexFixed();
   display: grid;
   place-items: center;
   border-radius: $default-gap;
@@ -26,6 +45,9 @@ $current-item-float-duration: 3s;
   background: $light-transparency;
   box-shadow: $shadow-elevated-sm;
   overflow: hidden;
+
+  @include float(4px, $current-item-float-duration);
+  @include flexFixed();
 
   :global(img) {
     width: auto;
@@ -50,4 +72,6 @@ $current-item-float-duration: 3s;
   @include flexShrink();
   max-width: var(--current-item-name-max-width);
   min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -71,32 +71,15 @@ export function HostSidePanel({
       </div>
 
       <div className={clsx(styles.panel, styles.controls)}>
-        <div
-          className={clsx(
-            styles.selectedTierSetCard,
-            !selectedTierSetName && styles.selectedTierSetCardEmpty,
-          )}
+        <MainTextTypography
+          variant={selectedTierSetName ? "h3" : "body"}
+          tone="player"
+          textAlign="center"
+          muted={!selectedTierSetName}
+          className={styles.selectedTierSetName}
         >
-          <div className={styles.selectedTierSetHeader}>
-            <MainTextTypography
-              variant="caption"
-              letterSpacing="wide"
-              className={styles.selectedTierSetLabel}
-            >
-              Selected Tier Set
-            </MainTextTypography>
-          </div>
-
-          <MainTextTypography
-            variant={selectedTierSetName ? "h3" : "body"}
-            tone="player"
-            textAlign="center"
-            muted={!selectedTierSetName}
-            className={styles.selectedTierSetName}
-          >
-            {selectedTierSetName ?? "No tier set selected"}
-          </MainTextTypography>
-        </div>
+          {selectedTierSetName ?? "No tier set selected"}
+        </MainTextTypography>
 
         <AccentButton
           variant="primary"

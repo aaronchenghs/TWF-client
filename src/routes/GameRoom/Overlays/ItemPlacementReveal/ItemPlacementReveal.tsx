@@ -88,13 +88,6 @@ export function ItemPlacementReveal({ state }: Props) {
               fetchPriority="high"
               decoding="async"
               className={styles.revealImage}
-              fallback={
-                <div className={styles.fallback} aria-hidden="true">
-                  <MainTextTypography variant="h1">
-                    {itemName}
-                  </MainTextTypography>
-                </div>
-              }
             />
 
             <div className={styles.text}>

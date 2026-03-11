@@ -83,52 +83,12 @@
   gap: $default-gap;
 }
 
-.selectedTierSetCard {
-  padding: $default-padding;
-  display: flex;
-  flex-direction: column;
-  gap: calc($default-gap * 0.5);
-  transition:
-    transform $dur-fast $ease-out,
-    border-color $dur-fast $ease-out,
-    box-shadow $dur-fast $ease-out;
-
-  @include comicPanel(
-    $comic-skew-soft,
-    $radius-sm,
-    rgba($accent, 0.45),
-    rgba($bg-surface, 0.9),
-    false
-  );
-
-  &:hover {
-    transform: rotate(0deg) translateY(-1px);
-    border-color: rgba($accent, 0.6);
-    box-shadow: $shadow-comic-panel;
-  }
-}
-
-.selectedTierSetCardEmpty {
-  border-style: dashed;
-}
-
-.selectedTierSetHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $default-gap;
-}
-
-.selectedTierSetLabel {
-  text-transform: uppercase;
-}
-
 .selectedTierSetName {
   display: grid;
   place-items: center;
   overflow-wrap: anywhere;
   word-break: break-word;
-  @include float(4px, 3s);
+  @include float(3px, 4s);
 }
 
 .playerList {

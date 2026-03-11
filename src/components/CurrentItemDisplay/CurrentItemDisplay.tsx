@@ -8,11 +8,13 @@ type CurrentItem = {
   imageSrc?: string | null;
 };
 
+type CurrentItemDisplayTextAlign = "left" | "center" | "right";
+
 type CurrentItemDisplayProps = {
   item: CurrentItem | null;
   isVisible: boolean;
   containerClassName?: string;
-  textAlign?: "left" | "center" | "right";
+  textAlign?: CurrentItemDisplayTextAlign;
   emptyText?: string;
   hiddenText?: React.ReactNode;
 };
@@ -28,23 +30,25 @@ export function CurrentItemDisplay({
   if (!isVisible) {
     const isSimpleHiddenText =
       typeof hiddenText === "string" || typeof hiddenText === "number";
-
     if (!isSimpleHiddenText) return hiddenText;
 
     return (
-      <MainTextTypography textAlign={textAlign} variant="h2" muted>
-        {hiddenText}
-      </MainTextTypography>
+      <CurrentItemPlaceholder
+        text={hiddenText}
+        textAlign={textAlign}
+        containerClassName={containerClassName}
+      />
     );
   }
 
-  if (!item) {
+  if (!item)
     return (
-      <MainTextTypography textAlign={textAlign} variant="h2" muted>
-        {emptyText}
-      </MainTextTypography>
+      <CurrentItemPlaceholder
+        text={emptyText}
+        textAlign={textAlign}
+        containerClassName={containerClassName}
+      />
     );
-  }
 
   return (
     <div className={clsx(styles.container, containerClassName)}>
@@ -62,6 +66,31 @@ export function CurrentItemDisplay({
         className={styles.name}
       >
         {item.name}
+      </MainTextTypography>
+    </div>
+  );
+}
+
+type CurrentItemPlaceholderProps = {
+  text: string | number;
+  textAlign: CurrentItemDisplayTextAlign;
+  containerClassName?: string;
+};
+
+function CurrentItemPlaceholder({
+  text,
+  textAlign,
+  containerClassName,
+}: CurrentItemPlaceholderProps) {
+  return (
+    <div className={clsx(styles.placeholderContainer, containerClassName)}>
+      <MainTextTypography
+        textAlign={textAlign}
+        variant="h2"
+        muted
+        className={styles.placeholderText}
+      >
+        {text}
       </MainTextTypography>
     </div>
   );

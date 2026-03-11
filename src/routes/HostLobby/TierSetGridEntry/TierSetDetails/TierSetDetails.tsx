@@ -48,11 +48,17 @@ export function TierSetDetails({ isLoading, details }: TierSetDetailsProps) {
               {details.items.map((item) => (
                 <div key={item.id} className={styles.itemRow}>
                   <LoadableImage
+                    className={styles.itemImage}
                     src={item.imageSrc}
                     alt={item.name}
                     loading="lazy"
                     draggable={false}
-                    fallback={<div aria-hidden="true" />}
+                    fallback={
+                      <div
+                        aria-hidden="true"
+                        className={styles.itemImageFallback}
+                      />
+                    }
                   />
                   <MainTextTypography
                     variant="body"

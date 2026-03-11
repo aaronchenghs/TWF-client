@@ -43,7 +43,7 @@
 
 .itemRow {
   display: grid;
-  grid-template-columns: 36px 1fr;
+  grid-template-columns: 44px 1fr;
   gap: $default-gap;
   align-items: center;
 
@@ -52,6 +52,36 @@
 
   border: 1px solid rgba($bg-elevated, 0.7);
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.itemImage {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background: rgba($bg-surface, 0.75);
+  border: 1px solid rgba($bg-elevated, 0.7);
+  box-sizing: border-box;
+  user-select: none;
+
+  :global(img) {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+  }
+}
+
+.itemImageFallback {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: rgba($light-transparency, 0.5);
 }
 
 .itemText {

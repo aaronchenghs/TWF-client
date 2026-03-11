@@ -2,6 +2,7 @@ import * as Contracts from "@twf/contracts";
 import {
   deleteStorageValue,
   getWebStorage,
+  listStorageKeys,
   readStorageValue,
   writeStorageValue,
 } from "@/lib/webStorage";
@@ -282,6 +283,11 @@ export function setLocalStorageValue<K extends AppLocalStorageKey>(
 }
 
 /** Safe typed remove for keys in the app schema. */
-export function removeLocalStorageValue(key: AppLocalStorageKey) {
+export function removeLocalStorageValue(key: AppLocalStorageKey | string) {
   deleteStorageValue(getWebStorage("local"), key);
+}
+
+/** Safe key listing for localStorage. */
+export function listLocalStorageKeys() {
+  return listStorageKeys(getWebStorage("local"));
 }

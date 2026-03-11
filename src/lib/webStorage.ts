@@ -46,3 +46,20 @@ export function deleteStorageValue(storage: Storage | null, key: string) {
     return;
   }
 }
+
+export function listStorageKeys(storage: Storage | null): string[] {
+  if (!storage) return [];
+
+  try {
+    const keys: string[] = [];
+
+    for (let index = 0; index < storage.length; index += 1) {
+      const key = storage.key(index);
+      if (key) keys.push(key);
+    }
+
+    return keys;
+  } catch {
+    return [];
+  }
+}

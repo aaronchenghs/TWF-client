@@ -3,6 +3,7 @@ import { normalizeCode } from "@/lib/stringNormalizers";
 import {
   LOCAL_STORAGE_KEYS,
   getLocalStorageValue,
+  listLocalStorageKeys,
   removeLocalStorageValue,
   setLocalStorageValue,
   type RoomSessionStorage,
@@ -39,6 +40,75 @@ const CODE_LENGTH = Contracts.CODE_LENGTH;
 function asValidRoomCode(code: string): string | null {
   const normalizedCode = normalizeCode(code);
   return normalizedCode.length === CODE_LENGTH ? normalizedCode : null;
+}
+
+function getRoomCodeFromScopedStorageKey(prefix: string, key: string) {
+  if (!key.startsWith(prefix)) return null;
+  return asValidRoomCode(key.slice(prefix.length));
+}
+
+function collectRetainedRoomState() {
+  const roomSessionCodes = new Set<string>();
+  const playerIdCodes = new Set<string>();
+
+  const hostSession = getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION);
+  const hostRoomCode = asValidRoomCode(hostSession?.code ?? "");
+  if (hostRoomCode) roomSessionCodes.add(hostRoomCode);
+
+  const activePlayerRoomCode = asValidRoomCode(
+    getSessionStorageValue(SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE) ?? "",
+  );
+
+  if (activePlayerRoomCode) {
+    const activePlayerSession = getLocalStorageValue(
+      LOCAL_STORAGE_KEYS.ROOM_SESSION(activePlayerRoomCode),
+    );
+
+    if (activePlayerSession?.role === "player") {
+      roomSessionCodes.add(activePlayerRoomCode);
+      playerIdCodes.add(activePlayerRoomCode);
+    } else {
+      removeSessionStorageValue(SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE);
+    }
+  }
+
+  return { roomSessionCodes, playerIdCodes, hostRoomCode };
+}
+
+/**
+ * Removes stale room-scoped localStorage entries once a new player identity
+ * has been established, preserving only the currently referenced host room
+ * and active player room state.
+ */
+function cleanupPersistedRoomState() {
+  const { roomSessionCodes, playerIdCodes, hostRoomCode } =
+    collectRetainedRoomState();
+
+  const startedHostRoomCode = asValidRoomCode(
+    getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE) ?? "",
+  );
+
+  if (startedHostRoomCode && startedHostRoomCode !== hostRoomCode)
+    removeLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_STARTED_ROOM_CODE);
+
+  for (const key of listLocalStorageKeys()) {
+    const roomSessionCode = getRoomCodeFromScopedStorageKey(
+      LOCAL_STORAGE_KEYS.ROOM_SESSION_PREFIX,
+      key,
+    );
+    if (roomSessionCode && !roomSessionCodes.has(roomSessionCode)) {
+      removeLocalStorageValue(key);
+      continue;
+    }
+
+    const playerIdCode = getRoomCodeFromScopedStorageKey(
+      LOCAL_STORAGE_KEYS.PLAYER_ID_PREFIX,
+      key,
+    );
+
+    if (playerIdCode && !playerIdCodes.has(playerIdCode))
+      removeLocalStorageValue(key);
+  }
 }
 
 /**
@@ -109,7 +179,37 @@ export function readPlayerRuntime(roomCode: string) {
 }
 
 /**
- * Player session state: Persists player join data (session, optional player id, active room marker).
+ * Player session state: Persists the minimum data needed to restore a player's
+ * room context after refresh, accidental tab close, or route re-entry.
+ *
+ * What this writes:
+ * - `ROOM_SESSION(code)` in localStorage:
+ *   stores the room code, `player` role, and the latest known player name so
+ *   the app can recover "which room was I in?" across browser restarts.
+ *
+ * - `PLAYER_ID(code)` in localStorage, when available:
+ *   stores the server-assigned player identity for that room. This is what
+ *   lets the client rejoin as the same player entity instead of creating a new
+ *   one on reconnect.
+ *
+ * - `ACTIVE_PLAYER_ROOM_CODE` in sessionStorage:
+ *   marks which player room should be treated as active in the current tab.
+ *   This is intentionally tab-scoped so one browser can still have separate
+ *   tabs pointed at different rooms without making every stored player session
+ *   globally active.
+ *
+ * Why `playerId` is optional:
+ * - Some call sites know the player name/room immediately but do not yet have
+ *   the canonical server-issued `playerId`.
+ * - In that case we still persist enough context to navigate back into the
+ *   player flow, then upgrade the stored state later once the server returns a
+ *   stable identity.
+ *
+ * Why cleanup only runs when `playerId` exists:
+ * - Old room-scoped keys are pruned only after a new player identity has been
+ *   confirmed. That avoids deleting the last-known room too early in cases
+ *   where the user is trying to recover from an accidental close and still
+ *   needs the previous session metadata to rejoin successfully.
  */
 export function persistPlayerJoinState(input: {
   roomCode: string;
@@ -124,15 +224,19 @@ export function persistPlayerJoinState(input: {
     role: "player",
     name: input.name,
   });
+
   if (input.playerId)
     setLocalStorageValue(
       LOCAL_STORAGE_KEYS.PLAYER_ID(normalizedCode),
       input.playerId,
     );
+
   setSessionStorageValue(
     SESSION_STORAGE_KEYS.ACTIVE_PLAYER_ROOM_CODE,
     normalizedCode,
   );
+
+  if (input.playerId) cleanupPersistedRoomState();
 }
 
 /**

@@ -128,6 +128,7 @@ export const LOCAL_STORAGE_KEYS = {
   HOST_SESSION: "twf:hostSession",
   HOST_STARTED_ROOM_CODE: "twf:hostStartedRoomCode",
   HOST_LOBBY_PLAY_TIP_SEEN: "twf:hostLobbyPlayTipSeen",
+  LANDING_MOBILE_JOIN_TIP_SEEN: "twf:landingMobileJoinTipSeen",
   CREATOR_MESSAGE_SEEN: "twf:creatorMessageSeen",
   USER_REDUCE_MOTION: "twf:userReduceMotion",
   USER_SHOW_TIPS: "twf:userShowTips",
@@ -166,6 +167,12 @@ const LOCAL_STORAGE_VARIABLES = [
     name: "hostLobbyPlayTipSeen",
     keyPattern: LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN,
     isKey: exactKey(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN),
+    codec: booleanCodec,
+  }),
+  defineStorageVariable({
+    name: "landingMobileJoinTipSeen",
+    keyPattern: LOCAL_STORAGE_KEYS.LANDING_MOBILE_JOIN_TIP_SEEN,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.LANDING_MOBILE_JOIN_TIP_SEEN),
     codec: booleanCodec,
   }),
   defineStorageVariable({
@@ -220,7 +227,7 @@ const LOCAL_STORAGE_VARIABLES = [
 type LocalStorageVariable = (typeof LOCAL_STORAGE_VARIABLES)[number];
 type LocalStorageVariableTypeMap = NonNullable<LocalStorageVariable["__types"]>;
 
-type AppLocalStorageKey = LocalStorageVariableTypeMap["key"];
+export type AppLocalStorageKey = LocalStorageVariableTypeMap["key"];
 type AppLocalStorageValue<K extends AppLocalStorageKey> = Extract<
   LocalStorageVariableTypeMap,
   { key: K }

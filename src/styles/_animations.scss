@@ -12,9 +12,20 @@
   }
 }
 
-@mixin float($intensity, $duration: 2.5s) {
+@mixin float(
+  $intensity,
+  $duration: 2.5s,
+  $delay: 0s,
+  $base-animation: null
+) {
   --float-intensity: #{$intensity};
-  animation: float $duration ease-in-out infinite;
+  $float-animation: float $duration ease-in-out $delay infinite;
+
+  @if $base-animation == null {
+    animation: $float-animation;
+  } @else {
+    animation: $base-animation, $float-animation;
+  }
 }
 
 @keyframes glowPulse {
@@ -74,7 +85,7 @@
 }
 
 @mixin appearPopIn($duration: $dur-fast) {
-  animation: popIn $duration cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  animation: popIn $duration $ease-pop both;
   will-change: transform, opacity;
 }
 
@@ -90,7 +101,7 @@
 }
 
 @mixin appearPopOut($duration: $dur-fast) {
-  animation: popOut $duration cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  animation: popOut $duration $ease-pop both;
   will-change: transform, opacity;
 }
 
@@ -217,7 +228,7 @@
   $duration: 0.7s,
   $opacity: 0.8,
   $hold-percent: 88%,
-  $timing: cubic-bezier(0.22, 1, 0.36, 1)
+  $timing: $ease-pop
 ) {
   animation: tierPreviewDrainOut $duration $timing both;
   will-change: inset, opacity;

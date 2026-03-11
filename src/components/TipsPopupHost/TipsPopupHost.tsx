@@ -1,59 +1,142 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import clsx from "clsx";
+import { useLocation } from "react-router-dom";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
-import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
-import { hideTip, TIP_KINDS } from "@/store/slices/tipsPopupSlice";
+import { EMOJIS } from "@/lib/emojis";
+import { useMobileView } from "@/lib/hooks/useMobileView";
+import { matchesRoutePath } from "@/routes/routes";
+import { useAppSelector, type AppState } from "@/store/store";
+import {
+  getTipDelayMs,
+  getTipDefinition,
+  getTipKindForPath,
+  getTipsToMarkSeenOnNavigation,
+  hasTipBeenSeen,
+  isTipVisibleForViewport,
+  markTipSeen,
+  type TipKind,
+} from "./tipRegistry";
 import styles from "./TipsPopupHost.module.scss";
-import { LOCAL_STORAGE_KEYS, setLocalStorageValue } from "@/lib/localStorage";
 
+/**
+ * Global host for route-driven in-app tips.
+ *
+ * To add a new tip:
+ * 1. Add a new key and definition to `tipRegistry.ts`.
+ * 2. Set the tip's `route`, `delayMs`, viewport visibility, and any optional
+ *    persistence rules there.
+ * 3. If the tip should become permanently dismissed after navigation, add
+ *    `markSeenOnNavigateTo` in the registry.
+ * 4. The host will automatically show the matching route tip on entry.
+ */
 export function TipsPopupHost() {
-  const dispatch = useAppDispatch();
-  const $activeTipKind = useAppSelector(
-    (state: AppState) => state.tipsPopup.activeTipKind,
-  );
+  const location = useLocation();
+  const isMobile = useMobileView();
+
   const $isShowTips = useAppSelector(
     (state: AppState) => state.userSettings.isShowTips,
   );
+  const [activeTipKind, setActiveTipKind] = useState<TipKind | null>(null);
+  const previousPathnameRef = useRef(location.pathname);
 
   useEffect(
-    function hideTipWhenDisabled() {
-      if ($isShowTips) return;
-      if (!$activeTipKind) return;
-      dispatch(hideTip());
+    function markSeenTipsOnRouteNavigation() {
+      const previousPathname = previousPathnameRef.current;
+      const nextPathname = location.pathname;
+
+      if (previousPathname === nextPathname) return;
+
+      for (const tipKind of getTipsToMarkSeenOnNavigation(
+        previousPathname,
+        nextPathname,
+      )) {
+        markTipSeen(tipKind);
+      }
+
+      previousPathnameRef.current = nextPathname;
     },
-    [$activeTipKind, $isShowTips, dispatch],
+    [location.pathname],
   );
 
-  if (!$activeTipKind || !$isShowTips) return null;
+  useEffect(
+    function syncActiveRouteTip() {
+      if (!$isShowTips) {
+        setActiveTipKind(null);
+        return;
+      }
 
-  if ($activeTipKind === TIP_KINDS.HOST_LOBBY_BEST_PLAY) {
-    return (
+      const routeTipKind = getTipKindForPath(location.pathname);
+      if (!routeTipKind) {
+        setActiveTipKind(null);
+        return;
+      }
+
+      if (hasTipBeenSeen(routeTipKind)) {
+        setActiveTipKind(null);
+        return;
+      }
+
+      if (!isTipVisibleForViewport(routeTipKind, isMobile)) {
+        setActiveTipKind(null);
+        return;
+      }
+
+      setActiveTipKind(null);
+
+      const tipTimer = window.setTimeout(() => {
+        setActiveTipKind(routeTipKind);
+      }, getTipDelayMs(routeTipKind));
+
+      return () => {
+        window.clearTimeout(tipTimer);
+      };
+    },
+    [location.pathname, isMobile, $isShowTips],
+  );
+
+  if (!activeTipKind || !$isShowTips) return null;
+
+  const tip = getTipDefinition(activeTipKind);
+
+  if (!matchesRoutePath(location.pathname, tip.route)) return null;
+  if (hasTipBeenSeen(activeTipKind)) return null;
+  if (!isTipVisibleForViewport(activeTipKind, isMobile)) return null;
+
+  return (
+    <div
+      className={clsx(
+        styles.host,
+        isMobile ? styles.mobileHost : styles.desktopHost,
+      )}
+    >
       <aside className={styles.tip} role="status" aria-live="polite">
-        <MainTextTypography variant="h6" className={styles.title}>
-          💡Best way to play
-        </MainTextTypography>
+        <div className={styles.copy}>
+          <div className={styles.titleRow}>
+            <span className={styles.titleIcon} aria-hidden="true">
+              {EMOJIS.LIGHT_BULB}
+            </span>
+            <MainTextTypography variant="h6" className={styles.title}>
+              {tip.title}
+            </MainTextTypography>
+          </div>
 
-        <MainTextTypography variant="body" muted>
-          Host on a big screen or screen-share, and have everyone join with this
-          room's code on their own phone or device. You can still play by
-          joining from your phone!
-        </MainTextTypography>
+          <MainTextTypography variant="body" muted className={styles.message}>
+            {tip.message}
+          </MainTextTypography>
+        </div>
 
         <AccentButton
           size="small"
+          className={styles.action}
           onClick={() => {
-            setLocalStorageValue(
-              LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN,
-              true,
-            );
-            dispatch(hideTip());
+            markTipSeen(activeTipKind);
+            setActiveTipKind(null);
           }}
         >
-          Got it
+          {tip.dismissLabel ?? "Got it"}
         </AccentButton>
       </aside>
-    );
-  }
-
-  return null;
+    </div>
+  );
 }

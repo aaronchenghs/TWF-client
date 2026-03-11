@@ -6,7 +6,6 @@ import {
   startTransition,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -19,34 +18,21 @@ import { getClientId, saveRoomSession } from "@/lib/session";
 import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
-import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
-import {
-  hideTipByKind,
-  showTip,
-  TIP_KINDS,
-} from "@/store/slices/tipsPopupSlice";
 import {
   clearHostRoomState,
   markHostRoomStarted,
   readHostRoomCode,
 } from "@/lib/roomClientState";
-import { getLocalStorageValue, LOCAL_STORAGE_KEYS } from "@/lib/localStorage";
 import { TierSetSelection } from "./TierSetSelection/TierSetSelection";
 import { HostSidePanel } from "./HostSidePanel/HostSidePanel";
 import { useHostLobbySoundEffects } from "@/lib/hooks/useSoundEffects";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
-const BEST_PLAY_TIP_DELAY_MS = 500;
 type TierSetSummary = Contracts.TierSetSummary;
 type RoomPublicState = Contracts.RoomPublicState;
 
 export default function HostLobby() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
-  const $isShowTips = useAppSelector(
-    (state: AppState) => state.userSettings.isShowTips,
-  );
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
@@ -57,15 +43,21 @@ export default function HostLobby() {
   );
   const suppressRejoinNoticeRef = useRef(false);
 
+  useHostLobbySoundEffects(roomState, countdownNumber);
+
   const roomCode = normalizeCode(readHostRoomCode());
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
-
-  const players = useMemo(() => roomState?.players ?? [], [roomState]);
-
+  const players = roomState?.players ?? [];
   const selectedTierSetId = (roomState?.tierSetId ?? null) as Guid | null;
-
   const selectedTierSetName =
     tierSets.find((tier) => tier.id === selectedTierSetId)?.title ?? null;
+
+  useUnexpectedExitRejoinNotice({
+    kind: "host_lobby",
+    roomCode,
+    isEligible: isRoomCodeValid,
+    suppressRef: suppressRejoinNoticeRef,
+  });
 
   const handleCloseLobby = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
@@ -85,57 +77,11 @@ export default function HostLobby() {
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
 
-  useUnexpectedExitRejoinNotice({
-    kind: "host_lobby",
-    roomCode,
-    isEligible: isRoomCodeValid,
-    suppressRef: suppressRejoinNoticeRef,
-  });
-
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,
     onState: handleRoomState,
     onClosed: handleRoomClosed,
   });
-
-  useHostLobbySoundEffects(roomState, countdownNumber);
-
-  useEffect(
-    function maybeShowBestPlayTip() {
-      if (
-        !isRoomCodeValid ||
-        !$isShowTips ||
-        getLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN)
-      )
-        return;
-
-      const tipTimer = window.setTimeout(() => {
-        dispatch(showTip(TIP_KINDS.HOST_LOBBY_BEST_PLAY));
-      }, BEST_PLAY_TIP_DELAY_MS);
-
-      return () => {
-        window.clearTimeout(tipTimer);
-      };
-    },
-    [isRoomCodeValid, $isShowTips, dispatch],
-  );
-
-  useEffect(
-    function hideBestPlayTipWhenDisabled() {
-      if ($isShowTips) return;
-      dispatch(hideTipByKind(TIP_KINDS.HOST_LOBBY_BEST_PLAY));
-    },
-    [$isShowTips, dispatch],
-  );
-
-  useEffect(
-    function cleanupBestPlayTipOnLeave() {
-      return () => {
-        dispatch(hideTipByKind(TIP_KINDS.HOST_LOBBY_BEST_PLAY));
-      };
-    },
-    [dispatch],
-  );
 
   useEffect(
     function redirectStartedRoomToGameRoute() {

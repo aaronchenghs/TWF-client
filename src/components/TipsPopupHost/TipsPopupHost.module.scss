@@ -1,23 +1,33 @@
 @use "../../styles/export.scss" as *;
 
-$quick-actions-clearance: calc($default-padding * 5.5);
+$quick-actions-clearance: calc($default-padding * 5);
 
-.tip {
+.host {
   position: fixed;
+  pointer-events: none;
+  z-index: $z-floating-tip;
+}
+
+.mobileHost {
+  top: calc(env(safe-area-inset-top, 0px) + $default-padding);
+  left: $default-padding;
+  right: $default-padding;
+}
+
+.desktopHost {
   right: calc(
     env(safe-area-inset-right, 0px) + $default-padding +
       $quick-actions-clearance
   );
   bottom: calc(env(safe-area-inset-bottom, 0px) + $default-padding);
-  z-index: $z-floating-tip;
+  width: min(390px, calc(100vw - $default-padding - $quick-actions-clearance));
+}
 
-  width: min(
-    390px,
-    calc(100vw - ($default-padding * 2) - $quick-actions-clearance)
-  );
+.tip {
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
-  gap: $default-gap;
+  width: 100%;
   padding: $default-padding;
 
   @include comicPanel(
@@ -27,22 +37,72 @@ $quick-actions-clearance: calc($default-padding * 5.5);
     $bg-surface,
     false
   );
+
+  background: rgba($bg-surface, 0.85);
+  backdrop-filter: $backdrop-blur;
   box-shadow: $shadow-comic-panel;
-  animation:
-    popIn $dur-base cubic-bezier(0.2, 0.9, 0.2, 1) both,
-    float 3.2s ease-in-out $dur-base infinite;
-  will-change: transform, opacity;
+  @include appearPopIn($dur-base);
+}
+
+.mobileHost .tip {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.desktopHost .tip {
+  @include float(6px, 3s, $dur-base, popIn $dur-base $ease-pop both);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: calc($default-gap * 0.5);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: calc($default-gap * 0.5);
+}
+
+.titleIcon {
+  flex: 0 0 auto;
+  font-size: 20px;
+  line-height: 1;
 }
 
 .title {
   text-transform: uppercase;
 }
 
+.message {
+  overflow-wrap: anywhere;
+}
+
+.action {
+  align-self: flex-end;
+}
+
 @media (max-width: $mobile-width) {
   .tip {
-    right: $default-padding;
-    left: $default-padding;
-    width: auto;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + $default-padding);
+    gap: $default-gap;
+    border-radius: $radius-md;
+  }
+
+  .mobileHost .title {
+    font-size: $fs-h5;
+  }
+
+  .mobileHost .titleIcon {
+    font-size: $fs-caption;
+  }
+
+  .mobileHost .message {
+    font-size: $fs-h6;
+    line-height: 1.3;
+  }
+
+  .action {
+    width: 100%;
   }
 }

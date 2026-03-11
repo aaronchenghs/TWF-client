@@ -24,10 +24,10 @@ export default function App() {
         <SeoManager />
         <AnimatedRoutes />
         <GlobalQuickActions />
+        <TipsPopupHost />
       </BrowserRouter>
 
       <SettingsModal />
-      <TipsPopupHost />
     </>
   );
 }

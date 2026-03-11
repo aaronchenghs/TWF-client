@@ -80,7 +80,6 @@
   justify-content: flex-end;
   gap: $default-gap;
   padding: $default-padding;
-  padding-top: 0px;
   @include flexFixed();
 }
 

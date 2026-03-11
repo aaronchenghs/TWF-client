@@ -42,6 +42,7 @@ const TIP_DEFINITIONS: Record<TipKind, TipDefinition> = {
     dismissLabel: "Got it",
     delayMs: 500,
     visibility: "all",
+    markSeenOnNavigateTo: [ROUTES.GAME_ROOM],
     persistence: createPersistentTipFlag(
       LOCAL_STORAGE_KEYS.HOST_LOBBY_PLAY_TIP_SEEN,
     ),

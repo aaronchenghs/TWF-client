@@ -121,6 +121,26 @@ $image-preview-height: 56px;
   margin-top: auto;
   padding-top: $default-gap;
   @include flexFixed();
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: $default-gap;
+}
+
+.passButton {
+  width: 100%;
+  height: $image-preview-height;
+  border-radius: $radius-lg;
+}
+
+.actionButtonContent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc($default-gap * 0.5);
+}
+
+.actionButtonIcon {
+  flex: 0 0 auto;
 }
 
 .confirmButton {

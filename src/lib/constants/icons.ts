@@ -1,6 +1,7 @@
 import {
   ArrowBigDownDash,
   ArrowBigUpDash,
+  ArrowRight,
   Bug,
   Check,
   CircleHelp,
@@ -27,6 +28,10 @@ export const APP_ICONS = {
   soundEffects: Volume2,
   lock: Lock,
   unlock: LockOpen,
+  place: {
+    confirm: Check,
+    pass: ArrowRight,
+  },
   vote: {
     up: ArrowBigUpDash,
     agree: Minus,
@@ -42,6 +47,12 @@ export const ICON_PROPS = {
   quickActions: {
     size: 20,
     strokeWidth: 2.4,
+  },
+  place: {
+    controls: {
+      size: 22,
+      strokeWidth: 2.8,
+    },
   },
   settingsRow: {
     size: 18,

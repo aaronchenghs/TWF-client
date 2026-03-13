@@ -6,6 +6,7 @@ import { AwaitingControls } from "../AwaitingControls/AwaitingControls";
 import * as Contracts from "@twf/contracts";
 import { AccentButton } from "../../../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../../../../components/MainTextTypography/MainTextTypography";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { useActionLocks } from "@/lib/hooks/useActionLocks";
 import { socketClient } from "@/services/sockets/socketClient";
 
@@ -43,6 +44,9 @@ export function PlaceControls({
   });
 
   const isPlacing = actionLocks.isLocked("place");
+  const placeButtonIconProps = ICON_PROPS.place.controls;
+  const ConfirmIcon = APP_ICONS.place.confirm;
+  const PassIcon = APP_ICONS.place.pass;
 
   const itemName = currentItem?.name ?? "";
   const itemImageSrc = currentItem?.imageSrc ?? null;
@@ -70,6 +74,19 @@ export function PlaceControls({
     actionLocks.lock("place");
     try {
       socketClient.emit("game:place", { tierId });
+    } catch {
+      actionLocks.unlock("place");
+    }
+  };
+
+  const handlePassTurn = () => {
+    if (phase !== "PLACE" || !isMyTurn) return;
+    if (isPlacing) return;
+    if (!socketClient.isConnected()) return;
+
+    actionLocks.lock("place");
+    try {
+      socketClient.emit("game:pass");
     } catch {
       actionLocks.unlock("place");
     }
@@ -146,6 +163,20 @@ export function PlaceControls({
 
       <div className={styles.confirmRow}>
         <AccentButton
+          variant="secondary"
+          className={styles.passButton}
+          onClick={handlePassTurn}
+        >
+          <span className={styles.actionButtonContent}>
+            <PassIcon
+              className={styles.actionButtonIcon}
+              {...placeButtonIconProps}
+              aria-hidden
+            />
+            PASS
+          </span>
+        </AccentButton>
+        <AccentButton
           variant="primary"
           className={styles.confirmButton}
           disabled={isConfirmDisabled || !currentItem}
@@ -154,7 +185,14 @@ export function PlaceControls({
             handlePlaceIntoTier(selectedTierId);
           }}
         >
-          CONFIRM
+          <span className={styles.actionButtonContent}>
+            <ConfirmIcon
+              className={styles.actionButtonIcon}
+              {...placeButtonIconProps}
+              aria-hidden
+            />
+            CONFIRM
+          </span>
         </AccentButton>
       </div>
     </div>

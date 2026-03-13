@@ -67,10 +67,10 @@ export default function Landing() {
                 className={styles.createButton}
               >
                 {isCreatingLobby ? (
-                  <>
+                  <MainTextTypography variant="h3">
                     Creating
                     <AnimatedDots />
-                  </>
+                  </MainTextTypography>
                 ) : (
                   "Create Lobby"
                 )}
@@ -187,7 +187,14 @@ export function JoinRoomPanel() {
           fullWidth
         />
         <AccentButton disabled={!isJoinEnabled} onClick={handleJoinRoom}>
-          Play
+          {isJoining ? (
+            <MainTextTypography variant="h3">
+              Joining
+              <AnimatedDots />
+            </MainTextTypography>
+          ) : (
+            "Play"
+          )}
         </AccentButton>
       </div>
     </div>

@@ -110,6 +110,7 @@ function ActivePlayerRow({
   const voteMeta = vote !== null ? getVoteIndicatorMeta(vote) : null;
   const voteIconProps = ICON_PROPS.vote.controls;
   const voteAriaPrefix = isVoteConfirmed ? "Locked vote" : "Queued vote";
+  const LockIcon = APP_ICONS.lock;
 
   return (
     <motion.div
@@ -131,6 +132,7 @@ function ActivePlayerRow({
         className={styles.activePlayerAvatar}
         sway
       />
+
       <MainTextTypography
         ref={playerNameRef}
         variant={isCurrentTurnPlayer ? "h2" : "h3"}
@@ -140,6 +142,7 @@ function ActivePlayerRow({
       >
         {player.name}
       </MainTextTypography>
+
       {showVoteStatus && voteMeta && (
         <span
           className={clsx(
@@ -158,6 +161,15 @@ function ActivePlayerRow({
             strokeWidth={2.6}
             aria-hidden
           />
+          {isVoteConfirmed && (
+            <LockIcon
+              className={clsx(styles.voteIndicatorIcon, styles.voteLockIcon)}
+              {...voteIconProps}
+              size={16}
+              strokeWidth={2.6}
+              aria-hidden
+            />
+          )}
         </span>
       )}
     </motion.div>

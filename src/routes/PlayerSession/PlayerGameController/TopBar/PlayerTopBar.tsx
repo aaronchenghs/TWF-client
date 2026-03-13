@@ -30,7 +30,8 @@ export function PlayerTopBar({
       case "PLACE":
         return isMyTurn ? "Your Turn" : "Waiting";
       case "VOTE":
-        return !isMyTurn && !hasConfirmedVote ? "Vote" : "Waiting";
+        if (isMyTurn) return "Waiting";
+        return hasConfirmedVote ? "Locked In" : "Vote";
       case "RESULTS":
         return "Results!";
       case "FINISHED":
@@ -58,6 +59,7 @@ export function PlayerTopBar({
             styles.statusPill,
             statusLabel === "Your Turn" && styles.statusPlace,
             statusLabel === "Vote" && styles.statusVote,
+            statusLabel === "Locked In" && styles.statusVote,
             statusLabel === "Waiting" && styles.statusWait,
           )}
         >

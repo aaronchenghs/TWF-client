@@ -2,12 +2,20 @@ import clsx from "clsx";
 import baseStyles from "../Controls.module.scss";
 import styles from "./VoteControls.module.scss";
 import { AwaitingControls } from "../AwaitingControls/AwaitingControls";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { AccentButton } from "../../../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import pluralize from "pluralize";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { useActionLocks } from "@/lib/hooks/useActionLocks";
+import {
+  type ActionLockKey,
+  type UnlockCooldownKey,
+  type VoteValue,
+  VOTE_OPTIONS,
+  getVoteToneButtonClassName,
+  getVoteToneClassName,
+} from "@/lib/voting";
 import {
   type MouseEvent,
   useCallback,
@@ -16,56 +24,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { resolvePlacedTierId } from "@/lib/tierItems";
 import { socketClient } from "@/services/sockets/socketClient";
-
-type VoteValue = Contracts.VoteValue;
-
-type ActionLockKey = "confirm";
 
 const ACTION_LOCK_TIMEOUT_MS = 6000;
 const DISCUSSION_LOCK_MS = 10000;
-
-const VOTE_OPTIONS = [
-  {
-    label: "Bump Up",
-    value: -1 as const,
-    Icon: APP_ICONS.vote.up,
-    ariaLabel: "Vote bump up one tier",
-  },
-  {
-    label: "No Vote",
-    value: 0 as const,
-    Icon: APP_ICONS.vote.agree,
-    ariaLabel: "Cast no vote",
-  },
-  {
-    label: "Bump Down",
-    value: 1 as const,
-    Icon: APP_ICONS.vote.down,
-    ariaLabel: "Vote bump down one tier",
-  },
-] satisfies Array<{
-  label: string;
-  value: VoteValue;
-  Icon: typeof APP_ICONS.vote.up;
-  ariaLabel: string;
-}>;
-
-function getVoteToneClassName(vote: VoteValue): string {
-  if (vote < 0) return styles.toneUp;
-  if (vote > 0) return styles.toneDown;
-  return styles.toneAgree;
-}
-
-function getVoteToneButtonClassName(vote: VoteValue): string {
-  if (vote < 0) return styles.toneButtonUp;
-  if (vote > 0) return styles.toneButtonDown;
-  return styles.toneButtonAgree;
-}
+const UNLOCK_VOTE_DELAY_MS = 1500;
 
 type VoteControlsProps = {
-  state: Contracts.RoomPublicState;
+  state: RoomPublicState;
   canVote: boolean;
   myVote: VoteValue | null;
   hasConfirmedVote: boolean;
@@ -87,6 +53,7 @@ export function VoteControls({
   >(null);
 
   const lastVoteWindowKeyRef = useRef<string | null>(null);
+  const lockedVoteWindowKeyRef = useRef<string | null>(null);
   const selectedVoteRef = useRef<VoteValue | null>(myVote);
   const pendingVoteRequestRef = useRef<{
     windowKey: string | null;
@@ -97,21 +64,6 @@ export function VoteControls({
   const turnIndex = state.turnIndex;
   const currentItemId = state.currentItem ?? null;
   const voteEndsAt = state.timers.voteEndsAt;
-
-  const orderedTierIds =
-    state.tierOrder.length > 0
-      ? state.tierOrder
-      : Object.keys(state.tiers ?? {});
-
-  const placedTierId = resolvePlacedTierId(state, currentItemId);
-
-  const placedTierIndex =
-    placedTierId !== null ? orderedTierIds.indexOf(placedTierId) : -1;
-
-  const canBumpUp = placedTierIndex > 0;
-
-  const canBumpDown =
-    placedTierIndex >= 0 ? placedTierIndex < orderedTierIds.length - 1 : true;
 
   const activeVoteWindowKey =
     phase === "VOTE" ? `${turnIndex}:${currentItemId ?? "none"}` : null;
@@ -135,42 +87,45 @@ export function VoteControls({
     canVote && !hasConfirmedVote && discussionSecondsLeft > 0;
 
   const voteButtonIconProps = ICON_PROPS.vote.controls;
+  const VoteActionIcon = hasConfirmedVote ? APP_ICONS.unlock : APP_ICONS.lock;
 
   const shouldRemainLockedByKey = useMemo<Record<ActionLockKey, boolean>>(
     () => ({
       confirm: phase === "VOTE" && canVote && !hasConfirmedVote,
+      unlock: phase === "VOTE" && canVote && hasConfirmedVote,
     }),
     [phase, canVote, hasConfirmedVote],
   );
 
-  const voteOptions = useMemo(
-    () =>
-      VOTE_OPTIONS.filter((opt) => {
-        if (opt.value < 0) return canBumpUp;
-        if (opt.value > 0) return canBumpDown;
-        return true;
-      }),
-    [canBumpUp, canBumpDown],
-  );
-
   const hasSelectableVote =
     selectedVote !== null &&
-    voteOptions.some((opt) => opt.value === selectedVote);
+    VOTE_OPTIONS.some((opt) => opt.value === selectedVote);
 
   const actionLocks = useActionLocks(shouldRemainLockedByKey, {
     timeoutMs: ACTION_LOCK_TIMEOUT_MS,
   });
+  const unlockCooldownLocks = useActionLocks<UnlockCooldownKey>(
+    { unlockCooldown: phase === "VOTE" && hasConfirmedVote },
+    { timeoutMs: UNLOCK_VOTE_DELAY_MS },
+  );
 
   const isConfirming = actionLocks.isLocked("confirm");
+  const isUnlocking = actionLocks.isLocked("unlock");
+  const isUnlockVoteDelayed = unlockCooldownLocks.isLocked("unlockCooldown");
 
-  const disabledVote = !canVote || hasConfirmedVote || isConfirming;
+  const isVoteDisabled =
+    !canVote || hasConfirmedVote || isConfirming || isUnlocking;
 
-  const disabledConfirm =
+  const isLockInVoteDisabled =
     !canVote ||
     hasConfirmedVote ||
     isConfirming ||
+    isUnlocking ||
     isDiscussionLocked ||
     !hasSelectableVote;
+
+  const isUnlockVoteDisabled =
+    !canVote || !hasConfirmedVote || isUnlocking || isUnlockVoteDelayed;
 
   const handleVote = useCallback(
     (vote: VoteValue) => {
@@ -222,7 +177,7 @@ export function VoteControls({
     [handleVote],
   );
 
-  const handleConfirm = useCallback(() => {
+  const handleLockInVote = useCallback(() => {
     if (!socketClient.isConnected()) return;
 
     actionLocks.lock("confirm");
@@ -230,6 +185,17 @@ export function VoteControls({
       socketClient.emit("game:voteConfirm");
     } catch {
       actionLocks.unlock("confirm");
+    }
+  }, [actionLocks]);
+
+  const handleUnlockVote = useCallback(() => {
+    if (!socketClient.isConnected()) return;
+
+    actionLocks.lock("unlock");
+    try {
+      socketClient.emit("game:voteUnlock");
+    } catch {
+      actionLocks.unlock("unlock");
     }
   }, [actionLocks]);
 
@@ -244,6 +210,7 @@ export function VoteControls({
     function initializeVoteDiscussionLockWindow() {
       if (phase !== "VOTE") {
         lastVoteWindowKeyRef.current = null;
+        lockedVoteWindowKeyRef.current = null;
         pendingVoteRequestRef.current = null;
         setVoteUnlockAt(null);
         return;
@@ -265,6 +232,24 @@ export function VoteControls({
   );
 
   useEffect(
+    function initializeUnlockVoteDelayWindow() {
+      if (
+        phase !== "VOTE" ||
+        activeVoteWindowKey === null ||
+        !hasConfirmedVote
+      ) {
+        lockedVoteWindowKeyRef.current = null;
+        return;
+      }
+
+      if (lockedVoteWindowKeyRef.current === activeVoteWindowKey) return;
+      lockedVoteWindowKeyRef.current = activeVoteWindowKey;
+      unlockCooldownLocks.lock("unlockCooldown");
+    },
+    [phase, activeVoteWindowKey, hasConfirmedVote, unlockCooldownLocks],
+  );
+
+  useEffect(
     function clearPendingVoteRequestWhenVoteWindowChangesOrSyncs() {
       if (activeVoteWindowKey === null) {
         pendingVoteRequestRef.current = null;
@@ -279,30 +264,50 @@ export function VoteControls({
         return;
       }
 
-      if (myVote !== null && pendingVoteRequest.vote === myVote) {
+      if (myVote !== null && pendingVoteRequest.vote === myVote)
         pendingVoteRequestRef.current = null;
-      }
     },
     [activeVoteWindowKey, myVote],
   );
 
   useEffect(
-    function tickVoteDiscussionTimer() {
+    function tickVoteTimers() {
       if (phase !== "VOTE") return;
-      if (voteUnlockAt === null) return;
-      if (voteUnlockAt <= Date.now()) return;
+
+      const deadlines = [voteUnlockAt].filter(
+        (deadline): deadline is number => deadline !== null,
+      );
+      if (deadlines.length === 0) return;
+
+      const nextDeadline = Math.max(...deadlines);
+      if (nextDeadline <= Date.now()) return;
 
       const id = window.setInterval(() => {
         const nextNow = Date.now();
         setNow(nextNow);
-        if (nextNow >= voteUnlockAt) window.clearInterval(id);
+        if (nextNow >= nextDeadline) window.clearInterval(id);
       }, 250);
       return () => window.clearInterval(id);
     },
     [phase, voteUnlockAt],
   );
 
-  if (isPlacer || hasConfirmedVote) return <AwaitingControls />;
+  const voteActionLabel = hasConfirmedVote
+    ? isUnlocking
+      ? "Unlocking..."
+      : "Unlock Vote"
+    : isConfirming
+      ? "Locking In..."
+      : "Lock In Vote";
+
+  const handleVoteAction = hasConfirmedVote
+    ? handleUnlockVote
+    : handleLockInVote;
+  const isVoteActionDisabled = hasConfirmedVote
+    ? isUnlockVoteDisabled
+    : isLockInVoteDisabled;
+
+  if (isPlacer) return <AwaitingControls />;
 
   return (
     <div className={clsx(baseStyles.controls, styles.voteControls)}>
@@ -333,7 +338,7 @@ export function VoteControls({
           role="group"
           aria-label="Vote placement adjustment"
         >
-          {voteOptions.map((opt) => {
+          {VOTE_OPTIONS.map((opt) => {
             const isSelected = selectedVote === opt.value;
             return (
               <AccentButton
@@ -342,9 +347,9 @@ export function VoteControls({
                 selected={isSelected}
                 className={clsx(
                   styles.bigButton,
-                  getVoteToneButtonClassName(opt.value),
+                  styles[getVoteToneButtonClassName(opt.value)],
                 )}
-                disabled={disabledVote || isDiscussionLocked}
+                disabled={isVoteDisabled || isDiscussionLocked}
                 onClick={(event) => handleVoteButtonClick(event, opt.value)}
                 aria-label={opt.ariaLabel}
                 aria-pressed={isSelected}
@@ -352,7 +357,7 @@ export function VoteControls({
                 <span
                   className={clsx(
                     styles.voteButtonContent,
-                    !isSelected && getVoteToneClassName(opt.value),
+                    !isSelected && styles[getVoteToneClassName(opt.value)],
                   )}
                 >
                   <opt.Icon
@@ -370,12 +375,19 @@ export function VoteControls({
 
       <div className={styles.confirmRow}>
         <AccentButton
-          variant="primary"
+          variant={hasConfirmedVote ? "secondary" : "primary"}
           className={styles.confirmButton}
-          disabled={disabledConfirm}
-          onClick={handleConfirm}
+          disabled={isVoteActionDisabled}
+          onClick={handleVoteAction}
         >
-          CONFIRM
+          <span className={styles.voteButtonContent}>
+            <VoteActionIcon
+              className={styles.voteButtonIcon}
+              {...voteButtonIconProps}
+              aria-hidden
+            />
+            {voteActionLabel}
+          </span>
         </AccentButton>
       </div>
     </div>

@@ -55,12 +55,16 @@
   align-items: center;
   justify-content: flex-end;
   margin-left: calc($default-gap / 2);
-  gap: 0;
+  gap: calc($default-gap / 2);
   color: var(--vote-color, $text-secondary);
 }
 
 .voteIndicatorIcon {
   display: block;
+}
+
+.voteLockIcon {
+  opacity: $ghost-preview-opacity;
 }
 
 .voteToneUp {

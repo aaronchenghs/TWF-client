@@ -1,7 +1,7 @@
 {
   "name": "client",
   "private": true,
-  "version": "0.2.6-alpha",
+  "version": "0.3.0-alpha",
   "type": "module",
   "scripts": {
     "predev": "npm i",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
-    "@twf/contracts": "github:aaronchenghs/TWF-contracts#e6fa16fc0562b68953e447f97fb61becc0429729",
+    "@twf/contracts": "github:aaronchenghs/TWF-contracts#1f9aafa84ec4468d49902687d63a2a967ce3c705",
     "@types/pluralize": "^0.0.33",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",

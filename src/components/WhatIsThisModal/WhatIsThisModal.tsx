@@ -6,7 +6,7 @@ import styles from "./WhatIsThisModal.module.scss";
 
 const QUICK_START_STEPS = [
   "The host clicks `Create Lobby` on a shared screen",
-  "Everyone else enters the lobby code, picks a name, and clicks `Play`",
+  "Everyone, from their phone or device, enters the lobby code, picks a name, and clicks `Play`",
   "Host picks a tier set to play, then starts the game when everyone is in",
 ] as const;
 
@@ -35,8 +35,8 @@ export function WhatIsThisModal(props: { open: boolean; onClose: () => void }) {
           Inspired by the likes of <i>JackBox</i> and <i>TierMaker</i>,{" "}
           <strong>Tiers! With Friends</strong> is a browser party game where
           your group builds a tier list together in real time. It works best
-          with one shared host screen and everyone else joining from their own
-          device.
+          with one shared host screen and everyone (including the host) joining
+          from their own device.
         </MainTextTypography>
 
         <section className={styles.section}>

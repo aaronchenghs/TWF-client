@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { useLocation } from "react-router-dom";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
-import { EMOJIS } from "@/lib/emojis";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { useMobileView } from "@/lib/hooks/useMobileView";
 import { matchesRoutePath } from "@/routes/routes";
 import { useAppSelector, type AppState } from "@/store/store";
@@ -31,6 +31,7 @@ import styles from "./TipsPopupHost.module.scss";
  * 4. The host will automatically show the matching route tip on entry.
  */
 export function TipsPopupHost() {
+  const ShowTipsIcon = APP_ICONS.showTips;
   const location = useLocation();
   const isMobile = useMobileView();
 
@@ -114,7 +115,7 @@ export function TipsPopupHost() {
         <div className={styles.copy}>
           <div className={styles.titleRow}>
             <span className={styles.titleIcon} aria-hidden="true">
-              {EMOJIS.LIGHT_BULB}
+              <ShowTipsIcon {...ICON_PROPS.quickActions} aria-hidden />
             </span>
             <MainTextTypography variant="h6" className={styles.title}>
               {tip.title}

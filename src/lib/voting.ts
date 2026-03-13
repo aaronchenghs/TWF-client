@@ -2,9 +2,62 @@ import type {
   TierId,
   TierItemId,
   TurnResolution,
-  VoteValue,
+  VoteValue as ContractsVoteValue,
 } from "@twf/contracts";
+import { APP_ICONS } from "./constants/icons";
 import { clamp } from "./clamp";
+
+export type VoteValue = ContractsVoteValue;
+
+export type ActionLockKey = "confirm" | "unlock";
+export type UnlockCooldownKey = "unlockCooldown";
+
+export type VoteToneClassName = "toneUp" | "toneAgree" | "toneDown";
+
+export type VoteToneButtonClassName =
+  | "toneButtonUp"
+  | "toneButtonAgree"
+  | "toneButtonDown";
+
+export const VOTE_OPTIONS = [
+  {
+    label: "Bump Up",
+    value: -1 as const,
+    Icon: APP_ICONS.vote.up,
+    ariaLabel: "Vote bump up one tier",
+  },
+  {
+    label: "No Vote",
+    value: 0 as const,
+    Icon: APP_ICONS.vote.agree,
+    ariaLabel: "Cast no vote",
+  },
+  {
+    label: "Bump Down",
+    value: 1 as const,
+    Icon: APP_ICONS.vote.down,
+    ariaLabel: "Vote bump down one tier",
+  },
+] satisfies Array<{
+  label: string;
+  value: VoteValue;
+  Icon: typeof APP_ICONS.vote.up;
+  ariaLabel: string;
+}>;
+
+export function getVoteToneClassName(vote: VoteValue): VoteToneClassName {
+  if (vote < 0) return "toneUp";
+  if (vote > 0) return "toneDown";
+  return "toneAgree";
+}
+
+export function getVoteToneButtonClassName(
+  vote: VoteValue,
+): VoteToneButtonClassName {
+  if (vote < 0) return "toneButtonUp";
+  if (vote > 0) return "toneButtonDown";
+  return "toneButtonAgree";
+}
 
 export function computeVoteResolution(args: {
   votes: Record<string, VoteValue | undefined>;

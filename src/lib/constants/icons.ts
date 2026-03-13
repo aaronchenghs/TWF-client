@@ -7,6 +7,8 @@ import {
   Contrast,
   Copy,
   EyeOff,
+  Lock,
+  LockOpen,
   Minus,
   Settings,
   Volume2,
@@ -23,6 +25,8 @@ export const APP_ICONS = {
   showTips: CircleHelp,
   streamerMode: EyeOff,
   soundEffects: Volume2,
+  lock: Lock,
+  unlock: LockOpen,
   vote: {
     up: ArrowBigUpDash,
     agree: Minus,

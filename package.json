@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
-    "@twf/contracts": "github:aaronchenghs/TWF-contracts#a49df2c8aa87cc7da7ad03ae20f0bccbaab4a6d4",
+    "@twf/contracts": "github:aaronchenghs/TWF-contracts#e35664d62013bad55d642d9b0d35f0ef22430ffb",
     "@types/pluralize": "^0.0.33",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",

@@ -1,6 +1,8 @@
+import { useRef } from "react";
 import clsx from "clsx";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { LoadableImage } from "@/components/LoadableImage/LoadableImage";
+import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 import styles from "./CurrentItemDisplay.module.scss";
 
 type CurrentItem = {
@@ -27,6 +29,14 @@ export function CurrentItemDisplay({
   emptyText = "--",
   hiddenText = "???",
 }: CurrentItemDisplayProps) {
+  const itemNameRef = useRef<HTMLSpanElement | null>(null);
+
+  useAutoFitText(itemNameRef, {
+    minFontSizePx: 14,
+    enabled: !!item && isVisible,
+    watch: item?.name,
+  });
+
   if (!isVisible) {
     const isSimpleHiddenText =
       typeof hiddenText === "string" || typeof hiddenText === "number";
@@ -61,6 +71,7 @@ export function CurrentItemDisplay({
         draggable={false}
       />
       <MainTextTypography
+        ref={itemNameRef}
         textAlign={textAlign}
         variant="h2"
         className={styles.name}

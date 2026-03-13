@@ -23,6 +23,7 @@ import {
   markHostRoomStarted,
   readHostRoomCode,
 } from "@/lib/roomClientState";
+import { DEFAULT_GAME_SETTINGS } from "@/lib/gameSettings";
 import { TierSetSelection } from "./TierSetSelection/TierSetSelection";
 import { HostSidePanel } from "./HostSidePanel/HostSidePanel";
 import { useHostLobbySoundEffects } from "@/lib/hooks/useSoundEffects";
@@ -174,6 +175,7 @@ export default function HostLobby() {
         <HostSidePanel
           roomCode={roomCode}
           players={players}
+          gameSettings={roomState?.gameSettings ?? DEFAULT_GAME_SETTINGS}
           selectedTierSetId={selectedTierSetId}
           selectedTierSetName={selectedTierSetName}
           onCountdownDisplayCountChange={setCountdownNumber}

@@ -26,9 +26,12 @@ export function PhaseStatusCard({ state }: PhaseStatusCardProps) {
 
   const phaseClock = usePhaseClock(state, 50);
   const shouldHideCountdown = PHASES_WITHOUT_COUNTDOWN.has(state.phase);
-  const ringProgress01 = shouldHideCountdown ? 1 : (phaseClock.progress01 ?? 0);
+  const isUnlimitedPhase = !shouldHideCountdown && phaseClock.endsAt == null;
+  const ringProgress01 =
+    shouldHideCountdown || isUnlimitedPhase ? 1 : (phaseClock.progress01 ?? 0);
   const isPhaseCritical =
     !shouldHideCountdown &&
+    !isUnlimitedPhase &&
     phaseClock.endsAt != null &&
     phaseClock.secondsLeft != null &&
     phaseClock.secondsLeft > 0 &&
@@ -131,7 +134,7 @@ export function PhaseStatusCard({ state }: PhaseStatusCardProps) {
 
         {!shouldHideCountdown && (
           <MainTextTypography variant="h2">
-            {phaseClock.secondsLeft ?? "--"}
+            {isUnlimitedPhase ? null : (phaseClock.secondsLeft ?? "--")}
           </MainTextTypography>
         )}
       </div>

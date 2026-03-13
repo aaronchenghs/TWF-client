@@ -1,0 +1,19 @@
+@use "../../../styles/export.scss" as *;
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: $default-gap;
+}
+
+.resetButtonContent {
+  display: inline-flex;
+  align-items: center;
+  gap: calc($default-gap * 0.5);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+}

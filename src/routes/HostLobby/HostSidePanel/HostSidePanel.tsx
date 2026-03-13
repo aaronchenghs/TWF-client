@@ -12,13 +12,18 @@ import { roomSocket } from "@/services/sockets/roomSocket";
 import { ROUTES } from "@/routes/routes";
 import { useNavigate } from "react-router-dom";
 import type { Guid } from "@/lib/guid";
+import type { GameSettings } from "@/lib/gameSettings";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
+import { useMobileView } from "@/lib/hooks/useMobileView";
 import styles from "./HostSidePanel.module.scss";
+import { GameSettingsModal } from "../GameSettingsModal/GameSettingsModal";
 
 type Player = Contracts.RoomPublicState["players"][number];
 
 type HostSidePanelProps = {
   roomCode: string;
   players: Player[];
+  gameSettings: GameSettings;
   selectedTierSetId: Guid | null;
   selectedTierSetName: string | null;
   onCountdownDisplayCountChange: (count: 3 | 2 | 1 | null) => void;
@@ -28,13 +33,20 @@ type HostSidePanelProps = {
 export function HostSidePanel({
   roomCode,
   players,
+  gameSettings,
   selectedTierSetId,
   selectedTierSetName,
   onCountdownDisplayCountChange,
   suppressRejoinNoticeRef,
 }: HostSidePanelProps) {
+  const [isGameSettingsOpen, setIsGameSettingsOpen] = useState(false);
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useMobileView();
+  const buttonIconProps = ICON_PROPS.quickActions;
+  const { gameSettings: GameSettingsIcon, startGame: StartGameIcon } =
+    APP_ICONS;
+  const buttonLabelVariant = isMobile ? "h2" : "h3";
 
   const isStartEnabled = !!selectedTierSetId && players.length >= 2;
 
@@ -80,11 +92,31 @@ export function HostSidePanel({
         </MainTextTypography>
 
         <AccentButton
+          variant="secondary"
+          disabled={isStartCountdownOpen}
+          onClick={() => setIsGameSettingsOpen(true)}
+        >
+          <MainTextTypography
+            variant={buttonLabelVariant}
+            className={styles.buttonContent}
+          >
+            <GameSettingsIcon {...buttonIconProps} aria-hidden="true" />
+            Customize
+          </MainTextTypography>
+        </AccentButton>
+
+        <AccentButton
           variant="primary"
           disabled={!isStartEnabled || isStartCountdownOpen}
           onClick={handleStartClick}
         >
-          Start Game
+          <MainTextTypography
+            variant={buttonLabelVariant}
+            className={styles.buttonContent}
+          >
+            <StartGameIcon {...buttonIconProps} aria-hidden="true" />
+            Start Game
+          </MainTextTypography>
         </AccentButton>
       </div>
 
@@ -130,6 +162,13 @@ export function HostSidePanel({
         onCancel={handleCancelCountdown}
         onComplete={handleCountdownComplete}
         onDisplayCountChange={onCountdownDisplayCountChange}
+      />
+
+      <GameSettingsModal
+        open={isGameSettingsOpen}
+        settings={gameSettings}
+        onClose={() => setIsGameSettingsOpen(false)}
+        onChange={(nextSettings) => roomSocket.setGameSettings(nextSettings)}
       />
     </aside>
   );

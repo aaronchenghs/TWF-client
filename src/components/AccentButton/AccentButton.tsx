@@ -29,6 +29,8 @@ export function AccentButton({
   const isMobile = useMobileView();
   const labelVariant =
     size === "small" ? (isMobile ? "h5" : "h6") : isMobile ? "h2" : "h3";
+  const shouldWrapLabel =
+    typeof children === "string" || typeof children === "number";
 
   return (
     <button
@@ -47,7 +49,11 @@ export function AccentButton({
       }
       {...props}
     >
-      <MainTextTypography variant={labelVariant}>{children}</MainTextTypography>
+      {shouldWrapLabel ? (
+        <MainTextTypography variant={labelVariant}>{children}</MainTextTypography>
+      ) : (
+        children
+      )}
     </button>
   );
 }

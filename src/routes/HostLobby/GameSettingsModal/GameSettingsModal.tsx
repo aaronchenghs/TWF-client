@@ -1,0 +1,92 @@
+import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
+import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
+import { SettingsOptionRow } from "@/components/SettingsModal/SettingsOptionRow/SettingsOptionRow";
+import {
+  areGameSettingsDefault,
+  DEFAULT_GAME_SETTINGS,
+  type GameSettings,
+} from "@/lib/gameSettings";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
+import styles from "./GameSettingsModal.module.scss";
+
+type GameSettingsModalProps = {
+  open: boolean;
+  settings: GameSettings;
+  onClose: () => void;
+  onChange: (nextSettings: GameSettings) => void;
+};
+
+const { timer: TimerIcon, reset: ResetIcon } = APP_ICONS;
+
+export function GameSettingsModal({
+  open,
+  settings,
+  onClose,
+  onChange,
+}: GameSettingsModalProps) {
+  const iconProps = ICON_PROPS.settingsRow;
+  const isResetDisabled = areGameSettingsDefault(settings);
+
+  return (
+    <PrimaryModal
+      open={open}
+      onClose={onClose}
+      title="Game Settings"
+      maxWidth={560}
+      footer={<AccentButton onClick={onClose}>Done</AccentButton>}
+    >
+      <div className={styles.actions}>
+        <AccentButton
+          variant="secondary"
+          size="small"
+          disabled={isResetDisabled}
+          onClick={() => onChange(DEFAULT_GAME_SETTINGS)}
+        >
+          <span className={styles.resetButtonContent}>
+            <ResetIcon {...iconProps} aria-hidden="true" />
+            <span>Reset to Default</span>
+          </span>
+        </AccentButton>
+      </div>
+
+      <div className={styles.rows}>
+        <SettingsOptionRow
+          icon={<TimerIcon {...iconProps} />}
+          title="Unlimited Placing Time"
+          description="The current placer can take as long as they need before placing or passing."
+          control={
+            <AccentToggle
+              checked={settings.unlimitedPlacingTime}
+              onChange={(nextValue) =>
+                onChange({
+                  ...settings,
+                  unlimitedPlacingTime: nextValue,
+                })
+              }
+              ariaLabel="Toggle unlimited placing time"
+            />
+          }
+        />
+
+        <SettingsOptionRow
+          icon={<TimerIcon {...iconProps} />}
+          title="Unlimited Voting Time"
+          description="Players have unlimited time to vote and the game waits until every eligible voter locks in."
+          control={
+            <AccentToggle
+              checked={settings.unlimitedVotingTime}
+              onChange={(nextValue) =>
+                onChange({
+                  ...settings,
+                  unlimitedVotingTime: nextValue,
+                })
+              }
+              ariaLabel="Toggle unlimited voting time"
+            />
+          }
+        />
+      </div>
+    </PrimaryModal>
+  );
+}

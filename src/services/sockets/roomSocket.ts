@@ -197,6 +197,10 @@ export const roomSocket = {
     socketClient.emit("room:setTierSet", { tierSetId });
   },
 
+  setGameSettings(gameSettings: RoomPublicState["gameSettings"]): void {
+    socketClient.emit("room:setGameSettings", { gameSettings });
+  },
+
   bootPlayerFromLobby(playerId: PlayerId): void {
     socketClient.emit("room:bootPlayerFromLobby", { playerId });
   },

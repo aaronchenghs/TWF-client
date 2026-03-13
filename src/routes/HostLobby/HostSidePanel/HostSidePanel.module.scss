@@ -83,6 +83,13 @@
   gap: $default-gap;
 }
 
+.buttonContent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $default-gap;
+}
+
 .selectedTierSetName {
   display: grid;
   place-items: center;

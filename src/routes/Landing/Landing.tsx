@@ -20,10 +20,13 @@ import {
 } from "../../lib/session";
 import { persistPlayerJoinState } from "@/lib/roomClientState";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
+import { APP_ICONS } from "@/lib/constants/icons";
 import { APP_VERSION } from "@/config/env";
+
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 const CURRENT_YEAR = new Date().getFullYear();
+const { lobbyCode: LobbyCodeIcon, playerName: PlayerNameIcon } = APP_ICONS;
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -183,6 +186,7 @@ export function JoinRoomPanel() {
           value={code}
           onChange={(e) => setCode(e.target.value)}
           onKeyDown={handleCodeInputEnter}
+          icon={LobbyCodeIcon}
           enterKeyHint="next"
           placeholder="CODE"
           autoComplete="off"
@@ -195,6 +199,7 @@ export function JoinRoomPanel() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleNameInputEnter}
+          icon={PlayerNameIcon}
           enterKeyHint="go"
           placeholder="YOUR NAME"
           autoComplete="off"

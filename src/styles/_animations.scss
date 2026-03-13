@@ -26,17 +26,17 @@
 @keyframes hop {
   0%,
   100% {
-    transform: translateY(0);
+    translate: 0 0;
     animation-timing-function: cubic-bezier(0.25, 0.8, 0.35, 1);
   }
 
   7% {
-    transform: translateY(calc(var(--hop-height, 10px) * -1));
+    translate: 0 calc(var(--hop-height, 10px) * -1);
     animation-timing-function: cubic-bezier(0.35, 0, 0.65, 1);
   }
 
   14% {
-    transform: translateY(0);
+    translate: 0 0;
   }
 }
 
@@ -44,8 +44,8 @@
   --hop-height: #{$height};
   animation: hop $duration linear $delay infinite;
   transform-box: fill-box;
-  transform-origin: center bottom;
-  will-change: transform;
+  transform-origin: center center;
+  will-change: translate;
 }
 
 @keyframes glowPulse {

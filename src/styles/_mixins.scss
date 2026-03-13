@@ -97,3 +97,23 @@
 @mixin flexFill($basis: auto) {
   flex: 1 1 $basis;
 }
+
+@mixin swivelHover(
+  $rotate: -5deg,
+  $scale-x: 0.97,
+  $scale-y: 1.03,
+  $duration: 180ms
+) {
+  transition:
+    rotate $duration $ease-out,
+    scale $duration $ease-out;
+  transform-box: fill-box;
+  transform-origin: center center;
+  cursor: default;
+  will-change: rotate, scale;
+
+  &:hover {
+    rotate: $rotate;
+    scale: $scale-x $scale-y;
+  }
+}

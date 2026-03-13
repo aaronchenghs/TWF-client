@@ -47,11 +47,15 @@
     }
 
     .logo {
-      @include float(10px, 3s);
+      @include float(6px, 3s);
       width: min(100vw, 950px);
       height: auto;
       margin-bottom: calc($default-gap * 3);
       transform-origin: center;
+
+      > g:nth-of-type(-n + 6) {
+        @include swivelHover();
+      }
 
       > g:nth-of-type(5) {
         @include hop($delay: 0s);

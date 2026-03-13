@@ -7,6 +7,7 @@ $bottom-part-height: calc(96vh - $header-height - $default-padding);
   --host-lobby-header-height: #{$header-height};
   --host-lobby-bottom-part-height: #{$bottom-part-height};
 
+  position: relative;
   max-width: $page-width-cutoff;
   margin: 0 auto;
   display: flex;
@@ -37,5 +38,19 @@ $bottom-part-height: calc(96vh - $header-height - $default-padding);
     display: grid;
     grid-template-columns: 1fr 0.35fr;
     gap: calc($default-gap * 2);
+  }
+}
+
+.topRightAction {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + calc($default-gap * 2));
+  right: calc(env(safe-area-inset-right, 0px) + calc($default-gap * 2));
+  z-index: $z-floating-actions;
+}
+
+@media (max-width: $mobile-width) {
+  .topRightAction {
+    top: calc(env(safe-area-inset-top, 0px) + $default-padding);
+    right: calc(env(safe-area-inset-right, 0px) + $default-padding);
   }
 }

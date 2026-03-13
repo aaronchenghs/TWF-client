@@ -4,12 +4,14 @@ import clsx from "clsx";
 import styles from "./ExpandingIconButton.module.scss";
 
 type ExpandDirection = "left" | "right";
+type Variant = "normal" | "destructive";
 
 type ExpandingIconButtonProps = {
   icon: ReactNode;
   label: string;
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
   expandDirection?: ExpandDirection;
+  variant?: Variant;
   className?: string;
   ariaLabel?: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick">;
@@ -19,6 +21,7 @@ export function ExpandingIconButton({
   label,
   onClick,
   expandDirection = "right",
+  variant = "normal",
   className,
   ariaLabel,
   type = "button",
@@ -57,6 +60,7 @@ export function ExpandingIconButton({
       className={clsx(
         styles.button,
         expandDirection === "left" ? styles.expandLeft : styles.expandRight,
+        variant === "destructive" && styles.destructive,
         className,
       )}
       onClick={onClick}

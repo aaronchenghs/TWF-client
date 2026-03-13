@@ -3,10 +3,11 @@ import styles from "./PlayerTopBar.module.scss";
 import { Pill } from "@/components/Pill/Pill";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
-import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { useMemo } from "react";
 import * as Contracts from "@twf/contracts";
+import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 
 type RoomPlayer = Contracts.RoomPublicState["players"][number];
 
@@ -18,6 +19,8 @@ type PlayerTopBarProps = {
   onExit: () => void;
 };
 
+const { exit: ExitIcon } = APP_ICONS;
+
 export function PlayerTopBar({
   phase,
   isMyTurn,
@@ -28,7 +31,7 @@ export function PlayerTopBar({
   const statusLabel = useMemo(() => {
     switch (phase) {
       case "PLACE":
-        return isMyTurn ? "Your Turn" : "Waiting";
+        return isMyTurn ? "Your Turn!" : "Waiting";
       case "VOTE":
         if (isMyTurn) return "Waiting";
         return hasConfirmedVote ? "Locked In" : "Vote";
@@ -57,7 +60,7 @@ export function PlayerTopBar({
           size="lg"
           className={clsx(
             styles.statusPill,
-            statusLabel === "Your Turn" && styles.statusPlace,
+            statusLabel === "Your Turn!" && styles.statusPlace,
             statusLabel === "Vote" && styles.statusVote,
             statusLabel === "Locked In" && styles.statusVote,
             statusLabel === "Waiting" && styles.statusWait,
@@ -72,14 +75,14 @@ export function PlayerTopBar({
         </Pill>
       </div>
 
-      <AccentButton
-        variant="secondary"
-        size="small"
+      <ExpandingIconButton
+        icon={<ExitIcon {...ICON_PROPS.quickActions} aria-hidden="true" />}
+        label="Exit"
+        ariaLabel="Exit"
+        expandDirection="left"
         className={styles.exitButton}
         onClick={onExit}
-      >
-        Exit
-      </AccentButton>
+      />
     </div>
   );
 }

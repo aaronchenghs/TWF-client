@@ -2,8 +2,8 @@
 
 .quickActions {
   position: fixed;
-  right: calc(env(safe-area-inset-right, 0px) + $default-gap);
-  bottom: calc(env(safe-area-inset-bottom, 0px) + $default-gap);
+  right: calc(env(safe-area-inset-right, 0px) + calc($default-gap * 2));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + calc($default-gap * 2));
   z-index: $z-floating-actions;
   display: flex;
   flex-direction: column;
@@ -14,5 +14,7 @@
 @media (max-width: $mobile-width) {
   .quickActions {
     flex-direction: row-reverse;
+    right: calc(env(safe-area-inset-right, 0px) + $default-gap);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + $default-gap);
   }
 }

@@ -26,10 +26,13 @@ import {
 import { TierSetSelection } from "./TierSetSelection/TierSetSelection";
 import { HostSidePanel } from "./HostSidePanel/HostSidePanel";
 import { useHostLobbySoundEffects } from "@/lib/hooks/useSoundEffects";
+import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
+import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 type TierSetSummary = Contracts.TierSetSummary;
 type RoomPublicState = Contracts.RoomPublicState;
+const { exit: ExitIcon } = APP_ICONS;
 
 export default function HostLobby() {
   const navigate = useNavigate();
@@ -51,6 +54,7 @@ export default function HostLobby() {
   const selectedTierSetId = (roomState?.tierSetId ?? null) as Guid | null;
   const selectedTierSetName =
     tierSets.find((tier) => tier.id === selectedTierSetId)?.title ?? null;
+  const isCloseLobbyDisabled = countdownNumber !== null;
 
   useUnexpectedExitRejoinNotice({
     kind: "host_lobby",
@@ -136,6 +140,23 @@ export default function HostLobby() {
 
   return (
     <div className={styles.root}>
+      <div className={styles.topRightAction}>
+        <ExpandingIconButton
+          icon={
+            <ExitIcon
+              {...ICON_PROPS.quickActions}
+              aria-hidden="true"
+            />
+          }
+          label="Close Lobby"
+          ariaLabel="Close Lobby"
+          expandDirection="left"
+          variant="destructive"
+          onClick={() => setIsConfirmCloseOpen(true)}
+          disabled={isCloseLobbyDisabled}
+        />
+      </div>
+
       <header className={styles.header}>
         <TWFLogo className={styles.logo} aria-hidden="true" />
         <MainTextTypography variant="h1" className={styles.title}>
@@ -155,7 +176,6 @@ export default function HostLobby() {
           players={players}
           selectedTierSetId={selectedTierSetId}
           selectedTierSetName={selectedTierSetName}
-          onCloseLobby={() => setIsConfirmCloseOpen(true)}
           onCountdownDisplayCountChange={setCountdownNumber}
           suppressRejoinNoticeRef={suppressRejoinNoticeRef}
         />

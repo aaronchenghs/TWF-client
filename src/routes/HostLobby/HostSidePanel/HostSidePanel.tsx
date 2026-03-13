@@ -21,7 +21,6 @@ type HostSidePanelProps = {
   players: Player[];
   selectedTierSetId: Guid | null;
   selectedTierSetName: string | null;
-  onCloseLobby: () => void;
   onCountdownDisplayCountChange: (count: 3 | 2 | 1 | null) => void;
   suppressRejoinNoticeRef: React.MutableRefObject<boolean>;
 };
@@ -31,7 +30,6 @@ export function HostSidePanel({
   players,
   selectedTierSetId,
   selectedTierSetName,
-  onCloseLobby,
   onCountdownDisplayCountChange,
   suppressRejoinNoticeRef,
 }: HostSidePanelProps) {
@@ -87,14 +85,6 @@ export function HostSidePanel({
           onClick={handleStartClick}
         >
           Start Game
-        </AccentButton>
-
-        <AccentButton
-          variant="secondary"
-          onClick={onCloseLobby}
-          disabled={isStartCountdownOpen}
-        >
-          Close Lobby
         </AccentButton>
       </div>
 

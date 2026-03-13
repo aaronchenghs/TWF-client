@@ -6,7 +6,7 @@ $button-size-mobile: $button-size * 0.9;
 $icon-size-mobile: $icon-size * 0.9;
 $inline-padding: $default-padding;
 $label-trailing-space: $default-gap;
-$border-width: 1px;
+$border-width: 2px;
 $collapsed-icon-offset: calc(
   ($button-size - ($border-width * 2) - $icon-size) / 2
 );
@@ -17,15 +17,24 @@ $collapsed-icon-offset: calc(
     ($border-width * 2) + ($inline-padding * 2) + $icon-size + $default-gap +
       var(--label-width) + $label-trailing-space
   );
+  --button-border-color: #{$bg-elevated};
+  --button-bg: #{$bg-surface};
+  --button-text-color: #{$text-primary};
+  --button-icon-color: var(--button-text-color);
+  --button-hover-border-color: #{$accent};
+  --button-hover-bg: #{$bg-elevated};
+  --button-hover-text-color: var(--button-text-color);
+  --button-hover-icon-color: var(--button-icon-color);
+  --button-focus-outline-color: #{$accent};
 
   height: $button-size;
   width: var(--expanded-width);
   max-width: $button-size;
   padding: 0;
-  border: $border-width solid $bg-elevated;
+  border: $border-width solid var(--button-border-color);
   border-radius: $radius-md;
-  background: $bg-surface;
-  color: $text-primary;
+  background: var(--button-bg);
+  color: var(--button-text-color);
 
   display: inline-flex;
   align-items: center;
@@ -49,8 +58,9 @@ $collapsed-icon-offset: calc(
   &:hover:not(:disabled),
   &:focus-visible:not(:disabled) {
     max-width: var(--expanded-width);
-    border-color: $accent;
-    background: $bg-elevated;
+    border-color: var(--button-hover-border-color);
+    background: var(--button-hover-bg);
+    color: var(--button-hover-text-color);
   }
 
   &:disabled {
@@ -59,7 +69,7 @@ $collapsed-icon-offset: calc(
   }
 
   &:focus-visible {
-    outline: 2px solid $accent;
+    outline: 2px solid var(--button-focus-outline-color);
     outline-offset: 2px;
   }
 }
@@ -82,6 +92,7 @@ $collapsed-icon-offset: calc(
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: var(--button-icon-color);
   transition: margin $dur-base $ease-out;
 
   :global(svg) {
@@ -108,6 +119,11 @@ $collapsed-icon-offset: calc(
   margin: 0 $inline-padding 0 0;
 }
 
+.button:hover:not(:disabled) .iconWrap,
+.button:focus-visible:not(:disabled) .iconWrap {
+  color: var(--button-hover-icon-color);
+}
+
 .label {
   width: var(--label-width);
   @include flexFixed(var(--label-width));
@@ -126,6 +142,13 @@ $collapsed-icon-offset: calc(
 .button:focus-visible:not(:disabled) .label {
   opacity: 1;
   transform: translateX(0);
+}
+
+.destructive {
+  --button-border-color: #{$error};
+  --button-hover-border-color: #{$error};
+  --button-icon-color: #{$error};
+  --button-hover-icon-color: #{$error};
 }
 
 @media (prefers-reduced-motion: reduce) {

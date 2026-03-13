@@ -118,11 +118,35 @@
   }
 }
 
-.versionTag {
+.versionTagButton {
   position: fixed;
   left: calc(env(safe-area-inset-left, 0px) + $default-gap);
   bottom: calc(env(safe-area-inset-bottom, 0px) + $default-gap);
-  pointer-events: none;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: $radius-md;
+  transition:
+    transform $dur-fast ease,
+    background $dur-fast ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: $light-transparency;
+  }
+
+  &:active {
+    transform: translateY(0px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $text-secondary;
+    outline-offset: 2px;
+  }
+}
+
+.versionTag {
   user-select: none;
 }
 

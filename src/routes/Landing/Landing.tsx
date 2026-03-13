@@ -9,6 +9,7 @@ import { useRef, useState, type KeyboardEvent } from "react";
 import { normalizeCode, normalizeName } from "../../lib/stringNormalizers";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
+import { LicensingModal } from "../../components/LicensingModal/LicensingModal";
 import { WhatIsThisModal } from "../../components/WhatIsThisModal/WhatIsThisModal";
 import * as Contracts from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
@@ -22,12 +23,14 @@ import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_VERSION } from "@/config/env";
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
+const CURRENT_YEAR = new Date().getFullYear();
 
 export default function Landing() {
   const navigate = useNavigate();
   const isMobile = useMobileView();
   const [isCreatingLobby, setIsCreatingLobby] = useState<boolean>(false);
   const [isWhatIsThisOpen, setIsWhatIsThisOpen] = useState(false);
+  const [isLicensingOpen, setIsLicensingOpen] = useState(false);
 
   const handleCreateRoom = async () => {
     setIsCreatingLobby(true);
@@ -88,13 +91,25 @@ export default function Landing() {
         onClose={() => setIsWhatIsThisOpen(false)}
       />
 
-      <MainTextTypography
-        className={styles.versionTag}
-        variant="caption"
-        letterSpacing="wide"
+      <LicensingModal
+        open={isLicensingOpen}
+        onClose={() => setIsLicensingOpen(false)}
+      />
+
+      <button
+        type="button"
+        className={styles.versionTagButton}
+        onClick={() => setIsLicensingOpen(true)}
+        aria-label="Open licensing information"
       >
-        © 2026 ARC | v{APP_VERSION}
-      </MainTextTypography>
+        <MainTextTypography
+          className={styles.versionTag}
+          variant="caption"
+          letterSpacing="wide"
+        >
+          © {CURRENT_YEAR} ARC | v{APP_VERSION}
+        </MainTextTypography>
+      </button>
     </div>
   );
 }

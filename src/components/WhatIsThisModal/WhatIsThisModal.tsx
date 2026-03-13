@@ -1,3 +1,16 @@
+/*
+Copyright (C) 2026 Aaron Raphael Cheng
+
+This file is part of Tiers! With Friends.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+See the LICENSE file for details.
+*/
+
 import { AccentButton } from "../AccentButton/AccentButton";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
@@ -5,7 +18,7 @@ import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
 import styles from "./WhatIsThisModal.module.scss";
 
 const QUICK_START_STEPS = [
-  "The host clicks `Create Lobby` on a shared screen",
+  "The host clicks `Create Lobby` on a larger shared screen",
   "Everyone, from their phone or device, enters the lobby code, picks a name, and clicks `Play`",
   "Host picks a tier set to play, then starts the game when everyone is in",
 ] as const;
@@ -34,9 +47,7 @@ export function WhatIsThisModal(props: { open: boolean; onClose: () => void }) {
         <MainTextTypography variant="body" muted textAlign="center">
           Inspired by the likes of <i>JackBox</i> and <i>TierMaker</i>,{" "}
           <strong>Tiers! With Friends</strong> is a browser party game where
-          your group builds a tier list together in real time. It works best
-          with one shared host screen and everyone (including the host) joining
-          from their own device.
+          your group builds a tier list together in real time.
         </MainTextTypography>
 
         <section className={styles.section}>

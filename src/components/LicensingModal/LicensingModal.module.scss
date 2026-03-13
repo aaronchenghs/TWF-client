@@ -1,0 +1,26 @@
+@use "../../styles/export.scss" as *;
+
+.content {
+  display: grid;
+  gap: $default-gap;
+}
+
+.section {
+  display: grid;
+  gap: $default-gap;
+  text-align: left;
+  padding: $default-padding;
+  border-radius: $radius-md;
+  border: 1px solid $light-transparency;
+  background: $light-transparency;
+}
+
+.list {
+  margin: 0;
+  padding-left: calc($default-padding * 1.5);
+  display: grid;
+}
+
+.list li::marker {
+  color: $accent;
+}

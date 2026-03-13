@@ -53,6 +53,30 @@
       margin-bottom: calc($default-gap * 3);
       transform-origin: center;
 
+      > g:nth-of-type(5) {
+        @include hop($delay: 0s);
+      }
+
+      > g:nth-of-type(6) {
+        @include hop($delay: 0.18s);
+      }
+
+      > g:nth-of-type(4) {
+        @include hop($delay: 0.36s);
+      }
+
+      > g:nth-of-type(3) {
+        @include hop($delay: 0.54s);
+      }
+
+      > g:nth-of-type(2) {
+        @include hop($delay: 0.72s);
+      }
+
+      > g:nth-of-type(1) {
+        @include hop($delay: 0.9s);
+      }
+
       @media (max-width: $mobile-width) {
         margin-bottom: 0px;
       }

@@ -150,11 +150,13 @@
   position: fixed;
   left: calc(env(safe-area-inset-left, 0px) + $default-gap);
   bottom: calc(env(safe-area-inset-bottom, 0px) + $default-gap);
+
   appearance: none;
   border: 0;
   background: transparent;
   cursor: pointer;
-  border-radius: $radius-md;
+
+  border-radius: $radius-sm;
   transition:
     transform $dur-fast ease,
     background $dur-fast ease;

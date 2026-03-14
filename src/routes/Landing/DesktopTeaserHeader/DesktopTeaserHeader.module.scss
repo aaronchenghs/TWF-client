@@ -1,0 +1,61 @@
+@use "../../../styles/export.scss" as *;
+
+.desktopTeaserHeader {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + $default-gap);
+  left: calc(env(safe-area-inset-left, 0px) + $default-gap);
+  z-index: $z-floating-actions;
+
+  display: inline-flex;
+  align-items: center;
+
+  @include comicPanel(
+    $comic-skew-soft,
+    $radius-md,
+    rgba(255, 255, 255, 0),
+    rgba($bg-surface, 0.8)
+  );
+}
+
+.desktopTeaserAction {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: $text-secondary;
+  cursor: help;
+  min-height: 35px;
+  display: inline-flex;
+  align-items: center;
+
+  gap: calc($default-gap * 0.5);
+  padding: calc($default-padding * 0.5) $default-padding;
+
+  border-radius: $radius-sm;
+  transition:
+    transform $dur-fast $ease-out,
+    background-color $dur-fast ease,
+    color $dur-fast ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-1px);
+    background: rgba($accent, 0.1);
+    color: $text-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($accent, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.desktopTeaserLabel {
+  font-size: 14px;
+  text-shadow: 0 1px 0 $box-shadow-color;
+}
+
+@media (max-width: $mobile-width) {
+  .desktopTeaserHeader {
+    display: none;
+  }
+}

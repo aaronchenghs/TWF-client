@@ -22,6 +22,7 @@ import { persistPlayerJoinState } from "@/lib/roomClientState";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_ICONS } from "@/lib/constants/icons";
 import { APP_VERSION } from "@/config/env";
+import { DesktopTeaserHeader } from "./DesktopTeaserHeader/DesktopTeaserHeader";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
@@ -50,6 +51,8 @@ export default function Landing() {
 
   return (
     <div className={styles.landingPage}>
+      {!isMobile && <DesktopTeaserHeader />}
+
       <div className={styles.container}>
         <h1 className={styles.seoHeading}>Tiers! With Friends</h1>
         <TWFLogo className={styles.logo} aria-hidden="true" />

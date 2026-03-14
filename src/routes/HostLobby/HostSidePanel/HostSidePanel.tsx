@@ -83,7 +83,7 @@ export function HostSidePanel({
       <div className={clsx(styles.panel, styles.controls)}>
         <MainTextTypography
           variant={selectedTierSetName ? "h3" : "body"}
-          tone="player"
+          tone={selectedTierSetName ? "player" : "default"}
           textAlign="center"
           muted={!selectedTierSetName}
           className={styles.selectedTierSetName}

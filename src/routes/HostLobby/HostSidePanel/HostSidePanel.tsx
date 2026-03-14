@@ -15,6 +15,7 @@ import type { Guid } from "@/lib/guid";
 import type { GameSettings } from "@/lib/gameSettings";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { useMobileView } from "@/lib/hooks/useMobileView";
+import { ToolTipWrapper } from "@/components/ToolTip/ToolTip";
 import styles from "./HostSidePanel.module.scss";
 import { GameSettingsModal } from "../GameSettingsModal/GameSettingsModal";
 
@@ -49,6 +50,10 @@ export function HostSidePanel({
   const buttonLabelVariant = isMobile ? "h2" : "h3";
 
   const isStartEnabled = !!selectedTierSetId && players.length >= 2;
+  const startDisabledReason = getStartDisabledReason({
+    selectedTierSetId,
+    playerCount: players.length,
+  });
 
   const handleStartClick = useCallback(() => {
     if (!isStartEnabled) return;
@@ -105,19 +110,28 @@ export function HostSidePanel({
           </MainTextTypography>
         </AccentButton>
 
-        <AccentButton
-          variant="primary"
-          disabled={!isStartEnabled || isStartCountdownOpen}
-          onClick={handleStartClick}
+        <ToolTipWrapper
+          content={startDisabledReason}
+          error
+          placement="bottom"
+          block
+          disabled={!startDisabledReason}
         >
-          <MainTextTypography
-            variant={buttonLabelVariant}
-            className={styles.buttonContent}
+          <AccentButton
+            variant="primary"
+            disabled={!isStartEnabled || isStartCountdownOpen}
+            onClick={handleStartClick}
+            className={styles.startButton}
           >
-            <StartGameIcon {...buttonIconProps} aria-hidden="true" />
-            Start Game
-          </MainTextTypography>
-        </AccentButton>
+            <MainTextTypography
+              variant={buttonLabelVariant}
+              className={styles.buttonContent}
+            >
+              <StartGameIcon {...buttonIconProps} aria-hidden="true" />
+              Start Game
+            </MainTextTypography>
+          </AccentButton>
+        </ToolTipWrapper>
       </div>
 
       <div className={styles.panel}>
@@ -172,4 +186,19 @@ export function HostSidePanel({
       />
     </aside>
   );
+}
+
+function getStartDisabledReason(args: {
+  selectedTierSetId: Guid | null;
+  playerCount: number;
+}) {
+  const { selectedTierSetId, playerCount } = args;
+  const hasTierSet = !!selectedTierSetId;
+  const hasEnoughPlayers = playerCount >= 2;
+
+  if (!hasTierSet && !hasEnoughPlayers)
+    return "Select a tier set and have at least 2 players to start.";
+  if (!hasTierSet) return "Select a tier set to start.";
+  if (!hasEnoughPlayers) return "At least 2 players are needed to start.";
+  return null;
 }

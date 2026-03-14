@@ -21,10 +21,20 @@
 
   border-radius: $radius-sm;
   border: 1px solid $light-transparency;
-  background: $bg-elevated;
+  background: rgba($bg-elevated, 0.88);
   color: $text-primary;
+  text-align: center;
   box-shadow: $shadow-comic-panel;
   backdrop-filter: $backdrop-blur;
+}
+
+.error {
+  border-color: $error;
+  color: $error;
+}
+
+.errorText {
+  color: $error;
 }
 
 .top {

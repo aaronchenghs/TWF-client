@@ -21,6 +21,7 @@ export interface ToolTipWrapperProps extends Omit<
 > {
   children: React.ReactNode;
   content: React.ReactNode;
+  error?: boolean;
   placement?: ToolTipPlacement;
   align?: ToolTipAlign;
   offset?: number;
@@ -36,6 +37,7 @@ const ALL_PLACEMENTS: ToolTipPlacement[] = ["top", "bottom", "left", "right"];
 export function ToolTipWrapper({
   children,
   content,
+  error = false,
   placement = "top",
   align = "center",
   offset = 8,
@@ -272,6 +274,7 @@ export function ToolTipWrapper({
             role="tooltip"
             className={clsx(
               styles.tooltip,
+              error && styles.error,
               styles[resolvedPlacement],
               isOpen ? styles.opening : styles.closing,
               tooltipClassName,
@@ -279,7 +282,7 @@ export function ToolTipWrapper({
             style={tooltipStyle ?? { visibility: "hidden" }}
             onAnimationEnd={handleTooltipAnimationEnd}
           >
-            {renderTooltipContent(content)}
+            {renderTooltipContent(content, error)}
           </div>,
           document.body,
         )}
@@ -400,10 +403,14 @@ function getTooltipPosition(args: {
   };
 }
 
-function renderTooltipContent(content: React.ReactNode) {
+function renderTooltipContent(content: React.ReactNode, error: boolean) {
   if (typeof content === "string" || typeof content === "number") {
     return (
-      <MainTextTypography variant="body" weight="bold">
+      <MainTextTypography
+        variant="body"
+        weight="bold"
+        className={error ? styles.errorText : undefined}
+      >
         {content}
       </MainTextTypography>
     );

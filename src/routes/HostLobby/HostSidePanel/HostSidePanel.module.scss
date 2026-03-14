@@ -90,6 +90,10 @@
   gap: $default-gap;
 }
 
+.startButton {
+  width: 100%;
+}
+
 .selectedTierSetName {
   display: grid;
   place-items: center;

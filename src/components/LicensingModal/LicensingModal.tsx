@@ -40,8 +40,8 @@ export function LicensingModal(props: { open: boolean; onClose: () => void }) {
           <ul className={styles.list}>
             <li>
               <MainTextTypography variant="body" muted>
-                Public source code may be reused under the terms of the
-                AGPL-3.0 license.
+                Public source code may be reused under the terms of the AGPL-3.0
+                license.
               </MainTextTypography>
             </li>
             <li>
@@ -57,10 +57,13 @@ export function LicensingModal(props: { open: boolean; onClose: () => void }) {
               </MainTextTypography>
             </li>
           </ul>
-        </section>
 
-        <section className={styles.section}>
-          <MainTextTypography variant="caption" muted letterSpacing="wide">
+          <MainTextTypography
+            variant="caption"
+            muted
+            letterSpacing="wide"
+            textAlign="right"
+          >
             Copyright © 2026 Aaron Raphael Cheng
           </MainTextTypography>
         </section>

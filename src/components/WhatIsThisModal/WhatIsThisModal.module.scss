@@ -18,9 +18,9 @@
 .stepList,
 .bulletList {
   margin: 0;
-  padding-left: calc($default-padding * 1.5);
+  padding-left: calc($default-padding * 2);
   display: grid;
-  gap: calc($default-gap * 0.8);
+  gap: $default-gap;
 }
 
 .stepList li::marker,

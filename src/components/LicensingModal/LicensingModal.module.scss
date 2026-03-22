@@ -7,7 +7,7 @@
 
 .section {
   display: grid;
-  gap: $default-gap;
+  gap: calc($default-gap * 2);
   text-align: left;
   padding: $default-padding;
   border-radius: $radius-md;
@@ -17,7 +17,7 @@
 
 .list {
   margin: 0;
-  padding-left: calc($default-padding * 1.5);
+  padding-left: calc($default-padding * 2);
   display: grid;
 }
 

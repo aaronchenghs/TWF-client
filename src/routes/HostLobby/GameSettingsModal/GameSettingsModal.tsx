@@ -5,6 +5,8 @@ import { SettingsOptionRow } from "@/components/SettingsModal/SettingsOptionRow/
 import {
   areGameSettingsDefault,
   DEFAULT_GAME_SETTINGS,
+  GAME_SETTING_TOGGLE_DEFINITIONS,
+  updateGameSetting,
   type GameSettings,
 } from "@/lib/gameSettings";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
@@ -51,41 +53,23 @@ export function GameSettingsModal({
       </div>
 
       <div className={styles.rows}>
-        <SettingsOptionRow
-          icon={<TimerIcon {...iconProps} />}
-          title="Unlimited Placing Time"
-          description="The current placer can take as long as they need before placing or passing."
-          control={
-            <AccentToggle
-              checked={settings.unlimitedPlacingTime}
-              onChange={(nextValue) =>
-                onChange({
-                  ...settings,
-                  unlimitedPlacingTime: nextValue,
-                })
-              }
-              ariaLabel="Toggle unlimited placing time"
-            />
-          }
-        />
-
-        <SettingsOptionRow
-          icon={<TimerIcon {...iconProps} />}
-          title="Unlimited Voting Time"
-          description="Players have unlimited time to vote and the game waits until every eligible voter locks in."
-          control={
-            <AccentToggle
-              checked={settings.unlimitedVotingTime}
-              onChange={(nextValue) =>
-                onChange({
-                  ...settings,
-                  unlimitedVotingTime: nextValue,
-                })
-              }
-              ariaLabel="Toggle unlimited voting time"
-            />
-          }
-        />
+        {GAME_SETTING_TOGGLE_DEFINITIONS.map((setting) => (
+          <SettingsOptionRow
+            key={setting.key}
+            icon={<TimerIcon {...iconProps} />}
+            title={setting.title}
+            description={setting.description}
+            control={
+              <AccentToggle
+                checked={settings[setting.key]}
+                onChange={(nextValue) =>
+                  onChange(updateGameSetting(settings, setting.key, nextValue))
+                }
+                ariaLabel={setting.ariaLabel}
+              />
+            }
+          />
+        ))}
       </div>
     </PrimaryModal>
   );

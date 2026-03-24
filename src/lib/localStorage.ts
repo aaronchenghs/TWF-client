@@ -69,6 +69,21 @@ const numberCodec: StorageCodec<number> = {
   },
 };
 
+function createJsonCodec<V>(parseValue: (value: unknown) => V | null) {
+  return {
+    parse(raw) {
+      try {
+        return parseValue(JSON.parse(raw));
+      } catch {
+        return null;
+      }
+    },
+    stringify(value) {
+      return JSON.stringify(value);
+    },
+  } satisfies StorageCodec<V>;
+}
+
 function defineStorageVariable<K extends string>(
   variable: StorageVariableDefinition<K>,
 ): StorageVariable<K, string>;
@@ -110,24 +125,15 @@ function isRoomSessionStorage(value: unknown): value is RoomSessionStorage {
   return true;
 }
 
-const roomSessionCodec: StorageCodec<RoomSessionStorage> = {
-  parse(raw) {
-    try {
-      const parsed: unknown = JSON.parse(raw);
-      return isRoomSessionStorage(parsed) ? parsed : null;
-    } catch {
-      return null;
-    }
-  },
-  stringify(value) {
-    return JSON.stringify(value);
-  },
-};
+const roomSessionCodec = createJsonCodec((value) =>
+  isRoomSessionStorage(value) ? value : null,
+);
 
 export const LOCAL_STORAGE_KEYS = {
   CLIENT_ID: "twf:clientId",
   HOST_SESSION: "twf:hostSession",
   HOST_STARTED_ROOM_CODE: "twf:hostStartedRoomCode",
+  HOST_LOBBY_GAME_SETTINGS: "twf:hostLobbyGameSettings",
   HOST_LOBBY_PLAY_TIP_SEEN: "twf:hostLobbyPlayTipSeen",
   LANDING_MOBILE_JOIN_TIP_SEEN: "twf:landingMobileJoinTipSeen",
   CREATOR_MESSAGE_SEEN: "twf:creatorMessageSeen",

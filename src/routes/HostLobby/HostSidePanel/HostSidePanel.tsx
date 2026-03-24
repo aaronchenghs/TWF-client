@@ -25,6 +25,7 @@ type HostSidePanelProps = {
   roomCode: string;
   players: Player[];
   gameSettings: GameSettings;
+  onGameSettingsChange: (nextSettings: GameSettings) => void;
   selectedTierSetId: Guid | null;
   selectedTierSetName: string | null;
   onCountdownDisplayCountChange: (count: 3 | 2 | 1 | null) => void;
@@ -35,6 +36,7 @@ export function HostSidePanel({
   roomCode,
   players,
   gameSettings,
+  onGameSettingsChange,
   selectedTierSetId,
   selectedTierSetName,
   onCountdownDisplayCountChange,
@@ -182,7 +184,7 @@ export function HostSidePanel({
         open={isGameSettingsOpen}
         settings={gameSettings}
         onClose={() => setIsGameSettingsOpen(false)}
-        onChange={(nextSettings) => roomSocket.setGameSettings(nextSettings)}
+        onChange={onGameSettingsChange}
       />
     </aside>
   );

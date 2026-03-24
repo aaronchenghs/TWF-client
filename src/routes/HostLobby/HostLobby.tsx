@@ -23,12 +23,14 @@ import {
   markHostRoomStarted,
   readHostRoomCode,
 } from "@/lib/roomClientState";
-import { DEFAULT_GAME_SETTINGS } from "@/lib/gameSettings";
 import { TierSetSelection } from "./TierSetSelection/TierSetSelection";
 import { HostSidePanel } from "./HostSidePanel/HostSidePanel";
 import { useHostLobbySoundEffects } from "@/lib/hooks/useSoundEffects";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
+import {
+  useHostLobbyGameSettingsController,
+} from "./GameSettingsModal/useHostLobbyGameSettingsController";
 
 const CODE_LENGTH = Contracts.CODE_LENGTH;
 type TierSetSummary = Contracts.TierSetSummary;
@@ -51,6 +53,11 @@ export default function HostLobby() {
 
   const roomCode = normalizeCode(readHostRoomCode());
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
+  const {
+    gameSettings,
+    handleGameSettingsChange,
+    handleIncomingRoomState,
+  } = useHostLobbyGameSettingsController({ roomCode });
   const players = roomState?.players ?? [];
   const selectedTierSetId = (roomState?.tierSetId ?? null) as Guid | null;
   const selectedTierSetName =
@@ -72,9 +79,10 @@ export default function HostLobby() {
   }, [navigate, roomCode]);
 
   const handleRoomState = useCallback((state: RoomPublicState) => {
+    handleIncomingRoomState(state);
     setRoomState(state);
     if (state.phase !== "LOBBY") markHostRoomStarted(state.code);
-  }, []);
+  }, [handleIncomingRoomState]);
 
   const handleRoomClosed = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
@@ -175,7 +183,8 @@ export default function HostLobby() {
         <HostSidePanel
           roomCode={roomCode}
           players={players}
-          gameSettings={roomState?.gameSettings ?? DEFAULT_GAME_SETTINGS}
+          gameSettings={gameSettings}
+          onGameSettingsChange={handleGameSettingsChange}
           selectedTierSetId={selectedTierSetId}
           selectedTierSetName={selectedTierSetName}
           onCountdownDisplayCountChange={setCountdownNumber}

@@ -14,7 +14,7 @@ See the LICENSE file for details.
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./PlayerGameController.module.scss";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState, TierSetDefinition, TierItem } from "@twf/contracts";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { socketClient } from "@/services/sockets/socketClient";
@@ -31,9 +31,6 @@ import { GameStatusCard } from "@/routes/GameRoom/GameSidePanel/GameStatusCard/G
 import { useScreenWakeLock } from "@/lib/hooks/useScreenWakeLock";
 import { useFinishedPhaseConfetti } from "@/lib/hooks/useFinishedPhaseConfetti";
 
-type RoomPublicState = Contracts.RoomPublicState;
-type TierSetDefinition = Contracts.TierSetDefinition;
-type TierItem = Contracts.TierItem;
 
 export default function PlayerGameController({
   state,

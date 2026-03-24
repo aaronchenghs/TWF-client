@@ -1,9 +1,8 @@
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { CreatorMessageButton } from "@/components/CreatorMessageButton/CreatorMessageButton";
 import { ShareResultsButton } from "@/components/ShareResultsButton/ShareResultsButton";
 import styles from "./FinishedUtilityActions.module.scss";
 
-type RoomPublicState = Contracts.RoomPublicState;
 
 type FinishedUtilityActionsProps = {
   state: RoomPublicState;

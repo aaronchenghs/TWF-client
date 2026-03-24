@@ -1,11 +1,10 @@
-import type * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { orderByIdsKeepingExtras } from "@/lib/array";
 
 type PlayerLike = {
   id: string;
   name: string;
 };
-type RoomPublicState = Contracts.RoomPublicState;
 type RoomPlayer = RoomPublicState["players"][number];
 
 export function getPlayerNameById(

@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerLobby.module.scss";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { HowToPlayModal } from "@/components/HowToPlayModal/HowToPlayModal";
@@ -16,7 +16,6 @@ import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
 import { clearPlayerRoomState, readPlayerRuntime } from "@/lib/roomClientState";
 
-type RoomPublicState = Contracts.RoomPublicState;
 
 export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const navigate = useNavigate();

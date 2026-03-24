@@ -4,7 +4,7 @@ import { useCallback, useId, useRef, useState } from "react";
 import { MainTextTypography } from "../../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../../services/sockets/roomSocket";
 import { TierSetDetails } from "./TierSetDetails/TierSetDetails";
-import * as Contracts from "@twf/contracts";
+import type { TierSetSummary, TierSetDefinition } from "@twf/contracts";
 import type { Guid } from "../../../lib/guid";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
 import { handleKeyDown } from "@/lib/accessibility";
@@ -13,8 +13,6 @@ import { getTierSetItemCountAccentColor } from "@/lib/tierItems";
 import pluralize from "pluralize";
 import { useStaggeredLoadImages } from "@/lib/hooks/useStaggeredLoad";
 
-type TierSetSummary = Contracts.TierSetSummary;
-type TierSetDefinition = Contracts.TierSetDefinition;
 
 type TierSetGridEntryProps = {
   index: number;

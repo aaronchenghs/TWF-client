@@ -1,11 +1,10 @@
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { FinishedUtilityActions } from "@/components/FinishedUtilityActions/FinishedUtilityActions";
 import { GameStatusCard } from "../GameStatusCard/GameStatusCard";
 import styles from "./FinishedCard.module.scss";
 
-type RoomPublicState = Contracts.RoomPublicState;
 
 type FinishedCardProps = {
   state: RoomPublicState;

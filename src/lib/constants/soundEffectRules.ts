@@ -1,10 +1,7 @@
-import type * as Contracts from "@twf/contracts";
+import type { RoomPublicState, TierId, TierItemId } from "@twf/contracts";
 import type { SfxId } from "@/lib/sounds/soundEffects";
 import { getPlayerDelta } from "@/lib/players";
 
-type RoomPublicState = Contracts.RoomPublicState;
-type TierId = Contracts.TierId;
-type TierItemId = Contracts.TierItemId;
 
 export type SoundRule<Snapshot, Runtime> = {
   id: string;

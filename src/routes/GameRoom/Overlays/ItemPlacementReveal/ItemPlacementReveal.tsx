@@ -1,5 +1,5 @@
 import styles from "./ItemPlacementReveal.module.scss";
-import type * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { resolvePlacedTierId } from "@/lib/tierItems";
@@ -11,7 +11,6 @@ import { getPlayerNameById } from "@/lib/players";
 import { playSfx } from "@/lib/sounds/soundEffects";
 import { buildHoldSlideAnimation } from "@/lib/motionPresets";
 
-type RoomPublicState = Contracts.RoomPublicState;
 
 type Props = {
   state: RoomPublicState | null;

@@ -3,15 +3,13 @@ import clsx from "clsx";
 import baseStyles from "../Controls.module.scss";
 import styles from "./PlaceControls.module.scss";
 import { AwaitingControls } from "../AwaitingControls/AwaitingControls";
-import * as Contracts from "@twf/contracts";
+import type { Tier, TierItem, RoomPublicState } from "@twf/contracts";
 import { AccentButton } from "../../../../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../../../../components/MainTextTypography/MainTextTypography";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { useActionLocks } from "@/lib/hooks/useActionLocks";
 import { socketClient } from "@/services/sockets/socketClient";
 
-type Tier = Contracts.Tier;
-type TierItem = Contracts.TierItem;
 type ActionLockKey = "place";
 
 const ACTION_LOCK_TIMEOUT_MS = 6000;
@@ -19,7 +17,7 @@ const ACTION_LOCK_TIMEOUT_MS = 6000;
 type PlaceControlsProps = {
   tiers: Tier[];
   tierOrder: string[];
-  phase: Contracts.RoomPublicState["phase"];
+  phase: RoomPublicState["phase"];
   isMyTurn: boolean;
   currentItem: TierItem | null;
 };

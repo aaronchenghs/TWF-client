@@ -1,13 +1,12 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { usePhaseClock } from "@/lib/hooks/usePhaseClock";
 import { useGameRoomSoundEffects } from "@/lib/hooks/useSoundEffects";
 import { GameStatusCard } from "../GameStatusCard/GameStatusCard";
 import styles from "./PhaseStatusCard.module.scss";
 
-type RoomPublicState = Contracts.RoomPublicState;
 type Phase = RoomPublicState["phase"];
 
 type PhaseStatusCardProps = {

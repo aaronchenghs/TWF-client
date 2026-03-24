@@ -1,13 +1,11 @@
 import { memo, useRef } from "react";
 import clsx from "clsx";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState, TierId } from "@twf/contracts";
 import styles from "./TierRow.module.scss";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
 import { useAutoFitText } from "../../../../lib/hooks/useAutoFitText";
 import { TierItemTile } from "./TierItemTile/TierItemTile";
 
-type RoomPublicState = Contracts.RoomPublicState;
-type TierId = Contracts.TierId;
 
 const MIN_TIER_LABEL_FONT_SIZE_PX = 26;
 const TIER_LABEL_COLOR_CSS_VAR = "--tierColor" as string;

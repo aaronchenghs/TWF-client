@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { useAppSelector, type AppState } from "@/store/store";
 import {
   initializeSoundEffects,
@@ -20,7 +20,6 @@ import {
 import { computeVoteResolution } from "@/lib/voting";
 import { resolvePlacedTierId } from "@/lib/tierItems";
 
-type RoomPublicState = Contracts.RoomPublicState;
 
 /**
  * Sound effects are driven by a small rule engine. Each exported hook builds

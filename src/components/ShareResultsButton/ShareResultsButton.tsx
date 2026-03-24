@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Share2 } from "lucide-react";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState, TierId, TierItemId } from "@twf/contracts";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { ROUTES } from "@/routes/routes";
 import styles from "./ShareResultsButton.module.scss";
 
-type RoomPublicState = Contracts.RoomPublicState;
-type TierId = Contracts.TierId;
-type TierItemId = Contracts.TierItemId;
 
 type ShareResultsButtonProps = {
   state: RoomPublicState;

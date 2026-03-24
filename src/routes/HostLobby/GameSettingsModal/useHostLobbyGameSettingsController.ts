@@ -1,6 +1,6 @@
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { useCallback, useRef, useState } from "react";
-import type * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import {
   areGameSettingsDefault,
   areGameSettingsEqual,
@@ -9,7 +9,6 @@ import {
   type GameSettings,
 } from "@/lib/gameSettings";
 
-type RoomPublicState = Contracts.RoomPublicState;
 
 type UseHostLobbyGameSettingsControllerArgs = {
   roomCode: string;

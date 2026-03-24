@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState, VoteValue } from "@twf/contracts";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
@@ -10,9 +10,7 @@ import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 import { GameStatusCard } from "../GameStatusCard/GameStatusCard";
 import styles from "./ActivePlayersCard.module.scss";
 
-type RoomPublicState = Contracts.RoomPublicState;
 type Player = RoomPublicState["players"][number];
-type VoteValue = Contracts.VoteValue;
 
 type VoteIndicatorMeta = {
   Icon: typeof APP_ICONS.vote.up;

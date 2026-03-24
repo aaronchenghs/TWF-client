@@ -1,12 +1,10 @@
 import { useMemo } from "react";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState, TierItemId } from "@twf/contracts";
 import { CurrentItemDisplay } from "@/components/CurrentItemDisplay/CurrentItemDisplay";
 import { ProgressBar } from "@/components/ProgressBar/ProgressBar";
 import { SHOW_CURRENT_ITEM_PHASES } from "@/lib/tierItems";
 import { GameStatusCard } from "../GameStatusCard/GameStatusCard";
 
-type RoomPublicState = Contracts.RoomPublicState;
-type TierItemId = Contracts.TierItemId;
 
 type CurrentItemCardProps = {
   state: RoomPublicState;

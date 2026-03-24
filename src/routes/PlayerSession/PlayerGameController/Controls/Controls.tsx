@@ -1,14 +1,10 @@
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState, TierSetDefinition, TierItem, VoteValue } from "@twf/contracts";
 import { AwaitingControls } from "./AwaitingControls/AwaitingControls";
 import PlaceControls from "./PlaceControls/PlaceControls";
 import VoteControls from "./VoteControls/VoteControls";
 import { FinishedControls } from "./FinishedControls/FinishedControls";
 import styles from "../PlayerGameController.module.scss";
 
-type RoomPublicState = Contracts.RoomPublicState;
-type TierSetDefinition = Contracts.TierSetDefinition;
-type TierItem = Contracts.TierItem;
-type VoteValue = Contracts.VoteValue;
 
 type PhaseControlsProps = {
   state: RoomPublicState;

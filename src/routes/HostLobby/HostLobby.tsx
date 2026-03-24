@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
-import * as Contracts from "@twf/contracts";
+import { CODE_LENGTH, type TierSetSummary, type RoomPublicState } from "@twf/contracts";
 import { normalizeCode } from "@/lib/stringNormalizers";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { ROUTES } from "@/routes/routes";
@@ -32,9 +32,6 @@ import {
   useHostLobbyGameSettingsController,
 } from "./GameSettingsModal/useHostLobbyGameSettingsController";
 
-const CODE_LENGTH = Contracts.CODE_LENGTH;
-type TierSetSummary = Contracts.TierSetSummary;
-type RoomPublicState = Contracts.RoomPublicState;
 const { exit: ExitIcon } = APP_ICONS;
 
 export default function HostLobby() {

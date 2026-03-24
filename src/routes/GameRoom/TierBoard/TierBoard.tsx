@@ -1,11 +1,8 @@
 import { memo, useCallback, useLayoutEffect, useRef, useState } from "react";
 import styles from "./TierBoard.module.scss";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState, TierId, TierItemId } from "@twf/contracts";
 import { computeVoteResolution } from "@/lib/voting";
 import { TierRow } from "./TierRow/TierRow";
-type RoomPublicState = Contracts.RoomPublicState;
-type TierId = Contracts.TierId;
-type TierItemId = Contracts.TierItemId;
 
 const SCALE_EPSILON = 0.001;
 const MIN_BOARD_SCALE = 0.2;

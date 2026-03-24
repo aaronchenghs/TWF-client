@@ -11,7 +11,7 @@ import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInpu
 import { useMobileView } from "../../lib/hooks/useMobileView";
 import { LicensingModal } from "../../components/LicensingModal/LicensingModal";
 import { WhatIsThisModal } from "../../components/WhatIsThisModal/WhatIsThisModal";
-import * as Contracts from "@twf/contracts";
+import { CODE_LENGTH, MAX_NAME_LENGTH } from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
 import {
   getClientId,
@@ -24,8 +24,6 @@ import { APP_ICONS } from "@/lib/constants/icons";
 import { APP_VERSION } from "@/config/env";
 import { DesktopTeaserHeader } from "./DesktopTeaserHeader/DesktopTeaserHeader";
 
-const CODE_LENGTH = Contracts.CODE_LENGTH;
-const MAX_NAME_LENGTH = Contracts.MAX_NAME_LENGTH;
 const CURRENT_YEAR = new Date().getFullYear();
 const { lobbyCode: LobbyCodeIcon, playerName: PlayerNameIcon } = APP_ICONS;
 

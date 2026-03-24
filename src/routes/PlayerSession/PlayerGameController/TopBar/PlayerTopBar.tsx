@@ -5,14 +5,14 @@ import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { useMemo } from "react";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 
-type RoomPlayer = Contracts.RoomPublicState["players"][number];
+type RoomPlayer = RoomPublicState["players"][number];
 
 type PlayerTopBarProps = {
-  phase: Contracts.RoomPublicState["phase"];
+  phase: RoomPublicState["phase"];
   isMyTurn: boolean;
   hasConfirmedVote: boolean;
   player: RoomPlayer | null;

@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { normalizeCode } from "@/lib/stringNormalizers";
-import type * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 
-type RoomPublicState = Contracts.RoomPublicState;
 
 type Options = {
   roomCode: string | null | undefined;

@@ -18,7 +18,7 @@ import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypo
 import { socketClient } from "@/services/sockets/socketClient";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { ROUTES } from "@/routes/routes";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { TierBoard } from "./TierBoard/TierBoard";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { IS_DEBUG_ENABLED } from "@/config/env";
@@ -38,7 +38,6 @@ import { GameSidePanel } from "./GameSidePanel/GameSidePanel";
 import { useScreenWakeLock } from "@/lib/hooks/useScreenWakeLock";
 import { useFinishedPhaseConfetti } from "@/lib/hooks/useFinishedPhaseConfetti";
 
-type RoomPublicState = Contracts.RoomPublicState;
 
 export default function GameRoom() {
   const navigate = useNavigate();

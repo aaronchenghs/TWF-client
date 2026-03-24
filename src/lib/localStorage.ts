@@ -1,4 +1,4 @@
-import * as Contracts from "@twf/contracts";
+import type { Role } from "@twf/contracts";
 import {
   deleteStorageValue,
   getWebStorage,
@@ -7,7 +7,6 @@ import {
   writeStorageValue,
 } from "@/lib/webStorage";
 
-type Role = Contracts.Role;
 
 export type RoomSessionStorage = {
   code: string;

@@ -1,4 +1,4 @@
-import type * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { LOCAL_STORAGE_KEYS } from "@/lib/localStorage";
 import {
   getWebStorage,
@@ -15,7 +15,7 @@ import {
  * 3. If the new setting needs a different control type later, keep the storage
  *    helpers here and add the new UI control in the Host Lobby settings feature.
  */
-export type GameSettings = Contracts.RoomPublicState["gameSettings"];
+export type GameSettings = RoomPublicState["gameSettings"];
 type GameSettingKey = keyof GameSettings;
 type StoredGameSettingValue = boolean | number | string;
 export type GameSettingToggleKey = {

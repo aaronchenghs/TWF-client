@@ -1,4 +1,4 @@
-import * as Contracts from "@twf/contracts";
+import { CODE_LENGTH } from "@twf/contracts";
 import { normalizeCode } from "@/lib/stringNormalizers";
 import {
   LOCAL_STORAGE_KEYS,
@@ -14,7 +14,6 @@ import {
   removeSessionStorageValue,
   setSessionStorageValue,
 } from "@/lib/sessionStorage";
-const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 /**
  * Storage tokens used by this module (keys in local/session storage):

@@ -2,13 +2,12 @@ import { SubtextDivider } from "@/components/SubtextDivider/SubtextDivider";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { TierSetGridEntry } from "../TierSetGridEntry/TierSetGridEntry";
-import * as Contracts from "@twf/contracts";
+import type { TierSetSummary } from "@twf/contracts";
 import type { Guid } from "@/lib/guid";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { useState } from "react";
 import styles from "./TierSetSelection.module.scss";
 
-type TierSetSummary = Contracts.TierSetSummary;
 type TierSetSelectionProps = {
   tierSets: TierSetSummary[];
   selectedTierSetId: Guid | null;

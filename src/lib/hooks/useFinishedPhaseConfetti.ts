@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
-import type * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { ROUTES, type RoutePath } from "@/routes/routes";
 import { useAppSelector, type AppState } from "@/store/store";
 
-type RoomPhase = Contracts.RoomPublicState["phase"];
+type RoomPhase = RoomPublicState["phase"];
 type FinishedPhaseConfettiHandler = (burst: confetti.CreateTypes) => void;
 let confettiBurst: confetti.CreateTypes | null = null;
 

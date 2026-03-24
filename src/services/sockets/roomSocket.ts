@@ -1,15 +1,7 @@
 import { socketClient } from "@/services/sockets/socketClient";
 import { normalizeCode } from "@/lib/stringNormalizers";
-import * as Contracts from "@twf/contracts";
+import type { Role, PlayerId, TierSetId, TierSetDefinition, TierSetSummary, RoomPublicState, ServerToClientEvents, RoomJoinPayload } from "@twf/contracts";
 
-type Role = Contracts.Role;
-type PlayerId = Contracts.PlayerId;
-type TierSetId = Contracts.TierSetId;
-type TierSetDefinition = Contracts.TierSetDefinition;
-type TierSetSummary = Contracts.TierSetSummary;
-type RoomPublicState = Contracts.RoomPublicState;
-type ServerToClientEvents = Contracts.ServerToClientEvents;
-type RoomJoinPayload = Contracts.RoomJoinPayload;
 
 type RoomCreatedPayload = Parameters<ServerToClientEvents["room:created"]>[0];
 type RoomStatePayload = Parameters<ServerToClientEvents["room:state"]>[0];

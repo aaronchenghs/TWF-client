@@ -1,7 +1,4 @@
-import * as Contracts from "@twf/contracts";
-type RoomPublicState = Contracts.RoomPublicState;
-type TierItemId = Contracts.TierItemId;
-type TierId = Contracts.TierId;
+import type { RoomPublicState, TierItemId, TierId } from "@twf/contracts";
 
 export const SHOW_CURRENT_ITEM_PHASES = new Set<RoomPublicState["phase"]>([
   "VOTE",

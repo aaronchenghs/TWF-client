@@ -1,9 +1,8 @@
 import styles from "./TierSetDetails.module.scss";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
-import * as Contracts from "@twf/contracts";
+import type { TierSetDefinition } from "@twf/contracts";
 import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
 import { handleKeyDown } from "@/lib/accessibility";
-type TierSetDefinition = Contracts.TierSetDefinition;
 
 type TierSetDetailsProps = {
   isLoading: boolean;

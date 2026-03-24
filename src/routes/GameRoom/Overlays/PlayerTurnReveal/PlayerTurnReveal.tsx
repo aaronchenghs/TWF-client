@@ -1,5 +1,5 @@
 import styles from "./PlayerTurnReveal.module.scss";
-import type * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { AnimatePresence, motion } from "framer-motion";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { OverlayDialog } from "@/components/OverlayDialog/OverlayDialog";
@@ -7,7 +7,6 @@ import { usePhaseStartOverlay } from "@/lib/hooks/usePhaseStartOverlay";
 import { getPlayerNameById } from "@/lib/players";
 import { buildHoldSlideAnimation } from "@/lib/motionPresets";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
-type RoomPublicState = Contracts.RoomPublicState;
 
 type PlayerTurnRevealProps = {
   state: RoomPublicState | null;

@@ -4,7 +4,7 @@ import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { RoomCodeDisplay } from "@/components/RoomCodeDisplay/RoomCodeDisplay";
-import * as Contracts from "@twf/contracts";
+import { LOBBY_CAPACITY, type RoomPublicState } from "@twf/contracts";
 import { useState, useCallback } from "react";
 import { CountdownOverlay } from "../CountdownOverlay/CountdownOverlay";
 import { markHostRoomStarted } from "@/lib/roomClientState";
@@ -19,7 +19,7 @@ import { ToolTipWrapper } from "@/components/ToolTip/ToolTip";
 import styles from "./HostSidePanel.module.scss";
 import { GameSettingsModal } from "../GameSettingsModal/GameSettingsModal";
 
-type Player = Contracts.RoomPublicState["players"][number];
+type Player = RoomPublicState["players"][number];
 
 type HostSidePanelProps = {
   roomCode: string;
@@ -138,7 +138,7 @@ export function HostSidePanel({
 
       <div className={styles.panel}>
         <MainTextTypography variant="h3">
-          Players ({players.length}/{Contracts.LOBBY_CAPACITY})
+          Players ({players.length}/{LOBBY_CAPACITY})
         </MainTextTypography>
 
         <ul className={styles.playerList}>

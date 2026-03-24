@@ -4,7 +4,7 @@ import { ROUTES } from "@/routes/routes";
 import { normalizeCode, normalizeName } from "@/lib/stringNormalizers";
 import { socketClient } from "@/services/sockets/socketClient";
 import { roomSocket } from "@/services/sockets/roomSocket";
-import * as Contracts from "@twf/contracts";
+import { CODE_LENGTH, type RoomPublicState } from "@twf/contracts";
 import PlayerLobby from "./PlayerLobby/PlayerLobby";
 import PlayerGameController from "./PlayerGameController/PlayerGameController";
 import { getStartedHostSession, getClientId } from "@/lib/session";
@@ -23,8 +23,6 @@ import { TAB_TITLES } from "@/lib/constants/tabTitles";
 import { setDocumentTitleIfNeeded } from "@/lib/documentTitle";
 import { getErrorMessage } from "@/lib/errors";
 
-type RoomPublicState = Contracts.RoomPublicState;
-const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 export default function PlayerSession() {
   const navigate = useNavigate();

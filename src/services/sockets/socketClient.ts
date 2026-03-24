@@ -1,8 +1,6 @@
 import { io, type Socket } from "socket.io-client";
 import { SOCKET_URL } from "@/config/env";
-import * as Contracts from "@twf/contracts";
-type ServerToClientEvents = Contracts.ServerToClientEvents;
-type ClientToServerEvents = Contracts.ClientToServerEvents;
+import type { ServerToClientEvents, ClientToServerEvents } from "@twf/contracts";
 
 type ContractSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 

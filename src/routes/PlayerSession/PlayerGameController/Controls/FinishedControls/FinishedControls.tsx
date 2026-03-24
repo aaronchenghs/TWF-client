@@ -4,10 +4,10 @@ import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypo
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { FinishedUtilityActions } from "@/components/FinishedUtilityActions/FinishedUtilityActions";
 import { roomSocket } from "@/services/sockets/roomSocket";
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 
 type FinishedControlsProps = {
-  state: Contracts.RoomPublicState;
+  state: RoomPublicState;
 };
 
 export function FinishedControls({ state }: FinishedControlsProps) {

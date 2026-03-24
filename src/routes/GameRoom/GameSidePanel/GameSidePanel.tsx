@@ -1,4 +1,4 @@
-import * as Contracts from "@twf/contracts";
+import type { RoomPublicState } from "@twf/contracts";
 import { SidePanelHeader } from "./SidePanelHeader/SidePanelHeader";
 import { PhaseStatusCard } from "./PhaseStatusCard/PhaseStatusCard";
 import { CurrentItemCard } from "./CurrentItemCard/CurrentItemCard";
@@ -7,7 +7,6 @@ import { FinishedCard } from "./FinishedCard/FinishedCard";
 import styles from "./GameSidePanel.module.scss";
 import { SubtextDivider } from "@/components/SubtextDivider/SubtextDivider";
 
-type RoomPublicState = Contracts.RoomPublicState;
 
 type GameSidePanelProps = {
   state: RoomPublicState;

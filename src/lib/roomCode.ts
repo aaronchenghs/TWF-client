@@ -1,8 +1,7 @@
-import * as Contracts from "@twf/contracts";
+import { CODE_LENGTH } from "@twf/contracts";
 import { normalizeCode } from "@/lib/stringNormalizers";
 import { useAppSelector, type AppState } from "@/store/store";
 
-const CODE_LENGTH = Contracts.CODE_LENGTH;
 
 type RoomCodeDisplayValue = {
   roomCode: string;

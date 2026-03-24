@@ -38,7 +38,6 @@ import { GameSidePanel } from "./GameSidePanel/GameSidePanel";
 import { useScreenWakeLock } from "@/lib/hooks/useScreenWakeLock";
 import { useFinishedPhaseConfetti } from "@/lib/hooks/useFinishedPhaseConfetti";
 
-
 export default function GameRoom() {
   const navigate = useNavigate();
   useScreenWakeLock({ enabled: true });
@@ -61,6 +60,11 @@ export default function GameRoom() {
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
+
+  const handleBackToLobby = useCallback(() => {
+    suppressRejoinNoticeRef.current = true;
+    roomSocket.backToLobby();
+  }, []);
 
   const handleRoomClosed = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
@@ -163,15 +167,25 @@ export default function GameRoom() {
       <ItemPlacementReveal state={state} />
       <ConfirmationModal
         open={isConfirmExitOpen}
-        title="Close Game?"
-        message="This will boot all players from the game."
-        confirmText="Exit"
+        title="Leave Game?"
+        message="You can either close the room for everyone, or reset the game to the lobby and pick a new tier set."
+        maxWidth={720}
+        secondaryAction={{
+          text: "Back to Lobby",
+          onAction: () => {
+            setIsConfirmExitOpen(false);
+            handleBackToLobby();
+          },
+        }}
+        confirmAction={{
+          text: "Exit",
+          onAction: () => {
+            setIsConfirmExitOpen(false);
+            handleExit();
+          },
+        }}
         destructive
         onCancel={() => setIsConfirmExitOpen(false)}
-        onConfirm={() => {
-          setIsConfirmExitOpen(false);
-          handleExit();
-        }}
       />
       <GameRoomDebugControls isPaused={state.debug?.paused ?? false} />
       {/** --- #endregion OVERLAYS and MODALS --- */}

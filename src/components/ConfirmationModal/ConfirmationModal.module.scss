@@ -1,0 +1,25 @@
+@use "../../styles/export.scss" as *;
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $default-gap;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+@media (max-width: $mobile-width) {
+  .actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .actionButton {
+    width: 100%;
+  }
+}

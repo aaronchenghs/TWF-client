@@ -10,7 +10,11 @@ import {
   useState,
 } from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
-import { CODE_LENGTH, type TierSetSummary, type RoomPublicState } from "@twf/contracts";
+import {
+  CODE_LENGTH,
+  type TierSetSummary,
+  type RoomPublicState,
+} from "@twf/contracts";
 import { normalizeCode } from "@/lib/stringNormalizers";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { ROUTES } from "@/routes/routes";
@@ -28,9 +32,7 @@ import { HostSidePanel } from "./HostSidePanel/HostSidePanel";
 import { useHostLobbySoundEffects } from "@/lib/hooks/useSoundEffects";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
-import {
-  useHostLobbyGameSettingsController,
-} from "./GameSettingsModal/useHostLobbyGameSettingsController";
+import { useHostLobbyGameSettingsController } from "./GameSettingsModal/useHostLobbyGameSettingsController";
 
 const { exit: ExitIcon } = APP_ICONS;
 
@@ -50,11 +52,8 @@ export default function HostLobby() {
 
   const roomCode = normalizeCode(readHostRoomCode());
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
-  const {
-    gameSettings,
-    handleGameSettingsChange,
-    handleIncomingRoomState,
-  } = useHostLobbyGameSettingsController({ roomCode });
+  const { gameSettings, handleGameSettingsChange, handleIncomingRoomState } =
+    useHostLobbyGameSettingsController({ roomCode });
   const players = roomState?.players ?? [];
   const selectedTierSetId = (roomState?.tierSetId ?? null) as Guid | null;
   const selectedTierSetName =
@@ -75,11 +74,14 @@ export default function HostLobby() {
     navigate(ROUTES.LANDING);
   }, [navigate, roomCode]);
 
-  const handleRoomState = useCallback((state: RoomPublicState) => {
-    handleIncomingRoomState(state);
-    setRoomState(state);
-    if (state.phase !== "LOBBY") markHostRoomStarted(state.code);
-  }, [handleIncomingRoomState]);
+  const handleRoomState = useCallback(
+    (state: RoomPublicState) => {
+      handleIncomingRoomState(state);
+      setRoomState(state);
+      if (state.phase !== "LOBBY") markHostRoomStarted(state.code);
+    },
+    [handleIncomingRoomState],
+  );
 
   const handleRoomClosed = useCallback(() => {
     suppressRejoinNoticeRef.current = true;
@@ -148,12 +150,7 @@ export default function HostLobby() {
     <div className={styles.root}>
       <div className={styles.topRightAction}>
         <ExpandingIconButton
-          icon={
-            <ExitIcon
-              {...ICON_PROPS.quickActions}
-              aria-hidden="true"
-            />
-          }
+          icon={<ExitIcon {...ICON_PROPS.quickActions} aria-hidden="true" />}
           label="Close Lobby"
           ariaLabel="Close Lobby"
           expandDirection="left"
@@ -193,13 +190,15 @@ export default function HostLobby() {
         open={isConfirmCloseOpen}
         title="Close Lobby?"
         message="This ends the session for everyone currently connected."
-        confirmText="Close"
+        confirmAction={{
+          text: "Close",
+          onAction: () => {
+            setIsConfirmCloseOpen(false);
+            window.requestAnimationFrame(handleCloseLobby);
+          },
+        }}
         destructive
         onCancel={() => setIsConfirmCloseOpen(false)}
-        onConfirm={() => {
-          setIsConfirmCloseOpen(false);
-          window.requestAnimationFrame(handleCloseLobby);
-        }}
       />
     </div>
   );

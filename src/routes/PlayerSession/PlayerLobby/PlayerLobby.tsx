@@ -16,7 +16,6 @@ import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
 import { clearPlayerRoomState, readPlayerRuntime } from "@/lib/roomClientState";
 
-
 export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const navigate = useNavigate();
   useAutoScroll();
@@ -112,10 +111,9 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
         open={isConfirmQuitOpen}
         title="Leave lobby?"
         message="This will disconnect you from the lobby."
-        confirmText="Quit"
+        confirmAction={{ text: "Quit", onAction: handleConfirmQuit }}
         destructive
         onCancel={() => setIsConfirmQuitOpen(false)}
-        onConfirm={handleConfirmQuit}
       />
 
       <HowToPlayModal

@@ -2,15 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { AccentButton } from "../AccentButton/AccentButton";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
+import styles from "./ConfirmationModal.module.scss";
+
+type ConfirmationAction = {
+  text: string;
+  onAction: () => void | Promise<void>;
+};
 
 type ConfirmationModalProps = {
   open: boolean;
   title: string;
   message?: React.ReactNode;
-  confirmText?: string;
-  destructive?: boolean;
+  confirmAction: ConfirmationAction;
+  secondaryAction?: ConfirmationAction;
   confirmDisabled?: boolean;
-  onConfirm: () => void | Promise<void>;
+  destructive?: boolean;
+  maxWidth?: number | string;
   onCancel: () => void;
 };
 
@@ -18,10 +25,11 @@ export function ConfirmationModal({
   open,
   title,
   message,
-  confirmText = "Confirm",
+  confirmAction,
+  secondaryAction,
   confirmDisabled,
   destructive,
-  onConfirm,
+  maxWidth,
   onCancel,
 }: ConfirmationModalProps) {
   const [isInternalWorking, setIsInternalWorking] = useState(false);
@@ -29,14 +37,23 @@ export function ConfirmationModal({
 
   const isWorking = confirmDisabled ?? isInternalWorking;
 
-  const handleConfirm = async () => {
+  const runAction = async (action: () => void | Promise<void>) => {
     if (isWorking) return;
     try {
       setIsInternalWorking(true);
-      await onConfirm();
+      await action();
     } finally {
       if (isMountedRef.current) setIsInternalWorking(false);
     }
+  };
+
+  const handleConfirm = async () => {
+    await runAction(confirmAction.onAction);
+  };
+
+  const handleSecondaryAction = async () => {
+    if (!secondaryAction) return;
+    await runAction(secondaryAction.onAction);
   };
 
   useEffect(function trackMountedState() {
@@ -52,28 +69,41 @@ export function ConfirmationModal({
       onClose={onCancel}
       title={title}
       ariaLabel={title}
-      maxWidth={520}
+      maxWidth={maxWidth ?? 520}
       closeOnBackdrop
       closeOnEscape
       showCloseButton
       footer={
-        <>
+        <div className={styles.actions}>
           <AccentButton
             variant="secondary"
+            className={styles.actionButton}
             onClick={onCancel}
             disabled={isWorking}
           >
             Cancel
           </AccentButton>
 
+          {secondaryAction && (
+            <AccentButton
+              variant="secondary"
+              className={styles.actionButton}
+              onClick={handleSecondaryAction}
+              disabled={isWorking}
+            >
+              {secondaryAction.text}
+            </AccentButton>
+          )}
+
           <AccentButton
             variant={destructive ? "destructive" : "primary"}
+            className={styles.actionButton}
             onClick={handleConfirm}
             disabled={isWorking}
           >
-            {confirmText}
+            {confirmAction.text}
           </AccentButton>
-        </>
+        </div>
       }
     >
       {message && (

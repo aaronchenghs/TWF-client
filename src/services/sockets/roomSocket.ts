@@ -1,7 +1,15 @@
 import { socketClient } from "@/services/sockets/socketClient";
 import { normalizeCode } from "@/lib/stringNormalizers";
-import type { Role, PlayerId, TierSetId, TierSetDefinition, TierSetSummary, RoomPublicState, ServerToClientEvents, RoomJoinPayload } from "@twf/contracts";
-
+import type {
+  Role,
+  PlayerId,
+  TierSetId,
+  TierSetDefinition,
+  TierSetSummary,
+  RoomPublicState,
+  ServerToClientEvents,
+  RoomJoinPayload,
+} from "@twf/contracts";
 
 type RoomCreatedPayload = Parameters<ServerToClientEvents["room:created"]>[0];
 type RoomStatePayload = Parameters<ServerToClientEvents["room:state"]>[0];
@@ -299,6 +307,10 @@ export const roomSocket = {
   },
 
   playAgain(): void {
+    socketClient.emit("room:playAgain");
+  },
+
+  backToLobby(): void {
     socketClient.emit("room:playAgain");
   },
 

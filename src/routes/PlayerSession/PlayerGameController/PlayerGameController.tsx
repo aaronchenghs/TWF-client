@@ -14,7 +14,11 @@ See the LICENSE file for details.
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./PlayerGameController.module.scss";
-import type { RoomPublicState, TierSetDefinition, TierItem } from "@twf/contracts";
+import type {
+  RoomPublicState,
+  TierSetDefinition,
+  TierItem,
+} from "@twf/contracts";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { socketClient } from "@/services/sockets/socketClient";
@@ -30,7 +34,6 @@ import { PlayerTopBar } from "./TopBar/PlayerTopBar";
 import { GameStatusCard } from "@/routes/GameRoom/GameSidePanel/GameStatusCard/GameStatusCard";
 import { useScreenWakeLock } from "@/lib/hooks/useScreenWakeLock";
 import { useFinishedPhaseConfetti } from "@/lib/hooks/useFinishedPhaseConfetti";
-
 
 export default function PlayerGameController({
   state,
@@ -159,10 +162,9 @@ export default function PlayerGameController({
         open={isConfirmExitOpen}
         title="Exit game?"
         message="You will disconnect from this room."
-        confirmText="Exit"
+        confirmAction={{ text: "Exit", onAction: handleConfirmExit }}
         destructive
         onCancel={() => setIsConfirmExitOpen(false)}
-        onConfirm={handleConfirmExit}
       />
     </div>
   );

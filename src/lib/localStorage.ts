@@ -1,4 +1,5 @@
 import type { Role } from "@twf/contracts";
+import { isObject } from "radashi";
 import {
   deleteStorageValue,
   getWebStorage,
@@ -6,7 +7,6 @@ import {
   readStorageValue,
   writeStorageValue,
 } from "@/lib/webStorage";
-
 
 export type RoomSessionStorage = {
   code: string;
@@ -112,15 +112,12 @@ function prefixedKey<P extends string>(prefix: P) {
   return (key: string): key is `${P}${string}` => key.startsWith(prefix);
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
 function isRoomSessionStorage(value: unknown): value is RoomSessionStorage {
   if (!isObject(value)) return false;
-  if (typeof value.code !== "string") return false;
-  if (typeof value.role !== "string") return false;
-  if (value.name != null && typeof value.name !== "string") return false;
+  const obj = value as Record<string, unknown>;
+  if (typeof obj.code !== "string") return false;
+  if (typeof obj.role !== "string") return false;
+  if (obj.name != null && typeof obj.name !== "string") return false;
   return true;
 }
 

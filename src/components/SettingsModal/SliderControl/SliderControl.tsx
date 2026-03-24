@@ -1,6 +1,6 @@
+import { clamp } from "radashi";
 import styles from "./SliderControl.module.scss";
 import { isSliderCommitKey } from "@/lib/accessibility";
-import { clamp } from "@/lib/clamp";
 
 type SliderControlProps = {
   valuePercent: number;

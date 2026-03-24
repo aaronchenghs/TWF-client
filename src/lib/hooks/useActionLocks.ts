@@ -68,7 +68,9 @@ export function useActionLocks<T extends string>(
 
   useEffect(
     function releaseLocksAfterTimeout() {
-      const activeKeys = (Object.keys(locks) as T[]).filter((key) => locks[key]);
+      const activeKeys = (Object.keys(locks) as T[]).filter(
+        (key) => locks[key],
+      );
       if (activeKeys.length === 0) return;
 
       const timeoutIds = activeKeys.map((key) =>
@@ -88,7 +90,9 @@ export function useActionLocks<T extends string>(
 
   useEffect(
     function releaseLocksOnErrorsAndDisconnect() {
-      const hasActiveLock = (Object.keys(locks) as T[]).some((key) => locks[key]);
+      const hasActiveLock = (Object.keys(locks) as T[]).some(
+        (key) => locks[key],
+      );
       if (!hasActiveLock) return;
 
       const offRoomError = roomSocket.onRoomError(() => {

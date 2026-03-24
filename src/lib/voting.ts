@@ -4,8 +4,8 @@ import type {
   TurnResolution,
   VoteValue as ContractsVoteValue,
 } from "@twf/contracts";
+import { clamp } from "radashi";
 import { APP_ICONS } from "./constants/icons";
-import { clamp } from "./clamp";
 
 export type VoteValue = ContractsVoteValue;
 

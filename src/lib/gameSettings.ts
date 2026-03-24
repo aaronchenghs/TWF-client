@@ -1,3 +1,4 @@
+import { isObject } from "radashi";
 import type { RoomPublicState } from "@twf/contracts";
 import { LOCAL_STORAGE_KEYS } from "@/lib/localStorage";
 import {
@@ -56,10 +57,6 @@ export const GAME_SETTING_TOGGLE_DEFINITIONS: readonly GameSettingToggleDefiniti
     },
   ];
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
 function matchesStoredGameSettingValue(
   value: unknown,
   defaultValue: StoredGameSettingValue,
@@ -75,9 +72,10 @@ export function normalizeGameSettings(input: unknown): GameSettings {
   const normalized: GameSettings = { ...DEFAULT_GAME_SETTINGS };
   if (!isObject(input)) return normalized;
 
+  const obj = input as Record<string, unknown>;
   for (const key of GAME_SETTING_KEYS) {
     const defaultValue = DEFAULT_GAME_SETTINGS[key] as StoredGameSettingValue;
-    const nextValue = input[key];
+    const nextValue = obj[key];
 
     if (!matchesStoredGameSettingValue(nextValue, defaultValue)) continue;
     normalized[key] = nextValue as GameSettings[typeof key];

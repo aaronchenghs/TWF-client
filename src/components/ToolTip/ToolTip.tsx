@@ -8,9 +8,9 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { clamp } from "@/lib/clamp";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 import styles from "./ToolTip.module.scss";
+import { clamp } from "radashi";
 
 export type ToolTipPlacement = "top" | "bottom" | "left" | "right";
 export type ToolTipAlign = "start" | "center" | "end";

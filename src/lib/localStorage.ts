@@ -1,5 +1,6 @@
 import type { Role } from "@twf/contracts";
 import { isObject } from "radashi";
+import { safeJsonParse } from "@/lib/json";
 import {
   deleteStorageValue,
   getWebStorage,
@@ -71,11 +72,8 @@ const numberCodec: StorageCodec<number> = {
 function createJsonCodec<V>(parseValue: (value: unknown) => V | null) {
   return {
     parse(raw) {
-      try {
-        return parseValue(JSON.parse(raw));
-      } catch {
-        return null;
-      }
+      const parsed = safeJsonParse(raw);
+      return parsed == null ? null : parseValue(parsed);
     },
     stringify(value) {
       return JSON.stringify(value);

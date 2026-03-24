@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Share2 } from "lucide-react";
+import { sift } from "radashi";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RoomPublicState, TierId, TierItemId } from "@twf/contracts";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { copyTextToClipboard } from "@/lib/clipboard";
@@ -111,7 +112,7 @@ function buildResultsSharePayload(state: RoomPublicState, shareUrl: string) {
   const boardSummary = summary ? `Final board:\n${summary}` : "";
   const callToAction = "Play your own round:";
 
-  const text = [intro, boardSummary, callToAction].filter(Boolean).join("\n\n");
+  const text = sift([intro, boardSummary, callToAction]).join("\n\n");
   const fallbackText = [text, shareUrl].join("\n\n");
 
   return {

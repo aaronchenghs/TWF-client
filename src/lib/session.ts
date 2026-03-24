@@ -10,6 +10,7 @@ import {
   removeSessionStorageValue,
   setSessionStorageValue,
 } from "./sessionStorage";
+import { safeJsonParse } from "./json";
 
 function createClientId(): string {
   const webCrypto = globalThis.crypto;
@@ -116,10 +117,5 @@ export function consumePendingRejoinNotice(): RejoinNotice | null {
 
   removeSessionStorageValue(SESSION_STORAGE_KEYS.REJOIN_NOTICE);
 
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    return isRejoinNotice(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
+  return safeJsonParse(raw, isRejoinNotice);
 }

@@ -1,6 +1,7 @@
 import { isObject } from "radashi";
 import type { RoomPublicState } from "@twf/contracts";
 import { LOCAL_STORAGE_KEYS } from "@/lib/localStorage";
+import { safeJsonParse } from "@/lib/json";
 import {
   getWebStorage,
   readStorageValue,
@@ -113,11 +114,8 @@ export function readSavedHostLobbyGameSettings(): GameSettings {
   );
   if (raw == null) return { ...DEFAULT_GAME_SETTINGS };
 
-  try {
-    return normalizeGameSettings(JSON.parse(raw));
-  } catch {
-    return { ...DEFAULT_GAME_SETTINGS };
-  }
+  const parsed = safeJsonParse(raw);
+  return parsed ? normalizeGameSettings(parsed) : { ...DEFAULT_GAME_SETTINGS };
 }
 
 export function saveHostLobbyGameSettings(settings: GameSettings) {

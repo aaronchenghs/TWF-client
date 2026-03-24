@@ -1,3 +1,5 @@
+import { template } from "radashi";
+
 const ERRORS = {
   ROOM_CLOSED: "The host ended the session.",
   PLAYER_KICKED: "The host removed you from the lobby.",
@@ -16,9 +18,7 @@ export function getErrorMessage(
   key: ErrorKey,
   params?: Record<string, string>,
 ): string {
-  const template = ERRORS[key];
-  if (!params) return template;
-  return template.replace(/\{(\w+)\}/g, (_, token: string) => {
-    return params[token] ?? "";
-  });
+  const message = ERRORS[key];
+  if (!params) return message;
+  return template(message, params);
 }

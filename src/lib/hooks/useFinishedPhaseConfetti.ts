@@ -1,12 +1,15 @@
 import { useEffect, useRef } from "react";
-import confetti from "canvas-confetti";
+import type { CreateTypes } from "canvas-confetti";
+import type confetti from "canvas-confetti";
 import type { RoomPublicState } from "@twf/contracts";
 import { ROUTES, type RoutePath } from "@/routes/routes";
 import { useAppSelector, type AppState } from "@/store/store";
 
 type RoomPhase = RoomPublicState["phase"];
-type FinishedPhaseConfettiHandler = (burst: confetti.CreateTypes) => void;
-let confettiBurst: confetti.CreateTypes | null = null;
+type ConfettiModule = typeof confetti;
+type FinishedPhaseConfettiHandler = (burst: CreateTypes) => void;
+let confettiBurst: CreateTypes | null = null;
+let confettiModulePromise: Promise<ConfettiModule> | null = null;
 
 export function useFinishedPhaseConfetti(
   phase: RoomPhase | null,
@@ -30,11 +33,7 @@ export function useFinishedPhaseConfetti(
       if (!hasEnteredFinished || $isReduceMotion) return;
 
       window.requestAnimationFrame(() => {
-        const burst = getConfettiBurst();
-        const fireConfetti =
-          FINISHED_PHASE_CONFETTI_BY_ROUTE.get(route) ??
-          firePlayerControllerConfetti;
-        fireConfetti(burst);
+        void fireFinishedPhaseConfetti(route);
       });
     },
     [phase, route, $isReduceMotion],
@@ -43,17 +42,41 @@ export function useFinishedPhaseConfetti(
 
 // #region Utilities
 
-function getConfettiBurst(): confetti.CreateTypes {
+async function fireFinishedPhaseConfetti(route: RoutePath) {
+  const burst = await getConfettiBurst();
+  const fireConfetti =
+    FINISHED_PHASE_CONFETTI_BY_ROUTE.get(route) ?? firePlayerControllerConfetti;
+
+  fireConfetti(burst);
+}
+
+async function getConfettiBurst(): Promise<CreateTypes> {
   if (confettiBurst) return confettiBurst;
+
+  const confettiModule = await getConfettiModule();
 
   /** Keep motion gating in the hook so behavior follows the app setting
    consistently instead of also depending on OS-level reduced-motion. */
-  confettiBurst = confetti.create(undefined, {
+  const burst = confettiModule.create(undefined, {
     resize: true,
     useWorker: true,
   });
+  confettiBurst = burst;
 
-  return confettiBurst;
+  return burst;
+}
+
+function getConfettiModule() {
+  if (!confettiModulePromise) {
+    confettiModulePromise = import("canvas-confetti").then((module) => {
+      return (
+        (module as { default?: ConfettiModule }).default ??
+        (module as unknown as ConfettiModule)
+      );
+    });
+  }
+
+  return confettiModulePromise;
 }
 
 function firePlayerControllerConfetti(burst: confetti.CreateTypes) {

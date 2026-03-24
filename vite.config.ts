@@ -30,6 +30,44 @@ function resolveHelloJoinSoundUrls(): string[] {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), svgr()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+
+          if (id.includes("react-router")) return "router";
+
+          if (
+            id.includes("framer-motion") ||
+            id.includes("motion-dom") ||
+            id.includes("motion-utils")
+          ) {
+            return "motion";
+          }
+
+          if (
+            id.includes("@reduxjs/toolkit") ||
+            id.includes("react-redux") ||
+            id.includes("/redux/") ||
+            id.includes("/immer/")
+          ) {
+            return "state";
+          }
+
+          if (
+            id.includes("socket.io-client") ||
+            id.includes("engine.io-client") ||
+            id.includes("socket.io-parser") ||
+            id.includes("engine.io-parser") ||
+            id.includes("@socket.io/component-emitter")
+          ) {
+            return "socket";
+          }
+        },
+      },
+    },
+  },
   define: {
     __APP_VERSION__: JSON.stringify(packageVersion),
     __HELLO_JOIN_SOUND_URLS__: JSON.stringify(resolveHelloJoinSoundUrls()),

@@ -1,12 +1,12 @@
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
 import { SettingsOptionRow } from "./SettingsOptionRow/SettingsOptionRow";
 import { SliderControl } from "./SliderControl/SliderControl";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import {
   closeSettingsModal,
-  setBackgroundMouseEffectEnabled,
   setHighContrast,
   setReduceMotion,
   setSfxVolume,
@@ -20,8 +20,8 @@ import { useMobileView } from "@/lib/hooks/useMobileView";
 import { openIssueReportForm } from "@/lib/openIssueReportForm";
 
 const {
+  settings: SettingsTitleIcon,
   reduceMotion: ReduceMotionIcon,
-  mouse: BackgroundMouseEffectIcon,
   highContrast: HighContrastIcon,
   showTips: ShowTipsIcon,
   streamerMode: StreamerModeIcon,
@@ -40,9 +40,6 @@ export function SettingsModal() {
   const $isReduceMotion = useAppSelector(
     (state: AppState) => state.userSettings.isReduceMotion,
   );
-  const $isBackgroundMouseEffectEnabled = useAppSelector(
-    (state: AppState) => state.userSettings.isBackgroundMouseEffectEnabled,
-  );
   const $isShowTips = useAppSelector(
     (state: AppState) => state.userSettings.isShowTips,
   );
@@ -60,7 +57,12 @@ export function SettingsModal() {
     <PrimaryModal
       open={$isSettingsModalOpen}
       onClose={() => dispatch(closeSettingsModal())}
-      title="Settings"
+      title={
+        <div className={styles.titleRow}>
+          <SettingsTitleIcon className={styles.titleIcon} aria-hidden="true" />
+          <MainTextTypography variant="h3">Settings</MainTextTypography>
+        </div>
+      }
       maxWidth={560}
       footer={
         <AccentButton onClick={() => dispatch(closeSettingsModal())}>
@@ -101,21 +103,6 @@ export function SettingsModal() {
               checked={$isReduceMotion}
               onChange={(nextValue) => dispatch(setReduceMotion(nextValue))}
               ariaLabel="Toggle reduce motion"
-            />
-          }
-        />
-
-        <SettingsOptionRow
-          icon={<BackgroundMouseEffectIcon {...iconProps} />}
-          title="Background Mouse Effect"
-          description="Turns the reactive background hover highlight on or off."
-          control={
-            <AccentToggle
-              checked={$isBackgroundMouseEffectEnabled}
-              onChange={(nextValue) =>
-                dispatch(setBackgroundMouseEffectEnabled(nextValue))
-              }
-              ariaLabel="Toggle background mouse effect"
             />
           }
         />

@@ -26,7 +26,6 @@
   justify-content: space-between;
   gap: $default-gap;
   padding: $default-padding;
-  padding-bottom: 0px;
   @include flexFixed();
 }
 
@@ -67,11 +66,28 @@
 }
 
 .content {
-  padding: $default-padding;
+  padding-left: $default-padding;
+  padding-right: $default-padding;
   @include flexFill();
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   min-height: 0;
+}
+
+.contentWithHeader {
+  padding-top: 0;
+}
+
+.contentWithoutHeader {
+  padding-top: $default-padding;
+}
+
+.contentWithFooter {
+  padding-bottom: 0;
+}
+
+.contentWithoutFooter {
+  padding-bottom: $default-padding;
 }
 
 .footer {

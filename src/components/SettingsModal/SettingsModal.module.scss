@@ -4,4 +4,16 @@
   display: flex;
   flex-direction: column;
   gap: $default-gap;
+  overflow: clip;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
+}
+
+.titleIcon {
+  color: $accent;
+  flex-shrink: 0;
 }

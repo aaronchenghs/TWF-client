@@ -37,7 +37,11 @@ export const AccentTextInput = forwardRef<
     (props["aria-labelledby"] ? undefined : (props.placeholder ?? props.name));
 
   return (
-    <div className={styles.wrapper} style={{ width: resolvedWidth }}>
+    <div
+      className={styles.wrapper}
+      style={{ width: resolvedWidth }}
+      data-bg-hover-block
+    >
       <input
         {...props}
         ref={ref}

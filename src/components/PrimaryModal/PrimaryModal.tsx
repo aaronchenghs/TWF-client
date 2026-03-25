@@ -42,6 +42,9 @@ export function PrimaryModal(props: {
   const maxWidthStyle =
     typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth;
 
+  const hasHeader = Boolean(title || subtitle || showCloseButton);
+  const hasFooter = Boolean(footer);
+
   return (
     <OverlayDialog
       open={open}
@@ -54,7 +57,7 @@ export function PrimaryModal(props: {
         className={clsx(styles.modal, className)}
         style={{ maxWidth: maxWidthStyle }}
       >
-        {(title || subtitle || showCloseButton) && (
+        {hasHeader && (
           <header className={styles.header}>
             <div className={styles.headerText}>
               {title &&
@@ -91,9 +94,18 @@ export function PrimaryModal(props: {
           </header>
         )}
 
-        <div className={clsx(styles.content, contentClassName)}>{children}</div>
+        <div
+          className={clsx(
+            styles.content,
+            hasHeader ? styles.contentWithHeader : styles.contentWithoutHeader,
+            hasFooter ? styles.contentWithFooter : styles.contentWithoutFooter,
+            contentClassName,
+          )}
+        >
+          {children}
+        </div>
 
-        {footer && <footer className={styles.footer}>{footer}</footer>}
+        {hasFooter && <footer className={styles.footer}>{footer}</footer>}
       </div>
     </OverlayDialog>
   );

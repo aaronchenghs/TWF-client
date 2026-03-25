@@ -221,10 +221,12 @@ export function getBackgroundGridTileStrokeStyle(
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
-/** Prevents the background effect from reacting under button-like controls. */
+/** Prevents the background effect from reacting under interactive controls. */
 export function isBackgroundGridHoverBlocked(target: EventTarget | null) {
   if (!(target instanceof Element)) return false;
-  return target.closest("button, [role='button']") !== null;
+  return (
+    target.closest("button, [role='button'], [data-bg-hover-block]") !== null
+  );
 }
 
 /** Builds the staggered tile layout that fills and over-scans the viewport. */

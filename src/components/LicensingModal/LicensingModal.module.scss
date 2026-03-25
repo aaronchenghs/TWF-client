@@ -5,9 +5,21 @@
   gap: $default-gap;
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
+}
+
+.titleIcon {
+  color: $accent;
+  flex-shrink: 0;
+  filter: drop-shadow($shadow-comic-icon);
+}
+
 .section {
   display: grid;
-  gap: calc($default-gap * 2);
+  gap: $default-gap;
   text-align: left;
   padding: $default-padding;
   border-radius: $radius-md;
@@ -23,4 +35,46 @@
 
 .list li::marker {
   color: $accent;
+}
+
+.linkList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: $default-gap;
+}
+
+.linkCard {
+  display: grid;
+  gap: 4px;
+  padding: $default-padding;
+  border-radius: $radius-md;
+  border: 1px solid $light-transparency;
+  background: rgba($black, 0.2);
+  text-decoration: none;
+  transition:
+    transform $dur-fast ease,
+    border-color $dur-fast ease,
+    background $dur-fast ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba($accent, 0.4);
+    background: rgba($accent, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($accent, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.linkLabel {
+  color: $accent;
+  opacity: 1;
+}
+
+.linkDescription {
+  opacity: 0.9;
 }

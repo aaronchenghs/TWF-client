@@ -40,8 +40,17 @@
   @include appearPopOut($dur-fast);
 }
 
+.finalOut {
+  @include disappearFadeOut($dur-base, -8px, $ease-out);
+}
+
 .actions {
   display: flex;
   justify-content: center;
   width: 100%;
+}
+
+.actionsExiting {
+  @include disappearFadeOut($dur-base, -8px, $ease-out);
+  pointer-events: none;
 }

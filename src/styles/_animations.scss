@@ -139,6 +139,28 @@
   will-change: opacity;
 }
 
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(var(--fade-out-translate-y, 0px));
+  }
+}
+
+@mixin disappearFadeOut(
+  $duration: $dur-fast,
+  $translate-y: 0px,
+  $timing: ease-out
+) {
+  --fade-out-translate-y: #{$translate-y};
+  animation: fadeOut $duration $timing both;
+  will-change: opacity, transform;
+}
+
 @keyframes shimmer {
   from {
     background-position: 0% 0%;

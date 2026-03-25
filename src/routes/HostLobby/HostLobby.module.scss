@@ -16,6 +16,11 @@ $bottom-part-height: calc(96vh - $header-height - $default-padding);
   height: 100dvh;
   overflow-y: auto;
 
+  &.exiting {
+    @include disappearFadeOut($dur-easy, -4px, $ease-out);
+    pointer-events: none;
+  }
+
   .header {
     display: flex;
     align-items: flex-end;

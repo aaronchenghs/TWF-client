@@ -11,6 +11,7 @@ import { OverlayDialog } from "../../../components/OverlayDialog/OverlayDialog";
 const COUNTDOWN_PACE = 600;
 const OUT_MS = 140;
 const VISIBLE_MS = Math.max(0, COUNTDOWN_PACE - OUT_MS);
+const FINAL_EXIT_MS = 220;
 
 type Props = {
   open: boolean;
@@ -29,6 +30,7 @@ export function CountdownOverlay({
 }: Props) {
   const [displayCount, setDisplayCount] = useState<number>(seconds);
   const [phase, setPhase] = useState<"in" | "out">("in");
+  const [isCompleting, setIsCompleting] = useState(false);
   const [color, setColor] = useState<string>(() => pickRandomColor());
 
   const timersRef = useRef<number[]>([]);
@@ -47,19 +49,22 @@ export function CountdownOverlay({
   const hardReset = useCallback(() => {
     clearAllTimers();
     setPhase("in");
+    setIsCompleting(false);
     setDisplayCount(seconds);
     setColor((prev) => pickRandomColor(prev));
   }, [clearAllTimers, seconds]);
 
   const handleCancel = useCallback(() => {
+    if (isCompleting) return;
     hardReset();
     onCancel();
-  }, [hardReset, onCancel]);
+  }, [hardReset, isCompleting, onCancel]);
 
   useEffect(
     function runCountdownSequence() {
       if (!open) {
         clearAllTimers();
+        setIsCompleting(false);
         onDisplayCountChange?.(null);
         return;
       }
@@ -70,6 +75,7 @@ export function CountdownOverlay({
 
       schedule(() => {
         setPhase("in");
+        setIsCompleting(false);
         setDisplayCount(startCount);
         setColor((prev) => pickRandomColor(prev));
         onDisplayCountChange?.(startCount);
@@ -84,6 +90,11 @@ export function CountdownOverlay({
         const base = (startCount - n) * COUNTDOWN_PACE;
 
         schedule(() => {
+          if (n === 1) {
+            setIsCompleting(true);
+            return;
+          }
+
           setPhase("out");
         }, base + VISIBLE_MS);
 
@@ -96,9 +107,12 @@ export function CountdownOverlay({
             onDisplayCountChange?.(nextCount);
           }, base + COUNTDOWN_PACE);
         } else {
-          schedule(() => {
-            onComplete();
-          }, base + COUNTDOWN_PACE);
+          schedule(
+            () => {
+              onComplete();
+            },
+            base + VISIBLE_MS + FINAL_EXIT_MS,
+          );
         }
       });
 
@@ -113,7 +127,7 @@ export function CountdownOverlay({
     <OverlayDialog
       open={open}
       ariaLabel="Starting game"
-      onEscape={handleCancel}
+      onEscape={isCompleting ? undefined : handleCancel}
       usePortal
     >
       <div className={styles.content}>
@@ -121,15 +135,28 @@ export function CountdownOverlay({
           <Svg
             className={clsx(
               styles.countSvg,
-              phase === "in" ? styles.in : styles.out,
+              isCompleting
+                ? styles.finalOut
+                : phase === "in"
+                  ? styles.in
+                  : styles.out,
             )}
             style={{ color }}
             aria-label={`${displayCount}`}
           />
         </div>
 
-        <div className={styles.actions}>
-          <AccentButton variant="secondary" onClick={handleCancel}>
+        <div
+          className={clsx(
+            styles.actions,
+            isCompleting && styles.actionsExiting,
+          )}
+        >
+          <AccentButton
+            variant="secondary"
+            onClick={handleCancel}
+            disabled={isCompleting}
+          >
             Cancel
           </AccentButton>
         </div>

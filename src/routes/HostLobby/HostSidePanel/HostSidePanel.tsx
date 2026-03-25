@@ -9,8 +9,6 @@ import { useState, useCallback } from "react";
 import { CountdownOverlay } from "../CountdownOverlay/CountdownOverlay";
 import { markHostRoomStarted } from "@/lib/roomClientState";
 import { roomSocket } from "@/services/sockets/roomSocket";
-import { ROUTES } from "@/routes/routes";
-import { useNavigate } from "react-router-dom";
 import type { Guid } from "@/lib/guid";
 import type { GameSettings } from "@/lib/gameSettings";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
@@ -29,6 +27,7 @@ type HostSidePanelProps = {
   selectedTierSetId: Guid | null;
   selectedTierSetName: string | null;
   onCountdownDisplayCountChange: (count: 3 | 2 | 1 | null) => void;
+  onStartGameTransition: () => void;
   suppressRejoinNoticeRef: React.MutableRefObject<boolean>;
 };
 
@@ -40,11 +39,11 @@ export function HostSidePanel({
   selectedTierSetId,
   selectedTierSetName,
   onCountdownDisplayCountChange,
+  onStartGameTransition,
   suppressRejoinNoticeRef,
 }: HostSidePanelProps) {
   const [isGameSettingsOpen, setIsGameSettingsOpen] = useState(false);
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
-  const navigate = useNavigate();
   const isMobile = useMobileView();
   const buttonIconProps = ICON_PROPS.quickActions;
   const { gameSettings: GameSettingsIcon, startGame: StartGameIcon } =
@@ -67,11 +66,12 @@ export function HostSidePanel({
   }, []);
 
   const handleCountdownComplete = useCallback(() => {
+    setIsStartCountdownOpen(false);
     suppressRejoinNoticeRef.current = true;
     markHostRoomStarted(roomCode);
     roomSocket.startGame(roomCode);
-    navigate(ROUTES.GAME_ROOM);
-  }, [navigate, roomCode, suppressRejoinNoticeRef]);
+    onStartGameTransition();
+  }, [onStartGameTransition, roomCode, suppressRejoinNoticeRef]);
 
   return (
     <aside className={styles.sidePanel}>

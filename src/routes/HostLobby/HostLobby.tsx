@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 import styles from "./HostLobby.module.scss";
 import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
@@ -35,6 +36,7 @@ import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { useHostLobbyGameSettingsController } from "./GameSettingsModal/useHostLobbyGameSettingsController";
 
 const { exit: ExitIcon } = APP_ICONS;
+const HOST_EXIT_FADE_MS = 350;
 
 export default function HostLobby() {
   const navigate = useNavigate();
@@ -43,22 +45,26 @@ export default function HostLobby() {
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [isTierSetsLoading, setIsTierSetsLoading] = useState(true);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
+  const [isTransitioningToGame, setIsTransitioningToGame] = useState(false);
   const [countdownNumber, setCountdownNumber] = useState<3 | 2 | 1 | null>(
     null,
   );
-  const suppressRejoinNoticeRef = useRef(false);
-
   useHostLobbySoundEffects(roomState, countdownNumber);
 
+  const suppressRejoinNoticeRef = useRef(false);
+  const navigateToGameTimeoutRef = useRef<number | null>(null);
+
   const roomCode = normalizeCode(readHostRoomCode());
-  const isRoomCodeValid = roomCode.length === CODE_LENGTH;
   const { gameSettings, handleGameSettingsChange, handleIncomingRoomState } =
     useHostLobbyGameSettingsController({ roomCode });
+
+  const isRoomCodeValid = roomCode.length === CODE_LENGTH;
   const players = roomState?.players ?? [];
   const selectedTierSetId = (roomState?.tierSetId ?? null) as Guid | null;
   const selectedTierSetName =
     tierSets.find((tier) => tier.id === selectedTierSetId)?.title ?? null;
-  const isCloseLobbyDisabled = countdownNumber !== null;
+  const isCloseLobbyDisabled =
+    countdownNumber !== null || isTransitioningToGame;
 
   useUnexpectedExitRejoinNotice({
     kind: "host_lobby",
@@ -89,6 +95,18 @@ export default function HostLobby() {
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
 
+  const handleStartGameTransition = useCallback(() => {
+    if (navigateToGameTimeoutRef.current != null) return;
+
+    suppressRejoinNoticeRef.current = true;
+    setIsTransitioningToGame(true);
+
+    navigateToGameTimeoutRef.current = window.setTimeout(() => {
+      navigateToGameTimeoutRef.current = null;
+      navigate(ROUTES.GAME_ROOM, { replace: true });
+    }, HOST_EXIT_FADE_MS);
+  }, [navigate]);
+
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,
     onState: handleRoomState,
@@ -99,11 +117,17 @@ export default function HostLobby() {
     function redirectStartedRoomToGameRoute() {
       if (!roomState) return;
       if (roomState.phase === "LOBBY") return;
-      suppressRejoinNoticeRef.current = true;
-      navigate(ROUTES.GAME_ROOM, { replace: true });
+      handleStartGameTransition();
     },
-    [navigate, roomState],
+    [handleStartGameTransition, roomState],
   );
+
+  useEffect(function clearPendingGameNavigationOnUnmount() {
+    return () => {
+      if (navigateToGameTimeoutRef.current == null) return;
+      window.clearTimeout(navigateToGameTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(
     function handleRoomConnection() {
@@ -147,7 +171,7 @@ export default function HostLobby() {
   );
 
   return (
-    <div className={styles.root}>
+    <div className={clsx(styles.root, isTransitioningToGame && styles.exiting)}>
       <div className={styles.topRightAction}>
         <ExpandingIconButton
           icon={<ExitIcon {...ICON_PROPS.quickActions} aria-hidden="true" />}
@@ -182,6 +206,7 @@ export default function HostLobby() {
           selectedTierSetId={selectedTierSetId}
           selectedTierSetName={selectedTierSetName}
           onCountdownDisplayCountChange={setCountdownNumber}
+          onStartGameTransition={handleStartGameTransition}
           suppressRejoinNoticeRef={suppressRejoinNoticeRef}
         />
       </div>

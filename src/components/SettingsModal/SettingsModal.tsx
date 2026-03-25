@@ -21,7 +21,7 @@ import { openIssueReportForm } from "@/lib/openIssueReportForm";
 
 const {
   reduceMotion: ReduceMotionIcon,
-  settings: BackgroundMouseEffectIcon,
+  mouse: BackgroundMouseEffectIcon,
   highContrast: HighContrastIcon,
   showTips: ShowTipsIcon,
   streamerMode: StreamerModeIcon,

@@ -21,6 +21,7 @@ import {
   Settings,
   Volume2,
   VibrateOff,
+  MousePointer2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -47,6 +48,7 @@ export const APP_ICONS = {
   showTips: CircleHelp,
   streamerMode: EyeOff,
   soundEffects: Volume2,
+  mouse: MousePointer2,
   lock: Lock,
   unlock: LockOpen,
   place: {

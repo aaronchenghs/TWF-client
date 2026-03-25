@@ -7,12 +7,19 @@
       type="image/svg+xml"
       href="./src/assets/public/favicon.png"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;500;600;700&family=Luckiest+Guy&family=Nunito:wght@400;600;700&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/fonts/Bangers-Latin-400.woff2"
+      as="font"
+      type="font/woff2"
     />
+    <link
+      rel="preload"
+      href="/fonts/Nunito-Latin-Variable.woff2"
+      as="font"
+      type="font/woff2"
+    />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
@@ -50,10 +57,7 @@
           {
             "@type": "WebSite",
             "name": "Tiers! With Friends",
-            "alternateName": [
-              "Tiers! With Friends",
-              "tierswithfriends.com"
-            ],
+            "alternateName": ["Tiers! With Friends", "tierswithfriends.com"],
             "url": "https://www.tierswithfriends.com/",
             "description": "Tiers! With Friends is a multiplayer tier list party game where friends create a lobby, join from any phone, and build chaotic rankings together in real time."
           },

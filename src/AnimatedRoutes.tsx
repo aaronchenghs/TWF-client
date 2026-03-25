@@ -1,6 +1,7 @@
-import { lazy, Suspense, useLayoutEffect, useState } from "react";
+import { Suspense, useLayoutEffect, useState } from "react";
 import { useLocation, Routes, Route, Navigate } from "react-router-dom";
 import HostLobby from "@/routes/HostLobby/HostLobby";
+import Landing from "@/routes/Landing/Landing";
 import { RouteTransition } from "@/components/RouteTransition";
 import { ROUTES } from "@/routes/routes";
 import {
@@ -11,8 +12,6 @@ import { RouteLoadingFallback } from "@/components/RouteLoadingFallback/RouteLoa
 import { usePendingRejoinSnackbar } from "@/lib/hooks/usePendingRejoinSnackbar";
 import GameRoom from "./routes/GameRoom/GameRoom";
 import PlayerSession from "./routes/PlayerSession/PlayerSession";
-
-const Landing = lazy(() => import("@/routes/Landing/Landing"));
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -60,14 +59,7 @@ export function AnimatedRoutes() {
     >
       <RouteTransition routeKey={displayLocation.pathname} kind={kind}>
         <Routes location={displayLocation}>
-          <Route
-            path={ROUTES.LANDING}
-            element={
-              <Suspense fallback={<RouteLoadingFallback />}>
-                <Landing />
-              </Suspense>
-            }
-          />
+          <Route path={ROUTES.LANDING} element={<Landing />} />
           <Route path={ROUTES.HOST_LOBBY} element={<HostLobby />} />
           <Route
             path={ROUTES.GAME_ROOM}

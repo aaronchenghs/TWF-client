@@ -11,7 +11,7 @@ by the Free Software Foundation, either version 3 of the License, or
 See the LICENSE file for details.
 */
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./GameRoom.module.scss";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
@@ -27,7 +27,6 @@ import { PlayerTurnReveal } from "./Overlays/PlayerTurnReveal/PlayerTurnReveal";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { getClientId, saveRoomSession } from "@/lib/session";
-import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import {
   clearHostRoomState,
   markHostRoomStarted,
@@ -50,11 +49,8 @@ export default function GameRoom() {
     roomSocket.getLastRoomState(roomCode),
   );
   useFinishedPhaseConfetti(state?.phase ?? null, ROUTES.GAME_ROOM);
-  const suppressRejoinNoticeRef = useRef(false);
-  const isHostUnexpectedExitEligible = state?.phase !== "FINISHED";
 
   const handleExit = useCallback(() => {
-    suppressRejoinNoticeRef.current = true;
     clearHostRoomState(roomCode);
     roomSocket.closeRoom();
     socketClient.disconnect();
@@ -62,12 +58,10 @@ export default function GameRoom() {
   }, [navigate, roomCode]);
 
   const handleBackToLobby = useCallback(() => {
-    suppressRejoinNoticeRef.current = true;
     roomSocket.backToLobby();
   }, []);
 
   const handleRoomClosed = useCallback(() => {
-    suppressRejoinNoticeRef.current = true;
     clearHostRoomState(roomCode);
     socketClient.disconnect();
     navigate(ROUTES.LANDING, { replace: true });
@@ -83,13 +77,6 @@ export default function GameRoom() {
     setIsRematchSubmitting(true);
     roomSocket.playAgain();
   }, [state]);
-
-  useUnexpectedExitRejoinNotice({
-    kind: "host_game",
-    roomCode,
-    isEligible: isHostUnexpectedExitEligible,
-    suppressRef: suppressRejoinNoticeRef,
-  });
 
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,

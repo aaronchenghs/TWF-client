@@ -18,7 +18,6 @@ import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { pushSnackbar } from "@/store/slices/snackBarSlice";
 import { useAppDispatch } from "@/store/store";
-import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import { TAB_TITLES } from "@/lib/constants/tabTitles";
 import { setDocumentTitleIfNeeded } from "@/lib/documentTitle";
 import { getErrorMessage } from "@/lib/errors";
@@ -35,8 +34,6 @@ export default function PlayerSession() {
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
   const nameFromUrl = normalizeName(searchParams.get("name"));
   const effectiveName = nameFromUrl || activePlayerSession?.name || "";
-  const isPlayerUnexpectedExitEligible =
-    !!state && state.phase !== "LOBBY" && state.phase !== "FINISHED";
 
   const returnToLanding = useCallback(() => {
     clearPlayerRoomState(roomCode);
@@ -66,12 +63,6 @@ export default function PlayerSession() {
     clearPlayerRoomState(roomCode);
     returnToLanding();
   }, [dispatch, roomCode, returnToLanding]);
-
-  useUnexpectedExitRejoinNotice({
-    kind: "player",
-    roomCode,
-    isEligible: isPlayerUnexpectedExitEligible,
-  });
 
   useRoomSubscriptions({
     roomCode: isRoomCodeValid ? roomCode : null,

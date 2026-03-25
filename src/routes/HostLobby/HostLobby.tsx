@@ -22,7 +22,6 @@ import { ROUTES } from "@/routes/routes";
 import { getClientId, saveRoomSession } from "@/lib/session";
 import type { Guid } from "@/lib/guid";
 import { useRoomSubscriptions } from "@/lib/hooks/useRoomSubscriptions";
-import { useUnexpectedExitRejoinNotice } from "@/lib/hooks/useUnexpectedExitRejoinNotice";
 import {
   clearHostRoomState,
   markHostRoomStarted,
@@ -51,7 +50,6 @@ export default function HostLobby() {
   );
   useHostLobbySoundEffects(roomState, countdownNumber);
 
-  const suppressRejoinNoticeRef = useRef(false);
   const navigateToGameTimeoutRef = useRef<number | null>(null);
 
   const roomCode = normalizeCode(readHostRoomCode());
@@ -66,15 +64,7 @@ export default function HostLobby() {
   const isCloseLobbyDisabled =
     countdownNumber !== null || isTransitioningToGame;
 
-  useUnexpectedExitRejoinNotice({
-    kind: "host_lobby",
-    roomCode,
-    isEligible: isRoomCodeValid,
-    suppressRef: suppressRejoinNoticeRef,
-  });
-
   const handleCloseLobby = useCallback(() => {
-    suppressRejoinNoticeRef.current = true;
     clearHostRoomState(roomCode);
     roomSocket.closeRoom();
     navigate(ROUTES.LANDING);
@@ -90,7 +80,6 @@ export default function HostLobby() {
   );
 
   const handleRoomClosed = useCallback(() => {
-    suppressRejoinNoticeRef.current = true;
     clearHostRoomState(roomCode);
     navigate(ROUTES.LANDING, { replace: true });
   }, [navigate, roomCode]);
@@ -98,7 +87,6 @@ export default function HostLobby() {
   const handleStartGameTransition = useCallback(() => {
     if (navigateToGameTimeoutRef.current != null) return;
 
-    suppressRejoinNoticeRef.current = true;
     setIsTransitioningToGame(true);
 
     navigateToGameTimeoutRef.current = window.setTimeout(() => {
@@ -207,7 +195,6 @@ export default function HostLobby() {
           selectedTierSetName={selectedTierSetName}
           onCountdownDisplayCountChange={setCountdownNumber}
           onStartGameTransition={handleStartGameTransition}
-          suppressRejoinNoticeRef={suppressRejoinNoticeRef}
         />
       </div>
 

@@ -9,13 +9,11 @@ import {
   type TransitionKind,
 } from "@/lib/routeTransitionRules";
 import { RouteLoadingFallback } from "@/components/RouteLoadingFallback/RouteLoadingFallback";
-import { usePendingRejoinSnackbar } from "@/lib/hooks/usePendingRejoinSnackbar";
 import GameRoom from "./routes/GameRoom/GameRoom";
 import PlayerSession from "./routes/PlayerSession/PlayerSession";
 
 export function AnimatedRoutes() {
   const location = useLocation();
-  usePendingRejoinSnackbar(location.pathname);
 
   const [displayLocation, setDisplayLocation] = useState(location);
   const [pendingLocation, setPendingLocation] = useState(location);

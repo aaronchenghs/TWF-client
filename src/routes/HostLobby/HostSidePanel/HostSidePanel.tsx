@@ -28,7 +28,6 @@ type HostSidePanelProps = {
   selectedTierSetName: string | null;
   onCountdownDisplayCountChange: (count: 3 | 2 | 1 | null) => void;
   onStartGameTransition: () => void;
-  suppressRejoinNoticeRef: React.MutableRefObject<boolean>;
 };
 
 export function HostSidePanel({
@@ -40,7 +39,6 @@ export function HostSidePanel({
   selectedTierSetName,
   onCountdownDisplayCountChange,
   onStartGameTransition,
-  suppressRejoinNoticeRef,
 }: HostSidePanelProps) {
   const [isGameSettingsOpen, setIsGameSettingsOpen] = useState(false);
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
@@ -67,11 +65,10 @@ export function HostSidePanel({
 
   const handleCountdownComplete = useCallback(() => {
     setIsStartCountdownOpen(false);
-    suppressRejoinNoticeRef.current = true;
     markHostRoomStarted(roomCode);
     roomSocket.startGame(roomCode);
     onStartGameTransition();
-  }, [onStartGameTransition, roomCode, suppressRejoinNoticeRef]);
+  }, [onStartGameTransition, roomCode]);
 
   return (
     <aside className={styles.sidePanel}>

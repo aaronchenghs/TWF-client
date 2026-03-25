@@ -4,20 +4,12 @@ import {
   setLocalStorageValue,
   type RoomSessionStorage,
 } from "./localStorage";
-import {
-  SESSION_STORAGE_KEYS,
-  getSessionStorageValue,
-  removeSessionStorageValue,
-  setSessionStorageValue,
-} from "./sessionStorage";
-import { safeJsonParse } from "./json";
 
 function createClientId(): string {
   const webCrypto = globalThis.crypto;
 
-  if (typeof webCrypto?.randomUUID === "function") {
+  if (typeof webCrypto?.randomUUID === "function")
     return webCrypto.randomUUID();
-  }
 
   if (typeof webCrypto?.getRandomValues === "function") {
     const bytes = new Uint8Array(16);
@@ -68,54 +60,4 @@ export function saveRoomSession(session: RoomSessionStorage) {
   setLocalStorageValue(LOCAL_STORAGE_KEYS.ROOM_SESSION(session.code), session);
   if (session.role === "host")
     setLocalStorageValue(LOCAL_STORAGE_KEYS.HOST_SESSION, session);
-}
-
-export type RejoinNotice = {
-  kind: "player" | "host_lobby" | "host_game";
-  roomCode: string;
-  createdAt: number;
-};
-
-function isRejoinNotice(value: unknown): value is RejoinNotice {
-  if (typeof value !== "object" || value === null) return false;
-  const candidate = value as Partial<RejoinNotice>;
-  if (
-    candidate.kind !== "player" &&
-    candidate.kind !== "host_lobby" &&
-    candidate.kind !== "host_game"
-  ) {
-    return false;
-  }
-  if (typeof candidate.roomCode !== "string") return false;
-  if (typeof candidate.createdAt !== "number") return false;
-  return true;
-}
-
-/**
- * Marks a one-time rejoin notice for this browser tab.
- */
-export function markPendingRejoinNotice(input: {
-  kind: RejoinNotice["kind"];
-  roomCode: string;
-}) {
-  const payload: RejoinNotice = {
-    ...input,
-    createdAt: Date.now(),
-  };
-  setSessionStorageValue(
-    SESSION_STORAGE_KEYS.REJOIN_NOTICE,
-    JSON.stringify(payload),
-  );
-}
-
-/**
- * Consumes and clears the one-time rejoin notice flag, if present.
- */
-export function consumePendingRejoinNotice(): RejoinNotice | null {
-  const raw = getSessionStorageValue(SESSION_STORAGE_KEYS.REJOIN_NOTICE);
-  if (!raw) return null;
-
-  removeSessionStorageValue(SESSION_STORAGE_KEYS.REJOIN_NOTICE);
-
-  return safeJsonParse(raw, isRejoinNotice);
 }

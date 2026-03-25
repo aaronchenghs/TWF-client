@@ -19,6 +19,7 @@ export type SfxId =
   | "hostLobby.countdown.three"
   | "hostLobby.countdown.two"
   | "hostLobby.countdown.one"
+  | "hostLobby.countdown.letsGo"
   | "gameRoom.timer.criticalTick"
   | "gameRoom.timer.bell"
   | "gameRoom.turn.doorbell"
@@ -56,6 +57,11 @@ const SFX_DEFS: Record<SfxId, SfxDefinition> = {
     kind: "single",
     url: "/sounds/numbers/one.mp3",
     minRepeatMs: 250,
+  },
+  "hostLobby.countdown.letsGo": {
+    kind: "single",
+    url: "/sounds/lets-go-a.mp3",
+    minRepeatMs: 600,
   },
   "gameRoom.timer.criticalTick": {
     kind: "single",
@@ -104,7 +110,7 @@ const SFX_DEFS: Record<SfxId, SfxDefinition> = {
   },
   "ui.preview": {
     kind: "single",
-    url: "/sounds/downward-whoosh.mp3",
+    url: "/sounds/doorbell-chime.mp3",
     minRepeatMs: 120,
   },
 };

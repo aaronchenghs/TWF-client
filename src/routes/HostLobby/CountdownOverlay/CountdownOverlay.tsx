@@ -13,11 +13,14 @@ const OUT_MS = 140;
 const VISIBLE_MS = Math.max(0, COUNTDOWN_PACE - OUT_MS);
 const FINAL_EXIT_MS = 220;
 
-type Props = {
+type CountdownPhase = "in" | "out" | "finalOut";
+
+type CountdownOverlayProps = {
   open: boolean;
   onCancel: () => void;
   onComplete: () => void;
   onDisplayCountChange?: (count: 3 | 2 | 1 | null) => void;
+  onOutroActiveChange?: (isActive: boolean) => void;
   seconds?: 3 | 2 | 1;
 };
 
@@ -26,11 +29,11 @@ export function CountdownOverlay({
   onCancel,
   onComplete,
   onDisplayCountChange,
+  onOutroActiveChange,
   seconds = 3,
-}: Props) {
+}: CountdownOverlayProps) {
   const [displayCount, setDisplayCount] = useState<number>(seconds);
-  const [phase, setPhase] = useState<"in" | "out">("in");
-  const [isCompleting, setIsCompleting] = useState(false);
+  const [phase, setPhase] = useState<CountdownPhase>("in");
   const [color, setColor] = useState<string>(() => pickRandomColor());
 
   const timersRef = useRef<number[]>([]);
@@ -49,22 +52,21 @@ export function CountdownOverlay({
   const hardReset = useCallback(() => {
     clearAllTimers();
     setPhase("in");
-    setIsCompleting(false);
     setDisplayCount(seconds);
     setColor((prev) => pickRandomColor(prev));
   }, [clearAllTimers, seconds]);
 
   const handleCancel = useCallback(() => {
-    if (isCompleting) return;
+    if (phase === "finalOut") return;
     hardReset();
     onCancel();
-  }, [hardReset, isCompleting, onCancel]);
+  }, [hardReset, onCancel, phase]);
 
   useEffect(
     function runCountdownSequence() {
       if (!open) {
         clearAllTimers();
-        setIsCompleting(false);
+        setPhase("in");
         onDisplayCountChange?.(null);
         return;
       }
@@ -75,7 +77,6 @@ export function CountdownOverlay({
 
       schedule(() => {
         setPhase("in");
-        setIsCompleting(false);
         setDisplayCount(startCount);
         setColor((prev) => pickRandomColor(prev));
         onDisplayCountChange?.(startCount);
@@ -91,7 +92,7 @@ export function CountdownOverlay({
 
         schedule(() => {
           if (n === 1) {
-            setIsCompleting(true);
+            setPhase("finalOut");
             return;
           }
 
@@ -123,24 +124,24 @@ export function CountdownOverlay({
     [open, seconds, onComplete, onDisplayCountChange, clearAllTimers, schedule],
   );
 
+  useEffect(
+    function syncOutroActiveChange() {
+      onOutroActiveChange?.(phase === "finalOut");
+    },
+    [onOutroActiveChange, phase],
+  );
+
   return (
     <OverlayDialog
       open={open}
       ariaLabel="Starting game"
-      onEscape={isCompleting ? undefined : handleCancel}
+      onEscape={phase === "finalOut" ? undefined : handleCancel}
       usePortal
     >
       <div className={styles.content}>
         <div className={styles.stage}>
           <Svg
-            className={clsx(
-              styles.countSvg,
-              isCompleting
-                ? styles.finalOut
-                : phase === "in"
-                  ? styles.in
-                  : styles.out,
-            )}
+            className={clsx(styles.countSvg, styles[phase])}
             style={{ color }}
             aria-label={`${displayCount}`}
           />
@@ -149,13 +150,13 @@ export function CountdownOverlay({
         <div
           className={clsx(
             styles.actions,
-            isCompleting && styles.actionsExiting,
+            phase === "finalOut" && styles.actionsExiting,
           )}
         >
           <AccentButton
             variant="secondary"
             onClick={handleCancel}
-            disabled={isCompleting}
+            disabled={phase === "finalOut"}
           >
             Cancel
           </AccentButton>

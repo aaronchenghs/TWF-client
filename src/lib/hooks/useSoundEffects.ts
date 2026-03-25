@@ -20,7 +20,6 @@ import {
 import { computeVoteResolution } from "@/lib/voting";
 import { resolvePlacedTierId } from "@/lib/tierItems";
 
-
 /**
  * Sound effects are driven by a small rule engine. Each exported hook builds
  * a domain-specific snapshot of the current UI/game state, compares it to the
@@ -40,6 +39,7 @@ type SoundCommand = {
 export function useHostLobbySoundEffects(
   state: RoomPublicState | null,
   countdownNumber: 3 | 2 | 1 | null = null,
+  countdownOutroActive = false,
 ) {
   const $sfxVolume = useAppSelector(
     (appState: AppState) => appState.userSettings.sfxVolume,
@@ -56,7 +56,11 @@ export function useHostLobbySoundEffects(
     function syncHostLobbySoundEffects() {
       initializeSoundEffects();
 
-      const currentSnapshot = createHostLobbySoundSnapshot(state, countdownNumber);
+      const currentSnapshot = createHostLobbySoundSnapshot(
+        state,
+        countdownNumber,
+        countdownOutroActive,
+      );
       const commands = evaluateSoundRules({
         rules: HOST_LOBBY_SOUND_RULES,
         prev: engineRef.current.prev,
@@ -67,7 +71,7 @@ export function useHostLobbySoundEffects(
       engineRef.current.prev = currentSnapshot;
       dispatchSoundCommands(commands, $sfxVolume > 0);
     },
-    [state, countdownNumber, $sfxVolume],
+    [state, countdownNumber, countdownOutroActive, $sfxVolume],
   );
 }
 
@@ -128,8 +132,9 @@ export function useGameRoomSoundEffects({
 function createHostLobbySoundSnapshot(
   state: RoomPublicState | null,
   countdownNumber: 3 | 2 | 1 | null,
+  countdownOutroActive: boolean,
 ): HostLobbySoundSnapshot {
-  return { state, countdownNumber };
+  return { state, countdownNumber, countdownOutroActive };
 }
 
 function createGameRoomSoundSnapshot({

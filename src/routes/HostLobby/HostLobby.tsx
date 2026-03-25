@@ -48,7 +48,9 @@ export default function HostLobby() {
   const [countdownNumber, setCountdownNumber] = useState<3 | 2 | 1 | null>(
     null,
   );
-  useHostLobbySoundEffects(roomState, countdownNumber);
+
+  const [isCountdownOutroActive, setIsCountdownOutroActive] = useState(false);
+  useHostLobbySoundEffects(roomState, countdownNumber, isCountdownOutroActive);
 
   const navigateToGameTimeoutRef = useRef<number | null>(null);
 
@@ -194,6 +196,7 @@ export default function HostLobby() {
           selectedTierSetId={selectedTierSetId}
           selectedTierSetName={selectedTierSetName}
           onCountdownDisplayCountChange={setCountdownNumber}
+          onCountdownOutroActiveChange={setIsCountdownOutroActive}
           onStartGameTransition={handleStartGameTransition}
         />
       </div>

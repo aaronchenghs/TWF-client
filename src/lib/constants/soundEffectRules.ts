@@ -2,7 +2,6 @@ import type { RoomPublicState, TierId, TierItemId } from "@twf/contracts";
 import type { SfxId } from "@/lib/sounds/soundEffects";
 import { getPlayerDelta } from "@/lib/players";
 
-
 export type SoundRule<Snapshot, Runtime> = {
   id: string;
   evaluate: (args: {
@@ -17,6 +16,7 @@ export type SoundRule<Snapshot, Runtime> = {
 export type HostLobbySoundSnapshot = {
   state: RoomPublicState | null;
   countdownNumber: 3 | 2 | 1 | null;
+  countdownOutroActive: boolean;
 };
 
 export type HostLobbySoundRuntime = Record<never, never>;
@@ -78,6 +78,15 @@ export const HOST_LOBBY_SOUND_RULES: readonly SoundRule<
       } else {
         play("hostLobby.countdown.one");
       }
+    },
+  },
+  {
+    id: "countdownOutro",
+    evaluate({ prev, curr, play }) {
+      if (!curr.countdownOutroActive) return;
+      if (prev?.countdownOutroActive) return;
+
+      play("hostLobby.countdown.letsGo");
     },
   },
 ];

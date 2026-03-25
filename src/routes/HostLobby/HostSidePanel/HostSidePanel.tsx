@@ -27,6 +27,7 @@ type HostSidePanelProps = {
   selectedTierSetId: Guid | null;
   selectedTierSetName: string | null;
   onCountdownDisplayCountChange: (count: 3 | 2 | 1 | null) => void;
+  onCountdownOutroActiveChange: (isActive: boolean) => void;
   onStartGameTransition: () => void;
 };
 
@@ -38,6 +39,7 @@ export function HostSidePanel({
   selectedTierSetId,
   selectedTierSetName,
   onCountdownDisplayCountChange,
+  onCountdownOutroActiveChange,
   onStartGameTransition,
 }: HostSidePanelProps) {
   const [isGameSettingsOpen, setIsGameSettingsOpen] = useState(false);
@@ -175,6 +177,7 @@ export function HostSidePanel({
         onCancel={handleCancelCountdown}
         onComplete={handleCountdownComplete}
         onDisplayCountChange={onCountdownDisplayCountChange}
+        onOutroActiveChange={onCountdownOutroActiveChange}
       />
 
       <GameSettingsModal

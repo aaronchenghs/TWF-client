@@ -6,6 +6,7 @@ import { SliderControl } from "./SliderControl/SliderControl";
 import { useAppDispatch, useAppSelector, type AppState } from "@/store/store";
 import {
   closeSettingsModal,
+  setBackgroundMouseEffectEnabled,
   setHighContrast,
   setReduceMotion,
   setSfxVolume,
@@ -20,6 +21,7 @@ import { openIssueReportForm } from "@/lib/openIssueReportForm";
 
 const {
   reduceMotion: ReduceMotionIcon,
+  settings: BackgroundMouseEffectIcon,
   highContrast: HighContrastIcon,
   showTips: ShowTipsIcon,
   streamerMode: StreamerModeIcon,
@@ -37,6 +39,9 @@ export function SettingsModal() {
   );
   const $isReduceMotion = useAppSelector(
     (state: AppState) => state.userSettings.isReduceMotion,
+  );
+  const $isBackgroundMouseEffectEnabled = useAppSelector(
+    (state: AppState) => state.userSettings.isBackgroundMouseEffectEnabled,
   );
   const $isShowTips = useAppSelector(
     (state: AppState) => state.userSettings.isShowTips,
@@ -96,6 +101,21 @@ export function SettingsModal() {
               checked={$isReduceMotion}
               onChange={(nextValue) => dispatch(setReduceMotion(nextValue))}
               ariaLabel="Toggle reduce motion"
+            />
+          }
+        />
+
+        <SettingsOptionRow
+          icon={<BackgroundMouseEffectIcon {...iconProps} />}
+          title="Background Mouse Effect"
+          description="Turns the reactive background hover highlight on or off."
+          control={
+            <AccentToggle
+              checked={$isBackgroundMouseEffectEnabled}
+              onChange={(nextValue) =>
+                dispatch(setBackgroundMouseEffectEnabled(nextValue))
+              }
+              ariaLabel="Toggle background mouse effect"
             />
           }
         />

@@ -3,17 +3,19 @@
 .desktopTeaserHeader {
   position: fixed;
   top: calc(env(safe-area-inset-top, 0px) + $default-gap);
-  left: calc(env(safe-area-inset-left, 0px) + $default-gap);
+  right: calc(env(safe-area-inset-right, 0px) + $default-gap);
   z-index: $z-floating-actions;
 
   display: inline-flex;
   align-items: center;
+  padding: calc($default-padding / 2);
+  gap: calc($default-gap / 2);
 
   @include comicPanel(
     $comic-skew-soft,
     $radius-md,
-    rgba(255, 255, 255, 0),
-    rgba($bg-surface, 0.8)
+    transparent,
+    $teaser-panel-surface
   );
 }
 
@@ -39,19 +41,40 @@
   &:hover,
   &:focus-visible {
     transform: translateY(-1px);
-    background: rgba($accent, 0.1);
+    background: $teaser-action-hover-bg;
     color: $text-primary;
   }
 
   &:focus-visible {
-    outline: 2px solid rgba($accent, 0.5);
+    outline: 2px solid $teaser-action-focus-outline;
     outline-offset: 2px;
   }
 }
 
+.createTierSetButton {
+  background: $severityError !important;
+  color: $text-primary !important;
+  border: 2px solid $severityError !important;
+  box-shadow: $teaser-cta-shadow;
+
+  &:hover,
+  &:focus-visible {
+    background: $severityErrorHover !important;
+    border-color: $severityErrorHover !important;
+    color: $text-primary !important;
+    box-shadow: $teaser-cta-shadow-hover;
+  }
+}
+
 .desktopTeaserLabel {
+  display: inline-block;
   font-size: 14px;
-  text-shadow: 0 1px 0 $box-shadow-color;
+  text-shadow: none;
+  transform: rotate(calc($comic-skew-soft * -1));
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 @media (max-width: $mobile-width) {

@@ -5,6 +5,7 @@ import { clamp01 } from "@/lib/clamp";
 type UserSettingsState = {
   isSettingsModalOpen: boolean;
   isReduceMotion: boolean;
+  isBackgroundMouseEffectEnabled: boolean;
   isShowTips: boolean;
   isHighContrast: boolean;
   isStreamerMode: boolean;
@@ -15,6 +16,9 @@ const initialState: UserSettingsState = {
   isSettingsModalOpen: false,
   isReduceMotion:
     getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_REDUCE_MOTION) === true,
+  isBackgroundMouseEffectEnabled:
+    getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_BACKGROUND_MOUSE_EFFECT) !==
+    false,
   isShowTips: getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_SHOW_TIPS) !== false,
   isHighContrast:
     getLocalStorageValue(LOCAL_STORAGE_KEYS.USER_HIGH_CONTRAST) === true,
@@ -41,6 +45,12 @@ const userSettingsSlice = createSlice({
     setReduceMotion: (state, action: PayloadAction<boolean>) => {
       state.isReduceMotion = action.payload;
     },
+    setBackgroundMouseEffectEnabled: (
+      state,
+      action: PayloadAction<boolean>,
+    ) => {
+      state.isBackgroundMouseEffectEnabled = action.payload;
+    },
     setShowTips: (state, action: PayloadAction<boolean>) => {
       state.isShowTips = action.payload;
     },
@@ -60,6 +70,7 @@ export const {
   openSettingsModal,
   closeSettingsModal,
   setReduceMotion,
+  setBackgroundMouseEffectEnabled,
   setShowTips,
   setHighContrast,
   setStreamerMode,

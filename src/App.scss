@@ -20,6 +20,8 @@ body,
 #root {
   height: 100%;
   margin: 0;
+  position: relative;
+  isolation: isolate;
 }
 
 html,
@@ -32,35 +34,27 @@ body {
   font-family: $font-ui;
   background: linear-gradient(
     160deg,
-    color-mix(in srgb, var(--bg-app) 85%, #090a0c 15%) 0%,
-    color-mix(in srgb, var(--bg-app) 96%, #08090b 4%) 45%,
-    #0d0f13 100%
+    color-mix(in srgb, var(--bg-app) 68%, $app-bg-depth-start 32%) 0%,
+    color-mix(in srgb, var(--bg-app) 82%, $app-bg-depth-mid 18%) 45%,
+    $app-bg-depth-end 100%
   );
   color: var(--text-primary);
   position: relative;
   overflow-x: hidden;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.24;
-  @include dotTexture();
-}
-
 body::after {
   content: "";
   position: fixed;
   inset: 0;
+  z-index: $z-app-bg-sheen;
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0) 45%
+    $app-bg-sheen-start,
+    $app-bg-sheen-end 45%
   );
-  opacity: 0.2;
+  opacity: $app-bg-sheen-opacity;
 }
 
 input,
@@ -90,9 +84,8 @@ html[data-theme="contrast"] body {
   color: var(--text-primary);
 }
 
-html[data-theme="contrast"] body::before,
 html[data-theme="contrast"] body::after {
-  opacity: 0.08;
+  opacity: $app-bg-sheen-contrast-opacity;
 }
 
 html[data-theme="contrast"] button,
@@ -103,6 +96,6 @@ html[data-theme="contrast"] select {
 }
 
 html[data-theme="contrast"] a {
-  color: #ffff00;
+  color: $contrast-link-color;
   text-decoration: underline;
 }

@@ -1,0 +1,19 @@
+@use "../../styles/export.scss" as *;
+
+.canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: $z-app-bg-grid;
+  pointer-events: none;
+  opacity: $bg-grid-layer-opacity;
+}
+
+:global(html[data-theme="contrast"]) .canvas {
+  opacity: 0;
+}
+
+:global(html[data-reduce-motion="true"]) .canvas {
+  opacity: $bg-grid-layer-opacity-reduced-motion;
+}

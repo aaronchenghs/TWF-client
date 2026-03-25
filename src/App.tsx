@@ -20,6 +20,7 @@ import { TipsPopupHost } from "@/components/TipsPopupHost/TipsPopupHost";
 import { useUserSettingsSync } from "@/lib/hooks/useUserSettingsSync";
 import { useRouteSeo } from "@/lib/hooks/useRouteSeo";
 import { GlobalQuickActions } from "@/components/GlobalQuickActions/GlobalQuickActions";
+import { BackgroundGridEffect } from "@/components/BackgroundGridEffect/BackgroundGridEffect";
 
 function SeoManager() {
   useRouteSeo();
@@ -31,6 +32,7 @@ export default function App() {
 
   return (
     <>
+      <BackgroundGridEffect />
       <SnackbarHost />
 
       <BrowserRouter>

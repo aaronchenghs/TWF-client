@@ -15,9 +15,26 @@ $surface-shadow-strong: rgba($black, 0.5);
 $backdrop-blur: blur(6px);
 
 $severityError: #e53935;
+$severityErrorHover: #d32f2f;
 $severityWarn: #fb8c00;
 $severityInfo: #1e88e5;
 $severitySuccess: #43a047;
+
+$app-bg-depth-start: #07080a;
+$app-bg-depth-mid: #06070a;
+$app-bg-depth-end: #0a0c10;
+$app-bg-sheen-start: rgba(255, 255, 255, 0.06);
+$app-bg-sheen-end: rgba(255, 255, 255, 0);
+$app-bg-sheen-opacity: 0.2;
+$app-bg-sheen-contrast-opacity: 0.08;
+$bg-grid-layer-opacity: 0.7;
+$bg-grid-layer-opacity-reduced-motion: 0.7;
+$contrast-link-color: #ffff00;
+$teaser-panel-surface: rgba($bg-surface, 0.95);
+$teaser-action-hover-bg: rgba($accent, 0.1);
+$teaser-action-focus-outline: rgba($accent, 0.5);
+$teaser-cta-shadow: 0 0 8px rgba($severityError, 0.4);
+$teaser-cta-shadow-hover: 0 0 12px rgba($severityErrorHover, 0.5);
 
 $radius-sm: 6px;
 $radius-md: 10px;
@@ -61,6 +78,8 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 $default-gap: 8px;
 $default-padding: 10px;
 
+$z-app-bg-sheen: -2;
+$z-app-bg-grid: -1;
 $z-local-base: 0;
 $z-local-fg: 1;
 $z-local-overlay: 10;

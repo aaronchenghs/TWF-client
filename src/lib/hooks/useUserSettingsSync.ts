@@ -7,6 +7,9 @@ export function useUserSettingsSync() {
   const $isReduceMotion = useAppSelector(
     (state: AppState) => state.userSettings.isReduceMotion,
   );
+  const $isBackgroundMouseEffectEnabled = useAppSelector(
+    (state: AppState) => state.userSettings.isBackgroundMouseEffectEnabled,
+  );
   const $isHighContrast = useAppSelector(
     (state: AppState) => state.userSettings.isHighContrast,
   );
@@ -46,6 +49,16 @@ export function useUserSettingsSync() {
       );
     },
     [$isReduceMotion],
+  );
+
+  useEffect(
+    function persistBackgroundMouseEffectSetting() {
+      setLocalStorageValue(
+        LOCAL_STORAGE_KEYS.USER_BACKGROUND_MOUSE_EFFECT,
+        $isBackgroundMouseEffectEnabled,
+      );
+    },
+    [$isBackgroundMouseEffectEnabled],
   );
 
   useEffect(

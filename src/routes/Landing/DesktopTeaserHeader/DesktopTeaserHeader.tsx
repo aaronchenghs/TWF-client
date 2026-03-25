@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import clsx from "clsx";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { ToolTipWrapper } from "@/components/ToolTip/ToolTip";
 import { APP_ICONS } from "@/lib/constants/icons";
@@ -40,11 +40,13 @@ export function DesktopTeaserHeader() {
       <ToolTipWrapper content={LANDING_TEASER_TOOLTIP} placement="bottom">
         <button
           type="button"
-          className={styles.desktopTeaserAction}
+          className={clsx(
+            styles.desktopTeaserAction,
+            styles.createTierSetButton,
+          )}
           aria-disabled="true"
           aria-label="Create a tier set, coming soon"
         >
-          <Plus {...TEASER_ICON_PROPS} />
           <MainTextTypography
             variant="caption"
             weight="bold"

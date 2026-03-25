@@ -132,6 +132,7 @@ export const LOCAL_STORAGE_KEYS = {
   LANDING_MOBILE_JOIN_TIP_SEEN: "twf:landingMobileJoinTipSeen",
   CREATOR_MESSAGE_SEEN: "twf:creatorMessageSeen",
   USER_REDUCE_MOTION: "twf:userReduceMotion",
+  USER_BACKGROUND_MOUSE_EFFECT: "twf:userBackgroundMouseEffect",
   USER_SHOW_TIPS: "twf:userShowTips",
   USER_HIGH_CONTRAST: "twf:userHighContrast",
   USER_STREAMER_MODE: "twf:userStreamerMode",
@@ -186,6 +187,12 @@ const LOCAL_STORAGE_VARIABLES = [
     name: "userReduceMotion",
     keyPattern: LOCAL_STORAGE_KEYS.USER_REDUCE_MOTION,
     isKey: exactKey(LOCAL_STORAGE_KEYS.USER_REDUCE_MOTION),
+    codec: booleanCodec,
+  }),
+  defineStorageVariable({
+    name: "userBackgroundMouseEffect",
+    keyPattern: LOCAL_STORAGE_KEYS.USER_BACKGROUND_MOUSE_EFFECT,
+    isKey: exactKey(LOCAL_STORAGE_KEYS.USER_BACKGROUND_MOUSE_EFFECT),
     codec: booleanCodec,
   }),
   defineStorageVariable({

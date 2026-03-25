@@ -28,7 +28,7 @@ export function TierSetSelection({
 
   return (
     <section className={styles.left}>
-      <SubtextDivider text="Choose a Tier List" noMargin />
+      <SubtextDivider text="Choose a Tier Set" noMargin />
 
       <div className={styles.presetGrid}>
         {isLoading || tierSets.length === 0 ? (

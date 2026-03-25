@@ -110,6 +110,7 @@ export default function Landing() {
           className={styles.versionTag}
           variant="caption"
           letterSpacing="wide"
+          muted
         >
           © {CURRENT_YEAR} ARC | v{APP_VERSION}
         </MainTextTypography>

@@ -1,6 +1,6 @@
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
-import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
+import { ModalHeaderTitle } from "@/components/ModalHeaderTitle/ModalHeaderTitle";
 import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
 import { SettingsOptionRow } from "./SettingsOptionRow/SettingsOptionRow";
 import { SliderControl } from "./SliderControl/SliderControl";
@@ -58,10 +58,9 @@ export function SettingsModal() {
       open={$isSettingsModalOpen}
       onClose={() => dispatch(closeSettingsModal())}
       title={
-        <div className={styles.titleRow}>
-          <SettingsTitleIcon className={styles.titleIcon} aria-hidden="true" />
-          <MainTextTypography variant="h3">Settings</MainTextTypography>
-        </div>
+        <ModalHeaderTitle icon={<SettingsTitleIcon />}>
+          Settings
+        </ModalHeaderTitle>
       }
       maxWidth={560}
       footer={

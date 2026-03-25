@@ -5,18 +5,6 @@
   gap: $default-gap;
 }
 
-.titleRow {
-  display: flex;
-  align-items: center;
-  gap: $default-gap;
-}
-
-.titleIcon {
-  color: $accent;
-  flex-shrink: 0;
-  filter: drop-shadow($shadow-comic-icon);
-}
-
 .section {
   display: grid;
   gap: $default-gap;

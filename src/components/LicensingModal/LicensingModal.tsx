@@ -15,6 +15,7 @@ import { Scale } from "lucide-react";
 import { LICENSING_RESOURCE_LINKS } from "@/lib/constants/licensing";
 import { AccentButton } from "../AccentButton/AccentButton";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
+import { ModalHeaderTitle } from "../ModalHeaderTitle/ModalHeaderTitle";
 import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
 import styles from "./LicensingModal.module.scss";
 
@@ -25,12 +26,7 @@ export function LicensingModal(props: { open: boolean; onClose: () => void }) {
     <PrimaryModal
       open={open}
       onClose={onClose}
-      title={
-        <div className={styles.titleRow}>
-          <Scale className={styles.titleIcon} aria-hidden="true" />
-          <MainTextTypography variant="h3">Licensing</MainTextTypography>
-        </div>
-      }
+      title={<ModalHeaderTitle icon={<Scale />}>Licensing</ModalHeaderTitle>}
       subtitle="AGPL-3.0-or-later and reserved branding"
       maxWidth={660}
       ariaLabel="Licensing information"

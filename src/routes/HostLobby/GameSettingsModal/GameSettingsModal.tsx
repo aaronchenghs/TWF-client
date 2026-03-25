@@ -1,5 +1,6 @@
 import { AccentButton } from "@/components/AccentButton/AccentButton";
 import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
+import { ModalHeaderTitle } from "@/components/ModalHeaderTitle/ModalHeaderTitle";
 import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
 import { SettingsOptionRow } from "@/components/SettingsModal/SettingsOptionRow/SettingsOptionRow";
 import {
@@ -19,7 +20,11 @@ type GameSettingsModalProps = {
   onChange: (nextSettings: GameSettings) => void;
 };
 
-const { timer: TimerIcon, reset: ResetIcon } = APP_ICONS;
+const {
+  gameSettings: GameSettingsTitleIcon,
+  timer: TimerIcon,
+  reset: ResetIcon,
+} = APP_ICONS;
 
 export function GameSettingsModal({
   open,
@@ -34,7 +39,11 @@ export function GameSettingsModal({
     <PrimaryModal
       open={open}
       onClose={onClose}
-      title="Game Settings"
+      title={
+        <ModalHeaderTitle icon={<GameSettingsTitleIcon />}>
+          Game Settings
+        </ModalHeaderTitle>
+      }
       maxWidth={560}
       footer={<AccentButton onClick={onClose}>Done</AccentButton>}
     >

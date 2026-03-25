@@ -1,0 +1,21 @@
+@use "../../styles/export.scss" as *;
+
+.root {
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
+}
+
+.icon {
+  color: $accent;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  filter: drop-shadow($shadow-comic-icon);
+
+  :global(svg) {
+    display: block;
+  }
+}

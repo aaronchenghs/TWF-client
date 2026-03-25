@@ -1,37 +1,25 @@
 import { useEffect, useRef } from "react";
 import styles from "./BackgroundGridEffect.module.scss";
 import {
-  BACKGROUND_GRID_PALETTE_RGB,
+  BACKGROUND_GRID_LAYOUT,
   buildBackgroundGridTiles,
+  canRenderBackgroundGridHover,
+  createBackgroundGridPointerRenderState,
+  createBackgroundGridPointerState,
   type BackgroundGridTile,
-  getBackgroundGridAreaColorIndex,
-  getBackgroundGridRevealAlpha,
+  getBackgroundGridRenderMetrics,
+  getBackgroundGridTileStrokeStyle,
+  haveBackgroundGridRenderMetricsChanged,
+  isBackgroundGridHoverBlocked,
+  type BackgroundGridRenderMetrics,
+  type BackgroundGridPointerRenderState,
+  type BackgroundGridPointerState,
+  shouldContinueBackgroundGridAnimation,
+  stepBackgroundGridPointerRenderState,
   strokeRoundedRect,
 } from "@/lib/backgroundGridEffect";
 import { useMobileView } from "@/lib/hooks/useMobileView";
 import { useAppSelector, type AppState } from "@/store/store";
-
-const TILE_WIDTH = 40;
-const TILE_HEIGHT = 14;
-const TILE_GAP = 4;
-const TILE_RADIUS = 1;
-const TILE_STROKE_WIDTH = 1;
-const HOVER_RADIUS = 70;
-const GRID_OFFSET_Y = 0;
-const ROW_SHIFT_X = 20;
-const BASE_TILE_COLOR = "rgba(255, 255, 255, 0.04)";
-
-type PointerState = {
-  x: number;
-  y: number;
-  active: boolean;
-};
-
-type GridRenderMetrics = {
-  viewportWidth: number;
-  viewportHeight: number;
-  dpr: number;
-};
 
 export function BackgroundGridEffect() {
   const isMobile = useMobileView();
@@ -44,96 +32,105 @@ export function BackgroundGridEffect() {
   );
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const renderMetricsRef = useRef<GridRenderMetrics | null>(null);
+  const renderMetricsRef = useRef<BackgroundGridRenderMetrics | null>(null);
   const gridTilesRef = useRef<BackgroundGridTile[]>([]);
-  const pointerStateRef = useRef<PointerState>({
-    x: window.innerWidth * 0.5,
-    y: window.innerHeight * 0.4,
-    active: false,
-  });
+  const pointerStateRef = useRef<BackgroundGridPointerState>(
+    createBackgroundGridPointerState(),
+  );
+  const pointerRenderStateRef = useRef<BackgroundGridPointerRenderState>(
+    createBackgroundGridPointerRenderState(),
+  );
 
   useEffect(
     function drawBackgroundGridEffect() {
       const canvas = canvasRef.current;
       if (!canvas) return undefined;
+
       renderMetricsRef.current = null;
       gridTilesRef.current = [];
+      pointerStateRef.current = createBackgroundGridPointerState();
+      pointerRenderStateRef.current = createBackgroundGridPointerRenderState();
 
       const context = canvas.getContext("2d");
       if (!context) return undefined;
+
       const canvasElement = canvas;
       const canvasContext = context;
       const staticCanvas = document.createElement("canvas");
       const staticContext = staticCanvas.getContext("2d");
       if (!staticContext) return undefined;
+
       const staticCanvasContext = staticContext;
+      const isInteractive = !isMobile && !$isReduceMotion && !$isHighContrast;
 
       let frame = 0;
 
-      function syncRenderSurface(): GridRenderMetrics {
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const dpr = window.devicePixelRatio || 1;
-        const previousMetrics = renderMetricsRef.current;
-
-        if (
-          previousMetrics &&
-          previousMetrics.viewportWidth === viewportWidth &&
-          previousMetrics.viewportHeight === viewportHeight &&
-          previousMetrics.dpr === dpr
-        )
-          return previousMetrics;
-
-        canvasElement.width = Math.round(viewportWidth * dpr);
-        canvasElement.height = Math.round(viewportHeight * dpr);
-        canvasElement.style.width = `${viewportWidth}px`;
-        canvasElement.style.height = `${viewportHeight}px`;
-
-        staticCanvas.width = Math.round(viewportWidth * dpr);
-        staticCanvas.height = Math.round(viewportHeight * dpr);
-        staticCanvas.style.width = `${viewportWidth}px`;
-        staticCanvas.style.height = `${viewportHeight}px`;
-
-        const nextMetrics = {
-          viewportWidth,
-          viewportHeight,
-          dpr,
-        } satisfies GridRenderMetrics;
-
-        renderMetricsRef.current = nextMetrics;
-        gridTilesRef.current = buildBackgroundGridTiles({
-          viewportWidth,
-          viewportHeight,
-          tileWidth: TILE_WIDTH,
-          tileHeight: TILE_HEIGHT,
-          tileGap: TILE_GAP,
-          gridOffsetY: GRID_OFFSET_Y,
-          rowShiftX: ROW_SHIFT_X,
-        });
-
-        staticCanvasContext.setTransform(dpr, 0, 0, dpr, 0, 0);
-        staticCanvasContext.clearRect(0, 0, viewportWidth, viewportHeight);
-        staticCanvasContext.lineWidth = TILE_STROKE_WIDTH;
-        staticCanvasContext.strokeStyle = BASE_TILE_COLOR;
+      function drawStaticGrid(metrics: BackgroundGridRenderMetrics) {
+        staticCanvasContext.setTransform(metrics.dpr, 0, 0, metrics.dpr, 0, 0);
+        staticCanvasContext.clearRect(
+          0,
+          0,
+          metrics.viewportWidth,
+          metrics.viewportHeight,
+        );
+        staticCanvasContext.lineWidth = BACKGROUND_GRID_LAYOUT.tileStrokeWidth;
+        staticCanvasContext.strokeStyle = BACKGROUND_GRID_LAYOUT.baseTileColor;
 
         for (const tile of gridTilesRef.current) {
           strokeRoundedRect(
             staticCanvasContext,
             tile.x,
             tile.y,
-            TILE_WIDTH,
-            TILE_HEIGHT,
-            TILE_RADIUS,
+            BACKGROUND_GRID_LAYOUT.tileWidth,
+            BACKGROUND_GRID_LAYOUT.tileHeight,
+            BACKGROUND_GRID_LAYOUT.tileRadius,
           );
         }
+      }
+
+      function resizeCanvas(
+        targetCanvas: HTMLCanvasElement,
+        metrics: BackgroundGridRenderMetrics,
+      ) {
+        targetCanvas.width = Math.round(metrics.viewportWidth * metrics.dpr);
+        targetCanvas.height = Math.round(metrics.viewportHeight * metrics.dpr);
+        targetCanvas.style.width = `${metrics.viewportWidth}px`;
+        targetCanvas.style.height = `${metrics.viewportHeight}px`;
+      }
+
+      function rebuildGridTiles(metrics: BackgroundGridRenderMetrics) {
+        gridTilesRef.current = buildBackgroundGridTiles({
+          viewportWidth: metrics.viewportWidth,
+          viewportHeight: metrics.viewportHeight,
+          tileWidth: BACKGROUND_GRID_LAYOUT.tileWidth,
+          tileHeight: BACKGROUND_GRID_LAYOUT.tileHeight,
+          tileGap: BACKGROUND_GRID_LAYOUT.tileGap,
+          gridOffsetY: BACKGROUND_GRID_LAYOUT.gridOffsetY,
+          rowShiftX: BACKGROUND_GRID_LAYOUT.rowShiftX,
+        });
+      }
+
+      function syncRenderSurface(): BackgroundGridRenderMetrics {
+        const nextMetrics = getBackgroundGridRenderMetrics();
+
+        if (
+          !haveBackgroundGridRenderMetricsChanged(
+            renderMetricsRef.current,
+            nextMetrics,
+          )
+        )
+          return nextMetrics;
+
+        resizeCanvas(canvasElement, nextMetrics);
+        resizeCanvas(staticCanvas, nextMetrics);
+        renderMetricsRef.current = nextMetrics;
+        rebuildGridTiles(nextMetrics);
+        drawStaticGrid(nextMetrics);
 
         return nextMetrics;
       }
 
-      function drawScene() {
-        frame = 0;
-
-        const { dpr } = syncRenderSurface();
+      function drawBaseLayer(metrics: BackgroundGridRenderMetrics) {
         canvasContext.setTransform(1, 0, 0, 1, 0, 0);
         canvasContext.clearRect(
           0,
@@ -143,41 +140,58 @@ export function BackgroundGridEffect() {
         );
         canvasContext.imageSmoothingEnabled = false;
         canvasContext.drawImage(staticCanvas, 0, 0);
-        canvasContext.setTransform(dpr, 0, 0, dpr, 0, 0);
+        canvasContext.setTransform(metrics.dpr, 0, 0, metrics.dpr, 0, 0);
+      }
 
-        const pointerState = pointerStateRef.current;
-        const isInteractive = !isMobile && !$isReduceMotion && !$isHighContrast;
-
-        if (!isInteractive || !pointerState.active) return;
-
-        canvasContext.lineWidth = TILE_STROKE_WIDTH;
+      function drawHoverLayer(
+        pointerRenderState: BackgroundGridPointerRenderState,
+      ) {
+        canvasContext.lineWidth = BACKGROUND_GRID_LAYOUT.tileStrokeWidth;
 
         for (const tile of gridTilesRef.current) {
-          const distance = Math.hypot(
-            tile.centerX - pointerState.x,
-            tile.centerY - pointerState.y,
+          const strokeStyle = getBackgroundGridTileStrokeStyle(
+            tile,
+            pointerRenderState,
           );
+          if (!strokeStyle) continue;
 
-          if (distance >= HOVER_RADIUS) continue;
-
-          const colorIndex = getBackgroundGridAreaColorIndex(
-            tile.column,
-            tile.row,
-          );
-          const [red, green, blue] = BACKGROUND_GRID_PALETTE_RGB[colorIndex] ??
-            BACKGROUND_GRID_PALETTE_RGB[0] ?? [255, 255, 255];
-          const alpha = getBackgroundGridRevealAlpha(distance, HOVER_RADIUS);
-
-          canvasContext.strokeStyle = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+          canvasContext.strokeStyle = strokeStyle;
           strokeRoundedRect(
             canvasContext,
             tile.x,
             tile.y,
-            TILE_WIDTH,
-            TILE_HEIGHT,
-            TILE_RADIUS,
+            BACKGROUND_GRID_LAYOUT.tileWidth,
+            BACKGROUND_GRID_LAYOUT.tileHeight,
+            BACKGROUND_GRID_LAYOUT.tileRadius,
           );
         }
+      }
+
+      function drawScene() {
+        frame = 0;
+
+        const metrics = syncRenderSurface();
+        drawBaseLayer(metrics);
+
+        const pointerState = pointerStateRef.current;
+        const pointerRenderState = pointerRenderStateRef.current;
+        const intensityTarget = stepBackgroundGridPointerRenderState(
+          pointerRenderState,
+          pointerState,
+        );
+
+        if (canRenderBackgroundGridHover(isInteractive, pointerRenderState))
+          drawHoverLayer(pointerRenderState);
+
+        if (
+          isInteractive &&
+          shouldContinueBackgroundGridAnimation(
+            pointerState,
+            pointerRenderState,
+            intensityTarget,
+          )
+        )
+          frame = window.requestAnimationFrame(drawScene);
       }
 
       function queueDraw() {
@@ -189,7 +203,7 @@ export function BackgroundGridEffect() {
         pointerStateRef.current = {
           x: event.clientX,
           y: event.clientY,
-          active: true,
+          active: !isBackgroundGridHoverBlocked(event.target),
         };
         queueDraw();
       }

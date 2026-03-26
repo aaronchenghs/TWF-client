@@ -18,6 +18,13 @@ const BACKGROUND_GRID_POINTER_INTENSITY_EASING = 0.18;
 const BACKGROUND_GRID_POINTER_POSITION_SETTLE_THRESHOLD = 0.4;
 const BACKGROUND_GRID_POINTER_INTENSITY_SETTLE_THRESHOLD = 0.02;
 const BACKGROUND_GRID_POINTER_VISIBLE_INTENSITY_THRESHOLD = 0.01;
+const BACKGROUND_GRID_HOVER_BLOCK_SELECTOR = [
+  "button",
+  "input[type='range']",
+  "[role='button']",
+  "[role='switch']",
+  "[data-bg-hover-block]",
+].join(", ");
 
 export const BACKGROUND_GRID_PALETTE = Array.from(DEFAULT_TIER_COLORS);
 export const BACKGROUND_GRID_PALETTE_RGB =
@@ -224,9 +231,7 @@ export function getBackgroundGridTileStrokeStyle(
 /** Prevents the background effect from reacting under interactive controls. */
 export function isBackgroundGridHoverBlocked(target: EventTarget | null) {
   if (!(target instanceof Element)) return false;
-  return (
-    target.closest("button, [role='button'], [data-bg-hover-block]") !== null
-  );
+  return target.closest(BACKGROUND_GRID_HOVER_BLOCK_SELECTOR) !== null;
 }
 
 /** Builds the staggered tile layout that fills and over-scans the viewport. */

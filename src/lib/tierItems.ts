@@ -1,4 +1,5 @@
 import type { RoomPublicState, TierItemId, TierId } from "@twf/contracts";
+import { REGEX } from "@/lib/constants/regex";
 
 export const SHOW_CURRENT_ITEM_PHASES = new Set<RoomPublicState["phase"]>([
   "VOTE",
@@ -8,7 +9,7 @@ export const SHOW_CURRENT_ITEM_PHASES = new Set<RoomPublicState["phase"]>([
 ]);
 
 function fallbackNameFromId(id: string) {
-  return id.replace(/[-_]/g, " ").trim();
+  return id.replace(REGEX.tierItemIdSeparator, " ").trim();
 }
 
 const ITEM_COUNT_COLOR_MIN = 4;

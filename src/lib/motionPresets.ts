@@ -1,5 +1,6 @@
 import type { TargetAndTransition, Transition } from "framer-motion";
 import { easeInOut, easeIn, easeOut } from "framer-motion";
+import { REGEX } from "@/lib/constants/regex";
 
 type Ease = Transition["ease"];
 
@@ -63,7 +64,7 @@ type FadeSlideScaleOptions = {
 function getAxisRestValue(value: number | string): number | string {
   if (typeof value === "number") return 0;
 
-  const unitMatch = value.trim().match(/[a-z%]+$/i);
+  const unitMatch = value.trim().match(REGEX.trailingCssUnit);
   if (!unitMatch) return "0";
   return `0${unitMatch[0]}`;
 }

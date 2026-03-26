@@ -6,7 +6,11 @@ import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../services/sockets/roomSocket";
 import { useRef, useState, type KeyboardEvent } from "react";
-import { normalizeCode, normalizeName } from "../../lib/stringNormalizers";
+import {
+  normalizeAlphabeticCodeInput,
+  normalizeCode,
+  normalizeName,
+} from "../../lib/stringNormalizers";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
 import { LicensingModal } from "../../components/LicensingModal/LicensingModal";
@@ -21,6 +25,7 @@ import {
 import { persistPlayerJoinState } from "@/lib/roomClientState";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_ICONS } from "@/lib/constants/icons";
+import { INPUT_PATTERNS } from "@/lib/constants/regex";
 import { APP_VERSION } from "@/config/env";
 import { DesktopTeaserHeader } from "./DesktopTeaserHeader/DesktopTeaserHeader";
 
@@ -186,9 +191,17 @@ export function JoinRoomPanel() {
         <AccentTextInput
           name="lobby code"
           value={code}
-          onChange={(e) => setCode(e.target.value)}
+          onChange={(e) =>
+            setCode(normalizeAlphabeticCodeInput(e.target.value))
+          }
           onKeyDown={handleCodeInputEnter}
           icon={LobbyCodeIcon}
+          type="text"
+          inputMode="text"
+          pattern={INPUT_PATTERNS.alphabetic}
+          autoCapitalize="characters"
+          autoCorrect="off"
+          spellCheck={false}
           enterKeyHint="next"
           placeholder="CODE"
           autoComplete="off"

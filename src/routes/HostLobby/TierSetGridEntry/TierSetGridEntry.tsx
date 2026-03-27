@@ -139,6 +139,7 @@ export function TierSetGridEntry({
             <AccentButton
               type="button"
               size="small"
+              className={styles.detailsButton}
               onClick={toggleDetails}
               aria-expanded={isDetailsOpen}
               aria-controls={detailsRegionId}

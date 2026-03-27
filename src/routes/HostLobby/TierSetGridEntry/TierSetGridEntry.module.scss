@@ -59,6 +59,7 @@
   display: flex;
   align-items: flex-start;
   gap: $default-gap;
+  min-width: 0;
 }
 
 .previewThumb {
@@ -105,14 +106,16 @@
 }
 
 .headerRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: flex-start;
-  justify-content: space-between;
   gap: $default-gap;
+  min-width: 0;
 }
 
 .titleGroup {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: flex-start;
   gap: $default-gap;
   min-width: 0;
@@ -120,21 +123,31 @@
 }
 
 .presetTitle {
+  display: block;
   margin: 0;
   min-width: 0;
   flex: 1;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .metaBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: fit-content;
+  max-width: 100%;
   flex-shrink: 0;
   padding: 0 $default-gap;
   border-radius: $round;
   border: 1px solid var(--meta-accent);
   background: var(--meta-surface);
   color: var(--meta-accent);
+}
+
+.detailsButton {
+  align-self: start;
+  justify-self: end;
 }
 
 .metaText {
@@ -192,4 +205,34 @@
   grid-template-rows: 1fr;
   opacity: 1;
   pointer-events: auto;
+}
+
+@media (max-width: $tablet-width) {
+  .titleGroup {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc($default-gap * 0.5);
+  }
+
+  .metaBadge {
+    justify-self: start;
+  }
+}
+
+@media (max-width: $mobile-width) {
+  .topRow {
+    gap: calc($default-gap * 0.5);
+  }
+
+  .previewThumb {
+    width: 60px;
+    height: 60px;
+  }
+
+  .headerRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detailsButton {
+    justify-self: start;
+  }
 }

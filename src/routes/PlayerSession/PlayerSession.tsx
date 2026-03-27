@@ -97,6 +97,25 @@ export default function PlayerSession() {
         return;
       }
       const clientId = getClientId();
+      const { playerId: existingPlayerId } = readPlayerRuntime(roomCode);
+      const cachedState = roomSocket.getLastRoomState(roomCode);
+
+      if (cachedState && existingPlayerId) {
+        const currentPlayer = cachedState.players.find(
+          (player) => player.id === existingPlayerId,
+        );
+
+        if (currentPlayer) {
+          socketClient.setMyPlayerId(existingPlayerId);
+          persistPlayerJoinState({
+            roomCode,
+            name: normalizeName(currentPlayer.name),
+            playerId: existingPlayerId,
+          });
+          setState(cachedState);
+          return;
+        }
+      }
 
       let cancelled = false;
 
@@ -110,8 +129,6 @@ export default function PlayerSession() {
           });
 
           const { state: initialState, playerId } = result;
-          const { playerId: existingPlayerId } = readPlayerRuntime(roomCode);
-
           const finalPlayerId = playerId ?? existingPlayerId ?? null;
           const canonicalName =
             (finalPlayerId

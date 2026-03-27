@@ -9,6 +9,7 @@ import { useState, type KeyboardEvent } from "react";
 import {
   normalizeAlphabeticCodeInput,
   normalizeCode,
+  normalizeName,
 } from "../../lib/stringNormalizers";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
@@ -16,12 +17,21 @@ import { LicensingModal } from "../../components/LicensingModal/LicensingModal";
 import { WhatIsThisModal } from "../../components/WhatIsThisModal/WhatIsThisModal";
 import { CODE_LENGTH } from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
-import { getStartedHostSession, saveRoomSession } from "../../lib/session";
+import {
+  getClientId,
+  getStartedHostSession,
+  saveRoomSession,
+} from "../../lib/session";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_ICONS } from "@/lib/constants/icons";
 import { INPUT_PATTERNS } from "@/lib/constants/regex";
 import { APP_VERSION } from "@/config/env";
 import { DesktopTeaserHeader } from "./DesktopTeaserHeader/DesktopTeaserHeader";
+import {
+  persistPlayerJoinState,
+  readActivePlayerSession,
+  readPlayerRuntime,
+} from "@/lib/roomClientState";
 
 const CURRENT_YEAR = new Date().getFullYear();
 const { lobbyCode: LobbyCodeIcon } = APP_ICONS;
@@ -143,7 +153,45 @@ export function JoinRoomPanel() {
       return;
     }
 
-    navigate(`${ROUTES.PLAYER_SESSION}?code=${encodeURIComponent(normalizedCode)}`);
+    const activePlayerSession = readActivePlayerSession();
+    const persistedName =
+      normalizeCode(activePlayerSession?.code ?? "") === normalizedCode
+        ? normalizeName(activePlayerSession?.name)
+        : "";
+
+    try {
+      const clientId = getClientId();
+      const { state, playerId } = await roomSocket.joinRoomOrThrow({
+        code: normalizedCode,
+        role: "player",
+        name: persistedName,
+        clientId,
+      });
+
+      const { playerId: existingPlayerId } = readPlayerRuntime(normalizedCode);
+      const finalPlayerId = playerId ?? existingPlayerId ?? null;
+      const canonicalName =
+        (finalPlayerId
+          ? state.players.find((player) => player.id === finalPlayerId)?.name
+          : null) ?? persistedName;
+      const normalizedCanonicalName = normalizeName(canonicalName);
+
+      if (finalPlayerId) socketClient.setMyPlayerId(finalPlayerId);
+
+      persistPlayerJoinState({
+        roomCode: normalizedCode,
+        name: normalizedCanonicalName,
+        playerId: finalPlayerId,
+      });
+
+      navigate(
+        `${ROUTES.PLAYER_SESSION}?code=${encodeURIComponent(normalizedCode)}`,
+      );
+    } catch {
+      socketClient.disconnect();
+    } finally {
+      setIsJoining(false);
+    }
   };
 
   return (

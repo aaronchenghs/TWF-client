@@ -9,14 +9,13 @@ import {
   type GameSettings,
 } from "@/lib/gameSettings";
 
-
-type UseHostLobbyGameSettingsControllerArgs = {
+type UseHostLobbyGameCustomizationControllerArgs = {
   roomCode: string;
 };
 
-export function useHostLobbyGameSettingsController({
+export function useHostLobbyGameCustomizationController({
   roomCode,
-}: UseHostLobbyGameSettingsControllerArgs) {
+}: UseHostLobbyGameCustomizationControllerArgs) {
   const [savedGameSettings, setSavedGameSettings] = useState<GameSettings>(() =>
     readSavedHostLobbyGameSettings(),
   );
@@ -57,7 +56,7 @@ export function useHostLobbyGameSettingsController({
     [roomCode, savedGameSettings],
   );
 
-  const handleGameSettingsChange = useCallback(
+  const handleGameCustomizationChange = useCallback(
     (nextSettings: GameSettings) => {
       restoredSavedSettingsRoomRef.current = roomCode;
       saveHostLobbyGameSettings(nextSettings);
@@ -69,8 +68,9 @@ export function useHostLobbyGameSettingsController({
   );
 
   return {
-    gameSettings: pendingGameSettings ?? roomGameSettings ?? savedGameSettings,
-    handleGameSettingsChange,
+    gameCustomization:
+      pendingGameSettings ?? roomGameSettings ?? savedGameSettings,
+    handleGameCustomizationChange,
     handleIncomingRoomState,
   };
 }

@@ -11,9 +11,9 @@ import {
   type GameSettings,
 } from "@/lib/gameSettings";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
-import styles from "./GameSettingsModal.module.scss";
+import styles from "./GameCustomizationModal.module.scss";
 
-type GameSettingsModalProps = {
+type GameCustomizationModalProps = {
   open: boolean;
   settings: GameSettings;
   onClose: () => void;
@@ -21,17 +21,17 @@ type GameSettingsModalProps = {
 };
 
 const {
-  gameSettings: GameSettingsTitleIcon,
+  gameSettings: GameCustomizationTitleIcon,
   timer: TimerIcon,
   reset: ResetIcon,
 } = APP_ICONS;
 
-export function GameSettingsModal({
+export function GameCustomizationModal({
   open,
   settings,
   onClose,
   onChange,
-}: GameSettingsModalProps) {
+}: GameCustomizationModalProps) {
   const iconProps = ICON_PROPS.settingsRow;
   const isResetDisabled = areGameSettingsDefault(settings);
 
@@ -40,8 +40,8 @@ export function GameSettingsModal({
       open={open}
       onClose={onClose}
       title={
-        <ModalHeaderTitle icon={<GameSettingsTitleIcon />}>
-          Game Settings
+        <ModalHeaderTitle icon={<GameCustomizationTitleIcon />}>
+          Customization
         </ModalHeaderTitle>
       }
       maxWidth={560}

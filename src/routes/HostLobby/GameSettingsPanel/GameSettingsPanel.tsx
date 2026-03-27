@@ -10,9 +10,9 @@ import { useMobileView } from "@/lib/hooks/useMobileView";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { getStartDisabledReason } from "@/lib/hostLobbyUtils";
 import { TierSetSelection } from "../TierSetSelection/TierSetSelection";
-import styles from "./HostLobbyPanel.module.scss";
+import styles from "./GameSettingsPanel.module.scss";
 
-type HostLobbyPanelProps = {
+type GameSettingsPanelProps = {
   className?: string;
   canLoadTierSets: boolean;
   selectedTierSetId: Guid | null;
@@ -24,7 +24,7 @@ type HostLobbyPanelProps = {
 
 const { gameSettings: GameSettingsIcon, startGame: StartGameIcon } = APP_ICONS;
 
-export function HostLobbyPanel({
+export function GameSettingsPanel({
   className,
   canLoadTierSets,
   selectedTierSetId,
@@ -32,7 +32,7 @@ export function HostLobbyPanel({
   isStartCountdownOpen,
   onOpenGameSettings,
   onStartGame,
-}: HostLobbyPanelProps) {
+}: GameSettingsPanelProps) {
   const isMobile = useMobileView();
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [isTierSetsLoading, setIsTierSetsLoading] = useState(true);
@@ -84,7 +84,7 @@ export function HostLobbyPanel({
     <section className={clsx(styles.root, className)}>
       <div className={styles.panelHeader}>
         <MainTextTypography variant="h1" textAlign="center">
-          Host Lobby
+          Game Settings
         </MainTextTypography>
       </div>
 

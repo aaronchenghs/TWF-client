@@ -18,12 +18,12 @@ import {
 } from "@/lib/roomClientState";
 import { SubtextDivider } from "@/components/SubtextDivider/SubtextDivider";
 import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
-import { GameSettingsModal } from "./GameSettingsModal/GameSettingsModal";
+import { GameCustomizationModal } from "./GameCustomizationModal/GameCustomizationModal";
 import { useHostLobbySoundEffects } from "@/lib/hooks/useSoundEffects";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
-import { useHostLobbyGameSettingsController } from "./GameSettingsModal/useHostLobbyGameSettingsController";
-import { HostLobbyPanel } from "./HostLobbyPanel/HostLobbyPanel";
+import { useHostLobbyGameCustomizationController } from "./GameCustomizationModal/useHostLobbyGameCustomizationController";
+import { GameSettingsPanel } from "./GameSettingsPanel/GameSettingsPanel";
 import { PlayerJoinPanel } from "./PlayerJoinPanel/PlayerJoinPanel";
 
 const HOST_EXIT_FADE_MS = 350;
@@ -34,7 +34,7 @@ export default function HostLobby() {
   const navigate = useNavigate();
 
   const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
-  const [isGameSettingsOpen, setIsGameSettingsOpen] = useState(false);
+  const [isGameCustomizationOpen, setIsGameCustomizationOpen] = useState(false);
   const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
   const [isTransitioningToGame, setIsTransitioningToGame] = useState(false);
@@ -48,8 +48,11 @@ export default function HostLobby() {
   const navigateToGameTimeoutRef = useRef<number | null>(null);
 
   const roomCode = normalizeCode(readHostRoomCode());
-  const { gameSettings, handleGameSettingsChange, handleIncomingRoomState } =
-    useHostLobbyGameSettingsController({ roomCode });
+  const {
+    gameCustomization,
+    handleGameCustomizationChange,
+    handleIncomingRoomState,
+  } = useHostLobbyGameCustomizationController({ roomCode });
 
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
   const players = roomState?.players ?? [];
@@ -174,13 +177,13 @@ export default function HostLobby() {
 
       <div className={styles.layoutShell}>
         <div className={styles.layout}>
-          <HostLobbyPanel
+          <GameSettingsPanel
             className={clsx(styles.lobbyPanel, styles.hostPanel)}
             canLoadTierSets={isRoomCodeValid}
             selectedTierSetId={selectedTierSetId}
             playerCount={players.length}
             isStartCountdownOpen={isStartCountdownOpen}
-            onOpenGameSettings={() => setIsGameSettingsOpen(true)}
+            onOpenGameSettings={() => setIsGameCustomizationOpen(true)}
             onStartGame={handleStartClick}
           />
 
@@ -201,11 +204,11 @@ export default function HostLobby() {
         onOutroActiveChange={setIsCountdownOutroActive}
       />
 
-      <GameSettingsModal
-        open={isGameSettingsOpen}
-        settings={gameSettings}
-        onClose={() => setIsGameSettingsOpen(false)}
-        onChange={handleGameSettingsChange}
+      <GameCustomizationModal
+        open={isGameCustomizationOpen}
+        settings={gameCustomization}
+        onClose={() => setIsGameCustomizationOpen(false)}
+        onChange={handleGameCustomizationChange}
       />
 
       <ConfirmationModal

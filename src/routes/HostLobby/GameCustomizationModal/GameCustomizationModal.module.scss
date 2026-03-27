@@ -3,7 +3,7 @@
 .actions {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: $default-gap;
+  margin-bottom: calc($default-gap * 2);
 }
 
 .resetButtonContent {
@@ -15,6 +15,5 @@
 .rows {
   display: flex;
   flex-direction: column;
-  gap: $default-gap;
-  overflow: clip;
+  gap: calc($default-gap * 1.5);
 }

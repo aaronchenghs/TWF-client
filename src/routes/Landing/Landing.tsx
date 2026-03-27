@@ -218,7 +218,11 @@ export function JoinRoomPanel() {
           maxLength={CODE_LENGTH}
           fullWidth
         />
-        <AccentButton disabled={!isJoinEnabled} onClick={handleJoinRoom}>
+        <AccentButton
+          disabled={!isJoinEnabled}
+          onClick={handleJoinRoom}
+          className={styles.joinButton}
+        >
           {isJoining ? (
             <MainTextTypography variant="h3">
               Joining

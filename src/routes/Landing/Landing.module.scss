@@ -91,7 +91,7 @@
 .joinCard {
   display: flex;
   flex-direction: column;
-  width: min(400px, 92vw);
+  width: min(420px, 92vw);
   gap: $default-gap;
   padding: $default-padding;
   @include comicPanel($comic-skew-soft, $radius-md, $bg-elevated, $bg-surface);
@@ -107,13 +107,17 @@
 
 .joinRow {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) 180px;
   gap: $default-gap;
   align-items: center;
 
   @media (max-width: $mobile-width) {
     grid-template-columns: 1fr;
   }
+}
+
+.joinButton {
+  width: 100%;
 }
 
 .howToPlayLink {

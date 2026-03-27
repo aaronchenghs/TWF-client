@@ -23,6 +23,22 @@ let lastRoomCode: string | null = null;
 let lastJoinPayload: RoomJoinPayload | null = null;
 let hasConnectedOnce = false;
 
+const toJoinPayload = (input: RoomJoinPayload): RoomJoinPayload => {
+  const normalizedCode = normalizeCode(input.code);
+  return input.role === "player"
+    ? {
+        code: normalizedCode,
+        role: "player",
+        name: input.name,
+        clientId: input.clientId,
+      }
+    : {
+        code: normalizedCode,
+        role: "host",
+        clientId: input.clientId,
+      };
+};
+
 const cacheRoomState = (state: RoomStatePayload) => {
   lastRoomState = state as RoomPublicState;
   lastRoomCode = state.code ?? null;
@@ -53,7 +69,7 @@ socketClient.onConnect(() => {
   }
 
   if (!lastJoinPayload) return;
-  roomSocket.joinRoom(lastJoinPayload);
+  socketClient.emit("room:join", toJoinPayload(lastJoinPayload));
 });
 
 type ListenArgs<E extends keyof ServerToClientEvents> = Parameters<
@@ -276,35 +292,12 @@ export const roomSocket = {
     return socketClient.on("room:kicked", handler);
   },
 
-  /**
-   * @deprecated Internal: Do not call directly. Use `joinRoomOrThrow()`.
-   */
-  joinRoom(input: RoomJoinPayload): void {
-    const normalizedCode = normalizeCode(input.code);
-    const payload: RoomJoinPayload =
-      input.role === "player"
-        ? {
-            code: normalizedCode,
-            role: "player",
-            name: input.name,
-            clientId: input.clientId,
-          }
-        : {
-            code: normalizedCode,
-            role: "host",
-            clientId: input.clientId,
-          };
-
-    lastJoinPayload = payload;
-
-    socketClient.emit("room:join", payload);
-  },
-
   async joinRoomOrThrow(
     input: RoomJoinPayload,
     timeoutMs = DEFAULT_TIMEOUT_MS,
   ): Promise<{ state: RoomPublicState; playerId?: string }> {
-    const normalizedCode = normalizeCode(input.code);
+    const joinPayload = toJoinPayload(input);
+    const normalizedCode = joinPayload.code;
     const isPlayer = input.role === "player";
 
     return new Promise((resolve, reject) => {
@@ -336,6 +329,7 @@ export const roomSocket = {
         const resolvedState = state;
         if (!resolvedState) return;
         if (isPlayer && !playerId) return;
+        lastJoinPayload = joinPayload;
         settle(() => resolve({ state: resolvedState, playerId }));
       };
 
@@ -365,7 +359,7 @@ export const roomSocket = {
       }, timeoutMs);
 
       socketClient.connect();
-      roomSocket.joinRoom({ ...input, code: normalizedCode });
+      socketClient.emit("room:join", joinPayload);
     });
   },
 

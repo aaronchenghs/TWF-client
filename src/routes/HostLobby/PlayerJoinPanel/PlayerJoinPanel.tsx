@@ -1,6 +1,5 @@
 import clsx from "clsx";
-import QRCode from "qrcode";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
@@ -15,6 +14,7 @@ import {
   PENDING_PLAYER_NAME_LABEL,
   hasSubmittedPlayerName,
 } from "@/lib/players";
+import { QrCodeDisplay } from "@/assets/components/QrCodeDisplay/QrCodeDisplay";
 
 type Player = RoomPublicState["players"][number];
 
@@ -31,7 +31,6 @@ export function PlayerJoinPanel({
   players,
   joinLocationLabel,
 }: PlayerJoinPanelProps) {
-  const [qrCodeSrc, setQrCodeSrc] = useState<string | null>(null);
   const openSlotCount = Math.max(0, LOBBY_CAPACITY - players.length);
 
   const joinUrl = useMemo(() => {
@@ -40,34 +39,6 @@ export function PlayerJoinPanel({
     url.searchParams.set("code", roomCode);
     return url.toString();
   }, [roomCode]);
-
-  useEffect(
-    function generateJoinQrCode() {
-      if (!joinUrl) {
-        setQrCodeSrc(null);
-        return;
-      }
-
-      let cancelled = false;
-
-      QRCode.toDataURL(joinUrl, {
-        margin: 1,
-        width: 320,
-        errorCorrectionLevel: "M",
-      })
-        .then((nextQrCodeSrc) => {
-          if (!cancelled) setQrCodeSrc(nextQrCodeSrc);
-        })
-        .catch(() => {
-          if (!cancelled) setQrCodeSrc(null);
-        });
-
-      return () => {
-        cancelled = true;
-      };
-    },
-    [joinUrl],
-  );
 
   return (
     <aside className={clsx(styles.sidePanel, className)}>
@@ -84,34 +55,19 @@ export function PlayerJoinPanel({
               Scan to Join
             </MainTextTypography>
 
-            <div className={styles.qrPlaceholder}>
-              {qrCodeSrc ? (
-                <img
-                  className={styles.qrCodeImage}
-                  src={qrCodeSrc}
-                  alt={`QR code for ${joinUrl}`}
-                />
-              ) : (
-                <div className={styles.qrPlaceholderContent}>
-                  <MainTextTypography
-                    variant="body"
-                    weight="bold"
-                    textAlign="center"
-                    letterSpacing="wide"
-                  >
-                    Preparing QR Code
-                  </MainTextTypography>
-                  <MainTextTypography
-                    variant="caption"
-                    textAlign="center"
-                    className={styles.qrPlaceholderCaption}
-                  >
-                    Players can still enter room code {roomCode} manually.
-                  </MainTextTypography>
-                </div>
-              )}
-            </div>
+            <QrCodeDisplay
+              value={joinUrl}
+              loadingCaption={
+                <>Players can still enter room code {roomCode} manually.</>
+              }
+            />
           </section>
+
+          <div className={styles.joinDivider} aria-hidden="true">
+            <MainTextTypography variant="h3" muted>
+              or
+            </MainTextTypography>
+          </div>
 
           <div className={styles.roomMetaSection}>
             <MainTextTypography variant="body" muted textAlign="center">

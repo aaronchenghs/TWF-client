@@ -25,10 +25,16 @@ $join-top-item-max-width: 280px;
 
 .joinTopRow {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: $default-gap;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   min-height: 0;
   align-items: center;
+}
+
+.joinDivider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
 }
 
 .joinSection {
@@ -58,45 +64,6 @@ $join-top-item-max-width: 280px;
   max-width: $join-top-item-max-width;
   width: 100%;
   justify-self: center;
-}
-
-.qrPlaceholder {
-  width: 100%;
-  max-width: $join-top-item-max-width;
-  height: 100%;
-  max-height: 280px;
-  min-height: 0;
-  aspect-ratio: 1;
-  border-radius: $radius-lg;
-
-  border: 2px dashed rgba($accent, 0.4);
-  background: $bg-elevated;
-  position: relative;
-  overflow: hidden;
-  align-self: center;
-}
-
-.qrCodeImage {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-  background: $text-primary;
-}
-
-.qrPlaceholderContent {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-content: center;
-  gap: calc($default-gap * 0.5);
-  padding: calc($default-padding * 1.5);
-}
-
-.qrPlaceholderCaption {
-  max-width: 18ch;
 }
 
 .roomMeta {
@@ -244,6 +211,10 @@ $join-top-item-max-width: 280px;
 
   .joinTopRow {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .joinDivider {
+    min-height: 24px;
   }
 
   .joinSection,

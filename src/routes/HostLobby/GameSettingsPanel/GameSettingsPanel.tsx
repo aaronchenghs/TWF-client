@@ -92,7 +92,7 @@ export function GameSettingsPanel({
     <section className={clsx(styles.root, className)}>
       <div className={styles.panelHeader}>
         <MainTextTypography variant="h1" textAlign="center">
-          Game Settings
+          Game
         </MainTextTypography>
       </div>
 

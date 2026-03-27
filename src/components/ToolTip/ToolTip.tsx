@@ -8,12 +8,16 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
+import type { ToolTipAlign, ToolTipPlacement } from "@/lib/tooltip";
+import {
+  getDirectionalRoom,
+  getTooltipPosition,
+  hasTooltipContent,
+  renderTooltipContent,
+  resolveToolTipPlacement,
+} from "@/lib/tooltip";
 import styles from "./ToolTip.module.scss";
-import { clamp } from "radashi";
-
-export type ToolTipPlacement = "top" | "bottom" | "left" | "right";
-export type ToolTipAlign = "start" | "center" | "end";
+export type { ToolTipAlign, ToolTipPlacement } from "@/lib/tooltip";
 
 export interface ToolTipWrapperProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -30,9 +34,6 @@ export interface ToolTipWrapperProps extends Omit<
   block?: boolean;
   tooltipClassName?: string;
 }
-
-const VIEWPORT_MARGIN = 8;
-const ALL_PLACEMENTS: ToolTipPlacement[] = ["top", "bottom", "left", "right"];
 
 export function ToolTipWrapper({
   children,
@@ -83,7 +84,7 @@ export function ToolTipWrapper({
     const wrapperRect = wrapper.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
     const directionalRoom = getDirectionalRoom(wrapperRect, offset);
-    const nextPlacement = resolvePlacement({
+    const nextPlacement = resolveToolTipPlacement({
       placement,
       responsive,
       tooltipRect,
@@ -282,139 +283,14 @@ export function ToolTipWrapper({
             style={tooltipStyle ?? { visibility: "hidden" }}
             onAnimationEnd={handleTooltipAnimationEnd}
           >
-            {renderTooltipContent(content, error)}
+            {renderTooltipContent({
+              content,
+              error,
+              errorClassName: styles.errorText,
+            })}
           </div>,
           document.body,
         )}
     </>
   );
-}
-
-function getOppositePlacement(placement: ToolTipPlacement): ToolTipPlacement {
-  switch (placement) {
-    case "bottom":
-      return "top";
-    case "left":
-      return "right";
-    case "right":
-      return "left";
-    default:
-      return "bottom";
-  }
-}
-
-function hasTooltipContent(content: React.ReactNode) {
-  return content !== null && content !== undefined;
-}
-
-function getDirectionalRoom(
-  wrapperRect: DOMRect,
-  offset: number,
-): Record<ToolTipPlacement, number> {
-  return {
-    top: wrapperRect.top - offset - VIEWPORT_MARGIN,
-    bottom: window.innerHeight - wrapperRect.bottom - offset - VIEWPORT_MARGIN,
-    left: wrapperRect.left - offset - VIEWPORT_MARGIN,
-    right: window.innerWidth - wrapperRect.right - offset - VIEWPORT_MARGIN,
-  };
-}
-
-function resolvePlacement(args: {
-  placement: ToolTipPlacement;
-  responsive: boolean;
-  tooltipRect: DOMRect;
-  directionalRoom: Record<ToolTipPlacement, number>;
-}): ToolTipPlacement {
-  const { placement, responsive, tooltipRect, directionalRoom } = args;
-
-  const hasDirectionalRoom = (candidate: ToolTipPlacement) => {
-    if (candidate === "top" || candidate === "bottom") {
-      return directionalRoom[candidate] >= tooltipRect.height;
-    }
-
-    return directionalRoom[candidate] >= tooltipRect.width;
-  };
-
-  const fallbackPlacements = ALL_PLACEMENTS.filter(
-    (candidate) =>
-      candidate !== placement && candidate !== getOppositePlacement(placement),
-  ).sort((a, b) => directionalRoom[b] - directionalRoom[a]);
-
-  const placementCandidates = responsive
-    ? [placement, getOppositePlacement(placement), ...fallbackPlacements]
-    : [placement];
-
-  return placementCandidates.find(hasDirectionalRoom) ?? placementCandidates[0];
-}
-
-function getTooltipPosition(args: {
-  wrapperRect: DOMRect;
-  tooltipRect: DOMRect;
-  placement: ToolTipPlacement;
-  align: ToolTipAlign;
-  offset: number;
-}): Pick<React.CSSProperties, "top" | "left"> {
-  const { wrapperRect, tooltipRect, placement, align, offset } = args;
-
-  let top = 0;
-  let left = 0;
-
-  const horizontalCenter =
-    wrapperRect.left + (wrapperRect.width - tooltipRect.width) / 2;
-  const verticalCenter =
-    wrapperRect.top + (wrapperRect.height - tooltipRect.height) / 2;
-
-  switch (placement) {
-    case "bottom":
-      top = wrapperRect.bottom + offset;
-      break;
-    case "left":
-      left = wrapperRect.left - tooltipRect.width - offset;
-      break;
-    case "right":
-      left = wrapperRect.right + offset;
-      break;
-    default:
-      top = wrapperRect.top - tooltipRect.height - offset;
-      break;
-  }
-
-  if (placement === "top" || placement === "bottom") {
-    if (align === "start") left = wrapperRect.left;
-    if (align === "center") left = horizontalCenter;
-    if (align === "end") left = wrapperRect.right - tooltipRect.width;
-  } else {
-    if (align === "start") top = wrapperRect.top;
-    if (align === "center") top = verticalCenter;
-    if (align === "end") top = wrapperRect.bottom - tooltipRect.height;
-  }
-
-  return {
-    top: clamp(
-      top,
-      VIEWPORT_MARGIN,
-      window.innerHeight - tooltipRect.height - VIEWPORT_MARGIN,
-    ),
-    left: clamp(
-      left,
-      VIEWPORT_MARGIN,
-      window.innerWidth - tooltipRect.width - VIEWPORT_MARGIN,
-    ),
-  };
-}
-
-function renderTooltipContent(content: React.ReactNode, error: boolean) {
-  if (typeof content === "string" || typeof content === "number") {
-    return (
-      <MainTextTypography
-        variant="body"
-        weight="bold"
-        className={error ? styles.errorText : undefined}
-      >
-        {content}
-      </MainTextTypography>
-    );
-  }
-
-  return content;
 }

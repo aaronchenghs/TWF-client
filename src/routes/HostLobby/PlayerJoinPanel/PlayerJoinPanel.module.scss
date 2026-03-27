@@ -1,0 +1,240 @@
+@use "../../../styles/export.scss" as *;
+
+$join-top-item-max-width: 280px;
+
+.sidePanel {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+  min-height: 0;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.joinLayout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 0.7fr 1fr;
+  gap: $default-gap;
+}
+
+.joinTopRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $default-gap;
+  min-height: 0;
+  align-items: center;
+}
+
+.joinSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $default-gap;
+  min-width: 0;
+  min-height: 100%;
+  height: 100%;
+  padding: $default-padding;
+  max-width: $join-top-item-max-width;
+  width: 100%;
+  justify-self: center;
+}
+
+.roomMetaSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $default-gap;
+  min-width: 0;
+  min-height: 100%;
+  height: 100%;
+  max-width: $join-top-item-max-width;
+  width: 100%;
+  justify-self: center;
+}
+
+.qrPlaceholder {
+  width: 100%;
+  max-width: $join-top-item-max-width;
+  height: 100%;
+  max-height: 280px;
+  min-height: 0;
+  aspect-ratio: 1;
+  border-radius: $radius-lg;
+
+  border: 2px dashed rgba($accent, 0.4);
+  background: $bg-elevated;
+  position: relative;
+  overflow: hidden;
+
+  align-self: center;
+}
+
+.qrPlaceholderContent {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  gap: calc($default-gap * 0.5);
+  padding: calc($default-padding * 1.5);
+}
+
+.qrPlaceholderCaption {
+  max-width: 18ch;
+}
+
+.roomMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+  justify-self: center;
+
+  width: 100%;
+  max-width: $join-top-item-max-width;
+  height: 100%;
+  max-height: 280px;
+  min-height: 0;
+
+  gap: calc($default-gap * 0.5);
+  background: rgba($accent, 0.9);
+
+  padding: $default-padding;
+  margin-bottom: calc($default-gap * 2);
+
+  border: 2px solid rgba($black, 0.3);
+  border-radius: $radius-lg;
+
+  box-shadow:
+    4px 4px 0 $severityError,
+    0 12px 26px $box-shadow-color;
+  overflow: hidden;
+  align-self: center;
+}
+
+.roomMetaLabel {
+  color: $bg-app;
+}
+
+.roomCodeContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc($default-gap * 1.5);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.roomCode {
+  display: inline-block;
+  color: $bg-app;
+  font-variant-numeric: tabular-nums;
+  text-shadow: none;
+  @include float(6px, 4s);
+  will-change: transform;
+}
+
+.roomCodeCopyButton {
+  position: absolute;
+  top: 50%;
+  right: -46px;
+  translate: 0 -50%;
+  border-color: rgba($black, 0.2);
+  background: rgba($black, 0.1);
+  color: $bg-app;
+
+  &:hover:not(:disabled) {
+    border-color: rgba($black, 0.3);
+    background: rgba($black, 0.2);
+  }
+
+  &:focus-visible {
+    outline-color: rgba($black, 0.4);
+  }
+}
+
+.playersSection {
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+  min-height: 0;
+  padding: $default-padding;
+}
+
+.playerList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $default-gap;
+  align-content: start;
+}
+
+.playerCell {
+  min-width: 0;
+}
+
+.playerEntry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $default-gap;
+  min-width: 0;
+  min-height: 60px;
+  padding: $default-gap;
+  border-radius: $radius-md;
+  background: rgba($black, 0.1);
+  @include appearPopIn($dur-base);
+}
+
+.playerIdentity {
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
+  @include flexFill();
+  min-width: 0;
+}
+
+.player {
+  padding: $default-padding 0;
+  @include flexFill(0);
+  min-width: 0;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: $tablet-width) {
+  .joinLayout {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .joinTopRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .joinSection,
+  .roomMeta {
+    padding: $default-padding;
+  }
+
+  .playerList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

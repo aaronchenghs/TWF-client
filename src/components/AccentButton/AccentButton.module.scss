@@ -81,16 +81,17 @@
   color: $text-primary;
   border-color: $bg-elevated;
   background: transparent;
+  border-color: rgba($text-secondary, 0.4);
 
   &:hover:not(:disabled) {
     background: $bg-surface;
-    border-color: rgba(255, 255, 255, 0.24);
+    border-color: rgba($text-secondary, 0.75);
     color: $text-primary;
     box-shadow: $shadow-elevated-md;
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 3px rgba($bg-elevated, 0.55);
+    box-shadow: 0 0 0 3px rgba($bg-elevated, 0.5);
   }
 }
 

@@ -1,16 +1,28 @@
 @use "../../../styles/export.scss" as *;
 
-.left {
+.root {
+  display: flex;
+  flex-direction: column;
   gap: $default-gap;
+  min-height: 0;
 }
 
 .presetGrid {
+  position: relative;
   display: flex;
   flex-direction: column;
-  max-height: var(--host-lobby-bottom-part-height);
+  flex: 1;
+  min-height: 0;
+
   overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+
   gap: $default-gap;
-  @include scrollFade(24px, y);
-  padding-block: calc($default-padding * 1.5);
-  padding: calc($default-gap * 2) $default-gap;
+  padding: $default-padding;
+
+  border: 4px solid rgba($bg-app, 0.8);
+  border-radius: $radius-md;
+  background: rgba($bg-app, 0.8);
+  box-shadow: inset $box-shadow-color;
 }

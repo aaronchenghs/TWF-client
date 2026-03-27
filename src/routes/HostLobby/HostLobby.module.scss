@@ -1,49 +1,108 @@
 @use "../../styles/export.scss" as *;
 
-$header-height: 11vh;
-$bottom-part-height: calc(96vh - $header-height - $default-padding);
-
 .root {
-  --host-lobby-header-height: #{$header-height};
-  --host-lobby-bottom-part-height: #{$bottom-part-height};
-
   position: relative;
   max-width: $page-width-cutoff;
+  height: 100dvh;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: $default-gap;
-  height: 100dvh;
-  overflow-y: auto;
+  padding: calc($default-padding * 2) calc($default-padding * 3);
+  overflow: hidden;
 
   &.exiting {
     @include disappearFadeOut($dur-easy, -4px, $ease-out);
     pointer-events: none;
   }
+}
 
-  .header {
-    display: flex;
-    align-items: flex-end;
-    height: var(--host-lobby-header-height);
-    gap: $default-gap;
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $default-gap;
+  text-align: center;
+  flex: 0 0 auto;
+}
 
-    .logo {
-      width: auto;
-      height: 75px;
-      max-width: 100%;
-      object-fit: contain;
-    }
+.logo {
+  width: min(100%, 300px);
+  height: auto;
+  max-height: 84px;
+  object-fit: contain;
+  @include float(4px, 4s);
+}
 
-    .title {
-      @include float(6px, 3s);
-    }
+.headerDivider {
+  width: min(100%, 320px);
+}
+
+.layoutShell {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin-bottom: calc($default-gap * 3);
+  padding: 0;
+  isolation: isolate;
+  overflow: visible;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 16px;
+    right: -14px;
+    bottom: -14px;
+    left: -14px;
+
+    border: 2px solid rgba($accent, 0.35);
+    border-radius: $radius-lg;
+    background: rgba($bg-surface, 0.75);
+
+    pointer-events: none;
+    z-index: -1;
   }
+}
 
-  .layout {
-    display: grid;
-    grid-template-columns: 1fr 0.35fr;
-    gap: calc($default-gap * 2);
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $default-gap;
+  align-items: stretch;
+  height: 100%;
+  min-height: 0;
+}
+
+.lobbyPanel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+  min-height: 0;
+  padding: calc($default-padding * 1.5);
+
+  border: 2px solid rgba($accent, 0.6);
+  border-radius: $radius-lg;
+  background: $bg-surface;
+  box-shadow:
+    $shadow-comic-panel,
+    inset 0 0 0 1px $box-shadow-color;
+  overflow: hidden;
+  backdrop-filter: $backdrop-blur;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    pointer-events: none;
   }
+}
+
+.hostPanel,
+.joinPanel {
+  min-height: 0;
 }
 
 .topRightAction {
@@ -53,7 +112,32 @@ $bottom-part-height: calc(96vh - $header-height - $default-padding);
   z-index: $z-floating-actions;
 }
 
+@media (max-width: $tablet-width) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: $mobile-width) {
+  .root {
+    padding: calc(env(safe-area-inset-top, 0px) + 56px) $default-padding
+      calc(env(safe-area-inset-bottom, 0px) + $default-padding);
+    overflow-y: auto;
+  }
+
+  .logo {
+    width: min(100%, 260px);
+  }
+
+  .layoutShell {
+    margin-bottom: 0;
+  }
+
+  .joinPanel {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
   .topRightAction {
     top: calc(env(safe-area-inset-top, 0px) + $default-padding);
     right: calc(env(safe-area-inset-right, 0px) + $default-padding);

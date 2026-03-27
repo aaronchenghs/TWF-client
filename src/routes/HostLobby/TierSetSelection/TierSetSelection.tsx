@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { SubtextDivider } from "@/components/SubtextDivider/SubtextDivider";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
@@ -12,12 +13,15 @@ type TierSetSelectionProps = {
   tierSets: TierSetSummary[];
   selectedTierSetId: Guid | null;
   isLoading: boolean;
+  className?: string;
+  hideHeading?: boolean;
 };
 
 export function TierSetSelection({
   tierSets,
   selectedTierSetId,
   isLoading,
+  className,
 }: TierSetSelectionProps) {
   const [tierSetWithDetailsOpen, setTierSetWithDetailsOpen] =
     useState<Guid | null>(null);
@@ -27,7 +31,7 @@ export function TierSetSelection({
   };
 
   return (
-    <section className={styles.left}>
+    <section className={clsx(styles.root, className)}>
       <SubtextDivider text="Choose a Tier Set" noMargin />
 
       <div className={styles.presetGrid}>

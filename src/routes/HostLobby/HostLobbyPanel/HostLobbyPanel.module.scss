@@ -1,0 +1,56 @@
+@use "../../../styles/export.scss" as *;
+
+.root {
+  min-height: 0;
+}
+
+.panelHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc($default-gap * 0.5);
+  text-align: center;
+}
+
+.body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc($default-gap * 2);
+  min-height: 0;
+  flex: 1;
+}
+
+.tierSetSelection {
+  flex: 1;
+  min-height: 0;
+}
+
+.actionRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $default-gap;
+  align-items: stretch;
+}
+
+.actionButton {
+  width: 100%;
+  min-height: 56px;
+}
+
+.buttonContent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $default-gap;
+  width: 100%;
+}
+
+@media (max-width: $mobile-width) {
+  .actionRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

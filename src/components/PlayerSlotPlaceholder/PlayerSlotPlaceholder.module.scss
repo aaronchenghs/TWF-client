@@ -1,0 +1,28 @@
+@use "../../styles/export.scss" as *;
+
+.root {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 56px;
+  padding: $default-gap;
+  border: 1px dashed rgba($accent, 0.3);
+  border-radius: $radius-md;
+  background: rgba($black, 0.15);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
+  min-width: 0;
+}
+
+.avatar {
+  opacity: 0.3;
+}
+
+.label {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

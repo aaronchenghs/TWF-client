@@ -2,7 +2,14 @@ import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 import styles from "./HostLobby.module.scss";
 import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { CODE_LENGTH, type RoomPublicState } from "@twf/contracts";
 import { normalizeCode } from "@/lib/stringNormalizers";
@@ -17,7 +24,6 @@ import {
   readHostRoomCode,
 } from "@/lib/roomClientState";
 import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
-import { GameCustomizationModal } from "./GameCustomizationModal/GameCustomizationModal";
 import { useHostLobbySoundEffects } from "@/lib/hooks/useSoundEffects";
 import { ExpandingIconButton } from "@/components/ExpandingIconButton/ExpandingIconButton";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
@@ -28,6 +34,11 @@ import { PlayerJoinPanel } from "./PlayerJoinPanel/PlayerJoinPanel";
 const HOST_EXIT_FADE_MS = 350;
 
 const { exit: ExitIcon } = APP_ICONS;
+const GameCustomizationModal = lazy(() =>
+  import("./GameCustomizationModal/GameCustomizationModal").then((module) => ({
+    default: module.GameCustomizationModal,
+  })),
+);
 
 export default function HostLobby() {
   const navigate = useNavigate();
@@ -199,12 +210,16 @@ export default function HostLobby() {
         onOutroActiveChange={setIsCountdownOutroActive}
       />
 
-      <GameCustomizationModal
-        open={isGameCustomizationOpen}
-        settings={gameCustomization}
-        onClose={() => setIsGameCustomizationOpen(false)}
-        onChange={handleGameCustomizationChange}
-      />
+      {isGameCustomizationOpen ? (
+        <Suspense fallback={null}>
+          <GameCustomizationModal
+            open
+            settings={gameCustomization}
+            onClose={() => setIsGameCustomizationOpen(false)}
+            onChange={handleGameCustomizationChange}
+          />
+        </Suspense>
+      ) : null}
 
       <ConfirmationModal
         open={isConfirmCloseOpen}

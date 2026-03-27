@@ -29,6 +29,17 @@
   min-height: 0;
 }
 
+.tierSetSelectionFallback {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: $default-padding;
+  border: 2px dashed rgba($accent, 0.2);
+  border-radius: $radius-md;
+  background: rgba($black, 0.04);
+}
+
 .actionRow {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

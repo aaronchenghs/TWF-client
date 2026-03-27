@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { startTransition, useEffect, useState } from "react";
+import { lazy, startTransition, Suspense, useEffect, useState } from "react";
 import { type RoomPublicState, type TierSetSummary } from "@twf/contracts";
 import type { Guid } from "@/lib/guid";
 import { roomSocket } from "@/services/sockets/roomSocket";
@@ -9,8 +9,9 @@ import { ToolTipWrapper } from "@/components/ToolTip/ToolTip";
 import { useMobileView } from "@/lib/hooks/useMobileView";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { getStartDisabledReason } from "@/lib/hostLobbyUtils";
-import { TierSetSelection } from "../TierSetSelection/TierSetSelection";
+import { useDeferredReady } from "@/lib/hooks/useDeferredReady";
 import styles from "./GameSettingsPanel.module.scss";
+import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 
 type GameSettingsPanelProps = {
   className?: string;
@@ -24,6 +25,12 @@ type GameSettingsPanelProps = {
 };
 
 const { gameSettings: GameSettingsIcon, startGame: StartGameIcon } = APP_ICONS;
+const TierSetSelection = lazy(() =>
+  import("../TierSetSelection/TierSetSelection").then((module) => ({
+    default: module.TierSetSelection,
+  })),
+);
+const TIER_SET_SELECTION_DELAY_MS = 120;
 
 export function GameSettingsPanel({
   className,
@@ -38,6 +45,7 @@ export function GameSettingsPanel({
   const isMobile = useMobileView();
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [isTierSetsLoading, setIsTierSetsLoading] = useState(true);
+  const isTierSetSelectionReady = useDeferredReady(TIER_SET_SELECTION_DELAY_MS);
 
   const isStartEnabled =
     !!selectedTierSetId &&
@@ -56,13 +64,23 @@ export function GameSettingsPanel({
   useEffect(
     function loadTierSets() {
       if (!canLoadTierSets) {
-        setTierSets([]);
-        setIsTierSetsLoading(false);
+        const frameId = window.requestAnimationFrame(() => {
+          startTransition(() => {
+            setTierSets([]);
+            setIsTierSetsLoading(false);
+          });
+        });
+
+        return () => {
+          window.cancelAnimationFrame(frameId);
+        };
+      }
+
+      if (!isTierSetSelectionReady) {
         return;
       }
 
       let cancelled = false;
-      setIsTierSetsLoading(true);
 
       roomSocket
         .listTierSets()
@@ -85,7 +103,7 @@ export function GameSettingsPanel({
         cancelled = true;
       };
     },
-    [canLoadTierSets],
+    [canLoadTierSets, isTierSetSelectionReady],
   );
 
   return (
@@ -97,12 +115,18 @@ export function GameSettingsPanel({
       </div>
 
       <div className={styles.body}>
-        <TierSetSelection
-          className={styles.tierSetSelection}
-          tierSets={tierSets}
-          selectedTierSetId={selectedTierSetId}
-          isLoading={isTierSetsLoading}
-        />
+        <Suspense
+          fallback={
+            <TierSetSelectionFallback className={styles.tierSetSelection} />
+          }
+        >
+          <TierSetSelection
+            className={styles.tierSetSelection}
+            tierSets={tierSets}
+            selectedTierSetId={selectedTierSetId}
+            isLoading={isTierSetsLoading}
+          />
+        </Suspense>
 
         <div className={styles.actionRow}>
           <AccentButton
@@ -142,6 +166,16 @@ export function GameSettingsPanel({
           </ToolTipWrapper>
         </div>
       </div>
+    </section>
+  );
+}
+
+function TierSetSelectionFallback({ className }: { className?: string }) {
+  return (
+    <section className={clsx(styles.tierSetSelectionFallback, className)}>
+      <MainTextTypography variant="body" muted textAlign="center">
+        Loading tier lists <AnimatedDots />
+      </MainTextTypography>
     </section>
   );
 }

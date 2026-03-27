@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
-import QRCode from "qrcode";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import styles from "./QrCodeDisplay.module.scss";
 
@@ -25,26 +24,48 @@ export function QrCodeDisplay({
   useEffect(
     function generateQrCode() {
       if (!value) {
-        setQrCodeSrc(null);
-        return;
+        const frameId = window.requestAnimationFrame(() => {
+          startTransition(() => {
+            setQrCodeSrc(null);
+          });
+        });
+
+        return () => {
+          window.cancelAnimationFrame(frameId);
+        };
       }
 
       let cancelled = false;
-
-      QRCode.toDataURL(value, {
-        margin: 1,
-        width: 320,
-        errorCorrectionLevel: "M",
-      })
-        .then((nextQrCodeSrc) => {
-          if (!cancelled) setQrCodeSrc(nextQrCodeSrc);
-        })
-        .catch(() => {
-          if (!cancelled) setQrCodeSrc(null);
-        });
+      let timeoutId: number | null = null;
+      const frameId = window.requestAnimationFrame(() => {
+        timeoutId = window.setTimeout(() => {
+          import("qrcode")
+            .then(({ default: QRCode }) =>
+              QRCode.toDataURL(value, {
+                margin: 1,
+                width: 320,
+                errorCorrectionLevel: "M",
+              }),
+            )
+            .then((nextQrCodeSrc) => {
+              if (cancelled) return;
+              startTransition(() => {
+                setQrCodeSrc(nextQrCodeSrc);
+              });
+            })
+            .catch(() => {
+              if (cancelled) return;
+              startTransition(() => {
+                setQrCodeSrc(null);
+              });
+            });
+        }, 120);
+      });
 
       return () => {
         cancelled = true;
+        window.cancelAnimationFrame(frameId);
+        if (timeoutId !== null) window.clearTimeout(timeoutId);
       };
     },
     [value],

@@ -16,7 +16,6 @@ import {
   markHostRoomStarted,
   readHostRoomCode,
 } from "@/lib/roomClientState";
-import { SubtextDivider } from "@/components/SubtextDivider/SubtextDivider";
 import { CountdownOverlay } from "./CountdownOverlay/CountdownOverlay";
 import { GameCustomizationModal } from "./GameCustomizationModal/GameCustomizationModal";
 import { useHostLobbySoundEffects } from "@/lib/hooks/useSoundEffects";
@@ -168,11 +167,6 @@ export default function HostLobby() {
 
       <header className={styles.header}>
         <TWFLogo className={styles.logo} aria-hidden="true" />
-        <SubtextDivider
-          text="Join Lobby"
-          noMargin
-          className={styles.headerDivider}
-        />
       </header>
 
       <div className={styles.layoutShell}>

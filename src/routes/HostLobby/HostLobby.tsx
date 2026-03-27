@@ -182,6 +182,7 @@ export default function HostLobby() {
             canLoadTierSets={isRoomCodeValid}
             selectedTierSetId={selectedTierSetId}
             playerCount={players.length}
+            players={players}
             isStartCountdownOpen={isStartCountdownOpen}
             onOpenGameSettings={() => setIsGameCustomizationOpen(true)}
             onStartGame={handleStartClick}

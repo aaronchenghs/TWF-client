@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { startTransition, useEffect, useState } from "react";
-import { type TierSetSummary } from "@twf/contracts";
+import { type RoomPublicState, type TierSetSummary } from "@twf/contracts";
 import type { Guid } from "@/lib/guid";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
@@ -17,6 +17,7 @@ type GameSettingsPanelProps = {
   canLoadTierSets: boolean;
   selectedTierSetId: Guid | null;
   playerCount: number;
+  players: RoomPublicState["players"];
   isStartCountdownOpen: boolean;
   onOpenGameSettings: () => void;
   onStartGame: () => void;
@@ -29,6 +30,7 @@ export function GameSettingsPanel({
   canLoadTierSets,
   selectedTierSetId,
   playerCount,
+  players,
   isStartCountdownOpen,
   onOpenGameSettings,
   onStartGame,
@@ -37,11 +39,17 @@ export function GameSettingsPanel({
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
   const [isTierSetsLoading, setIsTierSetsLoading] = useState(true);
 
-  const isStartEnabled = !!selectedTierSetId && playerCount >= 2;
+  const isStartEnabled =
+    !!selectedTierSetId &&
+    playerCount >= 2 &&
+    players.every((player) => player.name.trim().length > 0);
+
   const startDisabledReason = getStartDisabledReason({
     selectedTierSetId,
     playerCount,
+    players,
   });
+
   const buttonIconProps = ICON_PROPS.quickActions;
   const buttonLabelVariant = isMobile ? "h2" : "h3";
 

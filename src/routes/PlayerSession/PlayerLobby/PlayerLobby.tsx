@@ -15,6 +15,8 @@ import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
 import { clearPlayerRoomState, readPlayerRuntime } from "@/lib/roomClientState";
+import { hasSubmittedPlayerName } from "@/lib/players";
+import { PendingNameLobby } from "./PendingNameLobby/PendingNameLobby";
 
 export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const navigate = useNavigate();
@@ -30,6 +32,7 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
     : null;
 
   const myName = myPlayer?.name ?? getPlayerNameById(state.players, myPlayerId);
+  const hasSubmittedName = hasSubmittedPlayerName(myPlayer?.name);
 
   useAutoFitText(identityNameRef, {
     minFontSizePx: 20,
@@ -44,6 +47,11 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
       navigate(ROUTES.LANDING, { replace: true });
     });
   };
+
+  if (!hasSubmittedName)
+    return (
+      <PendingNameLobby roomCode={state.code} initialName={myPlayer?.name} />
+    );
 
   return (
     <div className={styles.waiting}>

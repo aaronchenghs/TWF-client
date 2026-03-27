@@ -22,7 +22,6 @@ import { TAB_TITLES } from "@/lib/constants/tabTitles";
 import { setDocumentTitleIfNeeded } from "@/lib/documentTitle";
 import { getErrorMessage } from "@/lib/errors";
 
-
 export default function PlayerSession() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -30,10 +29,12 @@ export default function PlayerSession() {
   const [state, setState] = useState<RoomPublicState | null>(null);
   const activePlayerSession = readActivePlayerSession();
 
-  const roomCode = normalizeCode(activePlayerSession?.code ?? "");
+  const roomCodeFromUrl = normalizeCode(searchParams.get("code") ?? "");
+  const storedRoomCode = normalizeCode(activePlayerSession?.code ?? "");
+  const roomCode = roomCodeFromUrl || storedRoomCode;
   const isRoomCodeValid = roomCode.length === CODE_LENGTH;
-  const nameFromUrl = normalizeName(searchParams.get("name"));
-  const effectiveName = nameFromUrl || activePlayerSession?.name || "";
+  const persistedName =
+    storedRoomCode === roomCode ? normalizeName(activePlayerSession?.name) : "";
 
   const returnToLanding = useCallback(() => {
     clearPlayerRoomState(roomCode);
@@ -97,11 +98,6 @@ export default function PlayerSession() {
       }
       const clientId = getClientId();
 
-      if (!effectiveName) {
-        returnToLanding();
-        return;
-      }
-
       let cancelled = false;
 
       async function joinAndHydrateSession() {
@@ -109,7 +105,7 @@ export default function PlayerSession() {
           const result = await roomSocket.joinRoomOrThrow({
             code: roomCode,
             role: "player",
-            name: effectiveName,
+            name: persistedName,
             clientId,
           });
 
@@ -122,11 +118,13 @@ export default function PlayerSession() {
               ? initialState.players.find(
                   (player) => player.id === finalPlayerId,
                 )?.name
-              : null) ?? effectiveName;
+              : null) ?? persistedName;
+          const normalizedCanonicalName = normalizeName(canonicalName);
+          if (finalPlayerId) socketClient.setMyPlayerId(finalPlayerId);
 
           persistPlayerJoinState({
             roomCode,
-            name: canonicalName,
+            name: normalizedCanonicalName,
             playerId: finalPlayerId,
           });
 
@@ -143,7 +141,28 @@ export default function PlayerSession() {
         cancelled = true;
       };
     },
-    [navigate, roomCode, isRoomCodeValid, returnToLanding, effectiveName],
+    [isRoomCodeValid, navigate, persistedName, returnToLanding, roomCode],
+  );
+
+  useEffect(
+    function persistLatestResolvedPlayerName() {
+      if (!state) return;
+
+      const { playerId } = readPlayerRuntime(roomCode);
+      if (!playerId) return;
+
+      const currentPlayer = state.players.find(
+        (player) => player.id === playerId,
+      );
+      if (!currentPlayer) return;
+
+      persistPlayerJoinState({
+        roomCode,
+        name: normalizeName(currentPlayer.name),
+        playerId,
+      });
+    },
+    [roomCode, state],
   );
 
   if (!state)

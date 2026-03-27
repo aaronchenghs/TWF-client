@@ -1,6 +1,6 @@
 import type { RoomPublicState, TierId, TierItemId } from "@twf/contracts";
 import type { SfxId } from "@/lib/sounds/soundEffects";
-import { getPlayerDelta } from "@/lib/players";
+import { getPlayerDelta, getPlayersNewlyNamedDelta } from "@/lib/players";
 
 export type SoundRule<Snapshot, Runtime> = {
   id: string;
@@ -48,12 +48,13 @@ export const HOST_LOBBY_SOUND_RULES: readonly SoundRule<
   HostLobbySoundRuntime
 >[] = [
   {
-    id: "playerJoined",
+    id: "playerNamed",
     evaluate({ prev, curr, play }) {
       if (!prev?.state || !curr.state) return;
 
-      const playerDelta = getPlayerDelta(prev.state, curr.state);
-      if (playerDelta.joinedCount > 0) play("hostLobby.playerJoined.hello");
+      const playerNameDelta = getPlayersNewlyNamedDelta(prev.state, curr.state);
+      if (playerNameDelta.newlyNamedCount > 0)
+        play("hostLobby.playerJoined.hello");
     },
   },
   {

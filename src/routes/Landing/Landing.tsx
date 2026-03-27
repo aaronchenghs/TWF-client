@@ -5,24 +5,18 @@ import { ROUTES } from "../routes";
 import { AccentButton } from "../../components/AccentButton/AccentButton";
 import { MainTextTypography } from "../../components/MainTextTypography/MainTextTypography";
 import { roomSocket } from "../../services/sockets/roomSocket";
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useState, type KeyboardEvent } from "react";
 import {
   normalizeAlphabeticCodeInput,
   normalizeCode,
-  normalizeName,
 } from "../../lib/stringNormalizers";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
 import { LicensingModal } from "../../components/LicensingModal/LicensingModal";
 import { WhatIsThisModal } from "../../components/WhatIsThisModal/WhatIsThisModal";
-import { CODE_LENGTH, MAX_NAME_LENGTH } from "@twf/contracts";
+import { CODE_LENGTH } from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
-import {
-  getClientId,
-  getStartedHostSession,
-  saveRoomSession,
-} from "../../lib/session";
-import { persistPlayerJoinState } from "@/lib/roomClientState";
+import { getStartedHostSession, saveRoomSession } from "../../lib/session";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_ICONS } from "@/lib/constants/icons";
 import { INPUT_PATTERNS } from "@/lib/constants/regex";
@@ -30,7 +24,7 @@ import { APP_VERSION } from "@/config/env";
 import { DesktopTeaserHeader } from "./DesktopTeaserHeader/DesktopTeaserHeader";
 
 const CURRENT_YEAR = new Date().getFullYear();
-const { lobbyCode: LobbyCodeIcon, playerName: PlayerNameIcon } = APP_ICONS;
+const { lobbyCode: LobbyCodeIcon } = APP_ICONS;
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -126,27 +120,14 @@ export default function Landing() {
 
 export function JoinRoomPanel() {
   const navigate = useNavigate();
-  const nameInputRef = useRef<HTMLInputElement>(null);
   const [code, setCode] = useState<string>("");
-  const [name, setName] = useState<string>("");
   const [isJoining, setIsJoining] = useState<boolean>(false);
 
   const normalizedCode = normalizeCode(code);
-  const normalizedName = normalizeName(name);
 
-  const isJoinEnabled =
-    normalizedCode.length === CODE_LENGTH &&
-    normalizedName.length >= 1 &&
-    normalizedName.length <= MAX_NAME_LENGTH &&
-    !isJoining;
+  const isJoinEnabled = normalizedCode.length === CODE_LENGTH && !isJoining;
 
   const handleCodeInputEnter = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== "Enter") return;
-    event.preventDefault();
-    nameInputRef.current?.focus();
-  };
-
-  const handleNameInputEnter = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== "Enter") return;
     event.preventDefault();
     void handleJoinRoom();
@@ -162,26 +143,7 @@ export function JoinRoomPanel() {
       return;
     }
 
-    try {
-      const clientId = getClientId();
-      await roomSocket.joinRoomOrThrow({
-        code: normalizedCode,
-        role: "player",
-        name: normalizedName,
-        clientId,
-      });
-
-      persistPlayerJoinState({
-        roomCode: normalizedCode,
-        name: normalizedName,
-      });
-
-      navigate(ROUTES.PLAYER_SESSION);
-    } catch {
-      socketClient.disconnect();
-    } finally {
-      setIsJoining(false);
-    }
+    navigate(`${ROUTES.PLAYER_SESSION}?code=${encodeURIComponent(normalizedCode)}`);
   };
 
   return (
@@ -206,19 +168,6 @@ export function JoinRoomPanel() {
           placeholder="CODE"
           autoComplete="off"
           maxLength={CODE_LENGTH}
-          fullWidth
-        />
-        <AccentTextInput
-          ref={nameInputRef}
-          name="username"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={handleNameInputEnter}
-          icon={PlayerNameIcon}
-          enterKeyHint="go"
-          placeholder="YOUR NAME"
-          autoComplete="off"
-          maxLength={MAX_NAME_LENGTH}
           fullWidth
         />
         <AccentButton disabled={!isJoinEnabled} onClick={handleJoinRoom}>

@@ -1,5 +1,5 @@
 import { socketClient } from "@/services/sockets/socketClient";
-import { normalizeCode } from "@/lib/stringNormalizers";
+import { normalizeCode, normalizeName } from "@/lib/stringNormalizers";
 import type {
   Role,
   PlayerId,
@@ -199,6 +199,73 @@ export const roomSocket = {
 
   setGameSettings(gameSettings: RoomPublicState["gameSettings"]): void {
     socketClient.emit("room:setGameSettings", { gameSettings });
+  },
+
+  async setPlayerNameOrThrow(
+    name: string,
+    roomCode: string,
+    timeoutMs = DEFAULT_TIMEOUT_MS,
+  ): Promise<RoomPublicState> {
+    const normalizedCode = normalizeCode(roomCode);
+    const normalizedName = normalizeName(name);
+    const myPlayerId = socketClient.getMyPlayerId();
+    return new Promise((resolve, reject) => {
+      let settled = false;
+
+      let offState: () => void = () => undefined;
+      let offError: () => void = () => undefined;
+      let timer: number | null = null;
+
+      const cleanup = () => {
+        if (timer !== null) window.clearTimeout(timer);
+        offState();
+        offError();
+      };
+
+      const settle = (fn: () => void) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        fn();
+      };
+
+      offState = socketClient.on("room:state", (state) => {
+        if (normalizeCode(state.code) !== normalizedCode) return;
+        if (myPlayerId) {
+          const currentPlayer = state.players.find(
+            (player) => player.id === myPlayerId,
+          );
+          if (!currentPlayer) return;
+          if (normalizeName(currentPlayer.name) !== normalizedName) return;
+        }
+
+        if (lastJoinPayload?.role === "player") {
+          lastJoinPayload = {
+            ...lastJoinPayload,
+            code: normalizedCode,
+            name: normalizedName,
+          };
+        }
+
+        settle(() => resolve(state));
+      });
+
+      offError = socketClient.on("room:error", (err) => {
+        settle(() => reject(toError(err)));
+      });
+
+      timer = window.setTimeout(() => {
+        settle(() =>
+          reject(
+            new Error(
+              `Timed out waiting for player name update (${normalizedCode})`,
+            ),
+          ),
+        );
+      }, timeoutMs);
+
+      socketClient.emit("room:setPlayerName", { name });
+    });
   },
 
   bootPlayerFromLobby(playerId: PlayerId): void {

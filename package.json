@@ -1,7 +1,7 @@
 {
   "name": "client",
   "private": true,
-  "version": "0.4.6-alpha",
+  "version": "0.5.1-alpha",
   "type": "module",
   "scripts": {
     "predev": "npm i",
@@ -22,6 +22,7 @@
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.562.0",
     "pluralize": "^8.0.0",
+    "qrcode": "^1.5.4",
     "radashi": "^12.7.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -36,6 +37,7 @@
     "@eslint/js": "^9.39.1",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^24.10.1",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^5.1.1",

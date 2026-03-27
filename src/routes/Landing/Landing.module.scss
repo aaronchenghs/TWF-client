@@ -91,7 +91,7 @@
 .joinCard {
   display: flex;
   flex-direction: column;
-  width: min(560px, 92vw);
+  width: min(400px, 92vw);
   gap: $default-gap;
   padding: $default-padding;
   @include comicPanel($comic-skew-soft, $radius-md, $bg-elevated, $bg-surface);
@@ -107,7 +107,7 @@
 
 .joinRow {
   display: grid;
-  grid-template-columns: 140px 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: $default-gap;
   align-items: center;
 
@@ -117,16 +117,19 @@
 }
 
 .howToPlayLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   appearance: none;
   border: 0;
   background: transparent;
   cursor: pointer;
-  padding: $default-padding;
   border-radius: $radius-md;
-  margin-bottom: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+
+  padding: $default-padding;
+  margin-bottom: $default-padding;
+
   transition:
     transform $dur-fast ease,
     background $dur-fast ease;
@@ -181,6 +184,10 @@
 }
 
 @media (max-width: $mobile-width) {
+  .howToPlayLink {
+    margin-bottom: auto;
+  }
+
   .joinCard {
     transform: none;
   }

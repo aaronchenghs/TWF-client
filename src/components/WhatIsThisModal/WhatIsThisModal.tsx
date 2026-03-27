@@ -19,7 +19,7 @@ import styles from "./WhatIsThisModal.module.scss";
 
 const QUICK_START_STEPS = [
   "The host clicks `Create Lobby` on a larger shared screen",
-  "Everyone, from their phone or device, enters the lobby code, picks a name, and clicks `Play`",
+  "Everyone scans the host QR code or enters the lobby code on their phone, then submits a name from the player lobby",
   "Host picks a tier set to play, then starts the game when everyone is in",
 ] as const;
 

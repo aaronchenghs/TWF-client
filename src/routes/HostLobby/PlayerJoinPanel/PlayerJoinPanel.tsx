@@ -1,4 +1,6 @@
 import clsx from "clsx";
+import QRCode from "qrcode";
+import { useEffect, useMemo, useState } from "react";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
@@ -8,6 +10,11 @@ import { LOBBY_CAPACITY, type RoomPublicState } from "@twf/contracts";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import styles from "./PlayerJoinPanel.module.scss";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
+import { ROUTES } from "@/routes/routes";
+import {
+  PENDING_PLAYER_NAME_LABEL,
+  hasSubmittedPlayerName,
+} from "@/lib/players";
 
 type Player = RoomPublicState["players"][number];
 
@@ -24,7 +31,43 @@ export function PlayerJoinPanel({
   players,
   joinLocationLabel,
 }: PlayerJoinPanelProps) {
+  const [qrCodeSrc, setQrCodeSrc] = useState<string | null>(null);
   const openSlotCount = Math.max(0, LOBBY_CAPACITY - players.length);
+
+  const joinUrl = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    const url = new URL(ROUTES.PLAYER_SESSION, window.location.origin);
+    url.searchParams.set("code", roomCode);
+    return url.toString();
+  }, [roomCode]);
+
+  useEffect(
+    function generateJoinQrCode() {
+      if (!joinUrl) {
+        setQrCodeSrc(null);
+        return;
+      }
+
+      let cancelled = false;
+
+      QRCode.toDataURL(joinUrl, {
+        margin: 1,
+        width: 320,
+        errorCorrectionLevel: "M",
+      })
+        .then((nextQrCodeSrc) => {
+          if (!cancelled) setQrCodeSrc(nextQrCodeSrc);
+        })
+        .catch(() => {
+          if (!cancelled) setQrCodeSrc(null);
+        });
+
+      return () => {
+        cancelled = true;
+      };
+    },
+    [joinUrl],
+  );
 
   return (
     <aside className={clsx(styles.sidePanel, className)}>
@@ -41,34 +84,40 @@ export function PlayerJoinPanel({
               Scan to Join
             </MainTextTypography>
 
-            <div
-              className={styles.qrPlaceholder}
-              role="img"
-              aria-label="QR code placeholder"
-            >
-              <div className={styles.qrPlaceholderContent}>
-                <MainTextTypography
-                  variant="body"
-                  weight="bold"
-                  textAlign="center"
-                  letterSpacing="wide"
-                >
-                  QR Code
-                </MainTextTypography>
-                <MainTextTypography
-                  variant="caption"
-                  textAlign="center"
-                  className={styles.qrPlaceholderCaption}
-                >
-                  Placeholder for future join flow
-                </MainTextTypography>
-              </div>
+            <div className={styles.qrPlaceholder}>
+              {qrCodeSrc ? (
+                <img
+                  className={styles.qrCodeImage}
+                  src={qrCodeSrc}
+                  alt={`QR code for ${joinUrl}`}
+                />
+              ) : (
+                <div className={styles.qrPlaceholderContent}>
+                  <MainTextTypography
+                    variant="body"
+                    weight="bold"
+                    textAlign="center"
+                    letterSpacing="wide"
+                  >
+                    Preparing QR Code
+                  </MainTextTypography>
+                  <MainTextTypography
+                    variant="caption"
+                    textAlign="center"
+                    className={styles.qrPlaceholderCaption}
+                  >
+                    Players can still enter room code {roomCode} manually.
+                  </MainTextTypography>
+                </div>
+              )}
             </div>
           </section>
 
           <div className={styles.roomMetaSection}>
             <MainTextTypography variant="body" muted textAlign="center">
-              or use the room code at: <br /> {joinLocationLabel}
+              Enter this room code at:
+              <br />
+              {joinLocationLabel}
             </MainTextTypography>
             <section className={styles.roomMeta} aria-label="Room Code">
               <MainTextTypography
@@ -116,17 +165,26 @@ type PlayerEntryProps = {
 };
 
 function PlayerEntry({ player }: PlayerEntryProps) {
+  const hasName = hasSubmittedPlayerName(player.name);
+
   return (
     <li className={styles.playerCell}>
-      <div className={styles.playerEntry}>
+      <div
+        className={clsx(
+          styles.playerEntry,
+          !hasName && styles.playerEntryPending,
+        )}
+      >
         <div className={styles.playerIdentity}>
           <PlayerAvatar avatar={player.avatar} size={45} sway />
           <MainTextTypography
-            className={styles.player}
-            variant="h4"
-            tone="player"
+            className={clsx(styles.player, !hasName && styles.playerPending)}
+            variant={hasName ? "h4" : "body"}
+            tone={hasName ? "player" : undefined}
+            muted={!hasName}
           >
-            {player.name}
+            {hasName ? player.name : PENDING_PLAYER_NAME_LABEL}
+            {!hasName ? <AnimatedDots /> : null}
           </MainTextTypography>
         </div>
         <AccentButton

@@ -59,7 +59,7 @@ export function usePhaseStartOverlay(
 
   const prevPhaseRef = useRef<RoomPublicState["phase"] | null>(null);
   const prevReopenKeyRef = useRef<typeof reopenKey>(undefined);
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeTimeoutRef = useRef<number | null>(null);
 
   const clearCloseTimer = useCallback(() => {
     if (!closeTimeoutRef.current) return;

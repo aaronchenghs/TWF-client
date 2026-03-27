@@ -1,11 +1,20 @@
 import type { RoomPublicState } from "@twf/contracts";
 import { orderByIdsKeepingExtras } from "@/lib/array";
+import { normalizeName } from "@/lib/stringNormalizers";
 
 type PlayerLike = {
   id: string;
   name: string;
 };
 type RoomPlayer = RoomPublicState["players"][number];
+
+export const PENDING_PLAYER_NAME_LABEL = "Waiting for name";
+
+export function hasSubmittedPlayerName(
+  name: string | null | undefined,
+): boolean {
+  return normalizeName(name).length > 0;
+}
 
 export function getPlayerNameById(
   players: readonly PlayerLike[],
@@ -47,4 +56,34 @@ export function getPlayerDelta(prev: RoomPublicState, next: RoomPublicState) {
   for (const id of prevIds) if (!nextIds.has(id)) leftCount += 1;
 
   return { joinedCount, leftCount };
+}
+
+/**
+ * Returns how many existing players transitioned from unnamed to named between
+ * two lobby snapshots.
+ */
+export function getPlayersNewlyNamedDelta(
+  prev: RoomPublicState,
+  next: RoomPublicState,
+) {
+  const previousNameSubmittedById = new Map<string, boolean>();
+
+  for (const player of prev.players) {
+    previousNameSubmittedById.set(
+      player.id,
+      hasSubmittedPlayerName(player.name),
+    );
+  }
+
+  let newlyNamedCount = 0;
+
+  for (const player of next.players) {
+    const hadSubmittedNameBefore =
+      previousNameSubmittedById.get(player.id) ?? false;
+
+    if (!hadSubmittedNameBefore && hasSubmittedPlayerName(player.name))
+      newlyNamedCount += 1;
+  }
+
+  return { newlyNamedCount };
 }

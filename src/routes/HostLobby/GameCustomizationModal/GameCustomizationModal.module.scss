@@ -1,5 +1,9 @@
 @use "../../../styles/export.scss" as *;
 
+.content {
+  overflow-y: clip;
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;

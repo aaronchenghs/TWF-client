@@ -45,6 +45,7 @@ export function GameCustomizationModal({
         </ModalHeaderTitle>
       }
       maxWidth={560}
+      contentClassName={styles.content}
       footer={<AccentButton onClick={onClose}>Done</AccentButton>}
     >
       <div className={styles.actions}>

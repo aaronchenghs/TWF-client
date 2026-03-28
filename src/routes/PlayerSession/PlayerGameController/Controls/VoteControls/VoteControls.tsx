@@ -25,6 +25,7 @@ import {
   useState,
 } from "react";
 import { socketClient } from "@/services/sockets/socketClient";
+import { useMobileView } from "@/lib/hooks/useMobileView";
 
 const ACTION_LOCK_TIMEOUT_MS = 6000;
 const DISCUSSION_LOCK_MS = 10000;
@@ -45,6 +46,7 @@ export function VoteControls({
   hasConfirmedVote,
   isPlacer,
 }: VoteControlsProps) {
+  const isMobile = useMobileView();
   const [voteUnlockAt, setVoteUnlockAt] = useState<number | null>(null);
   const [now, setNow] = useState<number>(() => Date.now());
   const [lastSentVote, setLastSentVote] = useState<VoteValue | null>(null);
@@ -87,6 +89,7 @@ export function VoteControls({
     canVote && !hasConfirmedVote && discussionSecondsLeft > 0;
 
   const voteButtonIconProps = ICON_PROPS.vote.controls;
+  const buttonLabelVariant = isMobile ? "h2" : "h3";
   const VoteActionIcon = hasConfirmedVote ? APP_ICONS.unlock : APP_ICONS.lock;
 
   const shouldRemainLockedByKey = useMemo<Record<ActionLockKey, boolean>>(
@@ -354,18 +357,23 @@ export function VoteControls({
                 aria-label={opt.ariaLabel}
                 aria-pressed={isSelected}
               >
-                <span
-                  className={clsx(
-                    styles.voteButtonContent,
-                    !isSelected && styles[getVoteToneClassName(opt.value)],
-                  )}
-                >
+                <span className={clsx(styles.voteButtonContent)}>
                   <opt.Icon
-                    className={styles.voteButtonIcon}
+                    className={clsx(
+                      styles.voteButtonIcon,
+                      !isSelected && styles[getVoteToneClassName(opt.value)],
+                    )}
                     {...voteButtonIconProps}
                     aria-hidden
                   />
-                  {opt.label}
+                  <MainTextTypography
+                    variant={buttonLabelVariant}
+                    className={clsx(
+                      !isSelected && styles[getVoteToneClassName(opt.value)],
+                    )}
+                  >
+                    {opt.label}
+                  </MainTextTypography>
                 </span>
               </AccentButton>
             );
@@ -386,7 +394,9 @@ export function VoteControls({
               {...voteButtonIconProps}
               aria-hidden
             />
-            {voteActionLabel}
+            <MainTextTypography variant={buttonLabelVariant}>
+              {voteActionLabel}
+            </MainTextTypography>
           </span>
         </AccentButton>
       </div>

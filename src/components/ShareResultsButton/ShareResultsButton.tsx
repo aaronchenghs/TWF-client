@@ -3,7 +3,9 @@ import { sift } from "radashi";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RoomPublicState, TierId, TierItemId } from "@twf/contracts";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { copyTextToClipboard } from "@/lib/clipboard";
+import { useMobileView } from "@/lib/hooks/useMobileView";
 import { ROUTES } from "@/routes/routes";
 import styles from "./ShareResultsButton.module.scss";
 
@@ -19,9 +21,11 @@ const MAX_VISIBLE_TIERS = 5;
 const MAX_ITEMS_PER_TIER = 4;
 
 export function ShareResultsButton({ state }: ShareResultsButtonProps) {
+  const isMobile = useMobileView();
   const [shareState, setShareState] = useState<ShareState>("idle");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
+  const buttonLabelVariant = isMobile ? "h2" : "h3";
 
   const shareUrl = useMemo(() => getLandingShareUrl(), []);
   const sharePayload = useMemo(
@@ -86,7 +90,9 @@ export function ShareResultsButton({ state }: ShareResultsButtonProps) {
     >
       <span className={styles.buttonContent}>
         <Share2 className={styles.buttonIcon} size={18} strokeWidth={2.2} />
-        {getButtonLabel(isSubmitting, shareState)}
+        <MainTextTypography variant={buttonLabelVariant}>
+          {getButtonLabel(isSubmitting, shareState)}
+        </MainTextTypography>
       </span>
     </AccentButton>
   );

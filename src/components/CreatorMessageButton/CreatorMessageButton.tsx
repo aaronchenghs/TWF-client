@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BarChart3,
   FolderPlus,
@@ -10,12 +10,10 @@ import {
 import { AccentButton } from "../AccentButton/AccentButton";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
-import {
-  LOCAL_STORAGE_KEYS,
-  getLocalStorageValue,
-  setLocalStorageValue,
-} from "@/lib/localStorage";
+import { removeLocalStorageValue } from "@/lib/localStorage";
 import styles from "./CreatorMessageButton.module.scss";
+
+const LEGACY_CREATOR_MESSAGE_SEEN_KEY = "twf:creatorMessageSeen";
 
 const CREATOR_MESSAGE_PLANS: CreatorMessagePlan[] = [
   {
@@ -53,22 +51,14 @@ type CreatorMessagePlan = {
 
 export function CreatorMessageButton() {
   const [isOpen, setIsOpen] = useState(false);
-  const hasSeenMessage =
-    getLocalStorageValue(LOCAL_STORAGE_KEYS.CREATOR_MESSAGE_SEEN) === true;
 
-  const handleOpen = () => {
-    if (!hasSeenMessage)
-      setLocalStorageValue(LOCAL_STORAGE_KEYS.CREATOR_MESSAGE_SEEN, true);
-
-    setIsOpen(true);
-  };
+  useEffect(function cleanupLegacyCreatorMessageSeenKey() {
+    removeLocalStorageValue(LEGACY_CREATOR_MESSAGE_SEEN_KEY);
+  }, []);
 
   return (
     <>
-      <AccentButton
-        variant={hasSeenMessage ? "secondary" : "special"}
-        onClick={handleOpen}
-      >
+      <AccentButton variant="special" onClick={() => setIsOpen(true)}>
         Message from Creator
       </AccentButton>
 

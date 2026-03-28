@@ -130,7 +130,6 @@ export const LOCAL_STORAGE_KEYS = {
   HOST_LOBBY_GAME_SETTINGS: "twf:hostLobbyGameSettings",
   HOST_LOBBY_PLAY_TIP_SEEN: "twf:hostLobbyPlayTipSeen",
   LANDING_MOBILE_JOIN_TIP_SEEN: "twf:landingMobileJoinTipSeen",
-  CREATOR_MESSAGE_SEEN: "twf:creatorMessageSeen",
   USER_REDUCE_MOTION: "twf:userReduceMotion",
   USER_SHOW_TIPS: "twf:userShowTips",
   USER_HIGH_CONTRAST: "twf:userHighContrast",
@@ -174,12 +173,6 @@ const LOCAL_STORAGE_VARIABLES = [
     name: "landingMobileJoinTipSeen",
     keyPattern: LOCAL_STORAGE_KEYS.LANDING_MOBILE_JOIN_TIP_SEEN,
     isKey: exactKey(LOCAL_STORAGE_KEYS.LANDING_MOBILE_JOIN_TIP_SEEN),
-    codec: booleanCodec,
-  }),
-  defineStorageVariable({
-    name: "creatorMessageSeen",
-    keyPattern: LOCAL_STORAGE_KEYS.CREATOR_MESSAGE_SEEN,
-    isKey: exactKey(LOCAL_STORAGE_KEYS.CREATOR_MESSAGE_SEEN),
     codec: booleanCodec,
   }),
   defineStorageVariable({

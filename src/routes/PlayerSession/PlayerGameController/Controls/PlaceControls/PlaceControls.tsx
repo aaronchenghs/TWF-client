@@ -9,6 +9,7 @@ import { MainTextTypography } from "../../../../../components/MainTextTypography
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { useActionLocks } from "@/lib/hooks/useActionLocks";
 import { socketClient } from "@/services/sockets/socketClient";
+import { useMobileView } from "@/lib/hooks/useMobileView";
 
 type ActionLockKey = "place";
 
@@ -29,6 +30,7 @@ export function PlaceControls({
   isMyTurn,
   currentItem,
 }: PlaceControlsProps) {
+  const isMobile = useMobileView();
   const [selectedTierId, setSelectedTierId] = useState<string | null>(null);
   const shouldRemainLockedByKey = useMemo<Record<ActionLockKey, boolean>>(
     () => ({
@@ -43,6 +45,7 @@ export function PlaceControls({
 
   const isPlacing = actionLocks.isLocked("place");
   const placeButtonIconProps = ICON_PROPS.place.controls;
+  const buttonLabelVariant = isMobile ? "h2" : "h3";
   const ConfirmIcon = APP_ICONS.place.confirm;
   const PassIcon = APP_ICONS.place.pass;
 
@@ -171,7 +174,9 @@ export function PlaceControls({
               {...placeButtonIconProps}
               aria-hidden
             />
-            PASS
+            <MainTextTypography variant={buttonLabelVariant}>
+              PASS
+            </MainTextTypography>
           </span>
         </AccentButton>
         <AccentButton
@@ -189,7 +194,9 @@ export function PlaceControls({
               {...placeButtonIconProps}
               aria-hidden
             />
-            CONFIRM
+            <MainTextTypography variant={buttonLabelVariant}>
+              CONFIRM
+            </MainTextTypography>
           </span>
         </AccentButton>
       </div>

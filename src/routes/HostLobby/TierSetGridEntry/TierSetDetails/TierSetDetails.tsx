@@ -20,12 +20,20 @@ export function TierSetDetails({ isLoading, details }: TierSetDetailsProps) {
     >
       {isLoading && (
         <MainTextTypography variant="body" muted>
-          Loading…
+          Loading...
         </MainTextTypography>
       )}
 
       {details && (
         <>
+          {details.description && (
+            <div className={styles.detailsSection}>
+              <MainTextTypography variant="body" muted>
+                {details.description}
+              </MainTextTypography>
+            </div>
+          )}
+
           <div className={styles.detailsSection}>
             <MainTextTypography variant="h5">Tiers</MainTextTypography>
             <div className={styles.tierChips}>

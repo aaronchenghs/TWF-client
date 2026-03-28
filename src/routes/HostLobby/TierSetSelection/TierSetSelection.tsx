@@ -25,6 +25,10 @@ export function TierSetSelection({
 }: TierSetSelectionProps) {
   const [tierSetWithDetailsOpen, setTierSetWithDetailsOpen] =
     useState<Guid | null>(null);
+  const selectedTierSet = tierSets.find(
+    (tierSet) => tierSet.id === selectedTierSetId,
+  );
+  const selectedTierSetTitle = selectedTierSet?.title ?? "Choose a Tier Set";
 
   const handleSelectTierSet = (ts: TierSetSummary) => {
     roomSocket.setTierSet(ts.id);
@@ -32,7 +36,11 @@ export function TierSetSelection({
 
   return (
     <section className={clsx(styles.root, className)}>
-      <SubtextDivider text="Choose a Tier Set" noMargin />
+      <SubtextDivider
+        text={selectedTierSetTitle}
+        textTone={selectedTierSet ? "player" : "default"}
+        noMargin
+      />
 
       <div className={styles.presetGrid}>
         {isLoading || tierSets.length === 0 ? (

@@ -13,7 +13,6 @@ import { getTierSetItemCountAccentColor } from "@/lib/tierItems";
 import pluralize from "pluralize";
 import { useStaggeredLoadImages } from "@/lib/hooks/useStaggeredLoad";
 
-
 type TierSetGridEntryProps = {
   index: number;
   tierSet: TierSetSummary;
@@ -149,14 +148,6 @@ export function TierSetGridEntry({
               </MainTextTypography>
             </AccentButton>
           </div>
-
-          <MainTextTypography
-            variant="body"
-            muted
-            className={styles.presetDescription}
-          >
-            {tierSet.description ?? "-"}
-          </MainTextTypography>
         </div>
       </div>
 

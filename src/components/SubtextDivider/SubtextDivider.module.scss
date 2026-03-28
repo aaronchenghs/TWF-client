@@ -6,11 +6,16 @@
   gap: $default-padding;
   width: 100%;
   margin: $default-gap 0;
+  color: $text-secondary;
 }
 
 .noMargin {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.rootPlayer {
+  color: $accent;
 }
 
 .line {
@@ -20,6 +25,6 @@
 }
 
 .text {
-  color: $text-secondary;
+  color: inherit;
   white-space: nowrap;
 }

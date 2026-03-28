@@ -76,23 +76,22 @@ $join-visual-max-width: 240px;
   text-align: center;
   justify-self: center;
 
-  width: 100%;
-  max-width: $join-visual-max-width;
-  height: 100%;
-  max-height: 280px;
+  width: min(100%, $join-visual-max-width);
+  aspect-ratio: 1;
+  box-sizing: border-box;
   min-height: 0;
 
   gap: calc($default-gap * 0.5);
-  background: rgba($accent, 0.9);
+  background: $accent;
 
   padding: $default-padding;
   margin-bottom: $default-padding;
 
-  border: 2px solid rgba($black, 0.3);
+  border: 2px solid $accent;
   border-radius: $radius-lg;
 
   box-shadow:
-    4px 4px 0 $severityError,
+    4px 4px 0 rgba($accent, 0.8),
     0 12px 26px $box-shadow-color;
   overflow: hidden;
   align-self: center;
@@ -145,7 +144,7 @@ $join-visual-max-width: 240px;
   flex-direction: column;
   gap: $default-gap;
   min-height: 0;
-  padding: $default-padding;
+  padding: calc($default-padding * 2) $default-padding 0 $default-padding;
 }
 
 .playerList {

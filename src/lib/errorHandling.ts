@@ -8,19 +8,47 @@ import { store } from "@/store/store";
 import { getErrorMessage } from "@/lib/errors";
 
 const CONNECT_ERROR_TOAST_COOLDOWN_MS = 60_000;
+const ROOM_ERROR_TOAST_DELAY_MS = 250;
+const ROOM_TERMINAL_ERROR_SUPPRESSION_MS = 1_500;
 
 export function initSocketErrorToasts(): () => void {
   let lastConnectErrorAt = 0;
+  let lastRoomTerminalEventAt = 0;
+  let pendingRoomErrorToastTimer: number | null = null;
+
+  function clearPendingRoomErrorToast() {
+    if (pendingRoomErrorToastTimer === null) return;
+    window.clearTimeout(pendingRoomErrorToastTimer);
+    pendingRoomErrorToastTimer = null;
+  }
+
+  function markRoomTerminalEvent() {
+    lastRoomTerminalEventAt = Date.now();
+    clearPendingRoomErrorToast();
+  }
+
+  const offRoomClosed = roomSocket.onRoomClosed(markRoomTerminalEvent);
+  const offRoomKicked = roomSocket.onRoomKicked(markRoomTerminalEvent);
 
   const offRoomError = roomSocket.onRoomError((err: RoomErrorPayload) => {
-    store.dispatch(
-      pushSnackbar({
-        severity: "error",
-        title: "Error",
-        message: err,
-        durationMs: 4500,
-      }),
-    );
+    clearPendingRoomErrorToast();
+
+    pendingRoomErrorToastTimer = window.setTimeout(() => {
+      pendingRoomErrorToastTimer = null;
+
+      if (Date.now() - lastRoomTerminalEventAt < ROOM_TERMINAL_ERROR_SUPPRESSION_MS) {
+        return;
+      }
+
+      store.dispatch(
+        pushSnackbar({
+          severity: "error",
+          title: "Error",
+          message: err,
+          durationMs: 4500,
+        }),
+      );
+    }, ROOM_ERROR_TOAST_DELAY_MS);
   });
 
   const offConnectError = socketClient.onConnectError((message) => {
@@ -45,6 +73,9 @@ export function initSocketErrorToasts(): () => void {
   });
 
   return () => {
+    clearPendingRoomErrorToast();
+    offRoomClosed();
+    offRoomKicked();
     offRoomError();
     offConnectError();
   };

@@ -1,0 +1,34 @@
+@use "../../styles/export.scss" as *;
+
+.group {
+  display: grid;
+  grid-template-columns: repeat(var(--grouped-button-columns), minmax(0, 1fr));
+  gap: calc($default-gap * 0.5);
+  width: 100%;
+}
+
+.button {
+  width: 100%;
+  min-height: 50px;
+  text-transform: none;
+}
+
+.buttonContent {
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.button[aria-pressed="true"] .labelText,
+.button[aria-pressed="true"] .detailText {
+  color: $bg-elevated;
+}
+
+@media (max-width: $mobile-width) {
+  .group {
+    grid-template-columns: repeat(
+      var(--grouped-button-mobile-columns),
+      minmax(0, 1fr)
+    );
+  }
+}

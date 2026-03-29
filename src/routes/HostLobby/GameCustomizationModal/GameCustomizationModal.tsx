@@ -1,12 +1,12 @@
 import { AccentButton } from "@/components/AccentButton/AccentButton";
-import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
+import { GroupedButtonOptions } from "@/components/GroupedButtonOptions/GroupedButtonOptions";
 import { ModalHeaderTitle } from "@/components/ModalHeaderTitle/ModalHeaderTitle";
 import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
 import { SettingsOptionRow } from "@/components/SettingsModal/SettingsOptionRow/SettingsOptionRow";
 import {
   areGameSettingsDefault,
   DEFAULT_GAME_SETTINGS,
-  GAME_SETTING_TOGGLE_DEFINITIONS,
+  GAME_SETTING_TIMING_DEFINITIONS,
   updateGameSetting,
   type GameSettings,
 } from "@/lib/gameSettings";
@@ -63,19 +63,21 @@ export function GameCustomizationModal({
       </div>
 
       <div className={styles.rows}>
-        {GAME_SETTING_TOGGLE_DEFINITIONS.map((setting) => (
+        {GAME_SETTING_TIMING_DEFINITIONS.map((setting) => (
           <SettingsOptionRow
             key={setting.key}
+            layout="stacked"
             icon={<TimerIcon {...iconProps} />}
             title={setting.title}
             description={setting.description}
             control={
-              <AccentToggle
-                checked={settings[setting.key]}
+              <GroupedButtonOptions
+                ariaLabel={setting.ariaLabel}
+                options={setting.options}
+                value={settings[setting.key]}
                 onChange={(nextValue) =>
                   onChange(updateGameSetting(settings, setting.key, nextValue))
                 }
-                ariaLabel={setting.ariaLabel}
               />
             }
           />

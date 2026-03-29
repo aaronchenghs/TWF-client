@@ -13,7 +13,6 @@ import {
 } from "../../lib/stringNormalizers";
 import { AccentTextInput } from "../../components/AccentTextInput/AccentTextInput";
 import { useMobileView } from "../../lib/hooks/useMobileView";
-import { LicensingModal } from "../../components/LicensingModal/LicensingModal";
 import { WhatIsThisModal } from "../../components/WhatIsThisModal/WhatIsThisModal";
 import { CODE_LENGTH } from "@twf/contracts";
 import { socketClient } from "../../services/sockets/socketClient";
@@ -25,7 +24,6 @@ import {
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_ICONS } from "@/lib/constants/icons";
 import { INPUT_PATTERNS } from "@/lib/constants/regex";
-import { APP_VERSION } from "@/config/env";
 import { DesktopTeaserHeader } from "./DesktopTeaserHeader/DesktopTeaserHeader";
 import {
   persistPlayerJoinState,
@@ -33,7 +31,6 @@ import {
   readPlayerRuntime,
 } from "@/lib/roomClientState";
 
-const CURRENT_YEAR = new Date().getFullYear();
 const { lobbyCode: LobbyCodeIcon } = APP_ICONS;
 
 export default function Landing() {
@@ -41,7 +38,6 @@ export default function Landing() {
   const isMobile = useMobileView();
   const [isCreatingLobby, setIsCreatingLobby] = useState<boolean>(false);
   const [isWhatIsThisOpen, setIsWhatIsThisOpen] = useState(false);
-  const [isLicensingOpen, setIsLicensingOpen] = useState(false);
 
   const handleCreateRoom = async () => {
     setIsCreatingLobby(true);
@@ -103,27 +99,6 @@ export default function Landing() {
         open={isWhatIsThisOpen}
         onClose={() => setIsWhatIsThisOpen(false)}
       />
-
-      <LicensingModal
-        open={isLicensingOpen}
-        onClose={() => setIsLicensingOpen(false)}
-      />
-
-      <button
-        type="button"
-        className={styles.versionTagButton}
-        onClick={() => setIsLicensingOpen(true)}
-        aria-label="Open licensing information"
-      >
-        <MainTextTypography
-          className={styles.versionTag}
-          variant="caption"
-          letterSpacing="wide"
-          muted
-        >
-          © {CURRENT_YEAR} ARC | v{APP_VERSION}
-        </MainTextTypography>
-      </button>
     </div>
   );
 }

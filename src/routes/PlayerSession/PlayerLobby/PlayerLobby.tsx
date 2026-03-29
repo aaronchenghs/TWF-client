@@ -1,22 +1,25 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
 import styles from "./PlayerLobby.module.scss";
-import type { RoomPublicState } from "@twf/contracts";
+import { MAX_NAME_LENGTH, type RoomPublicState } from "@twf/contracts";
 import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { AccentTextInput } from "@/components/AccentTextInput/AccentTextInput";
 import { ConfirmationModal } from "@/components/ConfirmationModal/ConfirmationModal";
 import { HowToPlayModal } from "@/components/HowToPlayModal/HowToPlayModal";
 import { MainTextTypography } from "@/components/MainTextTypography/MainTextTypography";
 import { AnimatedDots } from "@/components/AnimatedDots/AnimatedDots";
 import { roomSocket } from "@/services/sockets/roomSocket";
 import { ROUTES } from "@/routes/routes";
-import { getPlayerNameById } from "@/lib/players";
+import { getPlayerNameById, hasSubmittedPlayerName } from "@/lib/players";
 import { PlayerAvatar } from "@/components/PlayerAvatar/PlayerAvatar";
 import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 import { useAutoScroll } from "@/lib/hooks/useAutoScroll";
 import { clearPlayerRoomState, readPlayerRuntime } from "@/lib/roomClientState";
-import { hasSubmittedPlayerName } from "@/lib/players";
-import { PendingNameLobby } from "./PendingNameLobby/PendingNameLobby";
+import { APP_ICONS } from "@/lib/constants/icons";
+import { normalizeName } from "@/lib/stringNormalizers";
+
+const { playerName: PlayerNameIcon, send: SendIcon } = APP_ICONS;
 
 export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const navigate = useNavigate();
@@ -31,8 +34,18 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
     ? (state.players.find((player) => player.id === myPlayerId) ?? null)
     : null;
 
+  const [pendingName, setPendingName] = useState(() =>
+    normalizeName(myPlayer?.name),
+  );
+  const [isSubmittingName, setIsSubmittingName] = useState(false);
+
   const myName = myPlayer?.name ?? getPlayerNameById(state.players, myPlayerId);
   const hasSubmittedName = hasSubmittedPlayerName(myPlayer?.name);
+  const normalizedPendingName = normalizeName(pendingName);
+  const isSubmitEnabled =
+    normalizedPendingName.length >= 1 &&
+    normalizedPendingName.length <= MAX_NAME_LENGTH &&
+    !isSubmittingName;
 
   useAutoFitText(identityNameRef, {
     minFontSizePx: 20,
@@ -48,72 +61,144 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
     });
   };
 
-  if (!hasSubmittedName)
-    return (
-      <PendingNameLobby roomCode={state.code} initialName={myPlayer?.name} />
-    );
+  const handlePendingNameSubmit = async () => {
+    if (!isSubmitEnabled) return;
+    setIsSubmittingName(true);
+
+    try {
+      await roomSocket.setPlayerNameOrThrow(normalizedPendingName, state.code);
+    } catch {
+      setIsSubmittingName(false);
+    }
+  };
+
+  const handlePendingNameInputEnter = (
+    event: KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    void handlePendingNameSubmit();
+  };
 
   return (
     <div className={styles.waiting}>
       <TWFLogo className={styles.logo} aria-hidden="true" />
 
-      <section className={styles.identity}>
-        <MainTextTypography variant="body" muted>
-          YOU ARE:
-        </MainTextTypography>
-        <div className={styles.identityRow}>
-          <PlayerAvatar avatar={myPlayer?.avatar} sway size={52} />
-          <MainTextTypography
-            variant="h2"
-            weight="medium"
-            letterSpacing="wide"
-            className={styles.identityName}
-            ref={identityNameRef}
-            tone="player"
-          >
-            {myName}
-          </MainTextTypography>
-        </div>
+      <section className={styles.panel}>
+        {!hasSubmittedName ? (
+          <>
+            <div className={styles.pendingIdentity}>
+              <PlayerAvatar avatar={myPlayer?.avatar} sway size={64} />
+            </div>
+
+            <div className={styles.pendingContent}>
+              <MainTextTypography variant="h3" textAlign="center">
+                Who are you?
+              </MainTextTypography>
+
+              <div className={styles.nameForm}>
+                <AccentTextInput
+                  name="username"
+                  value={pendingName}
+                  onChange={(event) => setPendingName(event.target.value)}
+                  onKeyDown={handlePendingNameInputEnter}
+                  icon={PlayerNameIcon}
+                  enterKeyHint="go"
+                  placeholder="YOUR NAME"
+                  autoComplete="off"
+                  maxLength={MAX_NAME_LENGTH}
+                  fullWidth
+                />
+
+                <AccentButton
+                  className={styles.nameSubmitButton}
+                  disabled={!isSubmitEnabled}
+                  onClick={handlePendingNameSubmit}
+                >
+                  {isSubmittingName ? (
+                    <MainTextTypography variant="h3">
+                      Saving
+                      <AnimatedDots />
+                    </MainTextTypography>
+                  ) : (
+                    <span className={styles.buttonContent}>
+                      <SendIcon
+                        size={18}
+                        strokeWidth={2.6}
+                        aria-hidden="true"
+                      />
+                      <MainTextTypography variant="h2">
+                        Submit
+                      </MainTextTypography>
+                    </span>
+                  )}
+                </AccentButton>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <MainTextTypography variant="body" muted>
+              YOU ARE:
+            </MainTextTypography>
+            <div className={styles.identityRow}>
+              <PlayerAvatar avatar={myPlayer?.avatar} sway size={52} />
+              <MainTextTypography
+                variant="h2"
+                weight="medium"
+                letterSpacing="wide"
+                className={styles.identityName}
+                ref={identityNameRef}
+                tone="player"
+              >
+                {myName}
+              </MainTextTypography>
+            </div>
+          </>
+        )}
       </section>
 
-      <section className={styles.instructions}>
-        <button
-          type="button"
-          className={styles.instructionsTrigger}
-          onClick={() => setIsHowToOpen(true)}
-        >
-          <div className={styles.instructionsSummaryText}>
-            <MainTextTypography variant="body" muted letterSpacing="wide">
-              HOW TO PLAY
-            </MainTextTypography>
-            <MainTextTypography variant="body" weight="medium">
-              Game Instructions
-            </MainTextTypography>
-          </div>
-        </button>
-      </section>
+      {hasSubmittedName ? (
+        <section className={styles.instructions}>
+          <button
+            type="button"
+            className={styles.instructionsTrigger}
+            onClick={() => setIsHowToOpen(true)}
+          >
+            <div className={styles.instructionsSummaryText}>
+              <MainTextTypography variant="body" muted letterSpacing="wide">
+                HOW TO PLAY
+              </MainTextTypography>
+              <MainTextTypography variant="body" weight="medium">
+                Game Instructions
+              </MainTextTypography>
+            </div>
+          </button>
+        </section>
+      ) : null}
 
       <div className={styles.actions}>
         <AccentButton
           variant="secondary"
-          className={styles.leaveButton}
           onClick={() => setIsConfirmQuitOpen(true)}
         >
           QUIT
         </AccentButton>
       </div>
 
-      <footer className={styles.footer}>
-        <MainTextTypography
-          variant="caption"
-          muted
-          letterSpacing="wide"
-          className={styles.waitingStatus}
-        >
-          Waiting for host
-          <AnimatedDots className={styles.waitingDots} />
-        </MainTextTypography>
-      </footer>
+      {hasSubmittedName ? (
+        <footer className={styles.footer}>
+          <MainTextTypography
+            variant="caption"
+            muted
+            letterSpacing="wide"
+            className={styles.waitingStatus}
+          >
+            Waiting for host
+            <AnimatedDots className={styles.waitingDots} />
+          </MainTextTypography>
+        </footer>
+      ) : null}
 
       <ConfirmationModal
         open={isConfirmQuitOpen}

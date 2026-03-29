@@ -21,6 +21,7 @@ import { useUserSettingsSync } from "@/lib/hooks/useUserSettingsSync";
 import { useRouteSeo } from "@/lib/hooks/useRouteSeo";
 import { GlobalQuickActions } from "@/components/GlobalQuickActions/GlobalQuickActions";
 import { BackgroundGridEffect } from "@/components/BackgroundGridEffect/BackgroundGridEffect";
+import { VersionTagButton } from "@/components/VersionTagButton/VersionTagButton";
 
 function SeoManager() {
   useRouteSeo();
@@ -37,8 +38,11 @@ export default function App() {
 
       <BrowserRouter>
         <SeoManager />
+
         <AnimatedRoutes />
+
         <GlobalQuickActions />
+        <VersionTagButton />
         <TipsPopupHost />
       </BrowserRouter>
 

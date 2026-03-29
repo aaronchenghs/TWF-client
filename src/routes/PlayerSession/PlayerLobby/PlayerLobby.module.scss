@@ -23,7 +23,7 @@ $logo-max-height: 160px;
 }
 
 .logo {
-  width: min(90vw, $logo-max-width);
+  width: min(80vw, $logo-max-width);
   max-height: $logo-max-height;
   height: auto;
 
@@ -33,7 +33,7 @@ $logo-max-height: 160px;
   @include float(6px, 3.5s);
 }
 
-.identity {
+.panel {
   width: 100%;
   max-width: $max-lobby-width;
 
@@ -46,6 +46,40 @@ $logo-max-height: 160px;
   background: $bg-surface;
   border: 1px solid $bg-elevated;
   border-radius: $radius-sm;
+}
+
+.pendingIdentity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc($default-gap * 0.5);
+}
+
+.pendingContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $default-gap;
+}
+
+.nameForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $default-gap;
+  align-items: stretch;
+}
+
+.nameSubmitButton {
+  width: 100%;
+}
+
+.buttonContent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc($default-gap * 0.5);
 }
 
 .identityName {
@@ -146,7 +180,8 @@ $logo-max-height: 160px;
 }
 
 @media (max-width: $mobile-width) {
-  .identity {
+  .panel,
+  .instructionsTrigger {
     padding: $default-padding;
   }
 }

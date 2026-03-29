@@ -1,7 +1,7 @@
 @use "../../../styles/export.scss" as *;
 
 $join-top-item-max-width: 280px;
-$join-visual-max-width: 240px;
+$player-row-height: 60px;
 
 .sidePanel {
   display: flex;
@@ -76,7 +76,7 @@ $join-visual-max-width: 240px;
   text-align: center;
   justify-self: center;
 
-  width: min(100%, $join-visual-max-width);
+  width: min(100%, 240px);
   aspect-ratio: 1;
   box-sizing: border-box;
   min-height: 0;
@@ -155,12 +155,21 @@ $join-visual-max-width: 240px;
   overflow: auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: $player-row-height;
   gap: $default-gap;
   align-content: start;
 }
 
 .playerCell {
+  display: flex;
   min-width: 0;
+  min-height: $player-row-height;
+}
+
+.playerCell > * {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
 }
 
 .playerEntry {
@@ -169,7 +178,8 @@ $join-visual-max-width: 240px;
   align-items: center;
   gap: $default-gap;
   min-width: 0;
-  min-height: 60px;
+  min-height: 0;
+  height: 100%;
   padding: $default-gap;
   border-radius: $radius-md;
   background: rgba($black, 0.1);

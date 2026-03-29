@@ -4,7 +4,8 @@
   display: flex;
   align-items: center;
   min-width: 0;
-  min-height: 56px;
+  min-height: 60px;
+  height: 100%;
   padding: $default-gap;
   border: 1px dashed rgba($accent, 0.3);
   border-radius: $radius-md;

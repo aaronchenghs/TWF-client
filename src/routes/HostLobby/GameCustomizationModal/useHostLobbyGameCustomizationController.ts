@@ -4,9 +4,14 @@ import type { RoomPublicState } from "@twf/contracts";
 import {
   areGameSettingsDefault,
   areGameSettingsEqual,
+  normalizeGameCustomizationSettings,
   normalizeGameSettings,
   readSavedHostLobbyGameSettings,
+  readSavedHostLobbyShowItemNames,
+  resolveGameCustomizationSettings,
   saveHostLobbyGameSettings,
+  saveHostLobbyShowItemNames,
+  type GameCustomizationSettings,
   type GameSettings,
 } from "@/lib/gameSettings";
 
@@ -19,6 +24,9 @@ export function useHostLobbyGameCustomizationController({
 }: UseHostLobbyGameCustomizationControllerArgs) {
   const [savedGameSettings, setSavedGameSettings] = useState<GameSettings>(() =>
     readSavedHostLobbyGameSettings(),
+  );
+  const [savedShowItemNames, setSavedShowItemNames] = useState<boolean>(() =>
+    readSavedHostLobbyShowItemNames(),
   );
   const [roomGameSettings, setRoomGameSettings] = useState<GameSettings | null>(
     null,
@@ -64,20 +72,34 @@ export function useHostLobbyGameCustomizationController({
   );
 
   const handleGameCustomizationChange = useCallback(
-    (nextSettings: GameSettings) => {
-      const normalizedSettings = normalizeGameSettings(nextSettings);
+    (nextSettings: GameCustomizationSettings) => {
+      const normalizedCustomizationSettings =
+        normalizeGameCustomizationSettings(nextSettings);
+      const normalizedSettings = normalizeGameSettings(
+        normalizedCustomizationSettings,
+      );
+      const effectiveGameSettings =
+        pendingGameSettings ?? roomGameSettings ?? savedGameSettings;
+
       restoredSavedSettingsRoomRef.current = roomCode;
       saveHostLobbyGameSettings(normalizedSettings);
+      saveHostLobbyShowItemNames(normalizedCustomizationSettings.showItemNames);
       setSavedGameSettings(normalizedSettings);
-      setPendingGameSettings(normalizedSettings);
-      roomSocket.setGameSettings(normalizedSettings);
+      setSavedShowItemNames(normalizedCustomizationSettings.showItemNames);
+
+      if (!areGameSettingsEqual(normalizedSettings, effectiveGameSettings)) {
+        setPendingGameSettings(normalizedSettings);
+        roomSocket.setGameSettings(normalizedSettings);
+      }
     },
-    [roomCode],
+    [pendingGameSettings, roomCode, roomGameSettings, savedGameSettings],
   );
 
   return {
-    gameCustomization:
+    gameCustomization: resolveGameCustomizationSettings(
       pendingGameSettings ?? roomGameSettings ?? savedGameSettings,
+      savedShowItemNames,
+    ),
     handleGameCustomizationChange,
     handleIncomingRoomState,
   };

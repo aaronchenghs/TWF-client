@@ -128,6 +128,7 @@ export const LOCAL_STORAGE_KEYS = {
   HOST_SESSION: "twf:hostSession",
   HOST_STARTED_ROOM_CODE: "twf:hostStartedRoomCode",
   HOST_LOBBY_GAME_SETTINGS: "twf:hostLobbyGameSettings",
+  HOST_LOBBY_SHOW_ITEM_NAMES: "twf:hostLobbyShowItemNames",
   HOST_LOBBY_PLAY_TIP_SEEN: "twf:hostLobbyPlayTipSeen",
   LANDING_MOBILE_JOIN_TIP_SEEN: "twf:landingMobileJoinTipSeen",
   USER_REDUCE_MOTION: "twf:userReduceMotion",

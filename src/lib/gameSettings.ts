@@ -9,7 +9,7 @@ import {
 } from "@/lib/webStorage";
 
 /**
- * Adding a new custom game setting:
+ * Adding a new shared custom game setting:
  * 1. Add the key to `DEFAULT_GAME_SETTINGS` so it becomes part of the canonical
  *    shape used by normalization, equality checks, and storage.
  * 2. Update `normalizeGameSettings` (and any helper normalizers) so persisted,
@@ -19,17 +19,28 @@ import {
  *    timing definitions.
  * 4. If the setting needs a different control type, keep the data/storage
  *    helpers in this file and add a dedicated UI component for that control.
- * 5. Mirror any new setting keys in the shared contracts/server flow so the UI
- *    and runtime behavior stay in sync.
+ * 5. Mirror any new shared setting keys in the shared contracts/server flow so
+ *    the UI and runtime behavior stay in sync.
+ *
+ * Client-only display preferences can live alongside the shared settings in
+ * `GameCustomizationSettings`, but should not be added to `GameSettings`.
  *
  * Note: the canonical time settings are explicit duration values. The legacy
  * `unlimited*` booleans are still derived and normalized for compatibility.
  */
-export type GameSettings = RoomPublicState["gameSettings"];
+export type GameSettings = Omit<
+  RoomPublicState["gameSettings"],
+  "showItemNames"
+>;
+export type GameCustomizationSettings = GameSettings & {
+  showItemNames: boolean;
+};
 type GameSettingKey = keyof GameSettings;
+type GameCustomizationSettingKey = keyof GameCustomizationSettings;
 export type GameSettingTimingKey =
   | "placingTimeLimitSeconds"
   | "votingTimeLimitSeconds";
+export type GameSettingToggleKey = "showItemNames";
 
 export const PLACING_TIME_LIMIT_OPTIONS = [20, 30, 45, null] as const;
 export type PlacingTimeLimitSeconds =
@@ -46,6 +57,7 @@ export const DEFAULT_VOTING_TIME_LIMIT_SECONDS: Exclude<
   VotingTimeLimitSeconds,
   null
 > = 60;
+export const DEFAULT_SHOW_ITEM_NAMES = true;
 
 export type GameSettingTimingOption = {
   label: string;
@@ -63,6 +75,13 @@ export type GameSettingTimingDefinition = {
   options: readonly GameSettingTimingOption[];
 };
 
+export type GameSettingToggleDefinition = {
+  key: GameSettingToggleKey;
+  title: string;
+  description: string;
+  ariaLabel: string;
+};
+
 export const DEFAULT_GAME_SETTINGS: GameSettings = {
   placingTimeLimitSeconds: DEFAULT_PLACING_TIME_LIMIT_SECONDS,
   votingTimeLimitSeconds: DEFAULT_VOTING_TIME_LIMIT_SECONDS,
@@ -70,9 +89,17 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
   unlimitedPlacingTime: false,
 };
 
+export const DEFAULT_GAME_CUSTOMIZATION_SETTINGS: GameCustomizationSettings = {
+  ...DEFAULT_GAME_SETTINGS,
+  showItemNames: DEFAULT_SHOW_ITEM_NAMES,
+};
+
 const GAME_SETTING_KEYS = Object.keys(
   DEFAULT_GAME_SETTINGS,
 ) as GameSettingKey[];
+const GAME_CUSTOMIZATION_SETTING_KEYS = Object.keys(
+  DEFAULT_GAME_CUSTOMIZATION_SETTINGS,
+) as GameCustomizationSettingKey[];
 
 export const GAME_SETTING_TIMING_DEFINITIONS: readonly GameSettingTimingDefinition[] =
   [
@@ -144,6 +171,17 @@ export const GAME_SETTING_TIMING_DEFINITIONS: readonly GameSettingTimingDefiniti
     },
   ];
 
+export const GAME_SETTING_TOGGLE_DEFINITIONS: readonly GameSettingToggleDefinition[] =
+  [
+    {
+      key: "showItemNames",
+      title: "Show Item Names",
+      description:
+        "Displays each item's name below its image. Turn this off to show names on hover only.",
+      ariaLabel: "Toggle item names on the tier board",
+    },
+  ];
+
 function isPlacingTimeLimitSeconds(
   value: unknown,
 ): value is PlacingTimeLimitSeconds {
@@ -178,6 +216,15 @@ function normalizeVotingTimeLimitSeconds(
     : DEFAULT_VOTING_TIME_LIMIT_SECONDS;
 }
 
+function normalizeShowItemNamesPreference(input: unknown): boolean {
+  if (!isObject(input)) return DEFAULT_SHOW_ITEM_NAMES;
+
+  const candidate = input as Record<string, unknown>;
+  return typeof candidate.showItemNames === "boolean"
+    ? candidate.showItemNames
+    : DEFAULT_SHOW_ITEM_NAMES;
+}
+
 export function normalizeGameSettings(input: unknown): GameSettings {
   if (!isObject(input)) return { ...DEFAULT_GAME_SETTINGS };
 
@@ -193,12 +240,34 @@ export function normalizeGameSettings(input: unknown): GameSettings {
   };
 }
 
+export function normalizeGameCustomizationSettings(
+  input: unknown,
+): GameCustomizationSettings {
+  return {
+    ...normalizeGameSettings(input),
+    showItemNames: normalizeShowItemNamesPreference(input),
+  };
+}
+
 export function updateGameSetting<K extends GameSettingKey>(
   settings: GameSettings,
   key: K,
   value: GameSettings[K],
 ): GameSettings {
   return normalizeGameSettings({
+    ...settings,
+    [key]: value,
+  });
+}
+
+export function updateGameCustomizationSetting<
+  K extends GameCustomizationSettingKey,
+>(
+  settings: GameCustomizationSettings,
+  key: K,
+  value: GameCustomizationSettings[K],
+): GameCustomizationSettings {
+  return normalizeGameCustomizationSettings({
     ...settings,
     [key]: value,
   });
@@ -211,8 +280,26 @@ export function areGameSettingsEqual(
   return GAME_SETTING_KEYS.every((key) => left[key] === right[key]);
 }
 
+export function areGameCustomizationSettingsEqual(
+  left: GameCustomizationSettings,
+  right: GameCustomizationSettings,
+): boolean {
+  return GAME_CUSTOMIZATION_SETTING_KEYS.every(
+    (key) => left[key] === right[key],
+  );
+}
+
 export function areGameSettingsDefault(settings: GameSettings): boolean {
   return areGameSettingsEqual(settings, DEFAULT_GAME_SETTINGS);
+}
+
+export function areGameCustomizationSettingsDefault(
+  settings: GameCustomizationSettings,
+): boolean {
+  return areGameCustomizationSettingsEqual(
+    settings,
+    DEFAULT_GAME_CUSTOMIZATION_SETTINGS,
+  );
 }
 
 export function readSavedHostLobbyGameSettings(): GameSettings {
@@ -232,4 +319,53 @@ export function saveHostLobbyGameSettings(settings: GameSettings) {
     LOCAL_STORAGE_KEYS.HOST_LOBBY_GAME_SETTINGS,
     JSON.stringify(settings),
   );
+}
+
+function readLegacySavedHostLobbyShowItemNames(): boolean | null {
+  const raw = readStorageValue(
+    getWebStorage("local"),
+    LOCAL_STORAGE_KEYS.HOST_LOBBY_GAME_SETTINGS,
+  );
+  if (raw == null) return null;
+
+  const parsed = safeJsonParse(raw);
+  if (!isObject(parsed)) return null;
+
+  const candidate = parsed as Record<string, unknown>;
+  return typeof candidate.showItemNames === "boolean"
+    ? candidate.showItemNames
+    : null;
+}
+
+export function readSavedHostLobbyShowItemNames(): boolean {
+  const raw = readStorageValue(
+    getWebStorage("local"),
+    LOCAL_STORAGE_KEYS.HOST_LOBBY_SHOW_ITEM_NAMES,
+  );
+
+  if (raw == null)
+    return readLegacySavedHostLobbyShowItemNames() ?? DEFAULT_SHOW_ITEM_NAMES;
+
+  const parsed = safeJsonParse(raw);
+  return typeof parsed === "boolean"
+    ? parsed
+    : (readLegacySavedHostLobbyShowItemNames() ?? DEFAULT_SHOW_ITEM_NAMES);
+}
+
+export function saveHostLobbyShowItemNames(showItemNames: boolean) {
+  writeStorageValue(
+    getWebStorage("local"),
+    LOCAL_STORAGE_KEYS.HOST_LOBBY_SHOW_ITEM_NAMES,
+    JSON.stringify(showItemNames),
+  );
+}
+
+export function resolveGameCustomizationSettings(
+  settings: GameSettings,
+  showItemNames: boolean,
+): GameCustomizationSettings {
+  return {
+    ...normalizeGameSettings(settings),
+    showItemNames,
+  };
 }

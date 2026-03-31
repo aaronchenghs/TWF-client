@@ -36,6 +36,7 @@ import { useRoomCodeDisplayValue } from "@/lib/roomCode";
 import { GameSidePanel } from "./GameSidePanel/GameSidePanel";
 import { useScreenWakeLock } from "@/lib/hooks/useScreenWakeLock";
 import { useFinishedPhaseConfetti } from "@/lib/hooks/useFinishedPhaseConfetti";
+import { readSavedHostLobbyShowItemNames } from "@/lib/gameSettings";
 
 export default function GameRoom() {
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ export default function GameRoom() {
 
   const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
   const [isRematchSubmitting, setIsRematchSubmitting] = useState(false);
+  const [showItemNames] = useState(() => readSavedHostLobbyShowItemNames());
   const [state, setState] = useState<RoomPublicState | null>(() =>
     roomSocket.getLastRoomState(roomCode),
   );
@@ -139,7 +141,7 @@ export default function GameRoom() {
   return (
     <div className={styles.root}>
       <main className={styles.main}>
-        <TierBoard state={state} />
+        <TierBoard state={state} showItemNames={showItemNames} />
         <GameSidePanel
           state={state}
           roomCode={roomCode}

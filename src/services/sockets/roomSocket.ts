@@ -10,6 +10,7 @@ import type {
   ServerToClientEvents,
   RoomJoinPayload,
 } from "@twf/contracts";
+import type { GameSettings } from "@/lib/gameSettings";
 
 type RoomCreatedPayload = Parameters<ServerToClientEvents["room:created"]>[0];
 type RoomStatePayload = Parameters<ServerToClientEvents["room:state"]>[0];
@@ -213,8 +214,10 @@ export const roomSocket = {
     socketClient.emit("room:setTierSet", { tierSetId });
   },
 
-  setGameSettings(gameSettings: RoomPublicState["gameSettings"]): void {
-    socketClient.emit("room:setGameSettings", { gameSettings });
+  setGameSettings(gameSettings: GameSettings): void {
+    socketClient.emit("room:setGameSettings", {
+      gameSettings: gameSettings,
+    });
   },
 
   async setPlayerNameOrThrow(

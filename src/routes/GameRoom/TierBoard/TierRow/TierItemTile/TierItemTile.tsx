@@ -8,10 +8,10 @@ import { ToolTipWrapper } from "@/components/ToolTip/ToolTip";
 import { useAutoFitText } from "@/lib/hooks/useAutoFitText";
 import { getItemMeta } from "@/lib/tierItems";
 
-
 type Props = {
   state: RoomPublicState;
   itemId: TierItemId;
+  showItemNames: boolean;
   ghost?: boolean;
   isGhostSolidifying?: boolean;
   className?: string;
@@ -20,6 +20,7 @@ type Props = {
 export const TierItemTile = memo(function TierItemTile({
   state,
   itemId,
+  showItemNames,
   ghost,
   isGhostSolidifying,
   className,
@@ -29,6 +30,7 @@ export const TierItemTile = memo(function TierItemTile({
 
   useAutoFitText(itemNameRef, {
     minFontSizePx: 16,
+    enabled: showItemNames,
     watch: name,
   });
 
@@ -58,15 +60,17 @@ export const TierItemTile = memo(function TierItemTile({
           />
         </div>
 
-        <MainTextTypography
-          variant="body"
-          weight="bold"
-          textAlign="center"
-          className={styles.itemName}
-          ref={itemNameRef}
-        >
-          {name}
-        </MainTextTypography>
+        {showItemNames && (
+          <MainTextTypography
+            variant="body"
+            weight="bold"
+            textAlign="center"
+            className={styles.itemName}
+            ref={itemNameRef}
+          >
+            {name}
+          </MainTextTypography>
+        )}
       </div>
     </ToolTipWrapper>
   );

@@ -13,9 +13,13 @@ const BOARD_SCALE_CSS_VAR = "--boardScale" as string;
 
 type TierBoardProps = {
   state: RoomPublicState;
+  showItemNames: boolean;
 };
 
-export const TierBoard = memo(function TierBoard({ state }: TierBoardProps) {
+export const TierBoard = memo(function TierBoard({
+  state,
+  showItemNames,
+}: TierBoardProps) {
   const [scale, setScale] = useState(1);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -153,6 +157,7 @@ export const TierBoard = memo(function TierBoard({ state }: TierBoardProps) {
             <TierRow
               key={tierId}
               state={state}
+              showItemNames={showItemNames}
               tierId={tierId}
               ghostTierId={ghostTierId}
               ghostInsertIndex={ghostInsertIndex}

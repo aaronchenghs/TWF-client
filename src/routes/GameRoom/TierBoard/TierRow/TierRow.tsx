@@ -6,12 +6,12 @@ import { MainTextTypography } from "../../../../components/MainTextTypography/Ma
 import { useAutoFitText } from "../../../../lib/hooks/useAutoFitText";
 import { TierItemTile } from "./TierItemTile/TierItemTile";
 
-
 const MIN_TIER_LABEL_FONT_SIZE_PX = 26;
 const TIER_LABEL_COLOR_CSS_VAR = "--tierColor" as string;
 
 type TierRowProps = {
   state: RoomPublicState;
+  showItemNames: boolean;
   tierId: TierId;
   ghostTierId: TierId | null;
   ghostInsertIndex: number | null;
@@ -19,6 +19,7 @@ type TierRowProps = {
 
 export const TierRow = memo(function TierRow({
   state,
+  showItemNames,
   tierId,
   ghostTierId,
   ghostInsertIndex,
@@ -63,13 +64,19 @@ export const TierRow = memo(function TierRow({
           ? safeItems
           : safeItems.slice(0, safeGhostIndex)
         ).map((id) => (
-          <TierItemTile key={id} state={state} itemId={id} />
+          <TierItemTile
+            key={id}
+            state={state}
+            itemId={id}
+            showItemNames={showItemNames}
+          />
         ))}
 
         {isGhostTier && state.currentItem && (
           <TierItemTile
             state={state}
             itemId={state.currentItem}
+            showItemNames={showItemNames}
             ghost
             isGhostSolidifying={isResultsPhase}
           />
@@ -78,7 +85,14 @@ export const TierRow = memo(function TierRow({
         {safeGhostIndex !== null &&
           safeItems
             .slice(safeGhostIndex)
-            .map((id) => <TierItemTile key={id} state={state} itemId={id} />)}
+            .map((id) => (
+              <TierItemTile
+                key={id}
+                state={state}
+                itemId={id}
+                showItemNames={showItemNames}
+              />
+            ))}
       </div>
     </div>
   );

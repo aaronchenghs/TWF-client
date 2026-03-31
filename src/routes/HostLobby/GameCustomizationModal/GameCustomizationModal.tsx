@@ -1,27 +1,30 @@
 import { AccentButton } from "@/components/AccentButton/AccentButton";
+import { AccentToggle } from "@/components/AccentToggle/AccentToggle";
 import { GroupedButtonOptions } from "@/components/GroupedButtonOptions/GroupedButtonOptions";
 import { ModalHeaderTitle } from "@/components/ModalHeaderTitle/ModalHeaderTitle";
 import { PrimaryModal } from "@/components/PrimaryModal/PrimaryModal";
 import { SettingsOptionRow } from "@/components/SettingsModal/SettingsOptionRow/SettingsOptionRow";
 import {
-  areGameSettingsDefault,
-  DEFAULT_GAME_SETTINGS,
+  areGameCustomizationSettingsDefault,
+  DEFAULT_GAME_CUSTOMIZATION_SETTINGS,
+  GAME_SETTING_TOGGLE_DEFINITIONS,
   GAME_SETTING_TIMING_DEFINITIONS,
-  updateGameSetting,
-  type GameSettings,
+  updateGameCustomizationSetting,
+  type GameCustomizationSettings,
 } from "@/lib/gameSettings";
 import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import styles from "./GameCustomizationModal.module.scss";
 
 type GameCustomizationModalProps = {
   open: boolean;
-  settings: GameSettings;
+  settings: GameCustomizationSettings;
   onClose: () => void;
-  onChange: (nextSettings: GameSettings) => void;
+  onChange: (nextSettings: GameCustomizationSettings) => void;
 };
 
 const {
   gameSettings: GameCustomizationTitleIcon,
+  itemNames: ItemNamesIcon,
   timer: TimerIcon,
   reset: ResetIcon,
 } = APP_ICONS;
@@ -33,7 +36,7 @@ export function GameCustomizationModal({
   onChange,
 }: GameCustomizationModalProps) {
   const iconProps = ICON_PROPS.settingsRow;
-  const isResetDisabled = areGameSettingsDefault(settings);
+  const isResetDisabled = areGameCustomizationSettingsDefault(settings);
 
   return (
     <PrimaryModal
@@ -53,7 +56,7 @@ export function GameCustomizationModal({
           variant="secondary"
           size="small"
           disabled={isResetDisabled}
-          onClick={() => onChange(DEFAULT_GAME_SETTINGS)}
+          onClick={() => onChange(DEFAULT_GAME_CUSTOMIZATION_SETTINGS)}
         >
           <span className={styles.resetButtonContent}>
             <ResetIcon {...iconProps} aria-hidden="true" />
@@ -76,8 +79,38 @@ export function GameCustomizationModal({
                 options={setting.options}
                 value={settings[setting.key]}
                 onChange={(nextValue) =>
-                  onChange(updateGameSetting(settings, setting.key, nextValue))
+                  onChange(
+                    updateGameCustomizationSetting(
+                      settings,
+                      setting.key,
+                      nextValue,
+                    ),
+                  )
                 }
+              />
+            }
+          />
+        ))}
+
+        {GAME_SETTING_TOGGLE_DEFINITIONS.map((setting) => (
+          <SettingsOptionRow
+            key={setting.key}
+            icon={<ItemNamesIcon {...iconProps} />}
+            title={setting.title}
+            description={setting.description}
+            control={
+              <AccentToggle
+                checked={settings[setting.key]}
+                onChange={(nextValue) =>
+                  onChange(
+                    updateGameCustomizationSetting(
+                      settings,
+                      setting.key,
+                      nextValue,
+                    ),
+                  )
+                }
+                ariaLabel={setting.ariaLabel}
               />
             }
           />

@@ -80,6 +80,10 @@ export default defineConfig({
         ws: true,
         changeOrigin: true,
       },
+      "/health": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
     },
   },
   resolve: {

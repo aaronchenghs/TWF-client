@@ -1,0 +1,30 @@
+@use "../../styles/export.scss" as *;
+
+.banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-overlay;
+
+  padding: calc(env(safe-area-inset-top, 0px) + $default-padding)
+    calc(env(safe-area-inset-right, 0px) + $default-padding) $default-padding
+    calc(env(safe-area-inset-left, 0px) + $default-padding);
+
+  border-bottom: 2px solid $text-secondary;
+  background: $severityError;
+  box-shadow: $shadow-elevated-sm;
+  color: $text-primary;
+
+  font-size: $fs-h5;
+  font-weight: bold;
+  line-height: $lh-title;
+  text-align: center;
+  text-wrap: balance;
+}
+
+@media (max-width: $mobile-width) {
+  .banner {
+    font-size: $fs-h5;
+  }
+}

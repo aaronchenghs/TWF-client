@@ -25,8 +25,8 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const navigate = useNavigate();
   useAutoScroll();
 
-  const [isConfirmQuitOpen, setIsConfirmQuitOpen] = useState(false);
-  const [isHowToOpen, setIsHowToOpen] = useState(false);
+  const [isConfirmQuitOpen, setIsConfirmQuitOpen] = useState<boolean>(false);
+  const [isHowToOpen, setIsHowToOpen] = useState<boolean>(false);
   const identityNameRef = useRef<HTMLSpanElement | null>(null);
 
   const { playerId: myPlayerId } = readPlayerRuntime(state.code);
@@ -34,10 +34,10 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
     ? (state.players.find((player) => player.id === myPlayerId) ?? null)
     : null;
 
-  const [pendingName, setPendingName] = useState(() =>
+  const [pendingName, setPendingName] = useState<string>(() =>
     normalizeName(myPlayer?.name),
   );
-  const [isSubmittingName, setIsSubmittingName] = useState(false);
+  const [isSubmittingName, setIsSubmittingName] = useState<boolean>(false);
 
   const myName = myPlayer?.name ?? getPlayerNameById(state.players, myPlayerId);
   const hasSubmittedName = hasSubmittedPlayerName(myPlayer?.name);

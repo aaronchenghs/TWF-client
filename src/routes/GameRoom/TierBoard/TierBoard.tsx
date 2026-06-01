@@ -20,7 +20,7 @@ export const TierBoard = memo(function TierBoard({
   state,
   showItemNames,
 }: TierBoardProps) {
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState<number>(1);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef(0);

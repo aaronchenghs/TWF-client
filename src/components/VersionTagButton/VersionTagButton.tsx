@@ -9,7 +9,7 @@ import { VERSION_TAG_VISIBLE_ROUTE_PATTERNS } from "@/routes/routes";
 const CURRENT_YEAR = new Date().getFullYear();
 
 export function VersionTagButton() {
-  const [isLicensingOpen, setIsLicensingOpen] = useState(false);
+  const [isLicensingOpen, setIsLicensingOpen] = useState<boolean>(false);
   const { pathname } = useLocation();
   const shouldRender = VERSION_TAG_VISIBLE_ROUTE_PATTERNS.some(
     (pattern) => matchPath({ path: pattern, end: true }, pathname) !== null,

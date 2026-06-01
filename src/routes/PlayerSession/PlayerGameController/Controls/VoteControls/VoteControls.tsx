@@ -215,7 +215,9 @@ export function VoteControls({
         lastVoteWindowKeyRef.current = null;
         lockedVoteWindowKeyRef.current = null;
         pendingVoteRequestRef.current = null;
-        setVoteUnlockAt(null);
+        queueMicrotask(() => {
+          setVoteUnlockAt(null);
+        });
         return;
       }
 
@@ -224,12 +226,14 @@ export function VoteControls({
       lastVoteWindowKeyRef.current = voteWindowKey;
 
       const localUnlockAt = Date.now() + DISCUSSION_LOCK_MS;
-      setVoteUnlockAt(
-        typeof voteEndsAt === "number"
-          ? Math.min(localUnlockAt, voteEndsAt)
-          : localUnlockAt,
-      );
-      setNow(Date.now());
+      queueMicrotask(() => {
+        setVoteUnlockAt(
+          typeof voteEndsAt === "number"
+            ? Math.min(localUnlockAt, voteEndsAt)
+            : localUnlockAt,
+        );
+        setNow(Date.now());
+      });
     },
     [phase, activeVoteWindowKey, voteEndsAt],
   );

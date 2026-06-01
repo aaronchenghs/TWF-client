@@ -17,16 +17,10 @@ type VoteIndicatorMeta = {
   label: string;
 };
 
-const voteIndicatorMetaByValue = new Map<VoteValue, VoteIndicatorMeta>([
-  [-1, { Icon: APP_ICONS.vote.up, label: "bump up" }],
-  [0, { Icon: APP_ICONS.vote.agree, label: "no vote" }],
-  [1, { Icon: APP_ICONS.vote.down, label: "bump down" }],
-]);
-
 function getVoteIndicatorMeta(vote: VoteValue): VoteIndicatorMeta {
-  if (vote < 0) return voteIndicatorMetaByValue.get(-1)!;
-  if (vote > 0) return voteIndicatorMetaByValue.get(1)!;
-  return voteIndicatorMetaByValue.get(0)!;
+  if (vote < 0) return { Icon: APP_ICONS.vote.up, label: "bump up" };
+  if (vote > 0) return { Icon: APP_ICONS.vote.down, label: "bump down" };
+  return { Icon: APP_ICONS.vote.agree, label: "no vote" };
 }
 
 export function ActivePlayersCard({ state }: ActivePlayersCardProps) {

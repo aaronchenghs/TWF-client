@@ -57,8 +57,8 @@ export function ToolTipWrapper({
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const touchOpenRef = useRef(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isRendered, setIsRendered] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isRendered, setIsRendered] = useState<boolean>(false);
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties | null>(
     null,
   );
@@ -188,38 +188,44 @@ export function ToolTipWrapper({
     setResolvedPlacement(placement);
   }, [isOpen, placement]);
 
-  useEffect(() => {
-    if (!tooltipHasContent || disabled) {
-      const timeoutId = window.setTimeout(resetTooltip, 0);
-      return () => {
-        window.clearTimeout(timeoutId);
-      };
-    }
-  }, [disabled, resetTooltip, tooltipHasContent]);
+  useEffect(
+    function resetWhenTooltipGetsDisabled() {
+      if (!tooltipHasContent || disabled) {
+        const timeoutId = window.setTimeout(resetTooltip, 0);
+        return () => {
+          window.clearTimeout(timeoutId);
+        };
+      }
+    },
+    [disabled, resetTooltip, tooltipHasContent],
+  );
 
-  useEffect(() => {
-    if (!isOpen || !touchOpenRef.current || typeof document === "undefined") {
-      return;
-    }
-
-    // A touch-opened tooltip stays visible until the next tap outside.
-    const handleDocumentPointerDown = (event: PointerEvent) => {
-      const wrapper = wrapperRef.current;
-      const target = event.target;
-      if (!wrapper || !(target instanceof Node) || wrapper.contains(target)) {
+  useEffect(
+    function bindOutsideTouchDismiss() {
+      if (!isOpen || !touchOpenRef.current || typeof document === "undefined") {
         return;
       }
 
-      touchOpenRef.current = false;
-      setIsOpen(false);
-    };
+      // A touch-opened tooltip stays visible until the next tap outside.
+      const handleDocumentPointerDown = (event: PointerEvent) => {
+        const wrapper = wrapperRef.current;
+        const target = event.target;
+        if (!wrapper || !(target instanceof Node) || wrapper.contains(target)) {
+          return;
+        }
 
-    document.addEventListener("pointerdown", handleDocumentPointerDown);
+        touchOpenRef.current = false;
+        setIsOpen(false);
+      };
 
-    return () => {
-      document.removeEventListener("pointerdown", handleDocumentPointerDown);
-    };
-  }, [isOpen]);
+      document.addEventListener("pointerdown", handleDocumentPointerDown);
+
+      return () => {
+        document.removeEventListener("pointerdown", handleDocumentPointerDown);
+      };
+    },
+    [isOpen],
+  );
 
   useLayoutEffect(() => {
     if (!isRendered) {

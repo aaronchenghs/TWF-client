@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./CountdownOverlay.module.scss";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
@@ -37,7 +37,11 @@ export function CountdownOverlay({
   const [color, setColor] = useState<string>(() => pickRandomColor());
 
   const timersRef = useRef<number[]>([]);
-  const Svg = displayCount === 3 ? Three : displayCount === 2 ? Two : One;
+  const Svg = useMemo(() => {
+    if (displayCount === 3) return Three;
+    if (displayCount === 2) return Two;
+    return One;
+  }, [displayCount]);
 
   const clearAllTimers = useCallback(() => {
     for (const id of timersRef.current) window.clearTimeout(id);
@@ -66,7 +70,9 @@ export function CountdownOverlay({
     function runCountdownSequence() {
       if (!open) {
         clearAllTimers();
-        setPhase("in");
+        queueMicrotask(() => {
+          setPhase("in");
+        });
         onDisplayCountChange?.(null);
         return;
       }

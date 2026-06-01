@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { RoomPublicState } from "@twf/contracts";
 
-
 type UsePhaseStartOverlayOpts = {
   /** Phase that should edge-trigger the reveal (entering that phase). */
   openOnPhase: RoomPublicState["phase"];
@@ -54,8 +53,8 @@ export function usePhaseStartOverlay(
     skipInitialOpen = false,
   } = opts;
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [revealToken, setRevealToken] = useState(0);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [revealToken, setRevealToken] = useState<number>(0);
 
   const prevPhaseRef = useRef<RoomPublicState["phase"] | null>(null);
   const prevReopenKeyRef = useRef<typeof reopenKey>(undefined);
@@ -82,78 +81,84 @@ export function usePhaseStartOverlay(
     setIsOpen(false);
   }, [clearCloseTimer]);
 
-  useEffect(function handlePhaseEdgeTrigger() {
-    if (!state) {
-      prevPhaseRef.current = null;
-      prevReopenKeyRef.current = reopenKey;
-      clearCloseTimer();
-      queueMicrotask(() => setIsOpen(false));
-      return;
-    }
+  useEffect(
+    function handlePhaseEdgeTrigger() {
+      if (!state) {
+        prevPhaseRef.current = null;
+        prevReopenKeyRef.current = reopenKey;
+        clearCloseTimer();
+        queueMicrotask(() => setIsOpen(false));
+        return;
+      }
 
-    const prevPhase = prevPhaseRef.current;
-    const currPhase = state.phase;
+      const prevPhase = prevPhaseRef.current;
+      const currPhase = state.phase;
 
-    const isInitial = prevPhase === null;
+      const isInitial = prevPhase === null;
 
-    if (skipInitialOpen && isInitial) {
+      if (skipInitialOpen && isInitial) {
+        prevPhaseRef.current = currPhase;
+        prevReopenKeyRef.current = reopenKey;
+
+        if (closeIfPhaseMismatch && currPhase !== openOnPhase) {
+          clearCloseTimer();
+          queueMicrotask(() => setIsOpen(false));
+        }
+
+        return;
+      }
+
+      const hasEnteredPhase =
+        prevPhase !== openOnPhase && currPhase === openOnPhase;
+
+      const isReopenKeyChanged =
+        currPhase === openOnPhase &&
+        reopenKey !== undefined &&
+        prevReopenKeyRef.current !== undefined &&
+        prevReopenKeyRef.current !== reopenKey;
+
       prevPhaseRef.current = currPhase;
       prevReopenKeyRef.current = reopenKey;
 
       if (closeIfPhaseMismatch && currPhase !== openOnPhase) {
         clearCloseTimer();
         queueMicrotask(() => setIsOpen(false));
+        return;
       }
 
-      return;
-    }
+      if (!hasEnteredPhase && !isReopenKeyChanged) return;
+      if (!shouldOpen?.()) return;
 
-    const hasEnteredPhase =
-      prevPhase !== openOnPhase && currPhase === openOnPhase;
+      queueMicrotask(() => {
+        clearCloseTimer();
+        setIsOpen(true);
+        setRevealToken((t) => t + 1);
 
-    const isReopenKeyChanged =
-      currPhase === openOnPhase &&
-      reopenKey !== undefined &&
-      prevReopenKeyRef.current !== undefined &&
-      prevReopenKeyRef.current !== reopenKey;
+        closeTimeoutRef.current = window.setTimeout(() => {
+          setIsOpen(false);
+        }, openMs);
+      });
+    },
+    [
+      state,
+      openOnPhase,
+      reopenKey,
+      closeIfPhaseMismatch,
+      shouldOpen,
+      skipInitialOpen,
+      clearCloseTimer,
+      openMs,
+    ],
+  );
 
-    prevPhaseRef.current = currPhase;
-    prevReopenKeyRef.current = reopenKey;
-
-    if (closeIfPhaseMismatch && currPhase !== openOnPhase) {
-      clearCloseTimer();
-      queueMicrotask(() => setIsOpen(false));
-      return;
-    }
-
-    if (!hasEnteredPhase && !isReopenKeyChanged) return;
-    if (!shouldOpen?.()) return;
-
-    queueMicrotask(() => {
-      clearCloseTimer();
-      setIsOpen(true);
-      setRevealToken((t) => t + 1);
-
-      closeTimeoutRef.current = window.setTimeout(() => {
-        setIsOpen(false);
-      }, openMs);
-    });
-  }, [
-    state,
-    openOnPhase,
-    reopenKey,
-    closeIfPhaseMismatch,
-    shouldOpen,
-    skipInitialOpen,
-    clearCloseTimer,
-    openMs,
-  ]);
-
-  useEffect(function cleanupOverlayTimer() {
-    return () => {
-      clearCloseTimer();
-    };
-  }, [clearCloseTimer]);
+  useEffect(
+    function cleanupOverlayTimer() {
+      return () => {
+        clearCloseTimer();
+      };
+    },
+    [clearCloseTimer],
+  );
 
   return { isOpen, token: revealToken, open, close };
 }

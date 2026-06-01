@@ -47,7 +47,7 @@ export default function PlayerGameController({
 
   const [tierSet, setTierSet] = useState<TierSetDefinition | null>(null);
 
-  const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
+  const [isConfirmExitOpen, setIsConfirmExitOpen] = useState<boolean>(false);
   const { playerId: myPlayerId } = readPlayerRuntime(state.code);
 
   const myPlayer = useMemo(

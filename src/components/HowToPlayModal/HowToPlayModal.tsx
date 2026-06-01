@@ -24,7 +24,7 @@ export function HowToPlayModal(props: {
   initialIndex?: number;
 }) {
   const { open, onClose, initialIndex = 0 } = props;
-  const [index, setIndex] = useState(() => {
+  const [index, setIndex] = useState<number>(() => {
     if (!HOW_TO_STEPS.length) return 0;
     return Math.min(Math.max(initialIndex, 0), HOW_TO_STEPS.length - 1);
   });

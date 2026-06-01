@@ -32,9 +32,10 @@ export const AccentTextInput = forwardRef<
 ) {
   const { width: styleWidth, ...inputStyle } = style ?? {};
   const resolvedWidth = fullWidth ? "100%" : (width ?? styleWidth ?? "120px");
+  const hasAriaLabelledBy = Boolean(props["aria-labelledby"]);
+  const fallbackAriaLabel = props.placeholder ?? props.name;
   const ariaLabel =
-    props["aria-label"] ??
-    (props["aria-labelledby"] ? undefined : (props.placeholder ?? props.name));
+    props["aria-label"] ?? (hasAriaLabelledBy ? undefined : fallbackAriaLabel);
 
   return (
     <div

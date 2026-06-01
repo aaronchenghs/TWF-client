@@ -43,16 +43,20 @@ const GameCustomizationModal = lazy(() =>
 export default function HostLobby() {
   const navigate = useNavigate();
 
-  const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState(false);
-  const [isGameCustomizationOpen, setIsGameCustomizationOpen] = useState(false);
-  const [isStartCountdownOpen, setIsStartCountdownOpen] = useState(false);
+  const [isConfirmCloseOpen, setIsConfirmCloseOpen] = useState<boolean>(false);
+  const [isGameCustomizationOpen, setIsGameCustomizationOpen] =
+    useState<boolean>(false);
+  const [isStartCountdownOpen, setIsStartCountdownOpen] =
+    useState<boolean>(false);
   const [roomState, setRoomState] = useState<RoomPublicState | null>(null);
-  const [isTransitioningToGame, setIsTransitioningToGame] = useState(false);
+  const [isTransitioningToGame, setIsTransitioningToGame] =
+    useState<boolean>(false);
   const [countdownNumber, setCountdownNumber] = useState<3 | 2 | 1 | null>(
     null,
   );
 
-  const [isCountdownOutroActive, setIsCountdownOutroActive] = useState(false);
+  const [isCountdownOutroActive, setIsCountdownOutroActive] =
+    useState<boolean>(false);
   useHostLobbySoundEffects(roomState, countdownNumber, isCountdownOutroActive);
 
   const navigateToGameTimeoutRef = useRef<number | null>(null);
@@ -131,7 +135,8 @@ export default function HostLobby() {
     function redirectStartedRoomToGameRoute() {
       if (!roomState) return;
       if (roomState.phase === "LOBBY") return;
-      handleStartGameTransition();
+      const frameId = window.requestAnimationFrame(handleStartGameTransition);
+      return () => window.cancelAnimationFrame(frameId);
     },
     [handleStartGameTransition, roomState],
   );

@@ -22,7 +22,7 @@ import { useRouteSeo } from "@/lib/hooks/useRouteSeo";
 import { GlobalQuickActions } from "@/components/GlobalQuickActions/GlobalQuickActions";
 import { BackgroundGridEffect } from "@/components/BackgroundGridEffect/BackgroundGridEffect";
 import { VersionTagButton } from "@/components/VersionTagButton/VersionTagButton";
-import { BackendStoppedBanner } from "@/components/BackendStoppedBanner/BackendStoppedBanner";
+import { APIStoppedBanner } from "@/components/BackendStoppedBanner/BackendStoppedBanner";
 
 function SeoManager() {
   useRouteSeo();
@@ -35,7 +35,7 @@ export default function App() {
   return (
     <>
       <BackgroundGridEffect />
-      <BackendStoppedBanner />
+      <APIStoppedBanner />
       <SnackbarHost />
 
       <BrowserRouter>

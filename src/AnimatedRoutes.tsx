@@ -15,8 +15,10 @@ import PlayerSession from "./routes/PlayerSession/PlayerSession";
 export function AnimatedRoutes() {
   const location = useLocation();
 
-  const [displayLocation, setDisplayLocation] = useState(location);
-  const [pendingLocation, setPendingLocation] = useState(location);
+  const [displayLocation, setDisplayLocation] =
+    useState<typeof location>(location);
+  const [pendingLocation, setPendingLocation] =
+    useState<typeof location>(location);
   const [kind, setKind] = useState<TransitionKind>("crossfade");
 
   useLayoutEffect(
@@ -27,8 +29,12 @@ export function AnimatedRoutes() {
         location.pathname,
       );
 
-      setKind(transitionKind);
-      setPendingLocation(location);
+      const frameId = window.requestAnimationFrame(() => {
+        setKind(transitionKind);
+        setPendingLocation(location);
+      });
+
+      return () => window.cancelAnimationFrame(frameId);
     },
     [displayLocation.pathname, location],
   );

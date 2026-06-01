@@ -93,7 +93,12 @@ export function computeVoteResolution(args: {
     const voteRaw = votes[playerId];
     if (voteRaw === undefined) continue;
 
-    const vote = voteRaw < 0 ? -1 : voteRaw > 0 ? 1 : 0;
+    let vote: -1 | 0 | 1 = 0;
+    if (voteRaw < 0) {
+      vote = -1;
+    } else if (voteRaw > 0) {
+      vote = 1;
+    }
 
     if (vote < 0) {
       up1 += 1;

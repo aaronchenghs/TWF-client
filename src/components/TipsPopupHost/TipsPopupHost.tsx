@@ -62,28 +62,34 @@ export function TipsPopupHost() {
 
   useEffect(
     function syncActiveRouteTip() {
+      const clearActiveTip = () => {
+        queueMicrotask(() => {
+          setActiveTipKind(null);
+        });
+      };
+
       if (!$isShowTips) {
-        setActiveTipKind(null);
+        clearActiveTip();
         return;
       }
 
       const routeTipKind = getTipKindForPath(location.pathname);
       if (!routeTipKind) {
-        setActiveTipKind(null);
+        clearActiveTip();
         return;
       }
 
       if (hasTipBeenSeen(routeTipKind)) {
-        setActiveTipKind(null);
+        clearActiveTip();
         return;
       }
 
       if (!isTipVisibleForViewport(routeTipKind, isMobile)) {
-        setActiveTipKind(null);
+        clearActiveTip();
         return;
       }
 
-      setActiveTipKind(null);
+      clearActiveTip();
 
       const tipTimer = window.setTimeout(() => {
         setActiveTipKind(routeTipKind);

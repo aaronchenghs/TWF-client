@@ -44,9 +44,12 @@ export default function GameRoom() {
   const { roomCode, isRoomCodeValid, displayRoomCode } =
     useRoomCodeDisplayValue(readHostRoomCode());
 
-  const [isConfirmExitOpen, setIsConfirmExitOpen] = useState(false);
-  const [isRematchSubmitting, setIsRematchSubmitting] = useState(false);
-  const [showItemNames] = useState(() => readSavedHostLobbyShowItemNames());
+  const [isConfirmExitOpen, setIsConfirmExitOpen] = useState<boolean>(false);
+  const [isRematchSubmitting, setIsRematchSubmitting] =
+    useState<boolean>(false);
+  const [showItemNames] = useState<boolean>(() =>
+    readSavedHostLobbyShowItemNames(),
+  );
   const [state, setState] = useState<RoomPublicState | null>(() =>
     roomSocket.getLastRoomState(roomCode),
   );

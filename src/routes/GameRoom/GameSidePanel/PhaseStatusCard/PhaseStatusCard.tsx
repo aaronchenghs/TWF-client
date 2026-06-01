@@ -20,7 +20,10 @@ const PHASES_WITHOUT_COUNTDOWN = new Set<Phase>([
 ]);
 
 export function PhaseStatusCard({ state }: PhaseStatusCardProps) {
-  const [phaseRingSize, setPhaseRingSize] = useState({ width: 0, height: 0 });
+  const [phaseRingSize, setPhaseRingSize] = useState<{
+    width: number;
+    height: number;
+  }>({ width: 0, height: 0 });
   const phaseCardRef = useRef<HTMLElement | null>(null);
 
   const phaseClock = usePhaseClock(state, 50);

@@ -112,7 +112,9 @@ export default function PlayerSession() {
             name: normalizeName(currentPlayer.name),
             playerId: existingPlayerId,
           });
-          setState(cachedState);
+          queueMicrotask(() => {
+            setState(cachedState);
+          });
           return;
         }
       }

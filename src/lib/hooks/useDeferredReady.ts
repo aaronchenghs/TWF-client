@@ -5,7 +5,7 @@ import { startTransition, useEffect, useState } from "react";
  * after the route shell becomes interactive.
  */
 export function useDeferredReady(delayMs = 0) {
-  const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   useEffect(
     function scheduleDeferredReady() {

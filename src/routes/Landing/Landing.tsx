@@ -37,7 +37,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const isMobile = useMobileView();
   const [isCreatingLobby, setIsCreatingLobby] = useState<boolean>(false);
-  const [isWhatIsThisOpen, setIsWhatIsThisOpen] = useState(false);
+  const [isWhatIsThisOpen, setIsWhatIsThisOpen] = useState<boolean>(false);
 
   const handleCreateRoom = async () => {
     setIsCreatingLobby(true);

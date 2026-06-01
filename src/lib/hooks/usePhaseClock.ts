@@ -14,7 +14,7 @@ export function usePhaseClock(
   state: RoomPublicState | null,
   tickMs = 1000,
 ): PhaseClock {
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState<number>(() => Date.now());
   const [phaseInitialDurationMs, setPhaseInitialDurationMs] = useState<
     number | null
   >(null);

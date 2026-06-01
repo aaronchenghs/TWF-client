@@ -50,7 +50,7 @@ type CreatorMessagePlan = {
 };
 
 export function CreatorMessageButton() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(function cleanupLegacyCreatorMessageSeenKey() {
     removeLocalStorageValue(LEGACY_CREATOR_MESSAGE_SEEN_KEY);

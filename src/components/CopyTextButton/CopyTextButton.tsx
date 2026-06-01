@@ -21,7 +21,7 @@ export function CopyTextButton({
   title = "Copy",
 }: CopyTextButtonProps) {
   const iconProps = ICON_PROPS.copyButton;
-  const [isCopied, setIsCopied] = useState(false);
+  const [isCopied, setIsCopied] = useState<boolean>(false);
   const timerRef = useRef<number | null>(null);
   const isDisabled = disabled || !value;
 

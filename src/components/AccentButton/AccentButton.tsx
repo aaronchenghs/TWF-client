@@ -2,9 +2,11 @@ import React from "react";
 import clsx from "clsx";
 import styles from "./AccentButton.module.scss";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
+import { useMemo } from "react";
 import { useMobileView } from "@/lib/hooks/useMobileView";
 
 type Variant = "primary" | "secondary" | "ghost" | "destructive" | "special";
+type LabelVariant = "h2" | "h3" | "h5" | "h6";
 type Size = "small";
 
 interface AccentButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -27,8 +29,14 @@ export function AccentButton({
   ...props
 }: AccentButtonProps) {
   const isMobile = useMobileView();
-  const labelVariant =
-    size === "small" ? (isMobile ? "h5" : "h6") : isMobile ? "h2" : "h3";
+
+  const labelVariant = useMemo<LabelVariant>(() => {
+    if (size === "small") {
+      return isMobile ? "h5" : "h6";
+    }
+    return isMobile ? "h2" : "h3";
+  }, [isMobile, size]);
+
   const shouldWrapLabel =
     typeof children === "string" || typeof children === "number";
 
@@ -43,14 +51,14 @@ export function AccentButton({
         className,
       )}
       style={
-        color
-          ? ({ ["--accent" as string]: color } as React.CSSProperties)
-          : undefined
+        color ? ({ ["--accent"]: color } as React.CSSProperties) : undefined
       }
       {...props}
     >
       {shouldWrapLabel ? (
-        <MainTextTypography variant={labelVariant}>{children}</MainTextTypography>
+        <MainTextTypography variant={labelVariant}>
+          {children}
+        </MainTextTypography>
       ) : (
         children
       )}

@@ -11,9 +11,12 @@ type FinishedControlsProps = {
 };
 
 export function FinishedControls({ state }: FinishedControlsProps) {
-  const [isPlayAgainSubmitting, setIsPlayAgainSubmitting] = useState(false);
-  const [isWaitingForHostRematch, setIsWaitingForHostRematch] = useState(false);
-  const [hasHostStartedRematch, setHasHostStartedRematch] = useState(false);
+  const [isPlayAgainSubmitting, setIsPlayAgainSubmitting] =
+    useState<boolean>(false);
+  const [isWaitingForHostRematch, setIsWaitingForHostRematch] =
+    useState<boolean>(false);
+  const [hasHostStartedRematch, setHasHostStartedRematch] =
+    useState<boolean>(false);
 
   const playAgainLabel = useMemo(() => {
     if (hasHostStartedRematch)
@@ -63,9 +66,11 @@ export function FinishedControls({ state }: FinishedControlsProps) {
   useEffect(
     function resetRematchFlagsWhenLeavingFinished() {
       if (state.phase === "FINISHED") return;
-      setIsWaitingForHostRematch(false);
-      setHasHostStartedRematch(false);
-      setIsPlayAgainSubmitting(false);
+      queueMicrotask(() => {
+        setIsWaitingForHostRematch(false);
+        setHasHostStartedRematch(false);
+        setIsPlayAgainSubmitting(false);
+      });
     },
     [state.phase],
   );

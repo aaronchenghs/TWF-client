@@ -41,7 +41,7 @@ function SnackbarCard(props: {
 }) {
   const { item, onDismiss } = props;
 
-  const [isPaused, setPaused] = useState(false);
+  const [isPaused, setPaused] = useState<boolean>(false);
 
   const remainingMsRef = useRef<number>(0);
   const pauseStartRef = useRef<number | null>(null);
@@ -83,9 +83,7 @@ function SnackbarCard(props: {
         clearDismissTimeout();
       };
     },
-    // Intentionally exclude isPaused: this effect initializes per item,
-    // while pause/resume adjustments are handled in syncPausedState below.
-    [item.id, item.durationMs, clearDismissTimeout, scheduleDismiss],
+    [item.id, item.durationMs, isPaused, clearDismissTimeout, scheduleDismiss],
   );
 
   useEffect(

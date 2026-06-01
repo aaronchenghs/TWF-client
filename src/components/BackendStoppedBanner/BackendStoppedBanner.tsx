@@ -45,17 +45,16 @@ async function checkBackendAvailability(signal: AbortSignal): Promise<boolean> {
   }
 }
 
-export function BackendStoppedBanner() {
+export function APIStoppedBanner() {
   const [availability, setAvailability] =
     useState<BackendAvailability>("unknown");
 
-  useEffect(() => {
+  useEffect(function monitorAPIAvailability() {
     const controller = new AbortController();
     let isMounted = true;
 
     const updateAvailability = async () => {
       const isAvailable = await checkBackendAvailability(controller.signal);
-
       if (isMounted) {
         setAvailability(isAvailable ? "available" : "unavailable");
       }

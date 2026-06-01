@@ -44,7 +44,7 @@ export function GameSettingsPanel({
 }: GameSettingsPanelProps) {
   const isMobile = useMobileView();
   const [tierSets, setTierSets] = useState<TierSetSummary[]>([]);
-  const [isTierSetsLoading, setIsTierSetsLoading] = useState(true);
+  const [isTierSetsLoading, setIsTierSetsLoading] = useState<boolean>(true);
   const isTierSetSelectionReady = useDeferredReady(TIER_SET_SELECTION_DELAY_MS);
 
   const isStartEnabled =

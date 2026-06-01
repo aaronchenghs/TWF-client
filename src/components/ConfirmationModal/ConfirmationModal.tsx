@@ -32,7 +32,7 @@ export function ConfirmationModal({
   maxWidth,
   onCancel,
 }: ConfirmationModalProps) {
-  const [isInternalWorking, setIsInternalWorking] = useState(false);
+  const [isInternalWorking, setIsInternalWorking] = useState<boolean>(false);
   const isMountedRef = useRef(true);
 
   const isWorking = confirmDisabled ?? isInternalWorking;

@@ -9,7 +9,6 @@ import { useMobileView } from "@/lib/hooks/useMobileView";
 import { ROUTES } from "@/routes/routes";
 import styles from "./ShareResultsButton.module.scss";
 
-
 type ShareResultsButtonProps = {
   state: RoomPublicState;
 };
@@ -23,7 +22,7 @@ const MAX_ITEMS_PER_TIER = 4;
 export function ShareResultsButton({ state }: ShareResultsButtonProps) {
   const isMobile = useMobileView();
   const [shareState, setShareState] = useState<ShareState>("idle");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const resetTimerRef = useRef<number | null>(null);
   const buttonLabelVariant = isMobile ? "h2" : "h3";
 

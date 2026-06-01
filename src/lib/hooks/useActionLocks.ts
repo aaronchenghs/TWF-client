@@ -49,18 +49,20 @@ export function useActionLocks<T extends string>(
 
   useEffect(
     function releaseLocksAfterStateAdvances() {
-      setLocks((prev) => {
-        let changed = false;
-        const next = { ...prev };
+      queueMicrotask(() => {
+        setLocks((prev) => {
+          let changed = false;
+          const next = { ...prev };
 
-        (Object.keys(shouldRemainLockedByKey) as T[]).forEach((key) => {
-          if (!next[key]) return;
-          if (shouldRemainLockedByKey[key]) return;
-          next[key] = false;
-          changed = true;
+          (Object.keys(shouldRemainLockedByKey) as T[]).forEach((key) => {
+            if (!next[key]) return;
+            if (shouldRemainLockedByKey[key]) return;
+            next[key] = false;
+            changed = true;
+          });
+
+          return changed ? next : prev;
         });
-
-        return changed ? next : prev;
       });
     },
     [shouldRemainLockedByKey],

@@ -27,7 +27,7 @@ export function ExpandingIconButton({
   type = "button",
   ...buttonProps
 }: ExpandingIconButtonProps) {
-  const [labelWidthPx, setLabelWidthPx] = useState(0);
+  const [labelWidthPx, setLabelWidthPx] = useState<number>(0);
   const labelRef = useRef<HTMLSpanElement | null>(null);
 
   const dynamicStyle = {

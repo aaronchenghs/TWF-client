@@ -101,7 +101,8 @@ export function PlaceControls({
         aria-label="Choose a tier to place into"
       >
         {orderedTierIds.map((tierId) => {
-          const tier = tierById.get(tierId)!;
+          const tier = tierById.get(tierId);
+          if (!tier) return null;
           const isSelected = selectedTierId === tierId;
 
           return (

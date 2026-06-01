@@ -15,3 +15,6 @@
 - Components should be organized as closely as possible like this: Hooks -> Global variables -> useStates -> useRefs -> Local variables -> useMemos -> functions -> useCallbacks -> useEffects -> ...
 - useEffects should use named functions, not anonymous
 - useStates should always be typed
+- Component file names should match the name of the main component defined within them
+- Prefer const objects over enums
+-

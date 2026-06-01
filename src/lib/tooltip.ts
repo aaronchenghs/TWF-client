@@ -7,6 +7,12 @@ export type ToolTipAlign = "start" | "center" | "end";
 
 const VIEWPORT_MARGIN = 8;
 const ALL_PLACEMENTS: ToolTipPlacement[] = ["top", "bottom", "left", "right"];
+const OPPOSITE_PLACEMENT: Record<ToolTipPlacement, ToolTipPlacement> = {
+  top: "bottom",
+  bottom: "top",
+  left: "right",
+  right: "left",
+};
 
 export function hasTooltipContent(content: ReactNode) {
   return content !== null && content !== undefined;
@@ -126,14 +132,5 @@ export function renderTooltipContent(args: {
 }
 
 function getOppositePlacement(placement: ToolTipPlacement): ToolTipPlacement {
-  switch (placement) {
-    case "bottom":
-      return "top";
-    case "left":
-      return "right";
-    case "right":
-      return "left";
-    default:
-      return "bottom";
-  }
+  return OPPOSITE_PLACEMENT[placement];
 }

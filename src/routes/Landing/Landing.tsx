@@ -29,9 +29,11 @@ import {
   readActivePlayerSession,
   readPlayerRuntime,
 } from "@/lib/roomClientState";
+import { SkipLink } from "@/components/SkipLink/SkipLink";
 
 const { lobbyCode: LobbyCodeIcon } = APP_ICONS;
 const JOIN_CODE_HELP_ID = "join-code-help";
+const JOIN_LOBBY_ID = "join-lobby";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -54,12 +56,10 @@ export default function Landing() {
 
   return (
     <main id="main-content" className={styles.landingPage}>
-      <a className={styles.skipLink} href="#join-lobby">
-        Skip to join lobby
-      </a>
+      <SkipLink targetId={JOIN_LOBBY_ID}>Skip to join lobby</SkipLink>
 
       <nav className={styles.primaryNav} aria-label="Primary">
-        <a className={styles.screenReaderNavLink} href="#join-lobby">
+        <a className={styles.screenReaderNavLink} href={`#${JOIN_LOBBY_ID}`}>
           Join lobby
         </a>
         {!isMobile && <DesktopTeaserHeader />}
@@ -185,7 +185,7 @@ export function JoinRoomPanel() {
   };
 
   return (
-    <div id="join-lobby" className={styles.joinCard} tabIndex={-1}>
+    <div id={JOIN_LOBBY_ID} className={styles.joinCard} tabIndex={-1}>
       <MainTextTypography variant="h4">Join a Lobby</MainTextTypography>
       <MainTextTypography
         variant="p"

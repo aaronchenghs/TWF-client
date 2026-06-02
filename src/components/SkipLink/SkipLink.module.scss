@@ -1,0 +1,25 @@
+@use "../../styles/export.scss" as *;
+
+.skipLink {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + $default-gap);
+  left: calc(env(safe-area-inset-left, 0px) + $default-gap);
+  z-index: calc($z-floating-actions + 1);
+
+  padding: $default-padding;
+  border: 2px solid $text-secondary;
+  border-radius: $radius-sm;
+
+  background: $bg-elevated;
+  color: $text-primary;
+  text-decoration: none;
+
+  transform: translateY(calc(-100% - ($default-gap * 2)));
+  transition: transform $dur-fast $ease-out;
+
+  &:focus-visible {
+    outline: 2px solid $text-primary;
+    outline-offset: 2px;
+    transform: translateY(0);
+  }
+}

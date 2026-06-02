@@ -30,8 +30,10 @@ import { APP_ICONS, ICON_PROPS } from "@/lib/constants/icons";
 import { useHostLobbyGameCustomizationController } from "./GameCustomizationModal/useHostLobbyGameCustomizationController";
 import { GameSettingsPanel } from "./GameSettingsPanel/GameSettingsPanel";
 import { PlayerJoinPanel } from "./PlayerJoinPanel/PlayerJoinPanel";
+import { SkipLink } from "@/components/SkipLink/SkipLink";
 
 const HOST_EXIT_FADE_MS = 350;
+const HOST_LOBBY_MAIN_ID = "host-lobby-main";
 
 const { exit: ExitIcon } = APP_ICONS;
 const GameCustomizationModal = lazy(() =>
@@ -169,7 +171,12 @@ export default function HostLobby() {
 
   return (
     <div className={clsx(styles.root, isTransitioningToGame && styles.exiting)}>
-      <div className={styles.topRightAction}>
+      <SkipLink targetId={HOST_LOBBY_MAIN_ID}>
+        Skip to lobby content
+      </SkipLink>
+      <h1 className={styles.seoHeading}>Host Lobby</h1>
+
+      <nav className={styles.topRightAction} aria-label="Lobby actions">
         <ExpandingIconButton
           icon={<ExitIcon {...ICON_PROPS.quickActions} aria-hidden="true" />}
           label="Close Lobby"
@@ -179,33 +186,31 @@ export default function HostLobby() {
           onClick={() => setIsConfirmCloseOpen(true)}
           disabled={isCloseLobbyDisabled}
         />
-      </div>
+      </nav>
 
       <header className={styles.header}>
         <TWFLogo className={styles.logo} aria-hidden="true" />
       </header>
 
-      <div className={styles.layoutShell}>
-        <div className={styles.layout}>
-          <GameSettingsPanel
-            className={clsx(styles.lobbyPanel, styles.hostPanel)}
-            canLoadTierSets={isRoomCodeValid}
-            selectedTierSetId={selectedTierSetId}
-            playerCount={players.length}
-            players={players}
-            isStartCountdownOpen={isStartCountdownOpen}
-            onOpenGameSettings={() => setIsGameCustomizationOpen(true)}
-            onStartGame={handleStartClick}
-          />
+      <main id={HOST_LOBBY_MAIN_ID} className={styles.layout} tabIndex={-1}>
+        <GameSettingsPanel
+          className={clsx(styles.lobbyPanel, styles.hostPanel)}
+          canLoadTierSets={isRoomCodeValid}
+          selectedTierSetId={selectedTierSetId}
+          playerCount={players.length}
+          players={players}
+          isStartCountdownOpen={isStartCountdownOpen}
+          onOpenGameSettings={() => setIsGameCustomizationOpen(true)}
+          onStartGame={handleStartClick}
+        />
 
-          <PlayerJoinPanel
-            className={clsx(styles.lobbyPanel, styles.joinPanel)}
-            roomCode={roomCode}
-            players={players}
-            joinLocationLabel={joinLocationLabel}
-          />
-        </div>
-      </div>
+        <PlayerJoinPanel
+          className={clsx(styles.lobbyPanel, styles.joinPanel)}
+          roomCode={roomCode}
+          players={players}
+          joinLocationLabel={joinLocationLabel}
+        />
+      </main>
 
       <CountdownOverlay
         open={isStartCountdownOpen}

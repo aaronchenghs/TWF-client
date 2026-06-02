@@ -195,32 +195,50 @@
   pointer-events: auto;
 }
 
-@media (max-width: $tablet-width) {
-  .titleGroup {
-    grid-template-columns: minmax(0, 1fr);
+@media (max-width: $desktop-compact-width) {
+  .topRow {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr) auto auto;
     gap: calc($default-gap * 0.5);
+    align-items: center;
+  }
+
+  .mainColumn,
+  .headerRow,
+  .titleGroup {
+    display: contents;
+  }
+
+  .presetTitle {
+    grid-column: 1 / -1;
+    grid-row: 1;
   }
 
   .metaBadge {
-    justify-self: start;
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
+  }
+
+  .previewThumb {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .detailsButton {
+    grid-column: 4;
+    grid-row: 2;
+    justify-self: end;
   }
 }
 
 @media (max-width: $mobile-width) {
   .topRow {
-    gap: calc($default-gap * 0.5);
+    grid-template-columns: 68px minmax(0, 1fr) auto auto;
   }
 
   .previewThumb {
     width: 68px;
     height: 68px;
-  }
-
-  .headerRow {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .detailsButton {
-    justify-self: start;
   }
 }

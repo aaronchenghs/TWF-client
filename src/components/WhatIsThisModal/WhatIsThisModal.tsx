@@ -14,7 +14,7 @@ See the LICENSE file for details.
 import { AccentButton } from "../AccentButton/AccentButton";
 import { MainTextTypography } from "../MainTextTypography/MainTextTypography";
 import { PrimaryModal } from "../PrimaryModal/PrimaryModal";
-import TWFLogo from "@/assets/public/TWF_Transparent.svg?react";
+import TWFLogoSrc from "@/assets/public/TWF_Transparent.svg";
 import styles from "./WhatIsThisModal.module.scss";
 
 const QUICK_START_STEPS = [
@@ -43,9 +43,13 @@ export function WhatIsThisModal(props: { open: boolean; onClose: () => void }) {
       footer={<AccentButton onClick={onClose}>Got it</AccentButton>}
     >
       <div className={styles.content}>
-        <TWFLogo className={styles.logo} />
+        <img
+          className={styles.logo}
+          src={TWFLogoSrc}
+          alt="Tiers With Friends logo"
+        />
         <MainTextTypography variant="body" muted textAlign="center">
-          Inspired by the likes of <i>JackBox</i> and <i>TierMaker</i>,{" "}
+          Inspired by the likes of <em>JackBox</em> and <em>TierMaker</em>,{" "}
           <strong>Tiers! With Friends</strong> is a browser party game where
           your group builds a tier list together in real time.
         </MainTextTypography>

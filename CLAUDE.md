@@ -17,4 +17,4 @@
 - useStates should always be typed
 - Component file names should match the name of the main component defined within them
 - Prefer const objects over enums
--
+- Props interfaces for components should be start with the name of the component and end in Props

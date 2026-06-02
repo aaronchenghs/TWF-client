@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef, type SyntheticEvent } from "react";
 import { createPortal } from "react-dom";
 import clsx from "clsx";
 import styles from "./OverlayDialog.module.scss";
@@ -27,6 +27,8 @@ export function OverlayDialog({
   contentClassName,
   children,
 }: Props) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
   useEffect(
     function handleLockScroll() {
       if (!open || !lockScroll) return;
@@ -54,10 +56,33 @@ export function OverlayDialog({
     [open, onEscape],
   );
 
+  useLayoutEffect(
+    function showNativeModalDialog() {
+      if (!open || !usePortal) return;
+
+      const dialog = dialogRef.current;
+      if (!dialog || dialog.open) return;
+
+      dialog.showModal();
+
+      return () => {
+        if (!dialog.open) return;
+
+        dialog.close();
+      };
+    },
+    [open, usePortal],
+  );
+
   if (!open) return null;
 
-  const content = (
-    <div className={clsx(styles.overlay, className)}>
+  function handleNativeCancel(event: SyntheticEvent<HTMLDialogElement>) {
+    event.preventDefault();
+    onEscape?.();
+  }
+
+  const overlayContent = (
+    <>
       {onBackdrop && (
         <button
           type="button"
@@ -69,13 +94,27 @@ export function OverlayDialog({
       )}
       <div
         className={clsx(styles.content, contentClassName)}
-        role="dialog"
-        aria-modal="true"
-        aria-label={ariaLabel}
+        role={usePortal ? undefined : "dialog"}
+        aria-modal={usePortal ? undefined : true}
+        aria-label={usePortal ? undefined : ariaLabel}
       >
         {children}
       </div>
-    </div>
+    </>
+  );
+
+  const content = usePortal ? (
+    <dialog
+      ref={dialogRef}
+      className={clsx(styles.overlay, className)}
+      aria-modal="true"
+      aria-label={ariaLabel}
+      onCancel={handleNativeCancel}
+    >
+      {overlayContent}
+    </dialog>
+  ) : (
+    <div className={clsx(styles.overlay, className)}>{overlayContent}</div>
   );
 
   if (usePortal) return createPortal(content, document.body);

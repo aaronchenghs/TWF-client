@@ -7,13 +7,24 @@
   inset: 0;
   z-index: $z-overlay;
 
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  max-height: none;
   display: grid;
   place-items: center;
 
+  margin: 0;
   padding: $default-padding;
+  border: 0;
 
   background: $box-shadow-color;
+  color: inherit;
   backdrop-filter: $backdrop-blur;
+
+  &::backdrop {
+    background: transparent;
+  }
 }
 
 .backdrop {

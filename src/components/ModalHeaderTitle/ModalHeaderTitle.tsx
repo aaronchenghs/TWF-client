@@ -19,7 +19,7 @@ export function ModalHeaderTitle({
 }: ModalHeaderTitleProps) {
   return (
     <div className={clsx(styles.root, className)}>
-      <span className={clsx(styles.icon, iconClassName)} aria-hidden="true">
+      <span className={clsx(styles.icon, iconClassName)} role="presentation">
         {icon}
       </span>
       <MainTextTypography variant="h3" className={titleClassName}>

@@ -76,6 +76,7 @@ export default function Landing() {
         <button
           type="button"
           className={styles.howToPlayLink}
+          aria-label="What is this?"
           onClick={() => setIsWhatIsThisOpen(true)}
         >
           <MainTextTypography variant="caption" muted letterSpacing="wide">
@@ -90,6 +91,7 @@ export default function Landing() {
                 disabled={isCreatingLobby}
                 onClick={handleCreateRoom}
                 className={styles.createButton}
+                aria-label={isCreatingLobby ? "Creating lobby" : "Create Lobby"}
               >
                 {isCreatingLobby ? (
                   <MainTextTypography variant="h3">

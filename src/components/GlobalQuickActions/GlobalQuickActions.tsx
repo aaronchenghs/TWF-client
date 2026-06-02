@@ -21,7 +21,7 @@ export function GlobalQuickActions() {
   return (
     <div className={styles.quickActions}>
       <ExpandingIconButton
-        icon={<SettingsIcon {...iconProps} aria-hidden="true" />}
+        icon={<SettingsIcon {...iconProps} role="presentation" />}
         label="Settings"
         onClick={() => dispatch(openSettingsModal())}
         expandDirection="left"

@@ -68,10 +68,8 @@ export function ExpandingIconButton({
       style={dynamicStyle}
       {...buttonProps}
     >
-      <span className={styles.iconWrap} aria-hidden="true">
-        {icon}
-      </span>
-      <span ref={labelRef} className={styles.label} aria-hidden="true">
+      <span className={styles.iconWrap}>{icon}</span>
+      <span ref={labelRef} className={styles.label}>
         {label}
       </span>
     </button>

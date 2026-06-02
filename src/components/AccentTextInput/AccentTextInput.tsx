@@ -51,7 +51,7 @@ export const AccentTextInput = forwardRef<
         style={inputStyle}
       />
       {Icon ? (
-        <span className={styles.icon} aria-hidden="true">
+        <span className={styles.icon} role="presentation">
           <Icon {...ICON_PROPS.accentTextInput} />
         </span>
       ) : null}

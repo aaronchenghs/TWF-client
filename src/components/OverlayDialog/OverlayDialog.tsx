@@ -57,17 +57,24 @@ export function OverlayDialog({
   if (!open) return null;
 
   const content = (
-    <div
-      className={clsx(styles.overlay, className)}
-      role="dialog"
-      aria-modal="true"
-      aria-label={ariaLabel}
-      onMouseDown={(e) => {
-        if (!onBackdrop) return;
-        if (e.target === e.currentTarget) onBackdrop();
-      }}
-    >
-      <div className={clsx(styles.content, contentClassName)}>{children}</div>
+    <div className={clsx(styles.overlay, className)}>
+      {onBackdrop && (
+        <button
+          type="button"
+          className={styles.backdrop}
+          aria-label="Close dialog"
+          tabIndex={-1}
+          onClick={onBackdrop}
+        />
+      )}
+      <div
+        className={clsx(styles.content, contentClassName)}
+        role="dialog"
+        aria-modal="true"
+        aria-label={ariaLabel}
+      >
+        {children}
+      </div>
     </div>
   );
 

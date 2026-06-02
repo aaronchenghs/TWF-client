@@ -23,7 +23,6 @@ import {
 } from "../../lib/session";
 import { AnimatedDots } from "../../components/AnimatedDots/AnimatedDots";
 import { APP_ICONS } from "@/lib/constants/icons";
-import { INPUT_PATTERNS } from "@/lib/constants/regex";
 import { DesktopTeaserHeader } from "./DesktopTeaserHeader/DesktopTeaserHeader";
 import {
   persistPlayerJoinState,
@@ -32,6 +31,7 @@ import {
 } from "@/lib/roomClientState";
 
 const { lobbyCode: LobbyCodeIcon } = APP_ICONS;
+const JOIN_CODE_HELP_ID = "join-code-help";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -53,12 +53,25 @@ export default function Landing() {
   };
 
   return (
-    <div className={styles.landingPage}>
-      {!isMobile && <DesktopTeaserHeader />}
+    <main id="main-content" className={styles.landingPage}>
+      <a className={styles.skipLink} href="#join-lobby">
+        Skip to join lobby
+      </a>
+
+      <nav className={styles.primaryNav} aria-label="Primary">
+        <a className={styles.screenReaderNavLink} href="#join-lobby">
+          Join lobby
+        </a>
+        {!isMobile && <DesktopTeaserHeader />}
+      </nav>
 
       <div className={styles.container}>
         <h1 className={styles.seoHeading}>Tiers! With Friends</h1>
-        <TWFLogo className={styles.logo} aria-hidden="true" />
+        <TWFLogo
+          className={styles.logo}
+          role="img"
+          aria-label="Tiers With Friends logo"
+        />
 
         <button
           type="button"
@@ -99,7 +112,7 @@ export default function Landing() {
         open={isWhatIsThisOpen}
         onClose={() => setIsWhatIsThisOpen(false)}
       />
-    </div>
+    </main>
   );
 }
 
@@ -170,8 +183,15 @@ export function JoinRoomPanel() {
   };
 
   return (
-    <div className={styles.joinCard}>
+    <div id="join-lobby" className={styles.joinCard} tabIndex={-1}>
       <MainTextTypography variant="h4">Join a Lobby</MainTextTypography>
+      <MainTextTypography
+        variant="p"
+        id={JOIN_CODE_HELP_ID}
+        className={styles.codeHint}
+      >
+        Enter the 4-letter lobby code from the host screen. Letters only.
+      </MainTextTypography>
       <div className={styles.joinRow}>
         <AccentTextInput
           name="lobby code"
@@ -183,7 +203,7 @@ export function JoinRoomPanel() {
           icon={LobbyCodeIcon}
           type="text"
           inputMode="text"
-          pattern={INPUT_PATTERNS.alphabetic}
+          aria-describedby={JOIN_CODE_HELP_ID}
           autoCapitalize="characters"
           autoCorrect="off"
           spellCheck={false}

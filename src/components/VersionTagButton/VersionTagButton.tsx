@@ -7,6 +7,7 @@ import styles from "./VersionTagButton.module.scss";
 import { VERSION_TAG_VISIBLE_ROUTE_PATTERNS } from "@/routes/routes";
 
 const CURRENT_YEAR = new Date().getFullYear();
+const VERSION_TAG_TEXT = `Copyright ${CURRENT_YEAR} ARC v${APP_VERSION}`;
 
 export function VersionTagButton() {
   const [isLicensingOpen, setIsLicensingOpen] = useState<boolean>(false);
@@ -23,7 +24,7 @@ export function VersionTagButton() {
         type="button"
         className={styles.versionTagButton}
         onClick={() => setIsLicensingOpen(true)}
-        aria-label="Open licensing information"
+        aria-label={`${VERSION_TAG_TEXT}, open licensing information`}
       >
         <MainTextTypography
           className={styles.versionTag}
@@ -31,7 +32,7 @@ export function VersionTagButton() {
           letterSpacing="wide"
           muted
         >
-          {"\u00A9"} {CURRENT_YEAR} ARC | v{APP_VERSION}
+          {VERSION_TAG_TEXT}
         </MainTextTypography>
       </button>
 

@@ -246,7 +246,5 @@ export function BackgroundGridEffect() {
     [$isHighContrast, $isReduceMotion, isMobile],
   );
 
-  return (
-    <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
-  );
+  return <canvas ref={canvasRef} className={styles.canvas} />;
 }

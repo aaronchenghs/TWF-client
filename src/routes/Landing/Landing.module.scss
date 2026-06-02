@@ -19,6 +19,68 @@
   align-items: center;
   @include appearFadeIn($dur-long);
 
+  .skipLink {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + $default-gap);
+    left: calc(env(safe-area-inset-left, 0px) + $default-gap);
+    z-index: calc($z-floating-actions + 1);
+
+    padding: $default-padding;
+    border: 2px solid $text-secondary;
+    border-radius: $radius-sm;
+
+    background: $bg-elevated;
+    color: $text-primary;
+    text-decoration: none;
+
+    transform: translateY(calc(-100% - ($default-gap * 2)));
+    transition: transform $dur-fast $ease-out;
+
+    &:focus-visible {
+      outline: 2px solid $text-primary;
+      outline-offset: 2px;
+      transform: translateY(0);
+    }
+  }
+
+  .primaryNav {
+    display: contents;
+  }
+
+  .screenReaderNavLink {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + $default-gap);
+    left: calc(env(safe-area-inset-left, 0px) + $default-gap);
+    z-index: calc($z-floating-actions + 1);
+
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+
+    &:focus-visible {
+      width: auto;
+      height: auto;
+      padding: $default-padding;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+
+      border: 2px solid $text-secondary;
+      border-radius: $radius-sm;
+      outline: 2px solid $text-primary;
+      outline-offset: 2px;
+
+      background: $bg-elevated;
+      color: $text-primary;
+      text-decoration: none;
+    }
+  }
+
   .container {
     width: 100%;
     height: 100%;
@@ -103,6 +165,13 @@
     transform: rotate(0deg) translateY(-1px);
     box-shadow: $shadow-comic-panel-hover;
   }
+}
+
+.codeHint {
+  margin: 0;
+  color: $text-secondary;
+  font-size: $fs-caption;
+  line-height: 1.4;
 }
 
 .joinRow {

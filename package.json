@@ -11,6 +11,7 @@
     "deploy:frontend": "node ./scripts/deploy-frontend.mjs",
     "lint": "eslint .",
     "lint:a11y": "eslint . --max-warnings=0",
+    "lint:strict": "eslint . --max-warnings=0",
     "preview": "vite preview"
   },
   "dependencies": {

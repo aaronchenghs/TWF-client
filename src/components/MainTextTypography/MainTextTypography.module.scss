@@ -78,11 +78,13 @@
 }
 
 .body,
+.p,
 .caption {
   font-family: $font-body;
 }
 
-.body {
+.body,
+.p {
   font-size: $fs-body;
   line-height: $lh-body;
 }

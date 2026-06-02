@@ -11,11 +11,7 @@ export function PlayerSlotPlaceholder({
   className,
 }: PlayerSlotPlaceholderProps) {
   return (
-    <div
-      className={clsx(styles.root, className)}
-      aria-label="Open player slot"
-      role="presentation"
-    >
+    <div className={clsx(styles.root, className)}>
       <div className={styles.identity}>
         <PlayerAvatar avatar={null} size={45} className={styles.avatar} />
         <MainTextTypography variant="h4" muted className={styles.label}>

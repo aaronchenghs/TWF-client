@@ -4,8 +4,6 @@
   width: 100%;
   padding: $default-padding;
   @include comicPanel($comic-skew-soft, $radius-md, $bg-elevated, $bg-surface);
-  content-visibility: auto;
-  contain-intrinsic-size: 150px;
 
   text-align: left;
   cursor: pointer;

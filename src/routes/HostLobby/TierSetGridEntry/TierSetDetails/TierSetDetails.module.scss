@@ -13,7 +13,7 @@
   flex-direction: column;
   gap: $default-gap;
 
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: $bg-surface;
 }
 
 .detailsSection {
@@ -51,7 +51,7 @@
   border-radius: $radius-sm;
 
   border: 1px solid rgba($bg-elevated, 0.7);
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: $bg-surface;
 }
 
 .itemImage {

@@ -29,6 +29,7 @@ export function SliderControl({
         step={1}
         value={clamped}
         aria-label={ariaLabel}
+        autoComplete="off"
         disabled={disabled}
         onChange={(e) => onChangePercent(clamp(Number(e.target.value), 0, 100))}
         onPointerUp={() => onCommit?.()}
@@ -37,7 +38,7 @@ export function SliderControl({
           onCommit?.();
         }}
       />
-      <span className={styles.value} aria-hidden="true">
+      <span className={styles.value}>
         {clamped}%
       </span>
     </div>

@@ -28,7 +28,7 @@ export function SettingsOptionRow({
       <div className={styles.settingInfo}>
         <div className={styles.titleRow}>
           {icon && (
-            <span className={styles.icon} aria-hidden="true">
+            <span className={styles.icon} role="presentation">
               {icon}
             </span>
           )}

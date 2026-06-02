@@ -35,7 +35,7 @@ export function AccentToggle({
       }}
       {...props}
     >
-      <span className={styles.thumb} aria-hidden="true" />
+      <span className={styles.thumb} />
     </button>
   );
 }

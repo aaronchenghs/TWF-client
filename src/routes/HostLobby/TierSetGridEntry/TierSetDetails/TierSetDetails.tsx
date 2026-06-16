@@ -2,7 +2,6 @@ import styles from "./TierSetDetails.module.scss";
 import { MainTextTypography } from "../../../../components/MainTextTypography/MainTextTypography";
 import type { TierSetDefinition } from "@twf/contracts";
 import { LoadableImage } from "../../../../components/LoadableImage/LoadableImage";
-import { handleKeyDown } from "@/lib/accessibility";
 
 type TierSetDetailsProps = {
   isLoading: boolean;
@@ -10,13 +9,13 @@ type TierSetDetailsProps = {
 };
 
 export function TierSetDetails({ isLoading, details }: TierSetDetailsProps) {
+  /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- Scrollable details region needs keyboard focus for overflow content. */
   return (
     <div
       className={styles.detailsBody}
-      onClick={(e) => e.stopPropagation()}
-      onKeyDown={(e) => handleKeyDown(e, () => {}, { stopPropagation: true })}
-      tabIndex={-1}
-      role="button"
+      role="region"
+      aria-label="Tier set details"
+      tabIndex={0}
     >
       {isLoading && (
         <MainTextTypography variant="body" muted>
@@ -81,4 +80,5 @@ export function TierSetDetails({ isLoading, details }: TierSetDetailsProps) {
       )}
     </div>
   );
+  /* eslint-enable jsx-a11y/no-noninteractive-tabindex */
 }

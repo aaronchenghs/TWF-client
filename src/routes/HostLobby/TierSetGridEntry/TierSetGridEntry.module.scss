@@ -6,7 +6,6 @@
   @include comicPanel($comic-skew-soft, $radius-md, $bg-elevated, $bg-surface);
 
   text-align: left;
-  cursor: pointer;
 
   display: flex;
   flex-direction: column;
@@ -39,12 +38,19 @@
 
 .selectButton {
   appearance: none;
-  border: 1px solid rgba($bg-elevated, 0.7);
+  border: 0;
   background: transparent;
-  padding: $default-padding;
-  border-radius: $radius-sm;
+  color: inherit;
+  font: inherit;
+  padding: 0;
   cursor: pointer;
   text-align: left;
+  min-width: 0;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: $default-gap;
 
   &:focus-visible {
     outline: none;
@@ -53,7 +59,8 @@
 }
 
 .topRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: $default-gap;
   min-width: 0;
@@ -93,21 +100,6 @@
   font-size: $fs-title;
   text-transform: uppercase;
   background: $bg-elevated;
-}
-
-.mainColumn {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-}
-
-.headerRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: $default-gap;
-  min-width: 0;
 }
 
 .titleGroup {
@@ -197,44 +189,32 @@
 
 @media (max-width: $desktop-compact-width) {
   .topRow {
-    display: grid;
-    grid-template-columns: 88px minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: calc($default-gap * 0.5);
-    align-items: center;
   }
 
-  .mainColumn,
-  .headerRow,
+  .selectButton {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: calc($default-gap * 0.5);
+  }
+
   .titleGroup {
-    display: contents;
-  }
-
-  .presetTitle {
-    grid-column: 1 / -1;
-    grid-row: 1;
-  }
-
-  .metaBadge {
-    grid-column: 3;
-    grid-row: 2;
-    justify-self: end;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .previewThumb {
     grid-column: 1;
-    grid-row: 2;
   }
 
   .detailsButton {
-    grid-column: 4;
-    grid-row: 2;
     justify-self: end;
   }
 }
 
 @media (max-width: $mobile-width) {
-  .topRow {
-    grid-template-columns: 68px minmax(0, 1fr) auto auto;
+  .selectButton {
+    grid-template-columns: 68px minmax(0, 1fr);
   }
 
   .previewThumb {

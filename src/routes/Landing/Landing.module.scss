@@ -1,15 +1,7 @@
 @use "../../styles/export.scss" as *;
 
 .seoHeading {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  @include visuallyHidden();
 }
 
 .landingPage {
@@ -24,19 +16,12 @@
   }
 
   .screenReaderNavLink {
+    @include visuallyHidden();
+
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + $default-gap);
     left: calc(env(safe-area-inset-left, 0px) + $default-gap);
     z-index: calc($z-floating-actions + 1);
-
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
 
     &:focus-visible {
       width: auto;
@@ -151,15 +136,7 @@
 }
 
 .joinCodeLabel {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  @include visuallyHidden();
 }
 
 .joinRow {

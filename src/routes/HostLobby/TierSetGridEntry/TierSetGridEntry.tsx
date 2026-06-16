@@ -7,7 +7,6 @@ import { TierSetDetails } from "./TierSetDetails/TierSetDetails";
 import type { TierSetSummary, TierSetDefinition } from "@twf/contracts";
 import type { Guid } from "../../../lib/guid";
 import { AccentButton } from "../../../components/AccentButton/AccentButton";
-import { handleKeyDown } from "@/lib/accessibility";
 import { LoadableImage } from "../../../components/LoadableImage/LoadableImage";
 import { getTierSetItemCountAccentColor } from "@/lib/tierItems";
 import pluralize from "pluralize";
@@ -84,71 +83,65 @@ export function TierSetGridEntry({
 
   return (
     <div
-      role="button"
-      tabIndex={0}
       className={clsx(styles.presetCard, selected && styles.presetCardSelected)}
-      onClick={() => onSelect(tierSet)}
-      onKeyDown={(e) =>
-        handleKeyDown(e, () => {
-          onSelect(tierSet);
-        })
-      }
-      aria-pressed={selected}
     >
       <div className={styles.topRow}>
-        <div className={styles.previewThumb}>
-          <LoadableImage
-            className={styles.previewImage}
-            src={effectivePreviewSrc}
-            alt={previewName}
-            width={88}
-            height={88}
-            loading={previewLoading}
-            decoding="async"
-            fetchPriority="low"
-            draggable={false}
-            fallback={
-              <div className={styles.previewPlaceholder} aria-hidden="true" />
-            }
-          />
-        </div>
-
-        <div className={styles.mainColumn}>
-          <div className={styles.headerRow}>
-            <div className={styles.titleGroup}>
-              <MainTextTypography
-                variant="h3"
-                tone={selected ? "player" : undefined}
-                className={styles.presetTitle}
-              >
-                {tierSet.title}
-              </MainTextTypography>
-
-              <span className={styles.metaBadge} style={itemCountBadgeStyle}>
-                <MainTextTypography
-                  variant="body"
-                  weight="bold"
-                  className={styles.metaText}
-                >
-                  {itemCountLabel}
-                </MainTextTypography>
-              </span>
-            </div>
-
-            <AccentButton
-              type="button"
-              size="small"
-              className={styles.detailsButton}
-              onClick={toggleDetails}
-              aria-expanded={isDetailsOpen}
-              aria-controls={detailsRegionId}
-            >
-              <MainTextTypography variant="label" weight="bold">
-                {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
-              </MainTextTypography>
-            </AccentButton>
+        <button
+          type="button"
+          className={styles.selectButton}
+          onClick={() => onSelect(tierSet)}
+          aria-pressed={selected}
+        >
+          <div className={styles.previewThumb}>
+            <LoadableImage
+              className={styles.previewImage}
+              src={effectivePreviewSrc}
+              alt={previewName}
+              width={88}
+              height={88}
+              loading={previewLoading}
+              decoding="async"
+              fetchPriority="low"
+              draggable={false}
+              fallback={
+                <div className={styles.previewPlaceholder} aria-hidden="true" />
+              }
+            />
           </div>
-        </div>
+
+          <div className={styles.titleGroup}>
+            <MainTextTypography
+              variant="h3"
+              tone={selected ? "player" : undefined}
+              className={styles.presetTitle}
+            >
+              {tierSet.title}
+            </MainTextTypography>
+
+            <span className={styles.metaBadge} style={itemCountBadgeStyle}>
+              <MainTextTypography
+                variant="body"
+                weight="bold"
+                className={styles.metaText}
+              >
+                {itemCountLabel}
+              </MainTextTypography>
+            </span>
+          </div>
+        </button>
+
+        <AccentButton
+          type="button"
+          size="small"
+          className={styles.detailsButton}
+          onClick={toggleDetails}
+          aria-expanded={isDetailsOpen}
+          aria-controls={detailsRegionId}
+        >
+          <MainTextTypography variant="label" weight="bold">
+            {isDetailsOpen ? "HIDE DETAILS" : "DETAILS"}
+          </MainTextTypography>
+        </AccentButton>
       </div>
 
       <div

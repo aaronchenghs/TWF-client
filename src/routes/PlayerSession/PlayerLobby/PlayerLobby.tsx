@@ -20,6 +20,7 @@ import { APP_ICONS } from "@/lib/constants/icons";
 import { normalizeName } from "@/lib/stringNormalizers";
 
 const { playerName: PlayerNameIcon, send: SendIcon } = APP_ICONS;
+const PLAYER_NAME_INPUT_ID = "player-name-input";
 
 export default function PlayerLobby({ state }: { state: RoomPublicState }) {
   const navigate = useNavigate();
@@ -97,7 +98,14 @@ export default function PlayerLobby({ state }: { state: RoomPublicState }) {
               </MainTextTypography>
 
               <div className={styles.nameForm}>
+                <label
+                  className={styles.nameInputLabel}
+                  htmlFor={PLAYER_NAME_INPUT_ID}
+                >
+                  Your name
+                </label>
                 <AccentTextInput
+                  id={PLAYER_NAME_INPUT_ID}
                   name="username"
                   value={pendingName}
                   onChange={(event) => setPendingName(event.target.value)}

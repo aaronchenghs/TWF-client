@@ -32,10 +32,6 @@ export const AccentTextInput = forwardRef<
 ) {
   const { width: styleWidth, ...inputStyle } = style ?? {};
   const resolvedWidth = fullWidth ? "100%" : (width ?? styleWidth ?? "120px");
-  const hasAriaLabelledBy = Boolean(props["aria-labelledby"]);
-  const fallbackAriaLabel = props.placeholder ?? props.name;
-  const ariaLabel =
-    props["aria-label"] ?? (hasAriaLabelledBy ? undefined : fallbackAriaLabel);
 
   return (
     <div
@@ -46,7 +42,6 @@ export const AccentTextInput = forwardRef<
       <input
         {...props}
         ref={ref}
-        aria-label={ariaLabel}
         className={clsx(styles.input, Icon && styles.hasIcon, className)}
         style={inputStyle}
       />

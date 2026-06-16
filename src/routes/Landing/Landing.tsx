@@ -33,6 +33,7 @@ import { SkipLink } from "@/components/SkipLink/SkipLink";
 
 const { lobbyCode: LobbyCodeIcon } = APP_ICONS;
 const JOIN_CODE_HELP_ID = "join-code-help";
+const JOIN_CODE_INPUT_ID = "join-code-input";
 const JOIN_LOBBY_ID = "join-lobby";
 
 export default function Landing() {
@@ -195,7 +196,11 @@ export function JoinRoomPanel() {
         Enter the 4-letter lobby code from the host screen. Letters only.
       </MainTextTypography>
       <div className={styles.joinRow}>
+        <label className={styles.joinCodeLabel} htmlFor={JOIN_CODE_INPUT_ID}>
+          Lobby code
+        </label>
         <AccentTextInput
+          id={JOIN_CODE_INPUT_ID}
           name="lobby code"
           value={code}
           onChange={(e) =>

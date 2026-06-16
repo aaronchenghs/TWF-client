@@ -94,7 +94,7 @@ export function HowToPlayModal(props: {
             {step.body}
           </MainTextTypography>
 
-          <div className={styles.dots} aria-label="Steps">
+          <nav className={styles.dots} aria-label="Steps">
             {HOW_TO_STEPS.map((_, i) => (
               <button
                 key={i}
@@ -105,7 +105,7 @@ export function HowToPlayModal(props: {
                 aria-current={i === index ? "step" : undefined}
               />
             ))}
-          </div>
+          </nav>
         </div>
       </div>
     </PrimaryModal>

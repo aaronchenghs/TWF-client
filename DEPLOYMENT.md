@@ -76,3 +76,34 @@ After deployment:
 
 - The apex domain `tierswithfriends.com` is not the primary frontend host in the current setup.
 - The production frontend should be treated as `https://www.tierswithfriends.com`.
+
+## Pause Or Resume The Frontend CDN
+
+When the project is parked, disable CloudFront instead of deleting the S3 bucket. This takes the public frontend offline while keeping the built assets and deployment configuration available.
+
+To disable the frontend CDN:
+
+```powershell
+npm run cloudfront:stop
+```
+
+To turn it back on:
+
+```powershell
+npm run cloudfront:start
+```
+
+To check the current frontend deployment state:
+
+```powershell
+npm run cloudfront:status
+```
+
+What this keeps:
+
+- the S3 bucket `s3://www.tierswithfriends.com`
+- the deployed frontend files
+- the CloudFront distribution configuration
+- Route 53 records and ACM certificate validation records
+
+Disabling CloudFront is reversible, but it can take several minutes to fully deploy globally.
